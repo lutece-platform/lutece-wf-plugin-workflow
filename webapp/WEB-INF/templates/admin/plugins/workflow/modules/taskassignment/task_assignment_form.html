@@ -1,0 +1,26 @@
+<#if config?exists && config.multipleOwner>
+	<p>	
+		<label for="workgroups_${config.idTask}"> ${config.title} * :</label><br/>
+	</p>
+	
+	<!--  
+		<#list workgroup_list as workgroup>
+			<p>
+				<label for="document_type">&nbsp;</label>
+				<input name="workgroups_${config.idTask}" class="checkbox" value="${workgroup.code}" type="checkbox" />${workgroup.code}
+			</p>
+		</#list>
+		-->
+		 <@checkboxList name="workgroups_${config.idTask}"  items=workgroup_list default_values="" />
+	   <br/>
+	 <p>      
+	 	<label>&nbsp;</label> #i18n{module.workflow.taskassignment.task_assignment_config.label_workgroups_comment}
+	</p>	
+<#elseif config?exists>	
+	<p>	
+		<label for="workgroups_${config.idTask}"> ${config.title} * :</label>
+	   <@combo name="workgroups_${config.idTask}"  items=workgroup_list default_value="" />
+	    <br/>
+	    <label>&nbsp;</label> #i18n{module.workflow.taskassignment.task_assignment_config.label_workgroups_comment}
+	</p>
+</#if>

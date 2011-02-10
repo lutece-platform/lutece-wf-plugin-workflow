@@ -1,0 +1,35 @@
+<div class="content-box">
+  <h2> #i18n{workflow.create_icon.title}</h2>
+   <form action="jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data" >
+	   <div>
+		   <p>
+		    <label for="name">#i18n{workflow.create_icon.label_name} * : </label>
+		    <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
+			 <br/>
+			<label>&nbsp;</label>#i18n{workflow.create_icon.label_name_comment}
+		   </p>
+		 <p>
+            <label for="id_file" >#i18n{workflow.create_icon.label_file} * : </label>
+            <input type="file" id="id_file" name="id_file" size="60" />
+             <br/>
+			  <label>&nbsp;</label>#i18n{workflow.create_icon.label_file_comment}
+        </p>
+        <p>
+		    <label for="width">#i18n{workflow.create_icon.label_width} : </label>
+		   	<input type="text" name="width" id="" size="4" value=""  maxlength="255"/>
+			 <br/>
+			<label>&nbsp;</label>#i18n{workflow.create_icon.label_width_comment}
+		 </p>
+		 <p>
+		    <label for="height">#i18n{workflow.create_icon.label_height} : </label>
+		    <input type="text" name="height" id="" size="4" value=""  maxlength="255"/>
+		 	 <br/>
+			<label>&nbsp;</label>#i18n{workflow.create_icon.label_height_comment}
+		</div>
+    <p>
+  		<input type="submit" value="#i18n{workflow.create_icon.button_save}" class="button" name="save" />
+  		<input type="submit" value="#i18n{workflow.create_icon.button_cancel}" class="button" name="cancel" />
+   </p>
+ 	</form>
+ </div>
+

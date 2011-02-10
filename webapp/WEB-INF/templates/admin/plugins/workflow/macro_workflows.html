@@ -1,0 +1,25 @@
+<#macro radioIconList name default_value icons >
+        <#list icons as icon>
+            <#if default_value=icon.id> 			
+                <input checked="checked" class="radio" type="radio" name="${name}" value="${icon.id}" />
+                <img  src="image?resource_type=workflow_icon_img&id=${icon.id}"
+							<#if icon.width!=-1>
+									  width="${icon.width}"
+		 					</#if> 
+							<#if icon.height!=-1>
+		 								height="${icon.height}"
+							 </#if> 
+				/>
+            <#else>
+                <input class="radio" type="radio" name="${name}" value="${icon.id}" />
+                <img  src="image?resource_type=workflow_icon_img&id=${icon.id}"
+							<#if icon.width!=-1>
+									  width="${icon.width}"
+		 					</#if> 
+							<#if icon.height!=-1>
+		 								height="${icon.height}"
+							 </#if> 
+				/>
+            </#if>
+        </#list>
+</#macro>

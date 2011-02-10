@@ -1,0 +1,38 @@
+<table>
+   	<tr>
+   		<th>#i18n{workflow.dashboard.row_name}</th>
+   		<th>#i18n{workflow.dashboard.row_state}</th>
+   		<th>#i18n{workflow.dashboard.row_actions}</th>
+   	</tr>
+    <#list workflow_list as workflow>
+    	<tr>
+			<td>
+				${workflow.name}
+			</td>
+			<td>
+				<#if workflow.enabled>
+					<img  src="images/admin/skin/plugins/workflow/actions/enable.png" />
+				<#else>
+					<img src="images/admin/skin/plugins/workflow/actions/disable.png" />
+				</#if>
+			</td>
+			<td>
+				<a href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}">
+					<img src="images/admin/skin/plugins/workflow/actions/modify.png" alt="#i18n{workflow.manage_workflow.title_modify}" title="#i18n{workflow.manage_workflow.title_modify}" />
+				</a>
+				<a href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}">
+					<img src="images/admin/skin/plugins/workflow/actions/delete.png" alt="#i18n{workflow.manage_workflow.title_delete}" title="#i18n{workflow.manage_workflow.title_delete}" />
+				</a>
+				<#if workflow.enabled>
+					<a href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}">
+						<img src="images/admin/skin/plugins/workflow/actions/disable.png" alt="#i18n{workflow.manage_workflow.title_disable}" title="#i18n{workflow.manage_workflow.title_disable}" />
+					</a>
+				<#else>
+					<a href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}">
+						<img src="images/admin/skin/plugins/workflow/actions/enable.png" alt="#i18n{workflow.manage_workflow.title_enable}" title="#i18n{workflow.manage_workflow.title_enable}" />
+					</a>
+				</#if>
+			</td>
+    	</tr>
+    </#list>
+</table>

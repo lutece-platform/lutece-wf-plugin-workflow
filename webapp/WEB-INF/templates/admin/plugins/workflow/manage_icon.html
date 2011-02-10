@@ -1,0 +1,50 @@
+<div id="content-box-actions">
+	<form method="post" action="jsp/admin/plugins/workflow/CreateIcon.jsp">
+      	<input type="submit" value="#i18n{workflow.manage_icon.button_create}" class="button bt-toolbar" />
+  	</form>
+</div>
+<div class="content-box">
+  <h2>#i18n{workflow.manage_icon.title}</h2>
+  <@paginationAdmin paginator=paginator combo=1/>
+  <table>
+    <tr>
+      <th>
+       #i18n{workflow.manage_icon.row_icon}
+      </th>
+     <th>
+         #i18n{workflow.manage_icon.row_name}
+      </th>
+      <th>
+         #i18n{workflow.manage_workflow.row_actions}
+      </th>
+    </tr>
+   <#list icon_list as icon>	
+	   <tr>
+	      <td>
+	      	<img  src="image?resource_type=workflow_icon_img&id=${icon.id}"
+								<#if icon.width!=-1>
+										  width="${icon.width}"
+			 					</#if> 
+								<#if icon.height!=-1>
+			 								height="${icon.height}"
+								 </#if> 
+				/>
+	      </td>
+	     <td>
+	        ${icon.name} 
+	     </td>
+	     <td>
+			 <a href="jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}">
+							  <img src="images/admin/skin/plugins/workflow/actions/modify.png" alt="#i18n{workflow.manage_icon.title_modify}" title="#i18n{workflow.manage_icon.title_modify}" />
+					 </a>
+					 
+					 <a href="jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}">
+							  <img src="images/admin/skin/plugins/workflow/actions/delete.png" alt="#i18n{workflow.manage_icon.title_delete}" title="#i18n{workflow.manage_icon.title_delete}" />
+					 </a>
+					 
+		 </td>
+	    </tr>
+   </#list>
+   </table>
+   <@paginationAdmin paginator=paginator/>
+</div>

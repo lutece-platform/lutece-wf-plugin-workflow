@@ -1,0 +1,83 @@
+<div id="content-box-actions">
+	<#if permission_manage_advanced_parameters>
+	  	<form method="post" action="jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp">
+			<input type="submit" value="#i18n{workflow.manage_workflow.button_manage_advanced_parameters}" class="button bt-toolbar" />
+	  	</form>
+	</#if>
+  	<form method="post" action="jsp/admin/plugins/workflow/CreateWorkflow.jsp">
+      	<input type="submit" value="#i18n{workflow.manage_workflow.button_create}" class="button bt-toolbar" />
+  	</form>
+</div>
+<div class="content-box">
+  <h2>  #i18n{workflow.manage_workflow.title}</h2>
+  <div class="highlight-box">
+    <form action="" method="" name="" id="">
+      <p>
+        <label for="">
+          #i18n{workflow.manage_workflow.label_active} : 
+        </label>
+        <@combo name="is_enabled"  items=active_list default_value=active_selected />
+      &nbsp;
+       <span style="font-weight:bold;color:#395E7D;">
+         #i18n{workflow.manage_workflow.label_workgroup} :
+        </span>
+        <@combo name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected />
+		&nbsp;
+        <input class="button" value="#i18n{workflow.manage_workflow.button_search}" 	type="submit">
+      </p>
+    </form>
+  </div>
+  <@paginationAdmin paginator=paginator combo=1/>
+  <table>
+    <tr>
+      <th>
+       #i18n{workflow.manage_workflow.row_name}
+      </th>
+     <th>
+        #i18n{workflow.manage_workflow.row_state}
+      </th>
+      <th>
+        #i18n{workflow.manage_workflow.row_actions}
+      </th>
+    </tr>
+   <#list workflow_list as workflow>	
+   <tr>
+      <td>
+      	${workflow.name} 
+      </td>
+      
+      <td>
+       <#if workflow.enabled>
+      		<img  src="images/admin/skin/plugins/workflow/actions/enable.png" />
+      <#else>
+      		<img src="images/admin/skin/plugins/workflow/actions/disable.png" />
+      </#if>
+     
+      </td>
+     <td>
+		 <a href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}">
+						  <img src="images/admin/skin/plugins/workflow/actions/modify.png" alt="#i18n{workflow.manage_workflow.title_modify}" title="#i18n{workflow.manage_workflow.title_modify}" />
+				 </a>
+				<!--  
+				 <a href="jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}">
+						  <img src="images/admin/skin/plugins/workflow/actions/copy.png" alt="#i18n{workflow.manage_workflow.title_copy}" title="#i18n{workflow.manage_workflow.title_copy}" />
+				 </a>
+				 -->
+				 <a href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}">
+						  <img src="images/admin/skin/plugins/workflow/actions/delete.png" alt="#i18n{workflow.manage_workflow.title_delete}" title="#i18n{workflow.manage_workflow.title_delete}" />
+				 </a>
+				 <#if workflow.enabled>
+				 	<a href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}">
+						  <img src="images/admin/skin/plugins/workflow/actions/disable.png" alt="#i18n{workflow.manage_workflow.title_disable}" title="#i18n{workflow.manage_workflow.title_disable}" />
+				 	</a>
+				 <#else>
+						<a href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}">
+						  <img src="images/admin/skin/plugins/workflow/actions/enable.png" alt="#i18n{workflow.manage_workflow.title_enable}" title="#i18n{workflow.manage_workflow.title_enable}" />
+				 	</a>
+				 </#if>	
+	 </td>
+    </tr>
+   </#list>
+   </table>
+   <@paginationAdmin paginator=paginator/>
+</div>

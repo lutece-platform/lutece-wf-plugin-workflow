@@ -1,0 +1,111 @@
+<div class="content-box">
+	  <h2> #i18n{workflow.modify_workflow.title}</h2>
+	  <form action="jsp/admin/plugins/workflow/DoModifyWorkflow.jsp" method="post" name="" id=""  >
+	  <input name="id_workflow" value="${workflow.id}" type="hidden">
+	   
+		   <p>
+			    <label for="name">#i18n{workflow.create_workflow.label_name} * : </label>
+			    <input type="text" name="name" id="" size="80" value="${workflow.name}"  maxlength="255"/>
+				 <br/>
+				<label>&nbsp;</label>#i18n{workflow.create_workflow.label_name_comment}
+		   </p>
+			 <p>
+			     <label for="description"> #i18n{workflow.create_workflow.label_description} * : </label>
+			     <textarea name="description" cols="80" rows="2">${workflow.description}</textarea>
+			   <br/>
+			    <label>&nbsp;</label>
+					#i18n{workflow.create_workflow.label_description_comment}
+		     </p>
+		    	<p>
+				    <label for="">#i18n{workflow.create_workflow.label_workgroup}  : </label>
+				     <@combo name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup />
+					 <br/>
+					<label>&nbsp;</label>
+					#i18n{workflow.create_workflow.label_workgroup_comment}
+			   	</p>
+		  <p>
+	  			<input type="submit" value="#i18n{workflow.create_workflow.button_save}" class="button"  name="save" />
+	  			<input type="submit" value="#i18n{workflow.modify_workflow.button_apply}" class="button"  name="apply"/>
+	  			<input type="submit" value="#i18n{workflow.create_workflow.button_cancel}" class="button" name="cancel" />
+	  	 </p>
+	 </form>
+</div>
+ <a name="list_state" id="list_state"></a>
+<div class="content-box">
+	<h2>#i18n{workflow.modify_workflow.manage_state.title}</h2>
+	<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>
+	<table width="100%">
+			<tr>
+				<th>#i18n{workflow.modify_workflow.manage_state.row_name}</th>
+				<th>#i18n{workflow.modify_workflow.manage_state.row_actions}</th>
+			</tr>
+			<#list state_list as state>
+				<tr>
+					<td>${state.name}</td>
+					<td>
+						<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">
+							<img src="images/admin/skin/plugins/workflow/actions/modify.png"
+								alt="#i18n{workflow.modify_workflow.manage_state.title_modify}"
+								title="#i18n{workflow.modify_workflow.manage_state.title_modify}" /> 
+						</a>
+					   <a href="jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}">
+						<img src="images/admin/skin/plugins/workflow/actions/delete.png"
+							alt="#i18n{workflow.modify_workflow.manage_state.title_delete}"
+							title="#i18n{workflow.modify_workflow.manage_state.title_delete}" /> 
+					   </a>
+					</td>
+				</tr>
+			</#list>
+	</table>
+	<@paginationAdmin paginator=paginator_state nb_items_per_page=nb_items_per_page_state/>
+			
+	           	  <form  method="post"  action="jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state"> 
+        			 <p>		
+        			 	<input value="#i18n{workflow.modify_workflow.manage_state.button_insert_state}" class="button" type="submit">
+        			 </p> 
+		       		</form>
+		        
+</div>
+ <a name="list_action" id="list_action"></a>
+<div class="content-box">
+	<h2>#i18n{workflow.modify_workflow.manage_action.title}</h2>
+	<@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
+	<table width="100%">
+			<tr>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_name}</th>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_state_before}</th>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_state_after}</th>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_actions}</th>
+			</tr>
+			<#list action_list as action>
+				<tr>
+					<td>${action.name}</td>
+					<td>${action.stateBefore.name}</td>
+					<td>${action.stateAfter.name}</td>
+					<td>
+						<a href="jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}">
+							<img src="images/admin/skin/plugins/workflow/actions/modify.png"
+								alt="#i18n{workflow.modify_workflow.manage_action.title_modify}"
+								title="#i18n{workflow.modify_workflow.manage_action.title_modify}" /> 
+						</a>
+					   <a href="jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}">
+						<img src="images/admin/skin/plugins/workflow/actions/delete.png"
+							alt="#i18n{workflow.modify_workflow.manage_action.title_delete}"
+							title="#i18n{workflow.modify_workflow.manage_action.title_delete}" /> 
+					   </a>
+					</td>
+				</tr>
+			</#list>
+	</table>
+	<@paginationAdmin paginator=paginator_action nb_items_per_page=nb_items_per_page_action/>
+		<p>
+	           	  <form  method="post"  action="jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action"> 
+        				<p>
+			        		<input value="#i18n{workflow.modify_workflow.manage_action.button_insert_action}" class="button" type="submit">
+		       			</p>
+		       		</form>
+		</p> 
+</div>
+
+
+

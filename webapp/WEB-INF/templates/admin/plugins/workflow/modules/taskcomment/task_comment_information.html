@@ -1,0 +1,12 @@
+ <#if config?exists>
+	<p>
+	 	<#if config.title?exists >
+	   		<label>${config.title} :</label>
+	     </#if>
+	    <#if comment_value?exists>
+	    	${comment_value.value}
+	    </#if>
+	 </p>
+</#if>
+
+	

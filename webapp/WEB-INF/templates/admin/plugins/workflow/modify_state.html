@@ -1,0 +1,61 @@
+<#include "macro_workflows.html" />
+<div class="content-box">
+  <h2> #i18n{workflow.modify_state.title}</h2>
+   <form action="jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow" method="post" name="" id=""  >
+	   <input name="id_state" value="${state.id}" type="hidden">
+	   <div>
+		   <p>
+		    <label for="name">#i18n{workflow.create_state.label_name} * : </label>
+		    <input type="text" name="name" id="" size="80" value="${state.name}"  maxlength="255"/>
+			 <br/>
+			<label>&nbsp;</label>#i18n{workflow.create_state.label_name_comment}
+		   </p>
+		   <p>
+		     <label for="description"> #i18n{workflow.create_state.label_description} * : </label>
+		     <textarea name="description" cols="80" rows="2">${state.description}</textarea>
+		   	<br/>
+		    <label>&nbsp;</label>
+			#i18n{workflow.create_state.label_description_comment}
+		   </p>
+		   <p>
+			 <label for="is_initial_state">#i18n{workflow.create_state.label_initial_state} :</label>
+   		 		<#if state.isInitialState()>
+   		 			<input name="is_initial_state" value="1" type="checkbox" checked="checked">
+   		 		<#else>
+   		 			<input name="is_initial_state" value="1" type="checkbox">
+   		 		</#if>	
+   				<br/>
+ 			<label>&nbsp;</label> #i18n{workflow.create_state.label_initial_state_comment}
+	 		</p>
+	 		<p>
+				 <label for="is_required_user_assigned">#i18n{workflow.create_state.label_required_workgroup_assigned} :</label>
+	   		 	    
+	   		 	    <#if state.isRequiredWorkgroupAssigned()>
+	   		 	      <input name="is_required_workgroup_assigned" value="1" type="checkbox" checked="checked"/>
+	   		 	    <#else>
+	   		 	  	  <input name="is_required_workgroup_assigned" value="1" type="checkbox"/>
+	   		 	    </#if>	  
+	   		 	<br/>
+	 			<label>&nbsp;</label> #i18n{workflow.create_state.label_required_workgroup_assigned_comment}
+		 	</p>	
+	 		
+	 		<p>
+			     <label for="id_icon"> #i18n{workflow.create_state.label_icon} : </label>
+			    	<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
+			    	<input type="radio" name="id_icon" value="-1" 
+			    		<#if state.icon.id = 0>
+			    			checked="checked"
+			    		</#if>
+			    	/> #i18n{workflow.create_state.label_no_icon}	
+			   		<br/>
+			    <label>&nbsp;</label>
+					#i18n{workflow.create_state.label_icon_comment}
+		   </p>
+		</div>
+	    <p>
+	  		<input type="submit" value="#i18n{workflow.create_state.button_save}" class="button" name="save" />
+	  		<input type="submit" value="#i18n{workflow.create_state.button_cancel}" class="button" name="cancel" />
+	   </p>
+ 	</form>
+ </div>
+
