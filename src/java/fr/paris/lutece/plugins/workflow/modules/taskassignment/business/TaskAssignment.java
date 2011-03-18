@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.taskassignment.business;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.business.ResourceHistory;
 import fr.paris.lutece.plugins.workflow.business.ResourceHistoryHome;
 import fr.paris.lutece.plugins.workflow.business.ResourceWorkflow;
@@ -51,20 +60,11 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -299,7 +299,7 @@ public class TaskAssignment extends Task
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
         refMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_WORKGROUP_LIST, listWorkgroups );
         model.put( MARK_CONFIG, config );
         model.put( MARK_MAILING_LIST, refMailingList );
@@ -316,7 +316,7 @@ public class TaskAssignment extends Task
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Plugin plugin, Locale locale )
     {
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         TaskAssignmentConfig config = TaskAssignmentConfigHome.findByPrimaryKey( this.getId(  ), plugin );
 
         ReferenceList refWorkgroups = new ReferenceList(  );
@@ -355,7 +355,7 @@ public class TaskAssignment extends Task
     {
         List<AssignmentHistory> listAssignmentHistory = AssignmentHistoryHome.getListByHistory( nIdHistory,
                 this.getId(  ), plugin );
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         TaskAssignmentConfig config = TaskAssignmentConfigHome.findByPrimaryKey( this.getId(  ), plugin );
 
@@ -417,44 +417,37 @@ public class TaskAssignment extends Task
                 if ( ( workgroupConfig != null ) &&
                         ( workgroupConfig.getIdMailingList(  ) != WorkflowUtils.CONSTANT_ID_NULL ) )
                 {
-                    try
+                    Collection<Recipient> listRecipients = new ArrayList<Recipient>(  );
+                    listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList(  ) );
+
+                    String strSenderEmail = MailService.getNoReplyEmail(  );
+
+                    Map<String, Object> model = new HashMap<String, Object>(  );
+                    model.put( MARK_MESSAGE, config.getMessage(  ) );
+
+                    HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
+
+                    if ( config.isUseUserName(  ) )
                     {
-                        Collection<Recipient> listRecipients = new ArrayList<Recipient>(  );
-                        listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList(  ) );
+                        String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
 
-                        String strSenderEmail = MailService.getNoReplyEmail(  );
-
-                        HashMap model = new HashMap(  );
-                        model.put( MARK_MESSAGE, config.getMessage(  ) );
-
-                        HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
-
-                        if ( config.isUseUserName(  ) )
+                        // Send Mail
+                        for ( Recipient recipient : listRecipients )
                         {
-                            String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
-
-                            // Send Mail
-                            for ( Recipient recipient : listRecipients )
-                            {
-                                // Build the mail message
-                                MailService.sendMailHtml( recipient.getEmail(  ), strSenderName, strSenderEmail,
-                                    config.getSubject(  ), t.getHtml(  ) );
-                            }
-                        }
-                        else
-                        {
-                            for ( Recipient recipient : listRecipients )
-                            {
-                                // Build the mail message
-                                MailService.sendMailHtml( recipient.getEmail(  ),
-                                    admin.getFirstName(  ) + " " + admin.getLastName(  ), admin.getEmail(  ),
-                                    config.getSubject(  ), t.getHtml(  ) );
-                            }
+                            // Build the mail message
+                            MailService.sendMailHtml( recipient.getEmail(  ), strSenderName, strSenderEmail,
+                                config.getSubject(  ), t.getHtml(  ) );
                         }
                     }
-                    catch ( Exception e )
+                    else
                     {
-                        AppLogService.error( "Error during notification: " + e.getMessage(  ) );
+                        for ( Recipient recipient : listRecipients )
+                        {
+                            // Build the mail message
+                            MailService.sendMailHtml( recipient.getEmail(  ),
+                                admin.getFirstName(  ) + " " + admin.getLastName(  ), admin.getEmail(  ),
+                                config.getSubject(  ), t.getHtml(  ) );
+                        }
                     }
                 }
             }

@@ -74,6 +74,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
@@ -519,45 +520,52 @@ public class WorkflowService implements IWorkflowService
                 bRBACPermissionView = RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
             }
 
-            if ( ( resourceWorkflow != null ) &&
-                    ( resourceWorkflow.getState(  ).getId(  ) == action.getStateBefore(  ).getId(  ) ) &&
-                    ( bRBACPermissionView || isAutomatic ) )
+            try
             {
-                //create ResourceHistory
-                ResourceHistory resourceHistory = getNewResourceHistory( nIdResource, strResourceType, action, user,
-                        isAutomatic );
-                ResourceHistoryHome.create( resourceHistory, plugin );
-
-                List<ITask> listActionTasks = TaskHome.getListTaskByIdAction( nIdAction, plugin, locale );
-
-                for ( ITask task : listActionTasks )
-                {
-                    task.processTask( resourceHistory.getId(  ), request, plugin, locale );
-                }
-                
-                //reload the resource workflow in case a task had modified it
-                resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdResource, strResourceType,
-                        action.getWorkflow(  ).getId(  ), plugin );
-                resourceWorkflow.setState( action.getStateAfter(  ) );
-                resourceWorkflow.setExternalParentId( nExternalParentId );
-                ResourceWorkflowHome.update( resourceWorkflow, plugin );
+	            if ( ( resourceWorkflow != null ) &&
+	                    ( resourceWorkflow.getState(  ).getId(  ) == action.getStateBefore(  ).getId(  ) ) &&
+	                    ( bRBACPermissionView || isAutomatic ) )
+	            {
+	                //create ResourceHistory
+	                ResourceHistory resourceHistory = getNewResourceHistory( nIdResource, strResourceType, action, user,
+	                        isAutomatic );
+	                ResourceHistoryHome.create( resourceHistory, plugin );
+	
+	                List<ITask> listActionTasks = TaskHome.getListTaskByIdAction( nIdAction, plugin, locale );
+	
+	                for ( ITask task : listActionTasks )
+	                {
+	                    task.processTask( resourceHistory.getId(  ), request, plugin, locale );
+	                }
+	                
+	                //reload the resource workflow in case a task had modified it
+	                resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdResource, strResourceType,
+	                        action.getWorkflow(  ).getId(  ), plugin );
+	                resourceWorkflow.setState( action.getStateAfter(  ) );
+	                resourceWorkflow.setExternalParentId( nExternalParentId );
+	                ResourceWorkflowHome.update( resourceWorkflow, plugin );
+	            }
+	
+	            if ( action.getStateAfter(  ) != null )
+	            {
+	                State state = action.getStateAfter(  );
+	                ActionFilter actionFilter = new ActionFilter(  );
+	                actionFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
+	                actionFilter.setIdStateBefore( state.getId(  ) );
+	                actionFilter.setIsAutomaticState( 1 );
+	
+	                List<Action> listAction = ActionHome.getListActionByFilter( actionFilter, plugin );
+	
+	                if ( ( listAction != null ) && !listAction.isEmpty(  ) && ( listAction.get( 0 ) != null ) )
+	                {
+	                    this.doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId(  ),
+	                        nExternalParentId, request, locale, true );
+	                }
+	            }
             }
-
-            if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
+            catch( Exception e )
             {
-                State state = action.getStateAfter(  );
-                ActionFilter actionFilter = new ActionFilter(  );
-                actionFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
-                actionFilter.setIdStateBefore( state.getId(  ) );
-                actionFilter.setIsAutomaticState( 1 );
-
-                List<Action> listAction = ActionHome.getListActionByFilter( actionFilter, plugin );
-
-                if ( ( listAction != null ) && !listAction.isEmpty(  ) && ( listAction.get( 0 ) != null ) )
-                {
-                    this.doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId(  ),
-                        nExternalParentId, request, locale, true );
-                }
+            	AppLogService.error( "Error during processing tasks : " + e.getMessage(  ) );
             }
         }
     }
@@ -595,14 +603,14 @@ public class WorkflowService implements IWorkflowService
                 strResourceType, nIdWorkflow, plugin );
         List<ITask> listActionTasks;
         List<String> listTaskInformation;
-        HashMap model = new HashMap(  );
-        HashMap resourceHistoryTaskInformation;
-        List<HashMap> listResourceHistoryTaskInformation = new ArrayList<HashMap>(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> resourceHistoryTaskInformation;
+        List<Map<String, Object>> listResourceHistoryTaskInformation = new ArrayList<Map<String, Object>>(  );
         String strTaskinformation;
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            resourceHistoryTaskInformation = new HashMap(  );
+            resourceHistoryTaskInformation = new HashMap<String, Object>(  );
             resourceHistoryTaskInformation.put( MARK_RESOURCE_HISTORY, resourceHistory );
 
             if ( resourceHistory.getUserAccessCode(  ) != null )
@@ -1014,7 +1022,7 @@ public class WorkflowService implements IWorkflowService
             }
         }
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_TASK_FORM_ENTRY_LIST, listFormEntry );
 

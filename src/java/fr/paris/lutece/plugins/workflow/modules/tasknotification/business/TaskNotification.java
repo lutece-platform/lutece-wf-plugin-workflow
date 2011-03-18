@@ -33,6 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.tasknotification.business;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.business.task.Task;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.business.mailinglist.Recipient;
@@ -44,15 +51,8 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -173,7 +173,7 @@ public class TaskNotification extends Task
      */
     public String getDisplayConfigForm( HttpServletRequest request, Plugin plugin, Locale locale )
     {
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         String strNothing = I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale );
         ReferenceList refMailingList = new ReferenceList(  );
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
@@ -220,26 +220,19 @@ public class TaskNotification extends Task
 
         if ( config != null )
         {
-            try
-            {
-                String strSenderEmail = MailService.getNoReplyEmail(  );
-                Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList(  ) );
-                HashMap model = new HashMap(  );
-                model.put( MARK_MESSAGE, config.getMessage(  ) );
+            String strSenderEmail = MailService.getNoReplyEmail(  );
+            Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList(  ) );
+            Map<String, Object> model = new HashMap<String, Object>(  );
+            model.put( MARK_MESSAGE, config.getMessage(  ) );
 
-                HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
+            HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
 
-                // Send Mail
-                for ( Recipient recipient : listRecipients )
-                {
-                    // Build the mail message
-                    MailService.sendMailHtml( recipient.getEmail(  ), config.getSenderName(  ), strSenderEmail,
-                        config.getSubject(  ), t.getHtml(  ) );
-                }
-            }
-            catch ( Exception e )
+            // Send Mail
+            for ( Recipient recipient : listRecipients )
             {
-                AppLogService.error( "Error during notification: " + e.getMessage(  ) );
+                // Build the mail message
+                MailService.sendMailHtml( recipient.getEmail(  ), config.getSenderName(  ), strSenderEmail,
+                    config.getSubject(  ), t.getHtml(  ) );
             }
         }
     }

@@ -33,6 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.taskcomment.business;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.business.task.Task;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -43,11 +49,6 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import java.util.HashMap;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -171,7 +172,7 @@ public class TaskComment extends Task
      */
     public String getDisplayConfigForm( HttpServletRequest request, Plugin plugin, Locale locale )
     {
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         TaskCommentConfig config = TaskCommentConfigHome.findByPrimaryKey( this.getId(  ), plugin );
         model.put( MARK_CONFIG, config );
@@ -188,7 +189,7 @@ public class TaskComment extends Task
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Plugin plugin, Locale locale )
     {
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = TaskCommentConfigHome.findByPrimaryKey( this.getId(  ), plugin );
         model.put( MARK_CONFIG, config );
 
@@ -205,7 +206,7 @@ public class TaskComment extends Task
     {
         CommentValue commentValue = CommentValueHome.findByPrimaryKey( nIdHistory, this.getId(  ), plugin );
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = TaskCommentConfigHome.findByPrimaryKey( this.getId(  ), plugin );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
