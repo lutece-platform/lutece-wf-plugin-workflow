@@ -184,6 +184,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_ACTION = "action";
     private static final String MARK_INITIAL_STATE = "initial_state";
     private static final String MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS = "permission_manage_advanced_parameters";
+    private static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
+    
+    // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
     private static final String MESSAGE_ERROR_AUTOMATIC_FIELD = "workflow.message.error.automatic.field";
     private static final String MESSAGE_CONFIRM_REMOVE_WORKFLOW = "workflow.message.confirm_remove_workflow";
@@ -288,6 +291,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_USER_WORKGROUP_REF_LIST, AdminWorkgroupService.getUserWorkgroups( adminUser, locale ) );
+        model.put( MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS );
         setPageTitleProperty( PROPERTY_CREATE_WORKFLOW_PAGE_TITLE );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_WORKFLOW, locale, model );
