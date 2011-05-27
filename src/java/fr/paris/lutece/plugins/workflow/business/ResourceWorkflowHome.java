@@ -64,9 +64,13 @@ public final class ResourceWorkflowHome
      */
     public static void create( ResourceWorkflow resourceWorkflow, Plugin plugin )
     {
-        _dao.insert( resourceWorkflow, plugin );
+    	
+    	List<String> listWorkgroup = resourceWorkflow.getWorkgroups(  );
+    	resourceWorkflow.setAssociatedWithWorkgroup( listWorkgroup != null && listWorkgroup.size( ) > 0 );
+    	
+    	_dao.insert( resourceWorkflow, plugin );
 
-        List<String> listWorkgroup = resourceWorkflow.getWorkgroups(  );
+        
 
         if ( listWorkgroup != null )
         {
@@ -86,12 +90,13 @@ public final class ResourceWorkflowHome
      */
     public static void update( ResourceWorkflow resourceWorkflow, Plugin plugin )
     {
+    	
+    	List<String> listWorkgroup = resourceWorkflow.getWorkgroups(  );
+    	resourceWorkflow.setAssociatedWithWorkgroup( listWorkgroup != null && listWorkgroup.size( ) > 0 );
         _dao.store( resourceWorkflow, plugin );
         //update workgroups list
         _dao.deleteWorkgroups( resourceWorkflow, plugin );
-
-        List<String> listWorkgroup = resourceWorkflow.getWorkgroups(  );
-
+        
         if ( listWorkgroup != null )
         {
             for ( String workgroup : listWorkgroup )

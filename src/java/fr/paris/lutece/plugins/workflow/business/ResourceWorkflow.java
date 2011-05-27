@@ -52,6 +52,7 @@ public class ResourceWorkflow
     private State _state;
     private Integer _nIdExternalParent = null;
     private List<String> _workgroups;
+    private boolean _isAssociatedWithWorkgroup;
 
     /**
     *
@@ -160,4 +161,19 @@ public class ResourceWorkflow
     {
         _nIdExternalParent = nIdExternalParent;
     }
+
+    /**
+     * set to true if the workgroup is associate with workgroups 
+     * @param _isAssociatedWithWorkgroup
+     */
+	public void setAssociatedWithWorkgroup(boolean _isAssociatedWithWorkgroup) {
+		this._isAssociatedWithWorkgroup = _isAssociatedWithWorkgroup;
+	}
+	/**
+	 * 
+	 * @return true if the workgroup is associate with workgroups
+	 */
+	public boolean isAssociatedWithWorkgroup() {
+		return _isAssociatedWithWorkgroup;
+	}
 }
