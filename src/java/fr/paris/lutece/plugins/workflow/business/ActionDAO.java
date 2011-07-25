@@ -61,7 +61,7 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
         " a.id_state_after,a.id_icon,a.is_automatic,i.name,i.mime_type,i.file_value,i.width,i.height " +
         " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) ";
-    private static final String SQL_QUERY_INSERT = "INSERT workflow_action " +
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action " +
         "(id_action,name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic)" +
         " VALUES(?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action  SET id_action=?,name=?,description=?," +
