@@ -46,6 +46,19 @@
    	 
    	  
    	  <bean id="workflowService"  factory-method="getInstance" class="fr.paris.lutece.plugins.workflow.service.WorkflowService" />
-
+	  <bean id="workflow.workflowWebService" class="fr.paris.lutece.plugins.workflow.service.WorkflowWebService" />
+	  <!-- SignRequest -->
+	  <bean id="workflow.hashService" class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
+	  <bean id="workflow.userAtributeRequestAuthenticator" class="fr.paris.lutece.util.signrequest.SimpleHashAuthenticator" >
+			<property name="hashService" ref="workflow.hashService" />
+	        <property name="signatureElements" > 
+	            <list>
+	                <value>user_guid</value>
+	            </list>
+	        </property>
+	        <property name="privateKey">
+	            <value>change me</value>
+	        </property>
+	  </bean>
  </beans>
  	
