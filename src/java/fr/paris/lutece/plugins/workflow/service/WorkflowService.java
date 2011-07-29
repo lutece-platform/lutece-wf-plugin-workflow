@@ -180,11 +180,6 @@ public class WorkflowService implements IWorkflowService
     public void init(  )
     {
         Workflow.init(  );
-
-        for ( ITaskType taskType : WorkflowService.getInstance(  ).getTaskTypeList(  ) )
-        {
-            getTaskInstance( taskType.getKey(  ), null ).init(  );
-        }
     }
 
     /**

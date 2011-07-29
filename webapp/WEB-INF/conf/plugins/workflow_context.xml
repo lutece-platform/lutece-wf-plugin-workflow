@@ -60,5 +60,7 @@
 	            <value>change me</value>
 	        </property>
 	  </bean>
+	  
+	  <bean id="workflow.postStartupService" class="fr.paris.lutece.plugins.workflow.service.WorkflowPostStartupService" />
  </beans>
  	
