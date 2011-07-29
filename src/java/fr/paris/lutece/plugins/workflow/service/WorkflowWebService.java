@@ -66,6 +66,8 @@ public final class WorkflowWebService
     // CONSTANTS
     private static final String JSON_EXTENSION = ".json";
     private static final String SLASH = "/";
+    private static final String QUESTION_MARK = "?";
+    private static final String EQUAL = "=";
 
     // TAGS
     private static final String TAG_USER_ATTRIBUTES = "user-attributes";
@@ -136,7 +138,7 @@ public final class WorkflowWebService
             sbRestUrl.append( AppPropertiesService.getProperty( PROPERTY_REST_USER_ATTRIBUTE_GETATTRIBUTES_URL ) );
             sbRestUrl.append( strUserGuid );
             sbRestUrl.append( JSON_EXTENSION );
-            sbRestUrl.append( "?" + PARAMETER_USER_GUID + "=" + strUserGuid );
+            sbRestUrl.append( QUESTION_MARK + PARAMETER_USER_GUID + EQUAL + strUserGuid );
 
             List<String> listElements = new ArrayList<String>(  );
             listElements.add( strUserGuid );
@@ -190,11 +192,16 @@ public final class WorkflowWebService
             sbRestUrl.append( strUserGuid );
             sbRestUrl.append( SLASH );
             sbRestUrl.append( strAttributeKey );
+            sbRestUrl.append( QUESTION_MARK + PARAMETER_USER_GUID + EQUAL + strUserGuid );
 
+            List<String> listElements = new ArrayList<String>(  );
+            listElements.add( strUserGuid );
+            
             try
             {
                 HttpAccess httpAccess = new HttpAccess(  );
-                strUserAttribute = httpAccess.doGet( sbRestUrl.toString(  ) );
+                strUserAttribute = httpAccess.doGet( sbRestUrl.toString(  ),
+                        UserAttributeRequestAuthenticator.getRequestAuthenticator(  ), listElements );
             }
             catch ( HttpAccessException e )
             {
