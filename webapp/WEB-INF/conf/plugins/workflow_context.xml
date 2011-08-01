@@ -49,7 +49,7 @@
 	  <bean id="workflow.workflowWebService" class="fr.paris.lutece.plugins.workflow.service.WorkflowWebService" />
 	  <!-- SignRequest -->
 	  <bean id="workflow.hashService" class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
-	  <bean id="workflow.userAtributeRequestAuthenticator" class="fr.paris.lutece.util.signrequest.SimpleHashAuthenticator" >
+	  <bean id="workflow.userAtributeRequestAuthenticator" class="fr.paris.lutece.util.signrequest.HeaderHashAuthenticator" >
 			<property name="hashService" ref="workflow.hashService" />
 	        <property name="signatureElements" > 
 	            <list>

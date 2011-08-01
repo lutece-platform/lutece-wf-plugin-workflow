@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.utils.signrequest;
+package fr.paris.lutece.plugins.workflow.service.signrequest;
 
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.signrequest.RequestAuthenticator;
@@ -42,14 +42,14 @@ import fr.paris.lutece.util.signrequest.RequestAuthenticator;
  * UserAttributeRequestAuthenticator
  *
  */
-public final class UserAttributeRequestAuthenticator
+public final class UserAttributeRequestAuthenticatorService
 {
     private static final String BEAN_WORKFLOW_USER_ATTRIBUTE_REQUESTAUTHENTICATOR = "workflow.userAtributeRequestAuthenticator";
 
     /**
      * Private constructor
      */
-    private UserAttributeRequestAuthenticator(  )
+    private UserAttributeRequestAuthenticatorService(  )
     {
     }
 

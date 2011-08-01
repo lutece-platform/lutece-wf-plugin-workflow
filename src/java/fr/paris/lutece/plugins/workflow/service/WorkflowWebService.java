@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
-import fr.paris.lutece.plugins.workflow.utils.signrequest.UserAttributeRequestAuthenticator;
+import fr.paris.lutece.plugins.workflow.service.signrequest.UserAttributeRequestAuthenticatorService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -149,7 +149,7 @@ public final class WorkflowWebService
             {
                 HttpAccess httpAccess = new HttpAccess(  );
                 strJson = httpAccess.doGet( sbRestUrl.toString(  ),
-                        UserAttributeRequestAuthenticator.getRequestAuthenticator(  ), listElements );
+                        UserAttributeRequestAuthenticatorService.getRequestAuthenticator(  ), listElements );
 
                 JSONObject jsonAttributes = (JSONObject) JSONSerializer.toJSON( strJson );
                 JSONArray jsonArray = jsonAttributes.getJSONArray( TAG_USER_ATTRIBUTES );
@@ -201,7 +201,7 @@ public final class WorkflowWebService
             {
                 HttpAccess httpAccess = new HttpAccess(  );
                 strUserAttribute = httpAccess.doGet( sbRestUrl.toString(  ),
-                        UserAttributeRequestAuthenticator.getRequestAuthenticator(  ), listElements );
+                        UserAttributeRequestAuthenticatorService.getRequestAuthenticator(  ), listElements );
             }
             catch ( HttpAccessException e )
             {
