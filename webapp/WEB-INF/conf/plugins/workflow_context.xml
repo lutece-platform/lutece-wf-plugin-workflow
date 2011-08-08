@@ -43,26 +43,17 @@
      		 <property name="titleI18nKey" value="module.workflow.taskassignment.task_title" />
    	 		 <property name="className" value="fr.paris.lutece.plugins.workflow.modules.taskassignment.business.TaskAssignment"/>
    	  </bean>
-   	 
-   	  
+
    	  <bean id="workflowService"  factory-method="getInstance" class="fr.paris.lutece.plugins.workflow.service.WorkflowService" />
-	  <bean id="workflow.workflowWebService" class="fr.paris.lutece.plugins.workflow.service.WorkflowWebService" />
-	  <!-- SignRequest -->
-	  <bean id="workflow.hashService" class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
-	  <bean id="workflow.userAtributeRequestAuthenticator" class="fr.paris.lutece.util.signrequest.HeaderHashAuthenticator" >
-			<property name="hashService" ref="workflow.hashService" />
-	        <property name="signatureElements" > 
-	            <list>
-	            </list>
-	        </property>
-	        <property name="privateKey">
-	            <value>change me</value>
-	        </property>
-	  </bean>
 	  
 	  <bean id="workflow.postStartupService" class="fr.paris.lutece.plugins.workflow.service.WorkflowPostStartupService" />
 	  
 	  <!-- TaskInfoManager -->
 	  <bean id="workflow.taskInfoManager" class="fr.paris.lutece.plugins.workflow.service.taskinfo.TaskInfoManager" />
+
+	  <!-- User Attributes -->
+	  <bean id="workflow.userAttributesManager" class="fr.paris.lutece.plugins.workflow.service.security.WorkflowUserAttributesManager">
+	  		<!--<property name="userAttributesService" ref="userAttributesService" />-->
+	  </bean>
  </beans>
  	
