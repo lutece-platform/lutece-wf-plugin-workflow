@@ -53,7 +53,6 @@
 			<property name="hashService" ref="workflow.hashService" />
 	        <property name="signatureElements" > 
 	            <list>
-	                <value>user_guid</value>
 	            </list>
 	        </property>
 	        <property name="privateKey">
@@ -62,5 +61,8 @@
 	  </bean>
 	  
 	  <bean id="workflow.postStartupService" class="fr.paris.lutece.plugins.workflow.service.WorkflowPostStartupService" />
+	  
+	  <!-- TaskInfoManager -->
+	  <bean id="workflow.taskInfoManager" class="fr.paris.lutece.plugins.workflow.service.taskinfo.TaskInfoManager" />
  </beans>
  	
