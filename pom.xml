@@ -41,8 +41,8 @@
 
 	<properties>
 		<componentName>workflow</componentName>
-		<jiraProjectName>LUTECE</jiraProjectName>
-		<jiraComponentId>10036</jiraComponentId>
+		<jiraProjectName>WORKFLOW</jiraProjectName>
+		<jiraComponentId>10202</jiraComponentId>
 	</properties>
     <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/directory-form-workflow/plugin-workflow</connection>
