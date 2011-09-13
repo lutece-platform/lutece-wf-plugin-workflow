@@ -33,16 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.business;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.business.workflow.State;
 import fr.paris.lutece.portal.business.workflow.Workflow;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -63,9 +63,9 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_QUERY_SELECT_BY_STATE = "SELECT id_resource,resource_type,id_state,id_workflow  " +
         "FROM workflow_resource_workflow  WHERE id_state=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_workflow " +
-        "(id_resource,resource_type,id_state,id_workflow,id_external_parent)VALUES(?,?,?,?,?)";
+        "(id_resource,resource_type,id_state,id_workflow,id_external_parent,is_associated_workgroups)VALUES(?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_resource_workflow  SET id_resource=?,resource_type=?,id_state=?,id_workflow=?, " +
-        " id_external_parent= ? WHERE id_resource=? AND resource_type=? AND id_workflow=?";
+        " id_external_parent= ?,is_associated_workgroups= ? WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_workflow WHERE id_resource=? AND resource_type=? AND id_workflow=? ";
     private static final String SQL_QUERY_DELETE_WORKGROUP = "DELETE FROM workflow_resource_workgroup WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE = "DELETE FROM workflow_resource_workflow WHERE id_workflow =? AND resource_type = ? AND id_resource IN (? ";
@@ -77,10 +77,8 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_QUERY_SELECT_STATE_ID_BY_FILTER = "SELECT r.id_resource " +
         " FROM workflow_resource_workflow r ";
     private static final String SQL_QUERY_WITH_WORKGROUP = ",workflow_resource_workgroup w  ";
+
     //private static final String SQL_QUERY_WITH_WORKGROUP = " LEFT JOIN workflow_resource_workgroup w ON (r.id_resource = w.id_resource AND r.resource_type = w.resource_type AND r.id_workflow = w.id_workflow) ";
-    
-    
-    
     private static final String SQL_FILTER_EXTERNAL_PARENT_ID = " r.id_external_parent = ? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " r.id_workflow = ? ";
     private static final String SQL_FILTER_ID_STATE = " r.id_state = ? ";
@@ -92,7 +90,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_CLOSE_UNION = " UNION ";
     private static final String SQL_ADITIONAL_PARAMETER = ",?";
     private static final String SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP = " AND r.is_associated_workgroups=0 ";
-    
+
     /*
      * (non-Javadoc)
      * @see fr.paris.lutece.plugins.workflow.business.IResourceWorkflowDAO#insert(fr.paris.lutece.plugins.workflow.business.ResourceWorkflow, fr.paris.lutece.portal.service.plugin.Plugin)
@@ -116,6 +114,8 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         {
             daoUtil.setIntNull( ++nPos );
         }
+
+        daoUtil.setBoolean( ++nPos, resourceWorkflow.isAssociatedWithWorkgroup(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -145,6 +145,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
             daoUtil.setIntNull( ++nPos );
         }
 
+        daoUtil.setBoolean( ++nPos, resourceWorkflow.isAssociatedWithWorkgroup(  ) );
         daoUtil.setInt( ++nPos, resourceWorkflow.getIdResource(  ) );
         daoUtil.setString( ++nPos, resourceWorkflow.getResourceType(  ) );
         daoUtil.setInt( ++nPos, resourceWorkflow.getWorkflow(  ).getId(  ) );
@@ -442,26 +443,31 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         ResourceWorkflow resourceWorkflow = null;
 
         String strSQL = buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_BY_FILTER, null );
-        if(filter.containsWorkgroupKeyList())
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	ReferenceList workgroupList=filter.getWorkgroupKeyList();
-        	filter.setWorkgroupKeyList(null);
-        	StringBuffer bufSQL=new StringBuffer();
-        	bufSQL.	append(strSQL).append(SQL_CLOSE_UNION).append(buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_BY_FILTER, null )).append(SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP);
-        	filter.setWorkgroupKeyList(workgroupList);
-        	strSQL=bufSQL.toString();
+            ReferenceList workgroupList = filter.getWorkgroupKeyList(  );
+            filter.setWorkgroupKeyList( null );
+
+            StringBuffer bufSQL = new StringBuffer(  );
+            bufSQL.append( strSQL ).append( SQL_CLOSE_UNION )
+                  .append( buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_BY_FILTER, null ) )
+                  .append( SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP );
+            filter.setWorkgroupKeyList( workgroupList );
+            strSQL = bufSQL.toString(  );
         }
-        
+
         int nPos = 0;
 
         DAOUtil daoUtil = new DAOUtil( strSQL, plugin );
-        nPos=buildFilterQuerydFooter( daoUtil, filter, null, nPos );
-        if(filter.containsWorkgroupKeyList())
+        nPos = buildFilterQuerydFooter( daoUtil, filter, null, nPos );
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	filter.setWorkgroupKeyList(null);
-        	buildFilterQuerydFooter(daoUtil, filter, null, nPos);
+            filter.setWorkgroupKeyList( null );
+            buildFilterQuerydFooter( daoUtil, filter, null, nPos );
         }
-        
+
         daoUtil.executeQuery(  );
 
         while ( daoUtil.next(  ) )
@@ -526,28 +532,33 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     {
         List<Integer> listResourceWorkflowId = new ArrayList<Integer>(  );
 
-        String strSQL = buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_ID_BY_FILTER,
-                null );
-        if(filter.containsWorkgroupKeyList())
+        String strSQL = buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_ID_BY_FILTER, null );
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	ReferenceList workgroupList=filter.getWorkgroupKeyList();
-        	filter.setWorkgroupKeyList(null);
-        	StringBuffer bufSQL=new StringBuffer();
-        	bufSQL.	append(strSQL).append(SQL_CLOSE_UNION).append(buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_BY_FILTER, null )).append(SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP);
-        	filter.setWorkgroupKeyList(workgroupList);
-        	strSQL=bufSQL.toString();
+            ReferenceList workgroupList = filter.getWorkgroupKeyList(  );
+            filter.setWorkgroupKeyList( null );
+
+            StringBuffer bufSQL = new StringBuffer(  );
+            bufSQL.append( strSQL ).append( SQL_CLOSE_UNION )
+                  .append( buildFilterQuerydHeader( filter, null, SQL_QUERY_SELECT_STATE_ID_BY_FILTER, null ) )
+                  .append( SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP );
+            filter.setWorkgroupKeyList( workgroupList );
+            strSQL = bufSQL.toString(  );
         }
-        
+
         int nPos = 0;
 
         DAOUtil daoUtil = new DAOUtil( strSQL, plugin );
 
-        nPos=buildFilterQuerydFooter( daoUtil, filter, null, nPos );
-        if(filter.containsWorkgroupKeyList())
+        nPos = buildFilterQuerydFooter( daoUtil, filter, null, nPos );
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	filter.setWorkgroupKeyList(null);
-        	buildFilterQuerydFooter(daoUtil, filter, null, nPos);
+            filter.setWorkgroupKeyList( null );
+            buildFilterQuerydFooter( daoUtil, filter, null, nPos );
         }
+
         daoUtil.executeQuery(  );
 
         while ( daoUtil.next(  ) )
@@ -572,25 +583,32 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
 
         String strSQL = buildFilterQuerydHeader( filter, lListIdWorkflowState, SQL_QUERY_SELECT_STATE_ID_BY_FILTER,
                 SQL_ORDER_BY_ID_STATE );
-        if(filter.containsWorkgroupKeyList())
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	ReferenceList workgroupList=filter.getWorkgroupKeyList();
-        	filter.setWorkgroupKeyList(null);
-        	StringBuffer bufSQL=new StringBuffer();
-        	bufSQL.	append(strSQL).append(SQL_CLOSE_UNION).append(buildFilterQuerydHeader( filter, lListIdWorkflowState, SQL_QUERY_SELECT_STATE_ID_BY_FILTER, null )).append(SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP);
-        	filter.setWorkgroupKeyList(workgroupList);
-        	strSQL=bufSQL.toString();
+            ReferenceList workgroupList = filter.getWorkgroupKeyList(  );
+            filter.setWorkgroupKeyList( null );
+
+            StringBuffer bufSQL = new StringBuffer(  );
+            bufSQL.append( strSQL ).append( SQL_CLOSE_UNION )
+                  .append( buildFilterQuerydHeader( filter, lListIdWorkflowState, SQL_QUERY_SELECT_STATE_ID_BY_FILTER,
+                    null ) ).append( SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP );
+            filter.setWorkgroupKeyList( workgroupList );
+            strSQL = bufSQL.toString(  );
         }
+
         Integer nPos = 0;
 
         DAOUtil daoUtil = new DAOUtil( strSQL, plugin );
 
-        nPos=buildFilterQuerydFooter( daoUtil, filter, lListIdWorkflowState, nPos );
-        if(filter.containsWorkgroupKeyList())
+        nPos = buildFilterQuerydFooter( daoUtil, filter, lListIdWorkflowState, nPos );
+
+        if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	filter.setWorkgroupKeyList(null);
-        	buildFilterQuerydFooter(daoUtil, filter, lListIdWorkflowState, nPos);
+            filter.setWorkgroupKeyList( null );
+            buildFilterQuerydFooter( daoUtil, filter, lListIdWorkflowState, nPos );
         }
+
         daoUtil.executeQuery(  );
 
         while ( daoUtil.next(  ) )
@@ -610,7 +628,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
      * @param nPos the parameter position
      * @return the doaUtil
      */
-    private Integer  buildFilterQuerydFooter( DAOUtil daoUtil, ResourceWorkflowFilter filter,
+    private Integer buildFilterQuerydFooter( DAOUtil daoUtil, ResourceWorkflowFilter filter,
         List<Integer> lListIdState, Integer nPos )
     {
         if ( filter.containsIdWorkflow(  ) )
@@ -654,7 +672,8 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
             {
                 daoUtil.setString( i + nPos + 1, list.get( i ).getCode(  ) );
             }
-            nPos += nSize;   
+
+            nPos += nSize;
         }
 
         return nPos;
@@ -720,7 +739,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
 
         if ( filter.containsWorkgroupKeyList(  ) )
         {
-        	ReferenceList list = filter.getWorkgroupKeyList(  );
+            ReferenceList list = filter.getWorkgroupKeyList(  );
             int nSize = list.size(  );
 
             if ( nSize > 0 )
@@ -731,8 +750,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
                 {
                     if ( i < 1 )
                     {
-                       
-                    	sb.append( SQL_FILTER_WORKGROUP_KEY );
+                        sb.append( SQL_FILTER_WORKGROUP_KEY );
                     }
                     else
                     {
@@ -744,11 +762,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
                 listStrFilter.add( sb.toString(  ) );
             }
 
-            strSQL = WorkflowUtils.buildRequestWithFilter( strSelectSQL + SQL_QUERY_WITH_WORKGROUP, listStrFilter,
-                    null );
-            
-            
-            
+            strSQL = WorkflowUtils.buildRequestWithFilter( strSelectSQL + SQL_QUERY_WITH_WORKGROUP, listStrFilter, null );
         }
         else
         {
