@@ -42,11 +42,14 @@ package fr.paris.lutece.plugins.workflow.business;
 public class ActionFilter
 {
     public static final int ALL_INT = -1;
+    private static final int TRUE = 1;
+    private static final int FALSE = 0;
     private int _nIdWorkFlow = ALL_INT;
     private int _nIdStateBefore = ALL_INT;
     private int _nIdStateAfter = ALL_INT;
     private int _nIdIcon = ALL_INT;
     private int _nIsAutomaticState = ALL_INT;
+    private int _nIsMassAction= ALL_INT;
 
     /**
      *
@@ -161,10 +164,10 @@ public class ActionFilter
     }
 
     /**
-    *
-    * @return 1 if the state return must be the automatic action
-    *          0 if the state return must not be the automatic action
-    */
+     *
+     * @return 1 if the state return must be the automatic action
+     *          0 if the state return must not be the automatic action
+     */
     public int getIsAutomaticState(  )
     {
         return _nIsAutomaticState;
@@ -188,5 +191,35 @@ public class ActionFilter
     public boolean containsIsAutomaticState(  )
     {
         return ( _nIsAutomaticState != ALL_INT );
+    }
+    
+    /**
+     *
+     * @return 1 if the state return must be the mass action
+     *          0 if the state return must not be the mass action
+     */
+    public int getIsMassAction(  )
+    {
+        return _nIsMassAction;
+    }
+
+    /**
+     * Set 1 if the state return must be the mass action
+     *            0 if the state return must not be the mass action
+     * @param idState 1 if the state return must be the mass action
+     *                0 if the state return must not be the mass action
+     */
+    public void setIsMassAction( boolean bIsMassAction )
+    {
+        _nIsMassAction = bIsMassAction ? TRUE : FALSE;
+    }
+
+    /**
+     *
+     * @return true if the filter contain mass action
+     */
+    public boolean containsIsMassAction(  )
+    {
+        return ( _nIsMassAction != ALL_INT );
     }
 }

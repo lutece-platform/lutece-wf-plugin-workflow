@@ -124,6 +124,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_ID_TASK = "id_task";
     private static final String PARAMETER_ID_ICON = "id_icon";
     private static final String PARAMETER_ID_AUTOMATIC = "automatic";
+    private static final String PARAMETER_IS_MASS_ACTION = "is_mass_action";
     private static final String PARAMETER_ID_STATE_BEFORE = "id_state_before";
     private static final String PARAMETER_ID_STATE_AFTER = "id_state_after";
     private static final String PARAMETER_APPLY = "apply";
@@ -1050,6 +1051,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strIdStateAfter = request.getParameter( PARAMETER_ID_STATE_AFTER );
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         String strAutomatic = request.getParameter( PARAMETER_ID_AUTOMATIC );
+        String strIsMassAction = request.getParameter( PARAMETER_IS_MASS_ACTION );
 
         int nIdStateBefore = WorkflowUtils.convertStringToInt( strIdStateBefore );
         int nIdStateAfter = WorkflowUtils.convertStringToInt( strIdStateAfter );
@@ -1125,6 +1127,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         action.setIcon( icon );
 
         action.setAutomaticState( strAutomatic != null );
+        action.setMassAction( strIsMassAction != null );
 
         return null;
     }

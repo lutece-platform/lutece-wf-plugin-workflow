@@ -54,32 +54,33 @@ public class ActionDAO implements IActionDAO
 {
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_action ) FROM workflow_action";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_action,name,description,id_workflow," +
-        "id_state_before,id_state_after,id_icon,is_automatic FROM workflow_action WHERE id_action=?";
+        "id_state_before,id_state_after,id_icon,is_automatic,is_mass_action FROM workflow_action WHERE id_action=?";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
-        " a.id_state_after,a.id_icon,a.is_automatic,i.name,i.mime_type,i.file_value,i.width,i.height " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,i.name,i.mime_type,i.file_value,i.width,i.height " +
         " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE a.id_action=?";
     private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
-        " a.id_state_after,a.id_icon,a.is_automatic,i.name,i.mime_type,i.file_value,i.width,i.height " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,i.name,i.mime_type,i.file_value,i.width,i.height " +
         " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action " +
-        "(id_action,name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic)" +
-        " VALUES(?,?,?,?,?,?,?,?)";
+        "(id_action,name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic,is_mass_action)" +
+        " VALUES(?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action  SET id_action=?,name=?,description=?," +
-        "id_workflow=?,id_state_before=?,id_state_after=?,id_icon=?,is_automatic=? " + " WHERE id_action=?";
+        "id_workflow=?,id_state_before=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=? " + " WHERE id_action=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action  WHERE id_action=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " id_workflow = ? ";
     private static final String SQL_FILTER_ID_STATE_BEFORE = " id_state_before= ? ";
     private static final String SQL_FILTER_ID_STATE_AFTER = " id_state_after = ? ";
     private static final String SQL_FILTER_ID_ICON = " a.id_icon = ? ";
     private static final String SQL_FILTER_IS_AUTOMATIC = " is_automatic = ? ";
+    private static final String SQL_FILTER_IS_MASS_ACTION = " is_mass_action = ? ";
     private static final String SQL_ORDER_BY_ID_ACTION = " ORDER BY id_action";
 
     /**
-         * Generates a new primary key
-         *
-         * @param plugin the plugin
-         * @return The new primary key
-         */
+     * Generates a new primary key
+     *
+     * @param plugin the plugin
+     * @return The new primary key
+     */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
@@ -117,6 +118,7 @@ public class ActionDAO implements IActionDAO
         daoUtil.setInt( ++nPos, action.getStateAfter(  ).getId(  ) );
         daoUtil.setInt( ++nPos, action.getIcon(  ).getId(  ) );
         daoUtil.setBoolean( ++nPos, action.isAutomaticState(  ) );
+        daoUtil.setBoolean( ++nPos, action.isMassAction(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -139,6 +141,7 @@ public class ActionDAO implements IActionDAO
         daoUtil.setInt( ++nPos, action.getStateAfter(  ).getId(  ) );
         daoUtil.setInt( ++nPos, action.getIcon(  ).getId(  ) );
         daoUtil.setBoolean( ++nPos, action.isAutomaticState(  ) );
+        daoUtil.setBoolean( ++nPos, action.isMassAction(  ) );
 
         daoUtil.setInt( ++nPos, action.getId(  ) );
         daoUtil.executeUpdate(  );
@@ -188,6 +191,7 @@ public class ActionDAO implements IActionDAO
             action.setIcon( icon );
 
             action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
         }
 
         daoUtil.free(  );
@@ -237,6 +241,7 @@ public class ActionDAO implements IActionDAO
             icon.setId( daoUtil.getInt( ++nPos ) );
 
             action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
             icon.setName( daoUtil.getString( ++nPos ) );
             icon.setMimeType( daoUtil.getString( ++nPos ) );
             icon.setValue( daoUtil.getBytes( ++nPos ) );
@@ -252,8 +257,8 @@ public class ActionDAO implements IActionDAO
     }
 
     /* (non-Javadoc)
-         * @see fr.paris.lutece.plugins.workflow.business.IActionDAO#delete(int, fr.paris.lutece.portal.service.plugin.Plugin)
-         */
+     * @see fr.paris.lutece.plugins.workflow.business.IActionDAO#delete(int, fr.paris.lutece.portal.service.plugin.Plugin)
+     */
     public void delete( int nIdAction, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
@@ -302,6 +307,11 @@ public class ActionDAO implements IActionDAO
         {
             listStrFilter.add( SQL_FILTER_IS_AUTOMATIC );
         }
+        
+        if ( filter.containsIsMassAction(  ) )
+        {
+            listStrFilter.add( SQL_FILTER_IS_MASS_ACTION );
+        }
 
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_ACTION_BY_FILTER, listStrFilter,
                 SQL_ORDER_BY_ID_ACTION );
@@ -332,6 +342,11 @@ public class ActionDAO implements IActionDAO
         {
             daoUtil.setInt( ++nPos, filter.getIsAutomaticState(  ) );
         }
+        
+        if ( filter.containsIsMassAction(  ) )
+        {
+            daoUtil.setInt( ++nPos, filter.getIsMassAction(  ) );
+        }
 
         daoUtil.executeQuery(  );
 
@@ -359,6 +374,7 @@ public class ActionDAO implements IActionDAO
             icon.setId( daoUtil.getInt( ++nPos ) );
 
             action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
 
             icon.setName( daoUtil.getString( ++nPos ) );
             icon.setMimeType( daoUtil.getString( ++nPos ) );

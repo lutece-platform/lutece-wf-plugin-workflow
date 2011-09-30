@@ -59,6 +59,7 @@ CREATE TABLE workflow_action
 	id_state_after INT DEFAULT NULL,
 	id_icon INT DEFAULT NULL,
 	is_automatic SMALLINT DEFAULT 0,
+	is_mass_action SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_action)
 );
 

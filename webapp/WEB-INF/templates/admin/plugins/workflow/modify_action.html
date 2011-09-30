@@ -4,57 +4,66 @@
    <form action="jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
 	   <input name="id_action" value="${action.id}" type="hidden">
 	   <div>
-		   <p>
-		    <label for="name">#i18n{workflow.create_action.label_name} * : </label>
-		    <input type="text" name="name" id="" size="80" value="${action.name}"  maxlength="255"/>
-			 <br/>
-			<label>&nbsp;</label>#i18n{workflow.create_action.label_name_comment}
-		   </p>
-		   <p>
-		     <label for="description"> #i18n{workflow.create_action.label_description} * : </label>
-		     <textarea name="description" cols="80" rows="2">${action.description}</textarea>
-		   	<br/>
-		    <label>&nbsp;</label>
-			#i18n{workflow.create_action.label_description_comment}
-		   </p>
-		   <p>
-		     <label for="id_state_before"> #i18n{workflow.create_action.label_state_before} * : </label>
-		    	 <@combo name="id_state_before"  items=state_list default_value=action.stateBefore.id />	
-		   		<br/>
-		    <label>&nbsp;</label>
-				#i18n{workflow.create_action.label_state_before_comment}
-		   </p>
-		   <p>
-		     <label for="id_state_after"> #i18n{workflow.create_action.label_state_after} * : </label>
-		    	 <@combo name="id_state_after"  items=state_list default_value=action.stateAfter.id />	
-		   		<br/>
-		    <label>&nbsp;</label>
-				#i18n{workflow.create_action.label_state_after_comment}
-		   </p>
-		    <p>
-			     <label for="id_icon"> #i18n{workflow.create_action.label_icon} * : </label>
-			     <@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
-			   <br/>
-			    <label>&nbsp;</label>
-					#i18n{workflow.create_action.label_icon_comment}
-		   </p>
+			<p>
+		    	<label for="name">#i18n{workflow.create_action.label_name} * : </label>
+		    	<input type="text" name="name" id="" size="80" value="${action.name}"  maxlength="255"/>
+			 	<br/>
+				<label>&nbsp;</label>#i18n{workflow.create_action.label_name_comment}
+		   	</p>
 		   	<p>
-		    <label for="name">#i18n{workflow.create_action.label_automatic} : </label>
-		    <#if action.automaticState>
-		    	<input type="checkbox" name="automatic" value="1" checked="checked" />
-		    <#else>	
-		    	<input type="checkbox" name="automatic" value="1"/>
-		    </#if>	
-			 <br/>
-			<label>&nbsp;</label>#i18n{workflow.create_action.label_automatic_comment}
-		   </p>	
-					
+		     	<label for="description"> #i18n{workflow.create_action.label_description} * : </label>
+		     	<textarea name="description" cols="80" rows="2">${action.description}</textarea>
+		   		<br/>
+		    	<label>&nbsp;</label>
+				#i18n{workflow.create_action.label_description_comment}
+		   	</p>
+		   	<p>
+		     	<label for="id_state_before"> #i18n{workflow.create_action.label_state_before} * : </label>
+		    	<@combo name="id_state_before"  items=state_list default_value=action.stateBefore.id />	
+		   		<br/>
+		    	<label>&nbsp;</label>
+				#i18n{workflow.create_action.label_state_before_comment}
+		   	</p>
+		   	<p>
+		     	<label for="id_state_after"> #i18n{workflow.create_action.label_state_after} * : </label>
+		    	<@combo name="id_state_after"  items=state_list default_value=action.stateAfter.id />	
+		   		<br/>
+		    	<label>&nbsp;</label>
+				#i18n{workflow.create_action.label_state_after_comment}
+		   	</p>
+		    <p>
+				<label for="id_icon"> #i18n{workflow.create_action.label_icon} * : </label>
+			    <@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
+			   	<br/>
+			    <label>&nbsp;</label>
+				#i18n{workflow.create_action.label_icon_comment}
+		   	</p>
+		   	<p>
+		    	<label for="automatic">#i18n{workflow.create_action.label_automatic} : </label>
+		    	<#if action.automaticState>
+		    		<input type="checkbox" name="automatic" value="1" checked="checked" />
+		    	<#else>	
+		    		<input type="checkbox" name="automatic" value="1"/>
+		    	</#if>
+			 	<br/>
+				<label>&nbsp;</label>#i18n{workflow.create_action.label_automatic_comment}
+			</p>
+			<p>
+		    	<label for="is_mass_action">#i18n{workflow.create_action.label_mass_action} : </label>
+		    	<#if action.massAction>
+		    		<input type="checkbox" name="is_mass_action" value="1" checked="checked" />
+		    	<#else>	
+		    		<input type="checkbox" name="is_mass_action" value="1"/>
+		    	</#if>
+			 	<br/>
+				<label>&nbsp;</label>#i18n{workflow.create_action.label_mass_action_comment}
+			</p>
 		</div>
-    <p>
-  		<input type="submit" value="#i18n{workflow.create_action.button_save}" class="button" name="save" />
-  		<input type="submit" value="#i18n{workflow.modify_action.button_apply}" class="button"  name="apply"/>
-  		<input type="submit" value="#i18n{workflow.create_action.button_cancel}" class="button" name="cancel" />
-   </p>
+		<p>
+	  		<input type="submit" value="#i18n{workflow.create_action.button_save}" class="button" name="save" />
+	  		<input type="submit" value="#i18n{workflow.modify_action.button_apply}" class="button"  name="apply"/>
+	  		<input type="submit" value="#i18n{workflow.create_action.button_cancel}" class="button" name="cancel" />
+		</p>
  	</form>
  </div>
  <div class="content-box">

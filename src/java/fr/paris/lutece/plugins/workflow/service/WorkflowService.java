@@ -1309,4 +1309,16 @@ public class WorkflowService implements IWorkflowService
         
         return model;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Action> getMassActions( int nIdWorkflow )
+    {
+    	ActionFilter aFilter = new ActionFilter(  );
+    	aFilter.setIdWorkflow( nIdWorkflow );
+    	aFilter.setIsMassAction( true );
+    	
+    	return ActionHome.getListActionByFilter( aFilter, _pluginWorkflow );
+    }
 }

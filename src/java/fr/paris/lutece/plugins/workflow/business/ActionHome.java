@@ -121,11 +121,11 @@ public final class ActionHome
     // Finders
 
     /**
-         * Load the Action Object
-         * @param nIdAction the action id
-         * @param plugin the plugin
-         * @return the Action Object
-         */
+     * Load the Action Object
+     * @param nIdAction the action id
+     * @param plugin the plugin
+     * @return the Action Object
+     */
     public static Action findByPrimaryKey( int nIdAction, Plugin plugin )
     {
         return _dao.loadWithIcon( nIdAction, plugin );
