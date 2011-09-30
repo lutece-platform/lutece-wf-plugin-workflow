@@ -1321,4 +1321,54 @@ public class WorkflowService implements IWorkflowService
     	
     	return ActionHome.getListActionByFilter( aFilter, _pluginWorkflow );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, Integer nExternalParentId, 
+    		HttpServletRequest request, boolean bIsAutomatic )
+    {
+    	boolean bCanProcess = false;
+    	boolean bRBACPermissionView = false;
+        AdminUser user = null;
+
+        if ( request != null )
+        {
+            user = AdminUserService.getAdminUser( request );
+        }
+
+        Action action = ActionHome.findByPrimaryKey( nIdAction, _pluginWorkflow );
+
+        if ( action != null )
+        {
+            ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdResource, strResourceType,
+                    action.getWorkflow(  ).getId(  ), _pluginWorkflow );
+
+            if ( ( resourceWorkflow == null ) )
+            {
+                resourceWorkflow = getInitialResourceWorkflow( nIdResource, strResourceType, action.getWorkflow(  ),
+                        nExternalParentId, _pluginWorkflow );
+
+                if ( resourceWorkflow != null )
+                {
+                    //resourceWorkflow.setExternalParentId(nExternalParentId);
+                    ResourceWorkflowHome.create( resourceWorkflow, _pluginWorkflow );
+                }
+            }
+
+            if ( user != null )
+            {
+                bRBACPermissionView = RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
+            }
+
+            if ( ( resourceWorkflow != null ) &&
+                    ( resourceWorkflow.getState(  ).getId(  ) == action.getStateBefore(  ).getId(  ) ) &&
+                    ( bRBACPermissionView || bIsAutomatic ) )
+            {
+            	bCanProcess = true;
+            }
+        }
+        
+        return bCanProcess;
+    }
 }
