@@ -1143,7 +1143,10 @@ public class WorkflowService implements IWorkflowService
         resourceWorkflowFilter.setIdWorkflow( nIdWorkflow );
         resourceWorkflowFilter.setResourceType( strResourceType );
         resourceWorkflowFilter.setExternalParentId( nExternalParentId );
-        resourceWorkflowFilter.setWorkgroupKeyList( AdminWorkgroupService.getUserWorkgroups( user, user.getLocale(  ) ) );
+        if ( user != null )
+        {
+        	resourceWorkflowFilter.setWorkgroupKeyList( AdminWorkgroupService.getUserWorkgroups( user, user.getLocale(  ) ) );
+        }
 
         return ResourceWorkflowHome.getListResourceIdWorkflowByFilter( resourceWorkflowFilter, lListAutorizedIdSate,
             plugin );
