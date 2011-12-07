@@ -200,6 +200,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CAN_NOT_REMOVE_TASK = "workflow.message.can_not_remove_task";
     private static final String MESSAGE_CAN_NOT_DISABLE_WORKFLOW = "workflow.message.can_not_disable_workflow";
     private static final String MESSAGE_TASK_IS_NOT_AUTOMATIC = "workflow.message.task_not_automatic";
+    private static final String MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC = "workflow.message.mass_action_cannot_be_automatic";
 
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
@@ -1056,6 +1057,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         int nIdStateBefore = WorkflowUtils.convertStringToInt( strIdStateBefore );
         int nIdStateAfter = WorkflowUtils.convertStringToInt( strIdStateAfter );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
+        boolean bIsAutomatic = strAutomatic != null;
+        boolean bIsMassAction = strIsMassAction != null;
 
         String strFieldError = WorkflowUtils.EMPTY_STRING;
 
@@ -1089,6 +1092,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields,
                 AdminMessage.TYPE_STOP );
+        }
+        else if ( bIsAutomatic && bIsMassAction )
+        {
+        	return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC,
+                    AdminMessage.TYPE_STOP );
         }
 
         if ( !strFieldError.equals( WorkflowUtils.EMPTY_STRING ) )
@@ -1126,8 +1134,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         icon.setId( nIdIcon );
         action.setIcon( icon );
 
-        action.setAutomaticState( strAutomatic != null );
-        action.setMassAction( strIsMassAction != null );
+        action.setAutomaticState( bIsAutomatic );
+        action.setMassAction( bIsMassAction );
 
         return null;
     }
