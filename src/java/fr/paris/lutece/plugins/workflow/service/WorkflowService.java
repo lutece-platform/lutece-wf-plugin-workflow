@@ -74,7 +74,6 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
@@ -480,52 +479,45 @@ public class WorkflowService implements IWorkflowService
                 bRBACPermissionView = RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
             }
 
-            try
+            if ( ( resourceWorkflow != null ) &&
+                    ( resourceWorkflow.getState(  ).getId(  ) == action.getStateBefore(  ).getId(  ) ) &&
+                    ( bRBACPermissionView || isAutomatic ) )
             {
-	            if ( ( resourceWorkflow != null ) &&
-	                    ( resourceWorkflow.getState(  ).getId(  ) == action.getStateBefore(  ).getId(  ) ) &&
-	                    ( bRBACPermissionView || isAutomatic ) )
-	            {
-	                //create ResourceHistory
-	                ResourceHistory resourceHistory = getNewResourceHistory( nIdResource, strResourceType, action, user,
-	                        isAutomatic );
-	                ResourceHistoryHome.create( resourceHistory, plugin );
-	
-	                List<ITask> listActionTasks = TaskHome.getListTaskByIdAction( nIdAction, plugin, locale );
-	
-	                for ( ITask task : listActionTasks )
-	                {
-	                    task.processTask( resourceHistory.getId(  ), request, plugin, locale );
-	                }
-	                
-	                //reload the resource workflow in case a task had modified it
-	                resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdResource, strResourceType,
-	                        action.getWorkflow(  ).getId(  ), plugin );
-	                resourceWorkflow.setState( action.getStateAfter(  ) );
-	                resourceWorkflow.setExternalParentId( nExternalParentId );
-	                ResourceWorkflowHome.update( resourceWorkflow, plugin );
-	            }
-	
-	            if ( action.getStateAfter(  ) != null )
-	            {
-	                State state = action.getStateAfter(  );
-	                ActionFilter actionFilter = new ActionFilter(  );
-	                actionFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
-	                actionFilter.setIdStateBefore( state.getId(  ) );
-	                actionFilter.setIsAutomaticState( 1 );
-	
-	                List<Action> listAction = ActionHome.getListActionByFilter( actionFilter, plugin );
-	
-	                if ( ( listAction != null ) && !listAction.isEmpty(  ) && ( listAction.get( 0 ) != null ) )
-	                {
-	                    this.doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId(  ),
-	                        nExternalParentId, request, locale, true );
-	                }
-	            }
+                //create ResourceHistory
+                ResourceHistory resourceHistory = getNewResourceHistory( nIdResource, strResourceType, action, user,
+                        isAutomatic );
+                ResourceHistoryHome.create( resourceHistory, plugin );
+
+                List<ITask> listActionTasks = TaskHome.getListTaskByIdAction( nIdAction, plugin, locale );
+
+                for ( ITask task : listActionTasks )
+                {
+                    task.processTask( resourceHistory.getId(  ), request, plugin, locale );
+                }
+                
+                //reload the resource workflow in case a task had modified it
+                resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdResource, strResourceType,
+                        action.getWorkflow(  ).getId(  ), plugin );
+                resourceWorkflow.setState( action.getStateAfter(  ) );
+                resourceWorkflow.setExternalParentId( nExternalParentId );
+                ResourceWorkflowHome.update( resourceWorkflow, plugin );
             }
-            catch( Exception e )
+
+            if ( action.getStateAfter(  ) != null )
             {
-            	AppLogService.error( "Error during processing tasks : " + e.getMessage(  ) );
+                State state = action.getStateAfter(  );
+                ActionFilter actionFilter = new ActionFilter(  );
+                actionFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
+                actionFilter.setIdStateBefore( state.getId(  ) );
+                actionFilter.setIsAutomaticState( 1 );
+
+                List<Action> listAction = ActionHome.getListActionByFilter( actionFilter, plugin );
+
+                if ( ( listAction != null ) && !listAction.isEmpty(  ) && ( listAction.get( 0 ) != null ) )
+                {
+                    this.doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId(  ),
+                        nExternalParentId, request, locale, true );
+                }
             }
         }
     }
