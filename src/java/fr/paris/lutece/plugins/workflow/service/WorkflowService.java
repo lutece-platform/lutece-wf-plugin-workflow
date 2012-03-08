@@ -492,6 +492,7 @@ public class WorkflowService implements IWorkflowService
 
                 for ( ITask task : listActionTasks )
                 {
+                    task.setAction ( action );
                     task.processTask( resourceHistory.getId(  ), request, plugin, locale );
                 }
                 
@@ -737,6 +738,7 @@ public class WorkflowService implements IWorkflowService
 
             for ( ITask task : listActionTasks )
             {
+                task.setAction ( action );
                 task.processTask( resourceHistory.getId(  ), request, plugin, locale );
             }
 
