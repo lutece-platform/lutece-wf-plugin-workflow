@@ -56,7 +56,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         "FROM workflow_resource_workflow  WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_STATE = "SELECT id_resource,id_state FROM workflow_resource_workflow " +
         " WHERE id_workflow =? AND resource_type = ? AND id_external_parent = ? AND id_resource IN (?";
-    private static final String SQL_QUERY_SELECT_BY_WORKFLOW = "SELECT id_resource,resource_type,id_state,id_workflow  " +
+    private static final String SQL_QUERY_SELECT_BY_WORKFLOW = "SELECT id_resource,resource_type,id_state,id_workflow,id_external_parent  " +
         "FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_RESOURCE_BY_WORKFLOW = "SELECT id_resource  " +
         "FROM workflow_resource_workflow  WHERE id_workflow=?";
