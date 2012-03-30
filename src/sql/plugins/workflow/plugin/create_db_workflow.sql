@@ -1,21 +1,21 @@
 -- ---------------
 -- Drop tables --
 -- ---------------
-DROP TABLE IF EXISTS workflow_workflow;
-DROP TABLE IF EXISTS workflow_state;
+DROP TABLE IF EXISTS workflow_assignment_history;
+DROP TABLE IF EXISTS workflow_task_comment_value;
+DROP TABLE IF EXISTS workflow_resource_history;
+DROP TABLE IF EXISTS workflow_task;
 DROP TABLE IF EXISTS workflow_action;
 DROP TABLE IF EXISTS workflow_resource_workflow;
-DROP TABLE IF EXISTS workflow_resource_history;
+DROP TABLE IF EXISTS workflow_state;
 DROP TABLE IF EXISTS workflow_icon;
-DROP TABLE IF EXISTS workflow_task;
 DROP TABLE IF EXISTS workflow_task_comment_config;
-DROP TABLE IF EXISTS workflow_task_comment_value;
 DROP TABLE IF EXISTS workflow_test_resource;
 DROP TABLE IF EXISTS workflow_task_notification_cf;
 DROP TABLE IF EXISTS workflow_task_assignment_cf;
 DROP TABLE IF EXISTS workflow_workgroup_cf;
-DROP TABLE IF EXISTS workflow_assignment_history;
 DROP TABLE IF EXISTS workflow_resource_workgroup;
+DROP TABLE IF EXISTS workflow_workflow;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
