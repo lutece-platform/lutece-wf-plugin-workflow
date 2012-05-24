@@ -33,120 +33,87 @@
  */
 package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.workflow.business.task.ITask;
-import fr.paris.lutece.plugins.workflow.business.task.TaskHome;
-import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
- * 
+ *
  * TaskInfoManager
  *
  */
 public final class TaskInfoManager
 {
-	private static final String BEAN_WORKFLOW_TASK_INFO_MANAGER = "workflow.taskInfoManager";
+    /**
+     * Private constructor
+     */
+    private TaskInfoManager(  )
+    {
+    }
 
-	// MESSAGE
-	private static final String MESSAGE_PLUGIN_NOT_FOUND = "Plugin not found or not installed for plugin name ";
-	private Map<String, ITaskInfoProvider> _listProviders;
+    /**
+     * Get the list of provider
+     * @return the list of providers
+     */
+    public static List<ITaskInfoProvider> getProvidersList(  )
+    {
+        return SpringContextService.getBeansOfType( ITaskInfoProvider.class );
+    }
 
-	/**
-	 * Private constructor
-	 */
-	private TaskInfoManager(  )
-	{
-		_listProviders = new HashMap<String, ITaskInfoProvider>(  );
-	}
-
-	/**
-	 * Get the instance of the manager
-	 * @return the manager
-	 */
-	public static TaskInfoManager getManager(  )
-	{
-		return (TaskInfoManager) SpringContextService.getPluginBean( WorkflowPlugin.PLUGIN_NAME, 
-				BEAN_WORKFLOW_TASK_INFO_MANAGER );
-	}
-
-	/**
-	 * Register a provider
-	 * @param provider the provider
-	 */
-	public void registerProvider( ITaskInfoProvider provider )
-	{
-		_listProviders.put( provider.getTaskType(  ).getKey(  ), provider );
-	}
-
-	/**
-	 * Get the list of provider
-	 * @return the list of providers
-	 */
-	public List<ITaskInfoProvider> getProvidersList(  )
-	{
-		List<ITaskInfoProvider> listProviders = new ArrayList<ITaskInfoProvider>(  );
-
-        for ( ITaskInfoProvider provider : _listProviders.values(  ) )
+    /**
+     * Get the provider from a given provider key
+     * @param strProviderKey the provider key
+     * @return the provider
+     */
+    public static ITaskInfoProvider getProvider( String strProviderKey )
+    {
+        if ( StringUtils.isNotBlank( strProviderKey ) )
         {
-            Plugin plugin = PluginService.getPlugin( provider.getPluginName(  ) );
-
-            if ( ( plugin != null ) && plugin.isInstalled(  ) )
+            for ( ITaskInfoProvider provider : getProvidersList(  ) )
             {
-            	listProviders.add( provider );
-            }
-            else if ( AppLogService.isDebugEnabled(  ) )
-            {
-                AppLogService.debug( MESSAGE_PLUGIN_NOT_FOUND + provider.getPluginName(  ) );
+                if ( ( provider != null ) && ( provider.getTaskType(  ) != null ) &&
+                        strProviderKey.equals( provider.getTaskType(  ).getKey(  ) ) )
+                {
+                    return provider;
+                }
             }
         }
 
-        return listProviders;
-	}
+        return null;
+    }
 
-	/**
-	 * Get the provider from a given provider key
-	 * @param strProviderKey the provider key
-	 * @return the provider
-	 */
-	public ITaskInfoProvider getProvider( String strProviderKey )
-	{
-		return _listProviders.get( strProviderKey );
-	}
+    /**
+     * Get the task resource info. This method will first get
+     * the appropriate provider from the given id task.
+     * @param nIdHistory the id history
+     * @param nIdTask the id task
+     * @param request the HTTP request
+     * @return the task resource info
+     */
+    public static String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
+    {
+        String strInfo = StringUtils.EMPTY;
+        ITaskService taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+        ITask task = taskService.findByPrimaryKey( nIdTask, request.getLocale(  ) );
 
-	/**
-	 * Get the task resource info. This method will first get
-	 * the appropriate provider from the given id task.
-	 * @param nIdHistory the id history
-	 * @param nIdTask the id task
-	 * @param request the HTTP request
-	 * @return the task resource info
-	 */
-	public String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
-	{
-		String strInfo = StringUtils.EMPTY;
-		Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-		ITask task = TaskHome.findByPrimaryKey( nIdTask, pluginWorkflow, request.getLocale(  ) );
-		
-		if ( task != null )
-		{
-			ITaskInfoProvider provider = getProvider( task.getTaskType(  ).getKey(  ) );
-			if ( provider != null )
-			{
-				strInfo = provider.getTaskResourceInfo( nIdHistory, nIdTask, request );
-			}
-		}
-		return strInfo;
-	}
+        if ( task != null )
+        {
+            ITaskInfoProvider provider = getProvider( task.getTaskType(  ).getKey(  ) );
+
+            if ( provider != null )
+            {
+                strInfo = provider.getTaskResourceInfo( nIdHistory, nIdTask, request );
+            }
+        }
+
+        return strInfo;
+    }
 }

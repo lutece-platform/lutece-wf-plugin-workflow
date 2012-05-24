@@ -33,8 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.business.task;
 
-import fr.paris.lutece.plugins.workflow.service.WorkflowService;
-import fr.paris.lutece.portal.business.workflow.Action;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskDAO;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -42,10 +45,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 
 /**
  *
- *class  TaskDAO
+ * TaskDAO
  *
  */
 public class TaskDAO implements ITaskDAO
@@ -60,13 +65,15 @@ public class TaskDAO implements ITaskDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?" +
         " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task  WHERE id_task=? ";
+    @Inject
+    private ITaskFactory _taskFactory;
 
     /**
-         * Generates a new primary key
-         *
-         * @param plugin the plugin
-         * @return The new primary key
-         */
+     * Generates a new primary key
+     *
+     * @param plugin the plugin
+     * @return The new primary key
+     */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
@@ -86,50 +93,51 @@ public class TaskDAO implements ITaskDAO
         return nKey;
     }
 
-    /* (non-Javadoc)
-         * @see fr.paris.lutece.plugins.workflow.business.task.ITaskDAO#insert(fr.paris.lutece.plugins.workflow.business.task.ITask, fr.paris.lutece.portal.service.plugin.Plugin)
-         */
-    public synchronized void insert( ITask task, Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-
-        int nPos = 0;
-        task.setId( newPrimaryKey( plugin ) );
-
-        daoUtil.setInt( ++nPos, task.getId(  ) );
-        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
-        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
-    }
-
-    /* (non-Javadoc)
-         * @see fr.paris.lutece.plugins.workflow.business.task.ITaskDAO#store(fr.paris.lutece.plugins.workflow.business.task.ITask, fr.paris.lutece.portal.service.plugin.Plugin)
-         */
-    public void store( ITask task, Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-
-        int nPos = 0;
-
-        daoUtil.setInt( ++nPos, task.getId(  ) );
-        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
-        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
-        daoUtil.setInt( ++nPos, task.getId(  ) );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see fr.paris.lutece.plugins.workflow.business.task.ITaskDAO#load(int, fr.paris.lutece.portal.service.plugin.Plugin, java.util.Locale)
+    /**
+     * {@inheritDoc}
      */
-    public ITask load( int nIdTask, Plugin plugin, Locale locale )
+    @Override
+    public synchronized void insert( ITask task )
+    {
+        int nPos = 0;
+        task.setId( newPrimaryKey( WorkflowUtils.getPlugin(  ) ) );
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( ++nPos, task.getId(  ) );
+        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
+        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void store( ITask task )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+
+        int nPos = 0;
+
+        daoUtil.setInt( ++nPos, task.getId(  ) );
+        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
+        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
+        daoUtil.setInt( ++nPos, task.getId(  ) );
+
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITask load( int nIdTask, Locale locale )
     {
         ITask task = null;
         Action action = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
 
@@ -139,7 +147,7 @@ public class TaskDAO implements ITaskDAO
 
         if ( daoUtil.next(  ) )
         {
-            task = WorkflowService.getInstance(  ).getTaskInstance( daoUtil.getString( ++nPos ), locale );
+            task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
             action = new Action(  );
             action.setId( daoUtil.getInt( ++nPos ) );
@@ -151,23 +159,24 @@ public class TaskDAO implements ITaskDAO
         return task;
     }
 
-    /* (non-Javadoc)
-         * @see fr.paris.lutece.plugins.workflow.business.task.ITaskDAO#delete(int, fr.paris.lutece.portal.service.plugin.Plugin)
-         */
-    public void delete( int nIdTask, Plugin plugin )
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }
 
-    /*
-     * (non-Javadoc)
-     * @see fr.paris.lutece.plugins.workflow.business.task.ITaskDAO#selectTaskByIdAction(int, fr.paris.lutece.portal.service.plugin.Plugin, java.util.Locale)
+    /**
+     * {@inheritDoc}
      */
-    public List<ITask> selectTaskByIdAction( int nIdAction, Plugin plugin, Locale locale )
+    @Override
+    public List<ITask> selectTaskByIdAction( int nIdAction, Locale locale )
     {
         ITask task = null;
         Action action = null;
@@ -175,7 +184,7 @@ public class TaskDAO implements ITaskDAO
 
         int nPos = 0;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_STATE_BY_ID_ACTION, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_STATE_BY_ID_ACTION, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdAction );
 
@@ -184,7 +193,7 @@ public class TaskDAO implements ITaskDAO
         while ( daoUtil.next(  ) )
         {
             nPos = 0;
-            task = WorkflowService.getInstance(  ).getTaskInstance( daoUtil.getString( ++nPos ), locale );
+            task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
             action = new Action(  );
             action.setId( daoUtil.getInt( ++nPos ) );

@@ -33,22 +33,23 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
-import fr.paris.lutece.plugins.workflow.business.IconHome;
-import fr.paris.lutece.portal.business.workflow.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.portal.service.image.ImageResource;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.image.ImageResourceProvider;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.url.UrlItem;
 
 
 /**
- * Service for Url entry types. Provide ImageResource managemenent
+ *
+ * Service for Url entry types. Provide ImageResource management
  *
  */
-public class FileIconeService implements ImageResourceProvider
+public final class FileIconeService implements ImageResourceProvider
 {
     private static FileIconeService _singleton = new FileIconeService(  );
     private static final String IMAGE_RESOURCE_TYPE_ID = "workflow_icon_img";
@@ -56,7 +57,7 @@ public class FileIconeService implements ImageResourceProvider
     /**
      * Creates a new instance of FileImgService
      */
-    FileIconeService(  )
+    private FileIconeService(  )
     {
     }
 
@@ -85,8 +86,8 @@ public class FileIconeService implements ImageResourceProvider
     */
     public ImageResource getImageResource( int nIdResource )
     {
-        Plugin plugin = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        Icon icon = IconHome.findByPrimaryKey( nIdResource, plugin );
+        IIconService iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
+        Icon icon = iconService.findByPrimaryKey( nIdResource );
 
         if ( icon != null )
         {

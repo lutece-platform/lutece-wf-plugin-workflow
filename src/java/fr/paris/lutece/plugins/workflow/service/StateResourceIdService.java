@@ -33,16 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
-import fr.paris.lutece.plugins.workflow.business.StateFilter;
-import fr.paris.lutece.plugins.workflow.business.StateHome;
-import fr.paris.lutece.plugins.workflow.business.WorkflowHome;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.portal.business.workflow.State;
-import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.rbac.Permission;
 import fr.paris.lutece.portal.service.rbac.ResourceIdService;
 import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
 import java.util.List;
@@ -100,15 +102,15 @@ public class StateResourceIdService extends ResourceIdService
      */
     public ReferenceList getResourceIdList( Locale locale )
     {
-        List<State> listState = StateHome.getListStateByFilter( new StateFilter(  ),
-                PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
+        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+        List<State> listState = stateService.getListStateByFilter( new StateFilter(  ) );
 
         ReferenceList reflistState = new ReferenceList(  );
 
         for ( State state : listState )
         {
-            state.setWorkflow( WorkflowHome.findByPrimaryKey( state.getWorkflow(  ).getId(  ),
-                    PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) );
+            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow(  ).getId(  ) ) );
             reflistState.addItem( state.getId(  ), state.getWorkflow(  ).getName(  ) + "/" + state.getName(  ) );
         }
 
@@ -123,13 +125,14 @@ public class StateResourceIdService extends ResourceIdService
      */
     public String getTitle( String strId, Locale locale )
     {
+        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
         int nId = WorkflowUtils.convertStringToInt( strId );
-        State state = StateHome.findByPrimaryKey( nId, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
+        State state = stateService.findByPrimaryKey( nId );
 
         if ( state != null )
         {
-            state.setWorkflow( WorkflowHome.findByPrimaryKey( state.getWorkflow(  ).getId(  ),
-                    PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) );
+            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow(  ).getId(  ) ) );
         }
 
         return ( state != null ) ? ( state.getWorkflow(  ).getName(  ) + "/" + state.getName(  ) ) : null;

@@ -33,32 +33,38 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
-import fr.paris.lutece.plugins.workflow.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.portal.service.init.PostStartUpService;
+
+import javax.inject.Inject;
+
 
 /**
  * WorkflowPostStartupService
  *
  */
-public class WorkflowPostStartupService implements PostStartUpService {
+public class WorkflowPostStartupService implements PostStartUpService
+{
+    @Inject
+    private ITaskFactory _taskFactory;
 
-	/**
-	 * Initializes all ITaskType
-	 */
-	public void process(  )
-	{
-        for ( ITaskType taskType : WorkflowService.getInstance(  ).getTaskTypeList(  ) )
+    /**
+     * Initializes all ITaskType
+     */
+    public void process(  )
+    {
+        for ( ITaskType taskType : _taskFactory.getAllTaskTypes(  ) )
         {
-        	WorkflowService.getInstance(  ).getTaskInstance( taskType.getKey(  ), null ).init(  );
+            _taskFactory.newTask( taskType.getKey(  ), null ).init(  );
         }
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getName(  )
-	{
-		return "Workflow post startup service";
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public String getName(  )
+    {
+        return "Workflow post startup service";
+    }
 }

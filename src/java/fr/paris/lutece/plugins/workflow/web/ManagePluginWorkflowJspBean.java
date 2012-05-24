@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,7 +65,7 @@ public class ManagePluginWorkflowJspBean extends PluginAdminPageJspBean
     {
         setPageTitleProperty( WorkflowUtils.EMPTY_STRING );
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PLUGIN_WORKFLOW, getLocale(  ),
                 model );

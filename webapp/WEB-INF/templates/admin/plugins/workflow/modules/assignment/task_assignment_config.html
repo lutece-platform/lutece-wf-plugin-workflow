@@ -1,0 +1,132 @@
+<div>
+  <h2> #i18n{module.workflow.assignment.task_assignment_config.title}</h2>
+ 	
+	  
+	  	<p>
+	    	<label for="title">#i18n{module.workflow.assignment.task_assignment_config.label_title} * :</label>
+		    	<#if config?exists>
+		     			  <input type="text" name="title" id="" size="80" value="${config.title}"  maxlength="255"/>
+		     	<#else>
+		     			<input type="text" name="title" id="" size="80" value=""  maxlength="255"/>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.assignment.task_assignment_config.label_title}
+		</p>
+		 <p>
+			 <label for="is_multiple_owner">#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner} :</label>
+   		 		<#if config?exists&&config.multipleOwner>
+   		 			<input name="is_multiple_owner" value="1" type="checkbox" checked="checked"/>
+   		 		<#else>
+   		 			<input name="is_multiple_owner" value="1" type="checkbox"/>
+   		 		</#if>
+   				<br/>
+ 			 <label>&nbsp;</label> #i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner_comment}
+	 	</p>
+		<p>
+			 <label for="workgroups">#i18n{module.workflow.assignment.task_assignment_config.label_workgroups} * :</label>
+	    </p>
+	    
+	    <#list workgroup_list as workgroup>
+	    	<p>
+	    		<#if workgroup_index != 0>
+	    			<label>&nbsp;</label>
+	    		</#if>
+				<input type="checkbox" class="checkbox" name="workgroups" value="${workgroup.item.code}"
+				<#if workgroup.config?exists> checked="checked" </#if> />
+				${workgroup.item.name}
+				<span id="div_${workgroup.item.code}">
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
+					<#if workgroup.config?exists>
+						<@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
+					<#else>
+						<@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
+					</#if>
+				</span>
+   			</p>
+	   	</#list>
+	   	
+	   	<#if workgroup_list?size = 0 >
+	   		<p>&nbsp;</p>
+	   	</#if>
+   		<p>	
+ 			 <label>&nbsp;</label>#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}
+	 	</p>
+	 	<p>
+	 		<label for="is_notify">#i18n{module.workflow.assignment.task_assignment_config.label_notification} :</label>
+	 		<#if config?exists && config.notify>
+	 			<input type="checkbox" name="is_notify" value="1" checked="checked" onclick="javascript:notification();" />
+   		 	<#else>
+   		 		<input type="checkbox" name="is_notify" value="1" onclick="javascript:notification();" />
+   		 	</#if>
+   			<br />
+		</p>
+	 	
+	 	<div id="notification">
+	 	<p>
+			 <label for="is_use_user_name">#i18n{module.workflow.assignment.task_assignment_config.label_user_name} :</label>
+   		 		<#if config?exists&&config.notify>
+   		 			<input name="is_use_user_name" value="1" type="checkbox" checked="checked"/>
+   		 		<#else>
+   		 			<input name="is_use_user_name" value="1" type="checkbox"/>
+   		 		</#if>
+   				<br/>
+   				 <label>&nbsp;</label>
+			#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}
+	 	</p>
+	 	<p>
+	    	<label for="suject">#i18n{module.workflow.assignment.task_assignment_config.label_subject} * :</label>
+		    	<#if config?exists&&config.subject?exists>
+		     			<input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
+		     	<#else>
+		     			<input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.assignment.task_assignment_config.label_subject_comment}
+		</p>
+	 	<p>
+	    	<label for="message">#i18n{module.workflow.assignment.task_assignment_config.label_message} * :</label>
+		    	<#if config?exists&&config.message?exists>
+		     			<textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
+		     	<#else>
+		     			<textarea name="message" id="" rows="5" cols="80"></textarea>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.assignment.task_assignment_config.label_message_comment}
+		</p>	
+		</div>
+
+	 
+</div>
+
+<script type="text/javascript" charset="utf-8">
+	function notification()
+	{
+		var notif = document.getElementsByName("is_notify");
+
+		if(notif[0].checked)
+		{
+			document.getElementById("notification").style.display = "block";
+			<#list workgroup_list as workgroup>
+				if(document.getElementById("div_${workgroup.item.code}"))
+				{
+					document.getElementById("div_${workgroup.item.code}").style.display = "inline";
+				}
+			</#list>
+		}
+		else
+		{
+			document.getElementById("notification").style.display = "none";
+			<#list workgroup_list as workgroup>
+				if(document.getElementById("div_${workgroup.item.code}"))
+				{
+					document.getElementById("div_${workgroup.item.code}").style.display = "none";
+				}
+			</#list>
+		}
+	}
+	notification();
+</script>

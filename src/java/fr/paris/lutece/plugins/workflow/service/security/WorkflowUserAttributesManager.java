@@ -33,77 +33,59 @@
  */
 package fr.paris.lutece.plugins.workflow.service.security;
 
-import java.util.Map;
+import fr.paris.lutece.portal.service.security.UserAttributesService;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
-import fr.paris.lutece.portal.service.security.UserAttributesService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import java.util.Map;
+
 
 /**
- * 
+ *
  * WorkflowUserAttributesManager
  *
  */
-public final class WorkflowUserAttributesManager
+public class WorkflowUserAttributesManager implements IWorkflowUserAttributesManager
 {
-	private static final String BEAN_WORKFLOW_USER_ATTRIBUTES_MANAGER = "workflow.userAttributesManager";
-	private UserAttributesService _userAttributesService;
+    public static final String BEAN_MANAGER = "workflow.userAttributesManager";
+    private UserAttributesService _userAttributesService;
 
-	/**
-	 * Private constructor
-	 */
-	private WorkflowUserAttributesManager(  )
-	{
-	}
+    /**
+     * Check if the UserAttributesService is enabled
+     * @return true if the service is enabled, false otherwise
+     */
+    public boolean isEnabled(  )
+    {
+        return _userAttributesService != null;
+    }
 
-	/**
-	 * Get the instance of the service
-	 * @return the service
-	 */
-	public static WorkflowUserAttributesManager getManager(  )
-	{
-		return (WorkflowUserAttributesManager) SpringContextService.getPluginBean( WorkflowPlugin.PLUGIN_NAME, 
-				BEAN_WORKFLOW_USER_ATTRIBUTES_MANAGER );
-	}
+    /**
+     * Set the UserAttributesService
+     * @param userAttributesService the UserAttributesService
+     */
+    public void setUserAttributesService( UserAttributesService userAttributesService )
+    {
+        _userAttributesService = userAttributesService;
+    }
 
-	/**
-	 * Check if the UserAttributesService is enabled
-	 * @return true if the service is enabled, false otherwise
-	 */
-	public boolean isEnabled(  )
-	{
-		return _userAttributesService != null;
-	}
+    /**
+     * Get the attribute
+     * @param strUserId the id user guid
+     * @param strAttribute the attribute
+     * @return the attribute value
+     */
+    public String getAttribute( String strUserId, String strAttribute )
+    {
+        return isEnabled(  ) ? _userAttributesService.getAttribute( strUserId, strAttribute ) : StringUtils.EMPTY;
+    }
 
-	/**
-	 * Set the UserAttributesService
-	 * @param userAttributesService the UserAttributesService
-	 */
-	public void setUserAttributesService( UserAttributesService userAttributesService )
-	{
-		_userAttributesService = userAttributesService;
-	}
-
-	/**
-	 * Get the attribute
-	 * @param strUserId the id user guid
-	 * @param strAttribute the attribute
-	 * @return the attribute value
-	 */
-	public String getAttribute( String strUserId , String strAttribute )
-	{
-		return isEnabled(  ) ? _userAttributesService.getAttribute( strUserId, strAttribute ) : StringUtils.EMPTY;
-	}
-
-	/**
-	 * Get the attributes
-	 * @param strUserId the user id
-	 * @return a map of attribute key - attribute value
-	 */
-	public Map<String, String> getAttributes( String strUserId )
-	{
-		return isEnabled(  ) ? _userAttributesService.getAttributes( strUserId ) : null;
-	}
+    /**
+     * Get the attributes
+     * @param strUserId the user id
+     * @return a map of attribute key - attribute value
+     */
+    public Map<String, String> getAttributes( String strUserId )
+    {
+        return isEnabled(  ) ? _userAttributesService.getAttributes( strUserId ) : null;
+    }
 }

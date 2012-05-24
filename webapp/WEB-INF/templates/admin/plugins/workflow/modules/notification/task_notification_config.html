@@ -1,0 +1,57 @@
+<div>
+  <h2> #i18n{module.workflow.notification.task_notification_config.title}</h2>
+ 	
+ 	
+ 	<p>
+	      <label for="id_mailing_list">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} * :</label>
+		   <#if config?exists>
+		    	<@combo name="id_mailing_list"  items=mailing_list default_value=config.idMailingList />
+			  
+			 <#else>
+			 	<@combo name="id_mailing_list"  items=mailing_list default_value="-1" />
+			  
+			 </#if> 
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.notification.task_notification_config.label_mailing_list_comment}
+		</p>
+		
+		<p>
+	    	<label for="sender_name">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * :</label>
+		    	<#if config?exists>
+		     			<input type="text" name="sender_name" id="" size="80" value="${config.senderName}"  maxlength="255"/>
+		     	<#else>
+		     			<input type="text" name="sender_name" id="" size="80" value="${default_sender_name}"  maxlength="255"/>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.notification.task_notification_config.label_sender_name_comment}
+		</p>
+	  
+	  	<p>
+	    	<label for="suject">#i18n{module.workflow.notification.task_notification_config.label_subject} * :</label>
+		    	<#if config?exists>
+		     			<input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
+		     	<#else>
+		     			<input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.notification.task_notification_config.label_subject_comment}
+		</p>
+		
+		<p>
+	    	<label for="message">#i18n{module.workflow.notification.task_notification_config.label_message} * :</label>
+		    	<#if config?exists>
+		     			<textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
+		     	<#else>
+		     			<textarea name="message" id="" rows="5" cols="80"></textarea>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.notification.task_notification_config.label_message_comment}
+		</p>
+</div>
+ 
+
+	

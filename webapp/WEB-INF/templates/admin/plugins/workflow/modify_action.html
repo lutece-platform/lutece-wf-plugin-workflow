@@ -103,13 +103,13 @@
 	      ${cpt}
 	      </td>
 	      <td>
-	      	${task.getTitle(plugin,locale)}
+	      	${task.getTitle(locale)}
 	      </td>
 	      <td>
 	       	${task.taskType.title}
 	      </td>
 	       <td>
-			  <#if task.configRequire>
+			  <#if task.taskType.configRequired>
 				 <a href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}">
 						 <img src="images/admin/skin/plugins/workflow/actions/modify.png" alt="#i18n{workflow.modify_action.manage_task.title_modify}" title="#i18n{workflow.manage_workflow.title_modify}" />
 				  </a>

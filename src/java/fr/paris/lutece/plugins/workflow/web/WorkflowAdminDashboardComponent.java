@@ -33,21 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowService;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.workflow.Action;
 import fr.paris.lutece.portal.service.dashboard.admin.AdminDashboardComponent;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -61,7 +58,6 @@ public class WorkflowAdminDashboardComponent extends AdminDashboardComponent
     private static final String TEMPLATE_ADMIN_DASHBOARD = "admin/plugins/workflow/workflow_admindashboard.html";
 
     /**
-     *
      * {@inheritDoc}
      */
     @Override
@@ -70,8 +66,7 @@ public class WorkflowAdminDashboardComponent extends AdminDashboardComponent
         if ( RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
                     ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, user ) )
         {
-            Map<String, Object> model = WorkflowService.getInstance(  ).getManageAdvancedParameters( user );
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale(  ), model );
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale(  ) );
 
             return template.getHtml(  );
         }

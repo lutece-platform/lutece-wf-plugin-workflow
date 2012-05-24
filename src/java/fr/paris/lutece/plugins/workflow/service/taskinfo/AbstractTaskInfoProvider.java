@@ -33,31 +33,43 @@
  */
 package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
-import fr.paris.lutece.plugins.workflow.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 
 
 /**
- * 
+ *
  * AbstractTaskInfoProvider
  *
  */
 public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
 {
-	private ITaskType _taskType;
+    private ITaskType _taskType;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setTaskType( ITaskType taskType )
-	{
-		_taskType = taskType;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setTaskType( ITaskType taskType )
+    {
+        _taskType = taskType;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ITaskType getTaskType(  )
-	{
-		return _taskType;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public ITaskType getTaskType(  )
+    {
+        return _taskType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterPropertiesSet(  ) throws Exception
+    {
+        if ( _taskType == null )
+        {
+            throw new IllegalArgumentException( "Property 'taskType' is required" );
+        }
+    }
 }

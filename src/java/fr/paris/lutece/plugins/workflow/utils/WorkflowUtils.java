@@ -33,8 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.utils;
 
-import fr.paris.lutece.portal.business.workflow.IReferenceItem;
+import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
+import fr.paris.lutece.plugins.workflowcore.business.IReferenceItem;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 
@@ -222,5 +225,14 @@ public final class WorkflowUtils
         }
 
         return refList;
+    }
+
+    /**
+     * Get the workflow plugin
+     * @return the workflow plugin
+     */
+    public static Plugin getPlugin(  )
+    {
+        return PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
     }
 }

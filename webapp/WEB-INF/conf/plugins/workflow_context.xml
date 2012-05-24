@@ -1,59 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-<beans>
- 	 
-	 <!-- worklow -->
- 	 <bean id="workflowDAO"  class="fr.paris.lutece.plugins.workflow.business.WorkflowDAO" />
-	 <bean id="workflowStateDAO"  class="fr.paris.lutece.plugins.workflow.business.StateDAO" />
-	 <bean id="workflowActionDAO"  class="fr.paris.lutece.plugins.workflow.business.ActionDAO" />
-	 <bean id="workflowIconDAO"  class="fr.paris.lutece.plugins.workflow.business.IconDAO" />
-	 <bean id="workflowResourceWorkflowDAO"  class="fr.paris.lutece.plugins.workflow.business.ResourceWorkflowDAO" />
-	 <bean id="workflowResourceHistoryDAO"  class="fr.paris.lutece.plugins.workflow.business.ResourceHistoryDAO" />	 
-	 <bean id="workflowTaskDAO"  class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
-	 
-	 <!-- modules -->
-	 <bean id="workflowTaskCommentConfigDAO"  class="fr.paris.lutece.plugins.workflow.modules.taskcomment.business.TaskCommentConfigDAO" />
-	 <bean id="workflowTaskNotificationConfigDAO"  class="fr.paris.lutece.plugins.workflow.modules.tasknotification.business.TaskNotificationConfigDAO" />
-	 <bean id="workflowCommentValueDAO"  class="fr.paris.lutece.plugins.workflow.modules.taskcomment.business.CommentValueDAO" />	 
-	 <bean id="workflowAssignmentHistoryDAO"  class="fr.paris.lutece.plugins.workflow.modules.taskassignment.business.AssignmentHistoryDAO" />
-	 <bean id="workflowTaskAssignmentConfigDAO"  class="fr.paris.lutece.plugins.workflow.modules.taskassignment.business.TaskAssignmentConfigDAO" />
-	 <bean id="workflowWorkgroupConfigDAO"  class="fr.paris.lutece.plugins.workflow.modules.taskassignment.business.WorkgroupConfigDAO" />
+	<!-- Transaction Manager -->
+	<bean id="workflow.transactionManager"  class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
+		p:pluginName="workflow" />
 	
-	 <!-- testResource -->
-	 <bean id="workflowTestResourceDAO"  class="fr.paris.lutece.plugins.workflow.business.TestResourceDAO" />
-	
-	 <!-- Removal Services -->
-	 <bean id="workflowTaskRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
+	<!-- DAO -->
+ 	<bean id="worklow.workflowDAO" class="fr.paris.lutece.plugins.workflow.business.workflow.WorkflowDAO" />
+	<bean id="workflow.stateDAO" class="fr.paris.lutece.plugins.workflow.business.state.StateDAO" />
+	<bean id="workflow.actionDAO" class="fr.paris.lutece.plugins.workflow.business.action.ActionDAO" />
+	<bean id="workflow.iconDAO" class="fr.paris.lutece.plugins.workflow.business.icon.IconDAO" />
+	<bean id="workflow.resourceWorkflowDAO" class="fr.paris.lutece.plugins.workflow.business.resource.ResourceWorkflowDAO" />
+	<bean id="workflow.resourceHistoryDAO" class="fr.paris.lutece.plugins.workflow.business.resource.ResourceHistoryDAO" />	 
+	<bean id="workflow.taskDAO" class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
+	<bean id="workflow.testResourceDAO" class="fr.paris.lutece.plugins.workflow.business.testresource.TestResourceDAO" />
 	 
-	 <bean id="workflowTaskFactory"  class="fr.paris.lutece.plugins.workflow.business.task.TaskFactory" />
+	<!-- Removal Services -->
+	<bean id="workflow.taskRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
+
+	<!-- Factories -->
+	<bean id="workflow.taskFactory"  class="fr.paris.lutece.plugins.workflow.service.task.TaskFactory" />
+	<bean id="workflow.resourceHistoryFactory" class="fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistoryFactory" />
     
-      <bean id="workflow.taskTypeComment" class="fr.paris.lutece.plugins.workflow.business.task.TaskType" >
-      		<property name="key" value="taskTypeComment" />
-     		 <property name="titleI18nKey" value="module.workflow.taskcomment.task_title" />
-   	 		 <property name="className" value="fr.paris.lutece.plugins.workflow.modules.taskcomment.business.TaskComment"/>
-   	  </bean>
-   	 <bean id="workflow.taskTypeNotification" class="fr.paris.lutece.plugins.workflow.business.task.TaskType" >
-   	 		<property name="key" value="taskTypeNotification"/>
-     		 <property name="titleI18nKey" value="module.workflow.tasknotification.task_title" />
-   	 		 <property name="className" value="fr.paris.lutece.plugins.workflow.modules.tasknotification.business.TaskNotification"/>
-   	  </bean>
-   	  <bean id="workflow.taskTypeAssignment" class="fr.paris.lutece.plugins.workflow.business.task.TaskType" >
-   	  		<property name="key" value="taskTypeAssignment"/>
-     		 <property name="titleI18nKey" value="module.workflow.taskassignment.task_title" />
-   	 		 <property name="className" value="fr.paris.lutece.plugins.workflow.modules.taskassignment.business.TaskAssignment"/>
-   	  </bean>
-
-   	  <bean id="workflowService"  factory-method="getInstance" class="fr.paris.lutece.plugins.workflow.service.WorkflowService" />
-	  
-	  <bean id="workflow.postStartupService" class="fr.paris.lutece.plugins.workflow.service.WorkflowPostStartupService" />
-	  
-	  <!-- TaskInfoManager -->
-	  <bean id="workflow.taskInfoManager" class="fr.paris.lutece.plugins.workflow.service.taskinfo.TaskInfoManager" />
-
-	  <!-- User Attributes -->
-	  <bean id="workflow.userAttributesManager" class="fr.paris.lutece.plugins.workflow.service.security.WorkflowUserAttributesManager">
-	  		<!--<property name="userAttributesService" ref="userAttributesService" />-->
-	  </bean>
+    <!-- Services -->  
+	<bean id="workflow.postStartupService" class="fr.paris.lutece.plugins.workflow.service.WorkflowPostStartupService" />
+	<bean id="workflow.taskInfoManager" class="fr.paris.lutece.plugins.workflow.service.taskinfo.TaskInfoManager" />
+	<bean id="workflow.actionService" class="fr.paris.lutece.plugins.workflowcore.service.action.ActionService" />
+	<bean id="workflow.iconService" class="fr.paris.lutece.plugins.workflowcore.service.icon.IconService" />
+	<bean id="workflow.resourceHistoryService" class="fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService" />
+	<bean id="workflow.resourceWorkflowService" class="fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowService" />
+	<bean id="workflow.stateService" class="fr.paris.lutece.plugins.workflowcore.service.state.StateService" />
+	<bean id="workflow.taskService" class="fr.paris.lutece.plugins.workflowcore.service.task.TaskService" />
+	<bean id="workflow.testResourceService" class="fr.paris.lutece.plugins.workflow.service.testresource.TestResourceService" />
+	<bean id="workflow.workflowService" class="fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService" />
+	
+	<!-- Provider -->
+	<bean id="workflow.workflowProvider" class="fr.paris.lutece.plugins.workflow.service.WorkflowProvider" />
+	
+	<!-- User Attributes -->
+	<bean id="workflow.userAttributesManager" class="fr.paris.lutece.plugins.workflow.service.security.WorkflowUserAttributesManager">
+		<!--<property name="userAttributesService" ref="userws.userAttributesWebService" />-->
+	</bean>
+	
+	<!-- ************************** -->
+	<!-- Modules 					-->
+	<!-- ************************** -->
+	
+	<!-- DAO -->
+	<bean id="workflow.taskCommentConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfigDAO" />
+	<bean id="workflow.commentValueDAO" class="fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValueDAO" />	 
+	<bean id="workflow.taskNotificationConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationConfigDAO" />
+	<bean id="workflow.assignmentHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHistoryDAO" />
+	<bean id="workflow.taskAssignmentConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfigDAO" />
+	<bean id="workflow.workgroupConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfigDAO" />
+	
+	<!-- Task types -->
+	<bean id="workflow.taskTypeComment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
+		p:key="taskTypeComment"
+		p:titleI18nKey="module.workflow.comment.task_title"
+		p:beanName="workflow.taskComment"
+		p:configRequired="true"
+		p:formTaskRequired="true" />
+	<bean id="workflow.taskTypeNotification" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
+		p:key="taskTypeNotification"
+		p:titleI18nKey="module.workflow.notification.task_title"
+		p:beanName="workflow.taskNotification"
+		p:configRequired="true"
+		p:taskForAutomaticAction="true" />
+	<bean id="workflow.taskTypeAssignment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
+		p:key="taskTypeAssignment"
+		p:titleI18nKey="module.workflow.assignment.task_title"
+		p:beanName="workflow.taskAssignment"
+		p:configRequired="true" 
+		p:formTaskRequired="true" />
+	<!-- Tasks -->
+	<bean id="workflow.taskAssignment" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignment" scope="prototype" />
+	<bean id="workflow.taskComment" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskComment" scope="prototype" />
+	<bean id="workflow.taskNotification" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotification" scope="prototype" />
+	<!-- Task components -->
+	<bean id="workflow.commentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.comment.web.CommentTaskComponent"
+		p:taskType-ref="workflow.taskTypeComment"/>
+	<bean id="workflow.assignmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.assignment.web.AssignmentTaskComponent"
+		p:taskType-ref="workflow.taskTypeAssignment" />
+	<bean id="workflow.notificationTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.notification.web.NotificationTaskComponent"
+		p:taskType-ref="workflow.taskTypeNotification" />
+	
+	<!-- Services -->
+	<bean id="workflow.assignmentHistoryService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.AssignmentHistoryService" />
+	<bean id="workflow.taskAssignmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignmentConfigService" />
+	<bean id="workflow.workgroupConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.WorkgroupConfigService" />
+	<bean id="workflow.commentValueService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService" />
+	<bean id="workflow.taskCommentConfigService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService" />
+	<bean id="workflow.taskNotificationConfigService" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotificationConfigService" />
  </beans>
- 	

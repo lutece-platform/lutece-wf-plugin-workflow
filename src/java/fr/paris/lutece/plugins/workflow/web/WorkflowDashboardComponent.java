@@ -33,28 +33,30 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.portal.business.right.Right;
+import fr.paris.lutece.portal.business.right.RightHome;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.dashboard.DashboardComponent;
+import fr.paris.lutece.portal.service.database.AppConnectionService;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
+
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
-import fr.paris.lutece.plugins.workflow.business.WorkflowFilter;
-import fr.paris.lutece.plugins.workflow.business.WorkflowHome;
-import fr.paris.lutece.portal.business.right.Right;
-import fr.paris.lutece.portal.business.right.RightHome;
-import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.workflow.Workflow;
-import fr.paris.lutece.portal.service.dashboard.DashboardComponent;
-import fr.paris.lutece.portal.service.database.AppConnectionService;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
-import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.url.UrlItem;
 
 
 /**
@@ -63,18 +65,18 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class WorkflowDashboardComponent extends DashboardComponent
 {
-	// MARKS
-	private static final String MARK_URL = "url";
-	private static final String MARK_ICON = "icon";
+    // MARKS
+    private static final String MARK_URL = "url";
+    private static final String MARK_ICON = "icon";
     private static final String MARK_WORKFLOW_LIST = "workflow_list";
-    
+
     // PARAMETERS
     private static final String PARAMETER_PLUGIN_NAME = "plugin_name";
-    
-	// TEMPLATES
+
+    // TEMPLATES
     private static final String TEMPLATE_DASHBOARD_ZONE_1 = "/admin/plugins/workflow/workflow_dashboard_zone_1.html";
     private static final String TEMPLATE_DASHBOARD_OTHER_ZONE = "/admin/plugins/workflow/workflow_dashboard_other_zone.html";
-    
+
     // OTHER CONSTANTS
     private static final int ZONE_1 = 1;
     private static final int FILTER_NO_STATUS = -1;
@@ -82,29 +84,31 @@ public class WorkflowDashboardComponent extends DashboardComponent
     /**
      * The HTML code of the component
      * @param user The Admin User
-	 * @param request HttpServletRequest
+         * @param request HttpServletRequest
      * @return The dashboard component
      */
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
         Right right = RightHome.findByPrimaryKey( getRight(  ) );
         Plugin plugin = PluginService.getPlugin( right.getPluginName(  ) );
-        
+
         if ( !( ( plugin.getDbPoolName(  ) != null ) &&
                 !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName(  ) ) ) )
         {
             return StringUtils.EMPTY;
         }
-        
+
+        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+
         UrlItem url = new UrlItem( right.getUrl(  ) );
         url.addParameter( PARAMETER_PLUGIN_NAME, right.getPluginName(  ) );
 
         WorkflowFilter filter = new WorkflowFilter(  );
         filter.setIsEnabled( FILTER_NO_STATUS );
         filter.setWorkGroup( AdminWorkgroupService.ALL_GROUPS );
-        
-        List<Workflow> listWorkflow = WorkflowHome.getListWorkflowsByFilter( filter, getPlugin(  ) );
-        listWorkflow = ( List<Workflow> ) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
+
+        List<Workflow> listWorkflow = workflowService.getListWorkflowsByFilter( filter );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_WORKFLOW_LIST, listWorkflow );

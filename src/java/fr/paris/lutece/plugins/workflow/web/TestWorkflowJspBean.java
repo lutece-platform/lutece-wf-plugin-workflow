@@ -33,15 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
-import fr.paris.lutece.plugins.workflow.business.TestResource;
-import fr.paris.lutece.plugins.workflow.business.TestResourceHome;
+import fr.paris.lutece.plugins.workflow.business.testresource.TestResource;
+import fr.paris.lutece.plugins.workflow.service.testresource.ITestResourceService;
+import fr.paris.lutece.plugins.workflow.service.testresource.TestResourceService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.portal.business.workflow.Action;
-import fr.paris.lutece.portal.business.workflow.State;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -49,10 +51,13 @@ import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -102,6 +107,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_TEST_RESOURCE_TITLE_IS_MANDATORY = "workflow.message.test_resource_title_is_mandatory";
     private static final String MESSAGE_CONFIRM_REMOVE_TEST_RESOURCE = "workflow.message.confirm_remove_test_resource";
     private int _nIdWorkflow = WorkflowUtils.CONSTANT_ID_NULL;
+    private ITestResourceService _testResourceService = SpringContextService.getBean( TestResourceService.BEAN_SERVICE );
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -121,12 +127,12 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
             _nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
         }
 
-        HashMap model = new HashMap(  );
-        List<HashMap> listResourceActions = new ArrayList<HashMap>(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<Map<String, Object>> listResourceActions = new ArrayList<Map<String, Object>>(  );
 
         if ( _nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            List<TestResource> listTestResource = TestResourceHome.getList( getPlugin(  ) );
+            List<TestResource> listTestResource = _testResourceService.getList( getPlugin(  ) );
 
             for ( TestResource testResource : listTestResource )
             {
@@ -140,8 +146,8 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
                             TestResource.RESOURCE_TYPE, _nIdWorkflow, AdminUserService.getAdminUser( request ) );
                     State state = WorkflowService.getInstance(  )
                                                  .getState( testResource.getIdResource(  ), TestResource.RESOURCE_TYPE,
-                            _nIdWorkflow, AdminUserService.getAdminUser( request ) );
-                    HashMap resourceActions = new HashMap(  );
+                            _nIdWorkflow, null );
+                    Map<String, Object> resourceActions = new HashMap<String, Object>(  );
                     resourceActions.put( MARK_RESOURCE, testResource );
                     resourceActions.put( MARK_WORKFLOW_ACTION_LIST, listAction );
                     resourceActions.put( MARK_WORKFLOW_STATE, state );
@@ -176,7 +182,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
     {
         String strTestResourceTitle = request.getParameter( PARAMETER_TITLE_TEST_RESOURCE );
 
-        if ( ( strTestResourceTitle == null ) || strTestResourceTitle.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isBlank( strTestResourceTitle ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_TEST_RESOURCE_TITLE_IS_MANDATORY,
                 AdminMessage.TYPE_STOP );
@@ -184,7 +190,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
 
         TestResource testResource = new TestResource(  );
         testResource.setTitle( strTestResourceTitle );
-        TestResourceHome.create( testResource, getPlugin(  ) );
+        _testResourceService.create( testResource, getPlugin(  ) );
 
         return getJspManageTestWorkflow( request );
     }
@@ -224,7 +230,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdTestResource = request.getParameter( PARAMETER_ID_TEST_RESOURCE );
         int nIdTestResource = WorkflowUtils.convertStringToInt( strIdTestResource );
-        TestResourceHome.remove( nIdTestResource, getPlugin(  ) );
+        _testResourceService.remove( nIdTestResource, getPlugin(  ) );
         //Remove workflow resource associated
         WorkflowService.getInstance(  ).doRemoveWorkFlowResource( nIdTestResource, TestResource.RESOURCE_TYPE );
 
@@ -241,7 +247,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
         String strIdTestResource = request.getParameter( PARAMETER_ID_TEST_RESOURCE );
         int nIdTestResource = WorkflowUtils.convertStringToInt( strIdTestResource );
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_RESOURCE_HISTORY,
             WorkflowService.getInstance(  )
@@ -268,7 +274,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
         int nIdTestResource = WorkflowUtils.convertStringToInt( strIdTestResource );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_TASKS_FORM,
             WorkflowService.getInstance(  )
@@ -301,7 +307,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
             int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
             String strError = WorkflowService.getInstance(  )
                                              .doSaveTasksForm( nIdTestResource, TestResource.RESOURCE_TYPE, nIdAction,
-                    request, getLocale(  ) );
+                    null, request, getLocale(  ) );
 
             if ( strError != null )
             {
@@ -330,7 +336,7 @@ public class TestWorkflowJspBean extends PluginAdminPageJspBean
         }
 
         WorkflowService.getInstance(  )
-                       .doProcessAction( nIdTestResource, TestResource.RESOURCE_TYPE, nIdAction, request,
+                       .doProcessAction( nIdTestResource, TestResource.RESOURCE_TYPE, nIdAction, null, request,
             getLocale(  ), false );
 
         return getJspManageTestWorkflow( request );

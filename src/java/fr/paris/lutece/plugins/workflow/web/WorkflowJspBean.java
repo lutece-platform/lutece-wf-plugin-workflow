@@ -33,6 +33,54 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
+import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
+import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.portal.business.rbac.RBAC;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
+import fr.paris.lutece.portal.web.constants.Messages;
+import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.url.UrlItem;
+
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,44 +89,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import fr.paris.lutece.plugins.workflow.business.ActionFilter;
-import fr.paris.lutece.plugins.workflow.business.ActionHome;
-import fr.paris.lutece.plugins.workflow.business.IconHome;
-import fr.paris.lutece.plugins.workflow.business.StateFilter;
-import fr.paris.lutece.plugins.workflow.business.StateHome;
-import fr.paris.lutece.plugins.workflow.business.TaskRemovalListenerService;
-import fr.paris.lutece.plugins.workflow.business.WorkflowFilter;
-import fr.paris.lutece.plugins.workflow.business.WorkflowHome;
-import fr.paris.lutece.plugins.workflow.business.task.ITask;
-import fr.paris.lutece.plugins.workflow.business.task.ITaskType;
-import fr.paris.lutece.plugins.workflow.business.task.TaskHome;
-import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowService;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.portal.business.rbac.RBAC;
-import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.workflow.Action;
-import fr.paris.lutece.portal.business.workflow.Icon;
-import fr.paris.lutece.portal.business.workflow.State;
-import fr.paris.lutece.portal.business.workflow.Workflow;
-import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
-import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
-import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
-import fr.paris.lutece.portal.web.util.LocalizedPaginator;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
-import fr.paris.lutece.util.url.UrlItem;
 
 
 /**
@@ -186,7 +196,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_INITIAL_STATE = "initial_state";
     private static final String MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS = "permission_manage_advanced_parameters";
     private static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
-    
+
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
     private static final String MESSAGE_ERROR_AUTOMATIC_FIELD = "workflow.message.error.automatic.field";
@@ -212,6 +222,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private int _nItemsPerPageAction;
     private int _nIsEnabled = -1;
     private String _strWorkGroup = AdminWorkgroupService.ALL_GROUPS;
+    private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+    private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
+    private IIconService _iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
+    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+    private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -248,16 +264,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setIsEnabled( _nIsEnabled );
         filter.setWorkGroup( _strWorkGroup );
 
-        List<Workflow> listWorkflow = WorkflowHome.getListWorkflowsByFilter( filter, getPlugin(  ) );
-        listWorkflow = ( List<Workflow> ) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, getUser(  ) );
+        List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, getUser(  ) );
 
-        LocalizedPaginator paginator = new LocalizedPaginator( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
-                PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale(  ) );
+        LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<Workflow>( listWorkflow,
+                _nItemsPerPageWorkflow, getJspManageWorkflow( request ), PARAMETER_PAGE_INDEX,
+                _strCurrentPageIndexWorkflow, getLocale(  ) );
 
         boolean bPermissionAdvancedParameter = RBACService.isAuthorized( Action.RESOURCE_TYPE,
-                RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS,
-                getUser(  ) );
-        
+                RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser(  ) );
+
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_PAGINATOR, paginator );
@@ -315,7 +331,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         if ( ( request.getParameter( PARAMETER_CANCEL ) == null ) )
         {
-            Plugin plugin = getPlugin(  );
             Workflow workflow = new Workflow(  );
             String strError = getWorkflowData( request, workflow, getLocale(  ) );
 
@@ -325,7 +340,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
 
             workflow.setCreationDate( WorkflowUtils.getCurrentTimestamp(  ) );
-            WorkflowHome.create( workflow, plugin );
+            _workflowService.create( workflow );
         }
 
         return getJspManageWorkflow( request );
@@ -350,37 +365,37 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
         }
 
-        if ( ( workflow == null ) )
+        if ( workflow == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
         }
 
         StateFilter stateFilter = new StateFilter(  );
         stateFilter.setIdWorkflow( nIdWorkflow );
 
-        List<State> listState = StateHome.getListStateByFilter( stateFilter, getPlugin(  ) );
+        List<State> listState = _stateService.getListStateByFilter( stateFilter );
 
         _strCurrentPageIndexState = Paginator.getPageIndex( request, PARAMETER_PAGE_INDEX_STATE,
                 _strCurrentPageIndexState );
         _nItemsPerPageState = Paginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_STATE, _nItemsPerPageState,
                 _nDefaultItemsPerPage );
 
-        LocalizedPaginator paginatorState = new LocalizedPaginator( listState, _nItemsPerPageState,
-                getJspModifyWorkflow( request, nIdWorkflow ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState, PARAMETER_ITEMS_PER_PAGE_STATE, 
-                getLocale(  ) );
+        LocalizedPaginator<State> paginatorState = new LocalizedPaginator<State>( listState, _nItemsPerPageState,
+                getJspModifyWorkflow( request, nIdWorkflow ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState,
+                PARAMETER_ITEMS_PER_PAGE_STATE, getLocale(  ) );
 
         ActionFilter actionFilter = new ActionFilter(  );
         actionFilter.setIdWorkflow( nIdWorkflow );
 
-        List<Action> listAction = ActionHome.getListActionByFilter( actionFilter, getPlugin(  ) );
+        List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
 
         for ( Action action : listAction )
         {
-            action.setStateBefore( StateHome.findByPrimaryKey( action.getStateBefore(  ).getId(  ), getPlugin(  ) ) );
-            action.setStateAfter( StateHome.findByPrimaryKey( action.getStateAfter(  ).getId(  ), getPlugin(  ) ) );
+            action.setStateBefore( _stateService.findByPrimaryKey( action.getStateBefore(  ).getId(  ) ) );
+            action.setStateAfter( _stateService.findByPrimaryKey( action.getStateAfter(  ).getId(  ) ) );
         }
 
         _strCurrentPageIndexAction = Paginator.getPageIndex( request, PARAMETER_PAGE_INDEX_ACTION,
@@ -388,9 +403,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         _nItemsPerPageAction = Paginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_ACTION,
                 _nItemsPerPageAction, _nDefaultItemsPerPage );
 
-        LocalizedPaginator paginatorAction = new LocalizedPaginator( listAction, _nItemsPerPageAction,
-                getJspModifyWorkflow( request, nIdWorkflow ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction, PARAMETER_ITEMS_PER_PAGE_ACTION, 
-                getLocale(  ) );
+        LocalizedPaginator<Action> paginatorAction = new LocalizedPaginator<Action>( listAction, _nItemsPerPageAction,
+                getJspModifyWorkflow( request, nIdWorkflow ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction,
+                PARAMETER_ITEMS_PER_PAGE_ACTION, getLocale(  ) );
 
         workflow.setAllActions( paginatorAction.getPageItems(  ) );
         workflow.setAllStates( paginatorState.getPageItems(  ) );
@@ -434,11 +449,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
             {
-                workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+                workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
 
                 if ( ( workflow == null ) )
                 {
-                    throw new AccessDeniedException(  );
+                    throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
                 }
 
                 String strError = getWorkflowData( request, workflow, getLocale(  ) );
@@ -448,7 +463,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     return strError;
                 }
 
-                WorkflowHome.update( workflow, getPlugin(  ) );
+                _workflowService.update( workflow );
 
                 if ( request.getParameter( PARAMETER_APPLY ) != null )
                 {
@@ -508,7 +523,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 AdminMessage.TYPE_STOP );
         }
 
-        WorkflowHome.remove( nIdWorkflow, getPlugin(  ) );
+        _workflowService.remove( nIdWorkflow );
 
         return getJspManageWorkflow( request );
     }
@@ -527,15 +542,15 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
-        Workflow workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+        Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
 
-        if ( ( workflow == null ) )
+        if ( workflow == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
         }
 
         workflow.setEnabled( true );
-        WorkflowHome.update( workflow, getPlugin(  ) );
+        _workflowService.update( workflow );
 
         return getJspManageWorkflow( request );
     }
@@ -554,12 +569,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
-        Workflow workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+        Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
         ArrayList<String> listErrors = new ArrayList<String>(  );
 
-        if ( ( workflow == null ) )
+        if ( workflow == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
         }
 
         if ( !WorkflowRemovalListenerService.getService(  ).checkForRemoval( strIdWorkflow, listErrors, getLocale(  ) ) )
@@ -572,7 +587,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         workflow.setEnabled( false );
-        WorkflowHome.update( workflow, getPlugin(  ) );
+        _workflowService.update( workflow );
 
         return getJspManageWorkflow( request );
     }
@@ -634,19 +649,19 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
         }
 
-        if ( ( workflow == null ) )
+        if ( workflow == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
         }
-        
-        List<Icon> listIcon = IconHome.getListIcons( getPlugin(  ) );
+
+        List<Icon> listIcon = _iconService.getListIcons(  );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_WORKFLOW, workflow );
-        model.put( MARK_INITIAL_STATE, StateHome.getInitialState( nIdWorkflow, getPlugin(  ) ) != null );
+        model.put( MARK_INITIAL_STATE, _stateService.getInitialState( nIdWorkflow ) != null );
         model.put( MARK_ICON_LIST, listIcon );
         setPageTitleProperty( PROPERTY_CREATE_STATE_PAGE_TITLE );
 
@@ -672,17 +687,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( ( request.getParameter( PARAMETER_CANCEL ) == null ) )
         {
-            Plugin plugin = getPlugin(  );
             Workflow workflow = null;
 
             if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
             {
-                workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+                workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
             }
 
-            if ( ( workflow == null ) )
+            if ( workflow == null )
             {
-                throw new AccessDeniedException(  );
+                throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
             }
 
             State state = new State(  );
@@ -698,7 +712,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             if ( state.isInitialState(  ) )
             {
                 // test if initial test already exist
-                State stateInitial = StateHome.getInitialState( nIdWorkflow, getPlugin(  ) );
+                State stateInitial = _stateService.getInitialState( nIdWorkflow );
 
                 if ( stateInitial != null )
                 {
@@ -709,7 +723,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 }
             }
 
-            StateHome.create( state, plugin );
+            _stateService.create( state );
         }
 
         return getJspModifyWorkflow( request, nIdWorkflow );
@@ -733,16 +747,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdState != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            state = StateHome.findByPrimaryKey( nIdState, getPlugin(  ) );
+            state = _stateService.findByPrimaryKey( nIdState );
         }
 
-        if ( ( state == null ) )
+        if ( state == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "State not found for ID " + nIdState );
         }
 
-        List<Icon> listIcon = IconHome.getListIcons( getPlugin(  ) );
-        
+        List<Icon> listIcon = _iconService.getListIcons(  );
+
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_STATE, state );
         model.put( MARK_ICON_LIST, listIcon );
@@ -771,12 +785,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdState != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            state = StateHome.findByPrimaryKey( nIdState, getPlugin(  ) );
+            state = _stateService.findByPrimaryKey( nIdState );
         }
 
-        if ( ( state == null ) )
+        if ( state == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "State not found for ID " + nIdState );
         }
 
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
@@ -796,7 +810,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 filter.setIdWorkflow( state.getWorkflow(  ).getId(  ) );
                 filter.setIsInitialState( StateFilter.FILTER_TRUE );
 
-                List<State> listState = StateHome.getListStateByFilter( filter, getPlugin(  ) );
+                List<State> listState = _stateService.getListStateByFilter( filter );
 
                 if ( listState.size(  ) != 0 )
                 {
@@ -807,7 +821,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 }
             }
 
-            StateHome.update( state, getPlugin(  ) );
+            _stateService.update( state );
         }
 
         return getJspModifyWorkflow( request, state.getWorkflow(  ).getId(  ) );
@@ -831,11 +845,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         ActionFilter filter = new ActionFilter(  );
         filter.setIdStateBefore( nIdState );
 
-        List<Action> listActionStateBefore = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listActionStateBefore = _actionService.getListActionByFilter( filter );
         filter.setIdStateBefore( ActionFilter.ALL_INT );
         filter.setIdStateAfter( nIdState );
 
-        List<Action> listActionStateAfter = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listActionStateAfter = _actionService.getListActionByFilter( filter );
 
         if ( ( listActionStateBefore.size(  ) != 0 ) || ( listActionStateAfter.size(  ) != 0 ) )
         {
@@ -868,11 +882,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         ActionFilter filter = new ActionFilter(  );
         filter.setIdStateBefore( nIdState );
 
-        List<Action> listActionStateBefore = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listActionStateBefore = _actionService.getListActionByFilter( filter );
         filter.setIdStateBefore( ActionFilter.ALL_INT );
         filter.setIdStateAfter( nIdState );
 
-        List<Action> listActionStateAfter = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listActionStateAfter = _actionService.getListActionByFilter( filter );
 
         if ( ( listActionStateBefore.size(  ) != 0 ) || ( listActionStateAfter.size(  ) != 0 ) )
         {
@@ -880,11 +894,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 AdminMessage.TYPE_STOP );
         }
 
-        State state = StateHome.findByPrimaryKey( nIdState, getPlugin(  ) );
+        State state = _stateService.findByPrimaryKey( nIdState );
 
         if ( state != null )
         {
-            StateHome.remove( nIdState, getPlugin(  ) );
+            _stateService.remove( nIdState );
 
             return getJspModifyWorkflow( request, state.getWorkflow(  ).getId(  ) );
         }
@@ -925,14 +939,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
                 AdminMessage.TYPE_STOP );
         }
-        
+
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
 
         state.setName( strName );
         state.setDescription( strDescription );
         state.setInitialState( strIsInitialState != null );
         state.setRequiredWorkgroupAssigned( strIsRequiredWorkgroupAssigned != null );
-        
+
         Icon icon = new Icon(  );
         icon.setId( nIdIcon );
         state.setIcon( icon );
@@ -958,12 +972,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
         }
 
-        if ( ( workflow == null ) )
+        if ( workflow == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
         }
 
         Map<String, Object> model = new HashMap<String, Object>(  );
@@ -971,8 +985,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         StateFilter filter = new StateFilter(  );
         filter.setIdWorkflow( nIdWorkflow );
 
-        List<State> listState = StateHome.getListStateByFilter( filter, getPlugin(  ) );
-        List<Icon> listIcon = IconHome.getListIcons( getPlugin(  ) );
+        List<State> listState = _stateService.getListStateByFilter( filter );
+        List<Icon> listIcon = _iconService.getListIcons(  );
 
         model.put( MARK_WORKFLOW, workflow );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale(  ) ) );
@@ -1002,17 +1016,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( ( request.getParameter( PARAMETER_CANCEL ) == null ) )
         {
-            Plugin plugin = getPlugin(  );
             Workflow workflow = null;
 
             if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
             {
-                workflow = WorkflowHome.findByPrimaryKey( nIdWorkflow, getPlugin(  ) );
+                workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
             }
 
-            if ( ( workflow == null ) )
+            if ( workflow == null )
             {
-                throw new AccessDeniedException(  );
+                throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
             }
 
             Action action;
@@ -1026,7 +1039,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
-            ActionHome.create( action, plugin );
+            _actionService.create( action );
 
             if ( request.getParameter( PARAMETER_APPLY ) != null )
             {
@@ -1060,7 +1073,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         boolean bIsAutomatic = strAutomatic != null;
         boolean bIsMassAction = strIsMassAction != null;
 
-        String strFieldError = WorkflowUtils.EMPTY_STRING;
+        String strFieldError = StringUtils.EMPTY;
 
         if ( ( strName == null ) || strName.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
         {
@@ -1087,7 +1100,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             Object[] tabRequiredFields = 
                 {
                     I18nService.getLocalizedString( FIELD_STATE_BEFORE, getLocale(  ) ),
-                    I18nService.getLocalizedString( FIELD_STATE_AFTER, getLocale(  ) )
+                    I18nService.getLocalizedString( FIELD_STATE_AFTER, getLocale(  ) ),
                 };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields,
@@ -1095,11 +1108,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
         else if ( bIsAutomatic && bIsMassAction )
         {
-        	return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC,
-                    AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC,
+                AdminMessage.TYPE_STOP );
         }
 
-        if ( !strFieldError.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strFieldError ) )
         {
             Object[] tabRequiredFields = { I18nService.getLocalizedString( strFieldError, getLocale(  ) ) };
 
@@ -1107,11 +1120,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 AdminMessage.TYPE_STOP );
         }
 
-        if ( ( action != null ) && ( strAutomatic != null ) )
+        if ( action == null )
         {
-            for ( ITask task : TaskHome.getListTaskByIdAction( action.getId(  ), getPlugin(  ), getLocale(  ) ) )
+            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+        }
+
+        if ( strAutomatic != null )
+        {
+            for ( ITask task : _taskService.getListTaskByIdAction( action.getId(  ), getLocale(  ) ) )
             {
-                if ( !task.isTaskForActionAutomatic(  ) )
+                if ( !task.getTaskType(  ).isTaskForAutomaticAction(  ) )
                 {
                     return AdminMessageService.getMessageUrl( request, MESSAGE_TASK_IS_NOT_AUTOMATIC,
                         AdminMessage.TYPE_STOP );
@@ -1158,29 +1176,29 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdAction != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            action = ActionHome.findByPrimaryKey( nIdAction, getPlugin(  ) );
+            action = _actionService.findByPrimaryKey( nIdAction );
         }
 
-        if ( ( action == null ) )
+        if ( action == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Action not found for ID " + nIdAction );
         }
 
         StateFilter filter = new StateFilter(  );
         filter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
 
-        List<State> listState = StateHome.getListStateByFilter( filter, getPlugin(  ) );
-        List<Icon> listIcon = IconHome.getListIcons( getPlugin(  ) );
+        List<State> listState = _stateService.getListStateByFilter( filter );
+        List<Icon> listIcon = _iconService.getListIcons(  );
 
         ReferenceList refListTaskType = new ReferenceList(  );
-        Collection<ITaskType> taskTypeList = WorkflowService.getInstance(  ).getTaskTypeList(  );
+        Collection<ITaskType> taskTypeList = _taskFactory.getAllTaskTypes(  );
 
         if ( ( action != null ) && action.isAutomaticState(  ) )
         {
             for ( ITaskType taskType : taskTypeList )
             {
-                if ( WorkflowService.getInstance(  ).getTaskInstance( taskType.getKey(  ), getLocale(  ) )
-                                        .isTaskForActionAutomatic(  ) )
+                if ( _taskFactory.newTask( taskType.getKey(  ), getLocale(  ) ).getTaskType(  )
+                                     .isTaskForAutomaticAction(  ) )
                 {
                     refListTaskType.addItem( taskType.getKey(  ),
                         I18nService.getLocalizedString( taskType.getTitleI18nKey(  ), getLocale(  ) ) );
@@ -1189,7 +1207,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
         else
         {
-            refListTaskType = WorkflowService.getInstance(  ).getRefListTaskType( getLocale(  ) );
+            refListTaskType = ReferenceList.convert( _workflowService.getMapTaskTypes( getLocale(  ) ) );
         }
 
         Map<String, Object> model = new HashMap<String, Object>(  );
@@ -1197,7 +1215,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         setPageTitleProperty( PROPERTY_MODIFY_ACTION_PAGE_TITLE );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale(  ) ) );
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
-        model.put( MARK_TASK_LIST, TaskHome.getListTaskByIdAction( nIdAction, getPlugin(  ), getLocale(  ) ) );
+        model.put( MARK_TASK_LIST, _taskService.getListTaskByIdAction( nIdAction, getLocale(  ) ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin(  ) );
         model.put( MARK_LOCALE, getLocale(  ) );
@@ -1225,12 +1243,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( nIdAction != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            action = ActionHome.findByPrimaryKey( nIdAction, getPlugin(  ) );
+            action = _actionService.findByPrimaryKey( nIdAction );
         }
 
-        if ( ( action == null ) )
+        if ( action == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Action not found for ID " + nIdAction );
         }
 
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
@@ -1242,7 +1260,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
-            ActionHome.update( action, getPlugin(  ) );
+            _actionService.update( action );
         }
 
         if ( request.getParameter( PARAMETER_APPLY ) != null )
@@ -1288,11 +1306,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
-        Action action = ActionHome.findByPrimaryKey( nIdAction, getPlugin(  ) );
+        Action action = _actionService.findByPrimaryKey( nIdAction );
 
         if ( action != null )
         {
-            ActionHome.remove( nIdAction, getPlugin(  ) );
+            _actionService.remove( nIdAction );
 
             return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) );
         }
@@ -1315,13 +1333,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         String strTaskTypeKey = request.getParameter( PARAMETER_TASK_TYPE_KEY );
-        Action action = ActionHome.findByPrimaryKey( nIdAction, getPlugin(  ) );
-        ITask task = WorkflowService.getInstance(  ).getTaskInstance( strTaskTypeKey, getLocale(  ) );
+        Action action = _actionService.findByPrimaryKey( nIdAction );
+        ITask task = _taskFactory.newTask( strTaskTypeKey, getLocale(  ) );
 
         if ( ( action != null ) && ( task != null ) )
         {
             task.setAction( action );
-            TaskHome.create( task, getPlugin(  ) );
+            _taskService.create( task );
         }
 
         return getJspModifyAction( request, nIdAction );
@@ -1341,17 +1359,17 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
-        ITask task = TaskHome.findByPrimaryKey( nIdTask, getPlugin(  ), getLocale(  ) );
+        ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale(  ) );
 
-        if ( ( task == null ) )
+        if ( task == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "Task not found for ID " + nIdTask );
         }
 
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_TASK, task );
-        model.put( MARK_TASK_CONFIG, task.getDisplayConfigForm( request, getPlugin(  ), getLocale(  ) ) );
+        model.put( MARK_TASK_CONFIG, TaskComponentManager.getDisplayConfigForm( request, getLocale(  ), task ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_TASK_PAGE_TITLE );
 
@@ -1374,13 +1392,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
-        ITask task = TaskHome.findByPrimaryKey( nIdTask, getPlugin(  ), getLocale(  ) );
+        ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale(  ) );
 
         if ( task != null )
         {
             if ( request.getParameter( PARAMETER_CANCEL ) == null )
             {
-                String strError = task.doSaveConfig( request, getLocale(  ), getPlugin(  ) );
+                String strError = TaskComponentManager.doSaveConfig( request, getLocale(  ), task );
 
                 if ( strError != null )
                 {
@@ -1436,9 +1454,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
-        ITask task = TaskHome.findByPrimaryKey( nIdTask, getPlugin(  ), getLocale(  ) );
+        ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale(  ) );
 
-        if ( task != null )
+        if ( ( task != null ) && ( task.getTaskType(  ) != null ) )
         {
             List<String> listErrors = new ArrayList<String>(  );
 
@@ -1451,14 +1469,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     AdminMessage.TYPE_STOP );
             }
 
-            if ( task.isConfigRequire(  ) )
+            if ( task.getTaskType(  ).isConfigRequired(  ) )
             {
-                task.doRemoveConfig( getPlugin(  ) );
+                task.doRemoveConfig(  );
             }
 
-            TaskHome.remove( nIdTask, getPlugin(  ) );
+            _taskService.remove( nIdTask );
 
-            Action action = ActionHome.findByPrimaryKey( task.getAction(  ).getId(  ), getPlugin(  ) );
+            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
 
             if ( action != null )
             {
@@ -1467,6 +1485,25 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         return getJspManageWorkflow( request );
+    }
+
+    /**
+     * Returns advanced parameters form
+     *
+     * @param request The Http request
+     * @return Html form
+     */
+    public String getManageAdvancedParameters( HttpServletRequest request )
+    {
+        if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
+                    ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser(  ) ) )
+        {
+            return getManageWorkflow( request );
+        }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_ADVANCED_PARAMETERS, getLocale(  ) );
+
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -1493,10 +1530,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     /**
      * return url of the jsp modify workflow
      *
-     * @param request
-     *            The HTTP request
-     * @param nIdWorkflow
-     *            the key of workflow to modify
+     * @param request The HTTP request
+     * @param nIdWorkflow the key of workflow to modify
      * @return return url of the jsp modify workflows
      */
     private String getJspModifyWorkflow( HttpServletRequest request, int nIdWorkflow )
@@ -1506,12 +1541,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     }
 
     /**
-     * return url of the jsp modify action
-     *
-     * @param request
-     *            The HTTP request
-     * @param nIdAction
-     *            the key of action to modify
+     * Return url of the jsp modify action
+     * @param request The HTTP request
+     * @param nIdTask the id task
      * @return return url of the jsp modify action
      */
     private String getJspModifyTask( HttpServletRequest request, int nIdTask )
@@ -1520,12 +1552,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     }
 
     /**
-     * return url of the jsp modify action
-     *
-     * @param request
-     *            The HTTP request
-     * @param nIdAction
-     *            the key of action to modify
+     * Return url of the jsp modify action
+     * @param request The HTTP request
+     * @param nIdAction The key of action to modify
      * @return return url of the jsp modify action
      */
     private String getJspModifyAction( HttpServletRequest request, int nIdAction )
@@ -1541,27 +1570,5 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private String getJspManageWorkflow( HttpServletRequest request )
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_WORKFLOW;
-    }
-
-    /**
-     * Returns advanced parameters form
-     *
-     * @param request The Http request
-     * @return Html form
-     */
-    public String getManageAdvancedParameters( HttpServletRequest request )
-    {
-        if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                    ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser(  ) ) )
-        {
-            return getManageWorkflow( request );
-        }
-
-        Map<String, Object> model = WorkflowService.getInstance(  ).getManageAdvancedParameters( getUser(  ) );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_ADVANCED_PARAMETERS, getLocale(  ),
-                model );
-
-        return getAdminPage( template.getHtml(  ) );
     }
 }

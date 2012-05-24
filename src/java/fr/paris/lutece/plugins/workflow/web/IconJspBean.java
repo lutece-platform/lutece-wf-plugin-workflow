@@ -33,23 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-
-import fr.paris.lutece.plugins.workflow.business.ActionFilter;
-import fr.paris.lutece.plugins.workflow.business.ActionHome;
-import fr.paris.lutece.plugins.workflow.business.IconHome;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.portal.business.workflow.Action;
-import fr.paris.lutece.portal.business.workflow.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
+import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -59,6 +55,14 @@ import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
+
+import org.apache.commons.fileupload.FileItem;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -115,6 +119,8 @@ public class IconJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 15 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
+    private IIconService _iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
+    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
 
     /**
      * Return management icon ( list of icon )
@@ -123,14 +129,14 @@ public class IconJspBean extends PluginAdminPageJspBean
      */
     public String getManageIcon( HttpServletRequest request )
     {
-        HashMap model = new HashMap(  );
-        List<Icon> listDirectoryXsl = IconHome.getListIcons( getPlugin(  ) );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<Icon> listDirectoryXsl = _iconService.getListIcons(  );
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
                 _nDefaultItemsPerPage );
 
-        LocalizedPaginator paginator = new LocalizedPaginator( listDirectoryXsl, _nItemsPerPage, getJspManageIcon( request ),
-                PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<Icon> paginator = new LocalizedPaginator<Icon>( listDirectoryXsl, _nItemsPerPage,
+                getJspManageIcon( request ), PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, EMPTY_STRING + _nItemsPerPage );
@@ -173,7 +179,7 @@ public class IconJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
-            IconHome.create( icon, getPlugin(  ) );
+            _iconService.create( icon );
         }
 
         return getJspManageIcon( request );
@@ -188,17 +194,16 @@ public class IconJspBean extends PluginAdminPageJspBean
     public String getModifyIcon( HttpServletRequest request )
         throws AccessDeniedException
     {
-        Icon icon;
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
-        icon = IconHome.findByPrimaryKey( nIdIcon, getPlugin(  ) );
+        Icon icon = _iconService.findByPrimaryKey( nIdIcon );
 
-        if ( ( icon == null ) )
+        if ( icon == null )
         {
-            throw new AccessDeniedException(  );
+            throw new AccessDeniedException( "The icon is not found for ID " + nIdIcon );
         }
 
-        HashMap model = new HashMap(  );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_ICON, icon );
         setPageTitleProperty( PROPERTY_MODIFY_ICON );
@@ -219,14 +224,13 @@ public class IconJspBean extends PluginAdminPageJspBean
     {
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
-            Icon icon;
             String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
             int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
-            icon = IconHome.findByPrimaryKey( nIdIcon, getPlugin(  ) );
+            Icon icon = _iconService.findByPrimaryKey( nIdIcon );
 
-            if ( ( icon == null ) )
+            if ( icon == null )
             {
-                throw new AccessDeniedException(  );
+                throw new AccessDeniedException( "The icon is not found for ID " + nIdIcon );
             }
 
             String strError = getIconData( request, icon );
@@ -238,11 +242,11 @@ public class IconJspBean extends PluginAdminPageJspBean
 
             if ( icon.getValue(  ) != null )
             {
-                IconHome.update( icon, getPlugin(  ) );
+                _iconService.update( icon );
             }
             else
             {
-                IconHome.updateMetadata( icon, getPlugin(  ) );
+                _iconService.updateMetadata( icon );
             }
         }
 
@@ -263,7 +267,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         ActionFilter filter = new ActionFilter(  );
         filter.setIdIcon( nIdIcon );
 
-        List<Action> listAction = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listAction = _actionService.getListActionByFilter( filter );
 
         if ( listAction.size(  ) != 0 )
         {
@@ -292,15 +296,15 @@ public class IconJspBean extends PluginAdminPageJspBean
         ActionFilter filter = new ActionFilter(  );
         filter.setIdIcon( nIdIcon );
 
-        List<Action> listAction = ActionHome.getListActionByFilter( filter, getPlugin(  ) );
+        List<Action> listAction = _actionService.getListActionByFilter( filter );
 
-        if ( listAction.size(  ) != 0 )
+        if ( !listAction.isEmpty(  ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE,
                 AdminMessage.TYPE_STOP );
         }
 
-        IconHome.remove( nIdIcon, getPlugin(  ) );
+        _iconService.remove( nIdIcon );
 
         return getJspManageIcon( request );
     }

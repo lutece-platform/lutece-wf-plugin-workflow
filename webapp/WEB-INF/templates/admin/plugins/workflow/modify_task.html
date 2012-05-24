@@ -1,9 +1,9 @@
 <div class="content-box">
 	<h2>#i18n{workflow.modify_task.title}</h2>
    	<form action="jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
-	   <input name="id_task" value="${task.id}" type="hidden">
+	   <input name="id_task" value="${task.id!}" type="hidden">
 	  	<div class="highlight-box">
-	  		${task_config}
+	  		${task_config!}
 	    </div>
 	    <p>
 	  		<input type="submit" value="#i18n{workflow.modify_task.button_save}" class="button" name="save" />

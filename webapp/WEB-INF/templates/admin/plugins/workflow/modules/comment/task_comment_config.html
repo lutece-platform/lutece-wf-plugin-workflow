@@ -1,0 +1,30 @@
+<div>
+  <h2> #i18n{module.workflow.comment.task_comment_config.title}</h2>
+ 	
+	  
+	  	<p>
+	    	<label for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
+		    	<#if config?exists>
+		     			  <input type="text" name="title" id="" size="80" value="${config.title}"  maxlength="255"/>
+		     	<#else>
+		     			<input type="text" name="title" id="" size="80" value=""  maxlength="255"/>
+		     	</#if>		
+			   <br/>
+			  <label>&nbsp;</label>
+			#i18n{module.workflow.comment.task_comment_config.label_title_comment}
+		</p>
+		 <p>
+			 <label for="is_mandatory">#i18n{module.workflow.comment.task_comment_config.label_mandatory} :</label>
+   		 		<#if config?exists&&config.mandatory>
+   		 			<input name="is_mandatory" value="1" type="checkbox" checked="checked">
+   		 		<#else>
+   		 			<input name="is_mandatory" value="1" type="checkbox">
+   		 		</#if>
+   				<br/>
+ 			 <label>&nbsp;</label> #i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}
+	 	</p>	
+	 
+ </div>
+ 
+
+	

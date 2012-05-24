@@ -33,41 +33,44 @@
  */
 package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+
+import org.springframework.beans.factory.InitializingBean;
+
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.workflow.business.task.ITaskType;
 
 /**
- * 
+ *
  * ITaskInfoProvider
  *
  */
-public interface ITaskInfoProvider
+public interface ITaskInfoProvider extends InitializingBean
 {
-	/**
-	 * Set the task type
-	 * @param task type
-	 */
-	void setTaskType( ITaskType taskType );
+    /**
+     * Set the task type
+     * @param taskType the task type
+     */
+    void setTaskType( ITaskType taskType );
 
-	/**
-	 * Get the task type
-	 * @return the task type
-	 */
-	ITaskType getTaskType(  );
+    /**
+     * Get the task type
+     * @return the task type
+     */
+    ITaskType getTaskType(  );
 
-	/**
-	 * Get the task resource info
-	 * @param nIdHistory the id history
-	 * @param nIdTask the id task
-	 * @param request the HTTP request
-	 * @return the task resource info
-	 */
-	String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request );
+    /**
+     * Get the task resource info
+     * @param nIdHistory the id history
+     * @param nIdTask the id task
+     * @param request the HTTP request
+     * @return the task resource info
+     */
+    String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request );
 
-	/**
-	 * Get the plugin name
-	 * @return the plugin name
-	 */
-	String getPluginName(  );
+    /**
+     * Get the plugin name
+     * @return the plugin name
+     */
+    String getPluginName(  );
 }

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 
 
@@ -48,8 +49,7 @@ public class WorkflowPlugin extends PluginDefaultImplementation
      */
     public void init(  )
     {
-        // Initialize the Poll service
-        WorkflowService.getInstance(  ).init(  );
+        Workflow.init(  );
         //ImageResourceManager
         FileIconeService.getInstance(  ).register(  );
     }
