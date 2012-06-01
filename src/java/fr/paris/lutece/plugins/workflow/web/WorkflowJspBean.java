@@ -82,8 +82,10 @@ import fr.paris.lutece.util.url.UrlItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -143,6 +145,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_ITEMS_PER_PAGE_STATE = "items_per_page_state";
     private static final String PARAMETER_ITEMS_PER_PAGE_ACTION = "items_per_page_action";
     private static final String PARAMETER_TASK_TYPE_KEY = "task_type_key";
+    private static final String PARAMETER_SELECT_LINKED_ACTIONS = "select_linked_actions";
+    private static final String PARAMETER_UNSELECT_LINKED_ACTIONS = "unselect_linked_actions";
 
     // properties
     private static final String PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE = "workflow.manage_workflow.page_title";
@@ -196,6 +200,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_INITIAL_STATE = "initial_state";
     private static final String MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS = "permission_manage_advanced_parameters";
     private static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
+    private static final String MARK_AVAILABLE_LINKED_ACTIONS = "available_linked_actions";
+    private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
@@ -991,6 +997,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_WORKFLOW, workflow );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale(  ) ) );
         model.put( MARK_ICON_LIST, listIcon );
+        model.put( MARK_AVAILABLE_LINKED_ACTIONS,
+            getAvailableActionsToLink( WorkflowUtils.CONSTANT_ID_NULL, nIdWorkflow ) );
 
         setPageTitleProperty( PROPERTY_CREATE_ACTION_PAGE_TITLE );
 
@@ -1155,6 +1163,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         action.setAutomaticState( bIsAutomatic );
         action.setMassAction( bIsMassAction );
 
+        action.setListIdsLinkedAction( getSelectedLinkedActions( action, request ) );
+
         return null;
     }
 
@@ -1210,15 +1220,19 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             refListTaskType = ReferenceList.convert( _workflowService.getMapTaskTypes( getLocale(  ) ) );
         }
 
+        setPageTitleProperty( PROPERTY_MODIFY_ACTION_PAGE_TITLE );
+
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_ACTION, action );
-        setPageTitleProperty( PROPERTY_MODIFY_ACTION_PAGE_TITLE );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale(  ) ) );
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
         model.put( MARK_TASK_LIST, _taskService.getListTaskByIdAction( nIdAction, getLocale(  ) ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin(  ) );
         model.put( MARK_LOCALE, getLocale(  ) );
+        model.put( MARK_AVAILABLE_LINKED_ACTIONS,
+            getAvailableActionsToLink( nIdAction, action.getWorkflow(  ).getId(  ) ) );
+        model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale(  ), model );
 
@@ -1570,5 +1584,90 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private String getJspManageWorkflow( HttpServletRequest request )
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_WORKFLOW;
+    }
+
+    /**
+     * Get the available linked actions for a given action
+     * @param nIdAction the ID action
+     * @param nIdWorkflow the id workflow
+     * @return a {@link ReferenceList}
+     */
+    private ReferenceList getAvailableActionsToLink( int nIdAction, int nIdWorkflow )
+    {
+        ReferenceList listLinkedActions = new ReferenceList(  );
+        Collection<Integer> listIdsLinkedAction = _actionService.getListIdsLinkedAction( nIdAction );
+        ActionFilter filter = new ActionFilter(  );
+        filter.setIdWorkflow( nIdWorkflow );
+
+        for ( Action actionToLink : _actionService.getListActionByFilter( filter ) )
+        {
+            if ( !listIdsLinkedAction.contains( actionToLink.getId(  ) ) && ( actionToLink.getId(  ) != nIdAction ) )
+            {
+                listLinkedActions.addItem( actionToLink.getId(  ), actionToLink.getName(  ) );
+            }
+        }
+
+        return listLinkedActions;
+    }
+
+    /**
+     * Get the linked actions of a given id action
+     * @param nIdAction the id action
+     * @return a {@link ReferenceList}
+     */
+    private ReferenceList getLinkedActions( int nIdAction )
+    {
+        ReferenceList listLinkedActions = new ReferenceList(  );
+
+        for ( int nIdLinkedAction : _actionService.getListIdsLinkedAction( nIdAction ) )
+        {
+            Action linkedAction = _actionService.findByPrimaryKey( nIdLinkedAction );
+
+            if ( ( linkedAction != null ) && ( linkedAction.getId(  ) != nIdAction ) )
+            {
+                listLinkedActions.addItem( linkedAction.getId(  ), linkedAction.getName(  ) );
+            }
+        }
+
+        return listLinkedActions;
+    }
+
+    /**
+     * Get the selected linked actions
+     * @param action the action
+     * @param request the HTTP request
+     * @return a collection of IDs action
+     */
+    private Collection<Integer> getSelectedLinkedActions( Action action, HttpServletRequest request )
+    {
+        Collection<Integer> listIdsLinkedAction = action.getListIdsLinkedAction(  );
+
+        if ( listIdsLinkedAction == null )
+        {
+            listIdsLinkedAction = new LinkedHashSet<Integer>(  );
+        }
+
+        // Remove unselected id linked action from the list
+        String[] strUnselectedLinkedActions = request.getParameterValues( PARAMETER_UNSELECT_LINKED_ACTIONS );
+
+        if ( ( strUnselectedLinkedActions != null ) && ( strUnselectedLinkedActions.length > 0 ) )
+        {
+            if ( !listIdsLinkedAction.isEmpty(  ) )
+            {
+                Integer[] listUnselectedLinkedActions = WorkflowUtils.convertStringToInt( strUnselectedLinkedActions );
+                listIdsLinkedAction.removeAll( Arrays.asList( listUnselectedLinkedActions ) );
+            }
+        }
+
+        // Add selected linked actions
+        String[] strSelectedLinkedActions = request.getParameterValues( PARAMETER_SELECT_LINKED_ACTIONS );
+
+        if ( ( strSelectedLinkedActions != null ) && ( strSelectedLinkedActions.length > 0 ) )
+        {
+            Integer[] listSelectedLinkedActions = WorkflowUtils.convertStringToInt( strSelectedLinkedActions );
+            listIdsLinkedAction.addAll( Arrays.asList( listSelectedLinkedActions ) );
+        }
+
+        return listIdsLinkedAction;
     }
 }

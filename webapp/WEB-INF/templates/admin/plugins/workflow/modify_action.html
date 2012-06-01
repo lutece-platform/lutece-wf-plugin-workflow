@@ -58,6 +58,33 @@
 			 	<br/>
 				<label>&nbsp;</label>#i18n{workflow.create_action.label_mass_action_comment}
 			</p>
+			<p>
+				<label for="">#i18n{workflow.create_action.label_link_actions} :</label>
+				#i18n{workflow.create_action.label_link_actions_comment}
+				<br />
+				<label>&nbsp;</label>
+				#i18n{workflow.create_action.label_link_actions_example}
+			</p>
+			<table>
+				<tr>
+					<th>#i18n{workflow.create_action.label_available_linked_actions}</th>
+					<th>&nbsp;</th>
+					<th>#i18n{workflow.create_action.label_selected_linked_actions}</th>
+				</tr>
+				<tr>
+					<td>
+						<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_linked_actions max_length=175 />
+					</td>
+					<td>
+						<div align="center">
+							<input class="button" type="submit" name="apply" value="#i18n{workflow.create_action.label_select_unselect_linked_actions}" />
+						</div>
+					</td>
+					<td>
+						<@comboWithParamsAndLength name="unselect_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=selected_linked_actions max_length=175 />
+					</td>
+				</tr>
+			</table>
 		</div>
 		<p>
 	  		<input type="submit" value="#i18n{workflow.create_action.button_save}" class="button" name="save" />

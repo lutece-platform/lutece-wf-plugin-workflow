@@ -50,6 +50,17 @@
 			 	<br/>
 				<label>&nbsp;</label>#i18n{workflow.create_action.label_mass_action_comment}
 		   	</p>
+		   	<p>
+				<label for="">#i18n{workflow.create_action.label_link_actions} :</label>
+				#i18n{workflow.create_action.label_link_actions_comment}
+				<br />
+				<label>&nbsp;</label>
+				#i18n{workflow.create_action.label_link_actions_example}
+			</p>
+		   	<p>
+		   		<label for="selected_linked_actions">#i18n{workflow.create_action.label_available_linked_actions}</label>
+		   		<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:40%;'" items=available_linked_actions max_length=175 />
+		   	</p>
 		</div>
 		<p>
 	  		<input type="submit" value="#i18n{workflow.create_action.button_save}" class="button" name="save" />

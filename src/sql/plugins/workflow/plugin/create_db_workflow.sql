@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS workflow_task_assignment_cf;
 DROP TABLE IF EXISTS workflow_workgroup_cf;
 DROP TABLE IF EXISTS workflow_resource_workgroup;
 DROP TABLE IF EXISTS workflow_workflow;
+DROP TABLE IF EXISTS workflow_action_action;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
@@ -234,6 +235,16 @@ CREATE TABLE workflow_resource_workgroup
 CREATE INDEX workflow_resource_workgroup_id_resource_fk ON workflow_resource_workgroup(id_resource);
 CREATE INDEX workflow_resource_workgroup_resource_type_fk ON workflow_resource_workgroup(resource_type);
 CREATE INDEX workflow_resource_workgroup_id_workflow_fk ON workflow_resource_workgroup(id_workflow);
+
+-- ---------------------------------------------------------
+-- Table structure for table workflow_action_action 	  --
+-- ---------------------------------------------------------
+CREATE TABLE workflow_action_action
+(
+	id_action INT DEFAULT 0 NOT NULL,
+	id_linked_action INT DEFAULT 0 NOT NULL,
+	PRIMARY KEY (id_action, id_linked_action)
+);
 
 -- ---------------
 -- Constraints --

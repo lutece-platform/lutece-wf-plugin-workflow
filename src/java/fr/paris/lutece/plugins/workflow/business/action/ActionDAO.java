@@ -44,6 +44,8 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 
@@ -69,6 +71,10 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action  SET id_action=?,name=?,description=?," +
         "id_workflow=?,id_state_before=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=? " +
         " WHERE id_action=?";
+    private static final String SQL_QUERY_INSERT_LINKED_ACTION = " INSERT INTO workflow_action_action (id_action, id_linked_action) VALUES ( ?,? ) ";
+    private static final String SQL_QUERY_REMOVE_LINKED_ACTION = " DELETE FROM workflow_action_action WHERE id_action = ? OR id_linked_action = ? ";
+    private static final String SQL_QUERY_SELECT_LINKED_ACTION = " SELECT id_action FROM workflow_action_action WHERE id_linked_action = ?";
+    private static final String SQL_QUERY_SELECT_LINKED_ACTION_2 = " SELECT id_linked_action FROM workflow_action_action WHERE id_action = ?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action  WHERE id_action=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " id_workflow = ? ";
     private static final String SQL_FILTER_ID_STATE_BEFORE = " id_state_before= ? ";
@@ -379,5 +385,67 @@ public class ActionDAO implements IActionDAO
         daoUtil.free(  );
 
         return listAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void insertLinkedActions( int nIdAction, int nIdLinkedAction )
+    {
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_LINKED_ACTION, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( ++nPos, nIdAction );
+        daoUtil.setInt( ++nPos, nIdLinkedAction );
+
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeLinkedActions( int nIdAction )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_REMOVE_LINKED_ACTION, WorkflowUtils.getPlugin(  ) );
+        int nIndex = 1;
+        daoUtil.setInt( nIndex++, nIdAction );
+        daoUtil.setInt( nIndex++, nIdAction );
+
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Integer> selectListIdsLinkedAction( int nIdAction )
+    {
+        Collection<Integer> listIdsLinkedAction = new LinkedHashSet<Integer>(  );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nIdAction );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+        }
+
+        daoUtil.free(  );
+
+        daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION_2, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nIdAction );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+        }
+
+        daoUtil.free(  );
+
+        return listIdsLinkedAction;
     }
 }

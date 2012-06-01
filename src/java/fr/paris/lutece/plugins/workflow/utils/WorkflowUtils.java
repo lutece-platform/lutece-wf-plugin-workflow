@@ -235,4 +235,27 @@ public final class WorkflowUtils
     {
         return PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
     }
+
+    /**
+     * Convert an array of Strings into an array of Integers
+     * @param listToConvert the list to convert
+     * @return an array of Integers
+     */
+    public static Integer[] convertStringToInt( String[] listToConvert )
+    {
+        if ( ( listToConvert != null ) && ( listToConvert.length > 0 ) )
+        {
+            int nIndex = 0;
+            Integer[] listConverted = new Integer[listToConvert.length];
+
+            for ( String strToConvert : listToConvert )
+            {
+                listConverted[nIndex++] = convertStringToInt( strToConvert );
+            }
+
+            return listConverted;
+        }
+
+        return null;
+    }
 }
