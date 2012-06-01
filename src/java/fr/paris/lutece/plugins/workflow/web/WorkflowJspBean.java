@@ -202,6 +202,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
     private static final String MARK_AVAILABLE_LINKED_ACTIONS = "available_linked_actions";
     private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
+    private static final String MARK_DISPLAY_TASKS_FORM = "display_tasks_form";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
@@ -1230,9 +1231,17 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin(  ) );
         model.put( MARK_LOCALE, getLocale(  ) );
-        model.put( MARK_AVAILABLE_LINKED_ACTIONS,
-            getAvailableActionsToLink( nIdAction, action.getWorkflow(  ).getId(  ) ) );
-        model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
+
+        boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale(  ) );
+        model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
+
+        // The action can be linked only it has no task that requires a form
+        if ( !bDisplayTasksForm )
+        {
+            model.put( MARK_AVAILABLE_LINKED_ACTIONS,
+                getAvailableActionsToLink( nIdAction, action.getWorkflow(  ).getId(  ) ) );
+            model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
+        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale(  ), model );
 
@@ -1354,6 +1363,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             task.setAction( action );
             _taskService.create( task );
+
+            // If the task requires a form, then remove any links to the action
+            if ( task.getTaskType(  ).isFormTaskRequired(  ) )
+            {
+                _actionService.removeLinkedActions( nIdAction );
+            }
         }
 
         return getJspModifyAction( request, nIdAction );
@@ -1601,7 +1616,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         for ( Action actionToLink : _actionService.getListActionByFilter( filter ) )
         {
-            if ( !listIdsLinkedAction.contains( actionToLink.getId(  ) ) && ( actionToLink.getId(  ) != nIdAction ) )
+            /**
+             * The action can be linked only if the following conditions are met :
+             * - it should not already be in the list of linked action
+             * - it should not be the action to link itself
+             * - it should not have any task that requires a form
+             */
+            if ( !listIdsLinkedAction.contains( actionToLink.getId(  ) ) && ( actionToLink.getId(  ) != nIdAction ) &&
+                    !_workflowService.isDisplayTasksForm( actionToLink.getId(  ), null ) )
             {
                 listLinkedActions.addItem( actionToLink.getId(  ), actionToLink.getName(  ) );
             }
