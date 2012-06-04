@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHi
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
-import fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
@@ -75,12 +74,22 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskAssignment extends Task
 {
+    // TEMPLATE
     private static final String TEMPLATE_TASK_NOTIFICATION_MAIL = "admin/plugins/workflow/modules/notification/task_notification_mail.html";
+
+    // PARAMETER
     private static final String PARAMETER_WORKGROUPS = "workgroups";
+
+    // MARK
     private static final String MARK_MESSAGE = "message";
+
+    // PROPERTIES
     private static final String PROPERTY_MAIL_SENDER_NAME = "module.workflow.assignment.task_assignment_config.mailSenderName";
+
+    // BEANS
+    private static final String BEAN_COMMENT_CONFIG_SERVICE = "workflow.taskCommentConfigService";
     @Inject
-    @Named( TaskCommentConfigService.BEAN_SERVICE )
+    @Named( BEAN_COMMENT_CONFIG_SERVICE )
     private ITaskConfigService _taskCommentConfigService;
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;

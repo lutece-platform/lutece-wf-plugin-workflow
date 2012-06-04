@@ -59,8 +59,9 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskComment extends Task
 {
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";
+    private static final String BEAN_COMMENT_CONFIG_SERVICE = "workflow.taskCommentConfigService";
     @Inject
-    @Named( TaskCommentConfigService.BEAN_SERVICE )
+    @Named( BEAN_COMMENT_CONFIG_SERVICE )
     private ITaskConfigService _taskCommentConfigService;
     @Inject
     private ICommentValueService _commentValueService;

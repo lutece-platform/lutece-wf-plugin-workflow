@@ -111,8 +111,8 @@
 		p:taskConfigDAO-ref="workflow.taskAssignmentConfigDAO" />
 	<bean id="workflow.workgroupConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.WorkgroupConfigService" />
 	<bean id="workflow.commentValueService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService" />
-	<bean id="workflow.taskCommentConfigService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService"
+	<bean id="workflow.taskCommentConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		p:taskConfigDAO-ref="workflow.taskCommentConfigDAO" />
-	<bean id="workflow.taskNotificationConfigService" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotificationConfigService"
+	<bean id="workflow.taskNotificationConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		p:taskConfigDAO-ref="workflow.taskNotificationConfigDAO" />
  </beans>

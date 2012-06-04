@@ -61,10 +61,16 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskNotification extends Task
 {
+    // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFICATION_MAIL = "admin/plugins/workflow/modules/notification/task_notification_mail.html";
+
+    // MARKS
     private static final String MARK_MESSAGE = "message";
+
+    // BEANS
+    private static final String BEAN_NOTIFICATION_CONFIG_SERVICE = "workflow.taskNotificationConfigService";
     @Inject
-    @Named( TaskNotificationConfigService.BEAN_SERVICE )
+    @Named( BEAN_NOTIFICATION_CONFIG_SERVICE )
     private ITaskConfigService _taskNotificationConfigService;
 
     /**
