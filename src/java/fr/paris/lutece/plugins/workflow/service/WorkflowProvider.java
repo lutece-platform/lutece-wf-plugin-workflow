@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.service;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryFactory;
@@ -52,6 +51,7 @@ import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
@@ -123,6 +123,8 @@ public class WorkflowProvider implements IWorkflowProvider
     private ITaskService _taskService;
     @Inject
     private IWorkflowService _workflowService;
+    @Inject
+    private ITaskComponentManager _taskComponentManager;
 
     // GET
 
@@ -317,7 +319,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
             for ( ITask task : listActionTasks )
             {
-                strTaskinformation = TaskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
+                strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
                         request, locale, task );
 
                 if ( strTaskinformation != null )
@@ -351,7 +353,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         for ( ITask task : listTasks )
         {
-            strFormEntry = TaskComponentManager.getDisplayTaskForm( nIdResource, strResourceType, request, locale, task );
+            strFormEntry = _taskComponentManager.getDisplayTaskForm( nIdResource, strResourceType, request, locale, task );
 
             if ( strFormEntry != null )
             {
@@ -413,7 +415,7 @@ public class WorkflowProvider implements IWorkflowProvider
                 for ( ITask task : listActionTasks )
                 {
                     XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-                    strTaskinformation = TaskComponentManager.getTaskInformationXml( resourceHistory.getId(  ),
+                    strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId(  ),
                             request, locale, task );
 
                     if ( strTaskinformation != null )
@@ -555,7 +557,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         for ( ITask task : listTasks )
         {
-            strError = TaskComponentManager.doValidateTask( nIdResource, strResourceType, request, locale, task );
+            strError = _taskComponentManager.doValidateTask( nIdResource, strResourceType, request, locale, task );
 
             if ( strError != null )
             {

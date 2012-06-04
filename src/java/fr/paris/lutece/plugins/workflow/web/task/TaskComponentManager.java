@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.workflow.web.task;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponent;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.List;
@@ -47,30 +49,24 @@ import javax.servlet.http.HttpServletRequest;
  * TaskComponentManager
  *
  */
-public final class TaskComponentManager
+public class TaskComponentManager implements ITaskComponentManager
 {
-    /**
-     * Private constructor
-     */
-    private TaskComponentManager(  )
-    {
-    }
+    public static final String BEAN_MANAGER = "workflow.taskComponentManager";
 
     /**
-     * Get the list of task components
-     * @return a list of {@link ITaskComponent}
+     * {@inheritDoc}
      */
-    public static List<ITaskComponent> getTaskComponents(  )
+    @Override
+    public List<ITaskComponent> getTaskComponents(  )
     {
         return SpringContextService.getBeansOfType( ITaskComponent.class );
     }
 
     /**
-     * Get the task component from a given key
-     * @param strKey the key
-     * @return an instance of {@link ITaskComponent}
-     */
-    public static ITaskComponent getTaskComponent( String strKey )
+    * {@inheritDoc}
+    */
+    @Override
+    public ITaskComponent getTaskComponent( String strKey )
     {
         for ( ITaskComponent component : getTaskComponents(  ) )
         {
@@ -84,11 +80,10 @@ public final class TaskComponentManager
     }
 
     /**
-     * Get the task component from a given task
-     * @param task the task
-     * @return an instance of {@link ITaskComponent}
-     */
-    public static ITaskComponent getTaskComponent( ITask task )
+    * {@inheritDoc}
+    */
+    @Override
+    public ITaskComponent getTaskComponent( ITask task )
     {
         if ( ( task != null ) && ( task.getTaskType(  ) != null ) )
         {
@@ -99,15 +94,10 @@ public final class TaskComponentManager
     }
 
     /**
-    * Returns the informations which must  be displayed in the tasks form
-    * @param nIdResource the resource id
-    * @param strResourceType the resource type
-    * @param request request
-    * @param locale locale
-    * @param task the task
-    * @return the information which must  be displayed in the tasks form
+    * {@inheritDoc}
     */
-    public static String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
+    @Override
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
@@ -121,13 +111,10 @@ public final class TaskComponentManager
     }
 
     /**
-    * Returns the informations which must  be displayed in the task configuration
-    * @param request request
-    * @param locale locale
-    * @param task the task
-    * @return the information which must  be displayed in the task configuration
+    * {@inheritDoc}
     */
-    public static String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -140,15 +127,10 @@ public final class TaskComponentManager
     }
 
     /**
-     * Return for a document the informations store during processing task
-     * @param nIdHistory the document id
-     * @param request the request
-     * @param locale locale
-     * @param task the task
-     * @return the informations store during processing task
-     */
-    public static String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale,
-        ITask task )
+    * {@inheritDoc}
+    */
+    @Override
+    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -161,14 +143,10 @@ public final class TaskComponentManager
     }
 
     /**
-     * Return a xml which contains  for a document the informations store during processing task
-     * @param nIdHistory the document id
-     * @param request the request
-     * @param locale locale
-     * @param task the task
-     * @return the informations store during processing task
-     */
-    public static String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    * {@inheritDoc}
+    */
+    @Override
+    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -181,16 +159,11 @@ public final class TaskComponentManager
     }
 
     /**
-     * validates the user input associated to the task
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
-     * @param request request
-     * @param locale locale
-     * @param task the task
-     * @return null if there is no error in the task form else return the error message url
-     */
-    public static String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    * {@inheritDoc}
+    */
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
+        ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -203,13 +176,10 @@ public final class TaskComponentManager
     }
 
     /**
-     * Perform the task configuration
-     * @param request request
-     * @param locale locale
-     * @param task the task
-     * @return the url to go after perform task configuration
-     */
-    public static String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    * {@inheritDoc}
+    */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 

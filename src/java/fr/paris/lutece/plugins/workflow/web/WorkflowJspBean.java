@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -235,6 +236,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private IIconService _iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
     private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
+    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -1398,7 +1400,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_TASK, task );
-        model.put( MARK_TASK_CONFIG, TaskComponentManager.getDisplayConfigForm( request, getLocale(  ), task ) );
+        model.put( MARK_TASK_CONFIG, _taskComponentManager.getDisplayConfigForm( request, getLocale(  ), task ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_TASK_PAGE_TITLE );
 
@@ -1427,7 +1429,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             if ( request.getParameter( PARAMETER_CANCEL ) == null )
             {
-                String strError = TaskComponentManager.doSaveConfig( request, getLocale(  ), task );
+                String strError = _taskComponentManager.doSaveConfig( request, getLocale(  ), task );
 
                 if ( strError != null )
                 {

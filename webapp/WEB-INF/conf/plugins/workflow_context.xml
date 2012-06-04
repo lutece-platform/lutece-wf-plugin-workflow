@@ -42,6 +42,7 @@
 	<bean id="workflow.taskService" class="fr.paris.lutece.plugins.workflowcore.service.task.TaskService" />
 	<bean id="workflow.testResourceService" class="fr.paris.lutece.plugins.workflow.service.testresource.TestResourceService" />
 	<bean id="workflow.workflowService" class="fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService" />
+	<bean id="workflow.taskComponentManager" class="fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager" />
 	
 	<!-- Provider -->
 	<bean id="workflow.workflowProvider" class="fr.paris.lutece.plugins.workflow.service.WorkflowProvider" />
