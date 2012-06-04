@@ -33,13 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.notification.service;
 
-import fr.paris.lutece.plugins.workflow.modules.notification.business.ITaskNotificationConfigDAO;
-import fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationtConfig;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
+import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
 
 
 /**
@@ -47,48 +41,7 @@ import javax.inject.Inject;
  * TaskNotificationConfigService
  *
  */
-public class TaskNotificationConfigService implements ITaskNotificationConfigService
+public class TaskNotificationConfigService extends TaskConfigService
 {
     public static final String BEAN_SERVICE = "workflow.taskNotificationConfigService";
-    @Inject
-    private ITaskNotificationConfigDAO _taskNotificationConfigDAO;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void create( TaskNotificationtConfig config, Plugin plugin )
-    {
-        _taskNotificationConfigDAO.insert( config, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void update( TaskNotificationtConfig config, Plugin plugin )
-    {
-        _taskNotificationConfigDAO.store( config, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void remove( int nIdTask, Plugin plugin )
-    {
-        _taskNotificationConfigDAO.delete( nIdTask, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskNotificationtConfig findByPrimaryKey( int nIdTask, Plugin plugin )
-    {
-        return _taskNotificationConfigDAO.load( nIdTask, plugin );
-    }
 }

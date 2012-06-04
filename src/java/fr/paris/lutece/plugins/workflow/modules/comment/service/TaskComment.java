@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.comment.service;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,7 +60,8 @@ public class TaskComment extends Task
 {
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";
     @Inject
-    private ITaskCommentConfigService _taskCommentConfigService;
+    @Named( "workflow.taskCommentConfigService" )
+    private ITaskConfigService _taskCommentConfigService;
     @Inject
     private ICommentValueService _commentValueService;
 
@@ -90,7 +93,7 @@ public class TaskComment extends Task
     @Override
     public void doRemoveConfig(  )
     {
-        _taskCommentConfigService.remove( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskCommentConfigService.remove( this.getId(  ) );
         _commentValueService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
     }
 
@@ -109,8 +112,7 @@ public class TaskComment extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
@@ -127,8 +129,7 @@ public class TaskComment extends Task
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         Map<String, String> mapEntriesForm = null;
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {

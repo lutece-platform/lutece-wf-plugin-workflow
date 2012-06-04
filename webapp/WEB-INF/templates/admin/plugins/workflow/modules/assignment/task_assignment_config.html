@@ -66,7 +66,7 @@
 	 	<div id="notification">
 	 	<p>
 			 <label for="is_use_user_name">#i18n{module.workflow.assignment.task_assignment_config.label_user_name} :</label>
-   		 		<#if config?exists&&config.notify>
+   		 		<#if config?exists && config.useUserName>
    		 			<input name="is_use_user_name" value="1" type="checkbox" checked="checked"/>
    		 		<#else>
    		 			<input name="is_use_user_name" value="1" type="checkbox"/>
@@ -77,7 +77,7 @@
 	 	</p>
 	 	<p>
 	    	<label for="suject">#i18n{module.workflow.assignment.task_assignment_config.label_subject} * :</label>
-		    	<#if config?exists&&config.subject?exists>
+		    	<#if config?exists && config.subject?exists>
 		     			<input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
 		     	<#else>
 		     			<input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
@@ -88,7 +88,7 @@
 		</p>
 	 	<p>
 	    	<label for="message">#i18n{module.workflow.assignment.task_assignment_config.label_message} * :</label>
-		    	<#if config?exists&&config.message?exists>
+		    	<#if config?exists && config.message?exists>
 		     			<textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
 		     	<#else>
 		     			<textarea name="message" id="" rows="5" cols="80"></textarea>

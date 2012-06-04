@@ -37,10 +37,10 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHi
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
-import fr.paris.lutece.plugins.workflow.modules.comment.service.ITaskCommentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
@@ -62,6 +62,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,17 +79,19 @@ public class TaskAssignment extends Task
     private static final String MARK_MESSAGE = "message";
     private static final String PROPERTY_MAIL_SENDER_NAME = "module.workflow.assignment.task_assignment_config.mailSenderName";
     @Inject
-    private ITaskCommentConfigService _taskCommentConfigService;
+    @Named( "workflow.taskCommentConfigService" )
+    private ITaskConfigService _taskCommentConfigService;
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;
     @Inject
-    private ITaskAssignmentConfigService _taskAssignmentConfigService;
+    @Named( "workflow.taskAssignmentConfigService" )
+    private ITaskConfigService _taskAssignmentConfigService;
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;
 
     /**
-         * {@inheritDoc}
-         */
+     * {@inheritDoc}
+     */
     @Override
     public void init(  )
     {
@@ -103,8 +106,7 @@ public class TaskAssignment extends Task
         String[] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + this.getId(  ) );
         AdminUser admin = AdminUserService.getAdminUser( request );
         List<String> listWorkgroup = new ArrayList<String>(  );
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ) );
 
         for ( int i = 0; i < tabWorkgroups.length; i++ )
         {
@@ -180,7 +182,7 @@ public class TaskAssignment extends Task
     public void doRemoveConfig(  )
     {
         //remove config
-        _taskAssignmentConfigService.remove( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskAssignmentConfigService.remove( this.getId(  ) );
         //remove task information
         _assignmentHistoryService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
         _workgroupConfigService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
@@ -201,8 +203,7 @@ public class TaskAssignment extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
@@ -219,8 +220,7 @@ public class TaskAssignment extends Task
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         Map<String, String> mapEntriesForm = null;
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {

@@ -37,10 +37,9 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHi
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.service.IAssignmentHistoryService;
-import fr.paris.lutece.plugins.workflow.modules.assignment.service.ITaskAssignmentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
@@ -71,7 +70,7 @@ import javax.servlet.http.HttpServletRequest;
  * AssignmentTaskComponent
  *
  */
-public class AssignmentTaskComponent extends TaskComponent
+public class AssignmentTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_ASSIGNMENT_CONFIG = "admin/plugins/workflow/modules/assignment/task_assignment_config.html";
@@ -112,8 +111,6 @@ public class AssignmentTaskComponent extends TaskComponent
     private static final String TAG_WORKGROUP = "workgroup";
 
     // SERVICES
-    @Inject
-    private ITaskAssignmentConfigService _taskAssignmentConfigService;
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;
 
@@ -160,8 +157,7 @@ public class AssignmentTaskComponent extends TaskComponent
                 AdminMessage.TYPE_STOP );
         }
 
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         Boolean bCreate = false;
 
         if ( config == null )
@@ -209,11 +205,11 @@ public class AssignmentTaskComponent extends TaskComponent
 
         if ( bCreate )
         {
-            _taskAssignmentConfigService.create( config, WorkflowUtils.getPlugin(  ) );
+            this.getTaskConfigService(  ).create( config );
         }
         else
         {
-            _taskAssignmentConfigService.update( config, WorkflowUtils.getPlugin(  ) );
+            this.getTaskConfigService(  ).update( config );
         }
 
         return null;
@@ -228,8 +224,7 @@ public class AssignmentTaskComponent extends TaskComponent
     {
         String strError = StringUtils.EMPTY;
         String[] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + task.getId(  ) );
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
 
         if ( config == null )
         {
@@ -261,8 +256,7 @@ public class AssignmentTaskComponent extends TaskComponent
     {
         String strNothing = I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale );
 
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
 
         ReferenceList refWorkgroups = AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ),
                 locale );
@@ -315,8 +309,7 @@ public class AssignmentTaskComponent extends TaskComponent
         Locale locale, ITask task )
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
 
         ReferenceList refWorkgroups = new ReferenceList(  );
 
@@ -356,8 +349,7 @@ public class AssignmentTaskComponent extends TaskComponent
                 task.getId(  ), WorkflowUtils.getPlugin(  ) );
         Map<String, Object> model = new HashMap<String, Object>(  );
 
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
 
         ReferenceList refWorkgroups = new ReferenceList(  );
 

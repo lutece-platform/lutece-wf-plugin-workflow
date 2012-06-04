@@ -33,7 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 
@@ -42,7 +43,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  * TaskAssignmentConfigDAO
  *
  */
-public class TaskAssignmentConfigDAO implements ITaskAssignmentConfigDAO
+public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name" +
         " FROM workflow_task_assignment_cf WHERE id_task=?";
@@ -57,9 +58,9 @@ public class TaskAssignmentConfigDAO implements ITaskAssignmentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskAssignmentConfig config, Plugin plugin )
+    public synchronized void insert( TaskAssignmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -79,9 +80,9 @@ public class TaskAssignmentConfigDAO implements ITaskAssignmentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void store( TaskAssignmentConfig config, Plugin plugin )
+    public void store( TaskAssignmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -102,10 +103,10 @@ public class TaskAssignmentConfigDAO implements ITaskAssignmentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public TaskAssignmentConfig load( int nIdTask, Plugin plugin )
+    public TaskAssignmentConfig load( int nIdTask )
     {
         TaskAssignmentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
 
@@ -135,9 +136,9 @@ public class TaskAssignmentConfigDAO implements ITaskAssignmentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void delete( int nIdTask, Plugin plugin )
+    public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
         daoUtil.executeUpdate(  );

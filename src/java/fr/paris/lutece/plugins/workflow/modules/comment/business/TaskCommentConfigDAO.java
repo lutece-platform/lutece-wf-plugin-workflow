@@ -33,7 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 
@@ -42,7 +43,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  * TaskCommentConfig
  *
  */
-public class TaskCommentConfigDAO implements ITaskCommentConfigDAO
+public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_mandatory" +
         " FROM workflow_task_comment_config  WHERE id_task=?";
@@ -56,9 +57,9 @@ public class TaskCommentConfigDAO implements ITaskCommentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskCommentConfig config, Plugin plugin )
+    public synchronized void insert( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -74,9 +75,9 @@ public class TaskCommentConfigDAO implements ITaskCommentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void store( TaskCommentConfig config, Plugin plugin )
+    public void store( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -93,10 +94,10 @@ public class TaskCommentConfigDAO implements ITaskCommentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public TaskCommentConfig load( int nIdState, Plugin plugin )
+    public TaskCommentConfig load( int nIdState )
     {
         TaskCommentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdState );
 
@@ -121,9 +122,9 @@ public class TaskCommentConfigDAO implements ITaskCommentConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void delete( int nIdState, Plugin plugin )
+    public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdState );
         daoUtil.executeUpdate(  );

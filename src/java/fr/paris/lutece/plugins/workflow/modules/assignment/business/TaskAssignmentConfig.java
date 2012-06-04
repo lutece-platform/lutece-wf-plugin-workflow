@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+
 import java.util.List;
 
 
@@ -41,11 +43,10 @@ import java.util.List;
  *TaskCommentConfig
  *
  */
-public class TaskAssignmentConfig
+public class TaskAssignmentConfig extends TaskConfig
 {
     public static final String ASSIGMENT_TYPE_ADMIN_USER = "TYPE_ADMIN_USER";
     public static final String ASSIGMENT_TYPE_WORKGROUP = "TYPE_WORKGROUP";
-    private int _nIdTask;
     private boolean _bMultipleOwner;
     private String _strTitle;
     private List<WorkgroupConfig> _workgroups;
@@ -116,24 +117,6 @@ public class TaskAssignmentConfig
     public void setMessage( String message )
     {
         _strMessage = message;
-    }
-
-    /**
-    *
-    * @return the task id
-    */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     *
-     * @param idTask the task id
-      */
-    public void setIdTask( int idTask )
-    {
-        _nIdTask = idTask;
     }
 
     /**

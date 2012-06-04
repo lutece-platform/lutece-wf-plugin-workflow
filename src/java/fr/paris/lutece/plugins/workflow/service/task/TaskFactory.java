@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.service.task;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
@@ -78,6 +79,54 @@ public class TaskFactory implements ITaskFactory
         }
 
         return task;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITaskConfig newTaskConfig( String strKey )
+    {
+        if ( StringUtils.isBlank( strKey ) )
+        {
+            AppLogService.error( "TaskFactory ERROR : The key is empty." );
+
+            return null;
+        }
+
+        Collection<ITaskType> listTaskType = getAllTaskTypes(  );
+
+        for ( ITaskType taskType : listTaskType )
+        {
+            if ( strKey.equals( taskType.getKey(  ) ) )
+            {
+                try
+                {
+                    ITaskConfig config = SpringContextService.getBean( taskType.getConfigBeanName(  ) );
+
+                    return config;
+                }
+                catch ( BeanDefinitionStoreException e )
+                {
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
+                        "' - CAUSE : " + e.getMessage(  ), e );
+                }
+                catch ( NoSuchBeanDefinitionException e )
+                {
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
+                        "' - CAUSE : " + e.getMessage(  ), e );
+                }
+                catch ( CannotLoadBeanClassException e )
+                {
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
+                        "' - CAUSE : " + e.getMessage(  ), e );
+                }
+            }
+        }
+
+        AppLogService.error( "TaskFactory ERROR : The task type is not found." );
+
+        return null;
     }
 
     /**

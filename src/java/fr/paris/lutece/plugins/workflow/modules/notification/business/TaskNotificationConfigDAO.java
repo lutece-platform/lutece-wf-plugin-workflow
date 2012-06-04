@@ -33,7 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.notification.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 
@@ -42,7 +43,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  * TaskNotificationConfigDAO
  *
  */
-public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
+public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificationConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_mailing_list,sender_name,subject,message " +
         " FROM workflow_task_notification_cf WHERE id_task=?";
@@ -56,9 +57,9 @@ public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskNotificationtConfig config, Plugin plugin )
+    public synchronized void insert( TaskNotificationConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -76,9 +77,9 @@ public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void store( TaskNotificationtConfig config, Plugin plugin )
+    public void store( TaskNotificationConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
 
         int nPos = 0;
 
@@ -97,10 +98,10 @@ public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public TaskNotificationtConfig load( int nIdState, Plugin plugin )
+    public TaskNotificationConfig load( int nIdState )
     {
-        TaskNotificationtConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        TaskNotificationConfig config = null;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdState );
 
@@ -110,7 +111,7 @@ public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
 
         if ( daoUtil.next(  ) )
         {
-            config = new TaskNotificationtConfig(  );
+            config = new TaskNotificationConfig(  );
             config.setIdTask( daoUtil.getInt( ++nPos ) );
             config.setIdMailingList( daoUtil.getInt( ++nPos ) );
             config.setSenderName( daoUtil.getString( ++nPos ) );
@@ -127,9 +128,9 @@ public class TaskNotificationConfigDAO implements ITaskNotificationConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void delete( int nIdState, Plugin plugin )
+    public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdState );
         daoUtil.executeUpdate(  );

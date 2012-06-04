@@ -69,18 +69,21 @@
 		p:key="taskTypeComment"
 		p:titleI18nKey="module.workflow.comment.task_title"
 		p:beanName="workflow.taskComment"
+		p:configBeanName="workflow.taskCommentConfig"
 		p:configRequired="true"
 		p:formTaskRequired="true" />
 	<bean id="workflow.taskTypeNotification" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
 		p:key="taskTypeNotification"
 		p:titleI18nKey="module.workflow.notification.task_title"
 		p:beanName="workflow.taskNotification"
+		p:configBeanName="workflow.taskNotificationConfig"
 		p:configRequired="true"
 		p:taskForAutomaticAction="true" />
 	<bean id="workflow.taskTypeAssignment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
 		p:key="taskTypeAssignment"
 		p:titleI18nKey="module.workflow.assignment.task_title"
 		p:beanName="workflow.taskAssignment"
+		p:configBeanName="workflow.taskAssignmentConfig"
 		p:configRequired="true" 
 		p:formTaskRequired="true" />
 	<!-- Tasks -->
@@ -89,17 +92,27 @@
 	<bean id="workflow.taskNotification" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotification" scope="prototype" />
 	<!-- Task components -->
 	<bean id="workflow.commentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.comment.web.CommentTaskComponent"
-		p:taskType-ref="workflow.taskTypeComment"/>
+		p:taskType-ref="workflow.taskTypeComment"
+		p:taskConfigService-ref="workflow.taskCommentConfigService" />
 	<bean id="workflow.assignmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.assignment.web.AssignmentTaskComponent"
-		p:taskType-ref="workflow.taskTypeAssignment" />
+		p:taskType-ref="workflow.taskTypeAssignment"
+		p:taskConfigService-ref="workflow.taskAssignmentConfigService" />
 	<bean id="workflow.notificationTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.notification.web.NotificationTaskComponent"
-		p:taskType-ref="workflow.taskTypeNotification" />
+		p:taskType-ref="workflow.taskTypeNotification"
+		p:taskConfigService-ref="workflow.taskNotificationConfigService" />
+	<!-- Task configs -->
+	<bean id="workflow.taskAssignmentConfig" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig" scope="prototype" />
+	<bean id="workflow.taskCommentConfig" class="fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig" scope="prototype" />
+	<bean id="workflow.taskNotificationConfig" class="fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationConfig" scope="prototype" />
 	
 	<!-- Services -->
 	<bean id="workflow.assignmentHistoryService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.AssignmentHistoryService" />
-	<bean id="workflow.taskAssignmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignmentConfigService" />
+	<bean id="workflow.taskAssignmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignmentConfigService" 
+		p:taskConfigDAO-ref="workflow.taskAssignmentConfigDAO" />
 	<bean id="workflow.workgroupConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.WorkgroupConfigService" />
 	<bean id="workflow.commentValueService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService" />
-	<bean id="workflow.taskCommentConfigService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService" />
-	<bean id="workflow.taskNotificationConfigService" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotificationConfigService" />
+	<bean id="workflow.taskCommentConfigService" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService"
+		p:taskConfigDAO-ref="workflow.taskCommentConfigDAO" />
+	<bean id="workflow.taskNotificationConfigService" class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotificationConfigService"
+		p:taskConfigDAO-ref="workflow.taskNotificationConfigDAO" />
  </beans>

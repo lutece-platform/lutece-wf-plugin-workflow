@@ -31,50 +31,40 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.comment.service;
+package fr.paris.lutece.plugins.workflow.web.task;
 
-import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  *
- * ITaskCommentConfigService
+ * This component implements task that does not require
+ * any task form.
  *
  */
-public interface ITaskCommentConfigService
+public abstract class NoFormTaskComponent extends AbstractTaskComponent
 {
     /**
-    * Creation of an instance of config
-    * @param config The instance of task which contains the informations to store
-    * @param plugin the plugin
-    */
-    @Transactional( "workflow.transactionManager" )
-    void create( TaskCommentConfig config, Plugin plugin );
+     * {@inheritDoc}
+     */
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
+        ITask task )
+    {
+        return null;
+    }
 
     /**
-     * Update of task which is specified in parameter
-     * @param  config The instance of config which contains the informations to update
-     * @param plugin the Plugin
+     * {@inheritDoc}
      */
-    @Transactional( "workflow.transactionManager" )
-    void update( TaskCommentConfig config, Plugin plugin );
-
-    /**
-     * Remove config associated to the task which is specified in parameter
-     * @param nIdTask The task key
-     * @param plugin the Plugin
-     */
-    @Transactional( "workflow.transactionManager" )
-    void remove( int nIdTask, Plugin plugin );
-
-    /**
-     * Load the Config Object
-     * @param nIdTask the task id
-     * @param plugin the plugin
-     * @return the Config Object
-     */
-    TaskCommentConfig findByPrimaryKey( int nIdTask, Plugin plugin );
+    @Override
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
+        Locale locale, ITask task )
+    {
+        return null;
+    }
 }

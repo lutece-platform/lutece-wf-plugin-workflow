@@ -33,37 +33,20 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.notification.business;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+
 
 /**
  *
  *TaskNotificationtConfig
  *
  */
-public class TaskNotificationtConfig
+public class TaskNotificationConfig extends TaskConfig
 {
-    private int _nIdTask;
     private int _nIdMailingList;
     private String _strSubject;
     private String _strMessage;
     private String _strSenderName;
-
-    /**
-     *
-     * @return the task id
-     */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     * set the task id
-     * @param idTask the task id
-     */
-    public void setIdTask( int idTask )
-    {
-        _nIdTask = idTask;
-    }
 
     /**
      * return the mailing list id

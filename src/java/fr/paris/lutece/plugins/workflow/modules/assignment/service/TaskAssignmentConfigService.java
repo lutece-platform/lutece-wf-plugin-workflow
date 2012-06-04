@@ -33,10 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.assignment.service;
 
-import fr.paris.lutece.plugins.workflow.modules.assignment.business.ITaskAssignmentConfigDAO;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,11 +51,9 @@ import javax.inject.Inject;
  * TaskAssignmentConfigService
  *
  */
-public class TaskAssignmentConfigService implements ITaskAssignmentConfigService
+public class TaskAssignmentConfigService extends TaskConfigService
 {
     public static final String BEAN_SERVICE = "workflow.taskAssignmentConfigService";
-    @Inject
-    private ITaskAssignmentConfigDAO _taskAssignmentConfigDAO;
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;
 
@@ -63,17 +62,22 @@ public class TaskAssignmentConfigService implements ITaskAssignmentConfigService
      */
     @Override
     @Transactional( "workflow.transactionManager" )
-    public void create( TaskAssignmentConfig config, Plugin plugin )
+    public void create( ITaskConfig config )
     {
-        _taskAssignmentConfigDAO.insert( config, plugin );
+        super.create( config );
 
-        List<WorkgroupConfig> listWorkgroups = config.getWorkgroups(  );
+        TaskAssignmentConfig taskAssignmentConfig = getConfigBean( config );
 
-        if ( listWorkgroups != null )
+        if ( taskAssignmentConfig != null )
         {
-            for ( WorkgroupConfig workgroupConfig : listWorkgroups )
+            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups(  );
+
+            if ( listWorkgroups != null )
             {
-                _workgroupConfigService.create( workgroupConfig, plugin );
+                for ( WorkgroupConfig workgroupConfig : listWorkgroups )
+                {
+                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin(  ) );
+                }
             }
         }
     }
@@ -83,19 +87,24 @@ public class TaskAssignmentConfigService implements ITaskAssignmentConfigService
      */
     @Override
     @Transactional( "workflow.transactionManager" )
-    public void update( TaskAssignmentConfig config, Plugin plugin )
+    public void update( ITaskConfig config )
     {
-        _taskAssignmentConfigDAO.store( config, plugin );
+        super.update( config );
         //update workgroups
-        _workgroupConfigService.removeByTask( config.getIdTask(  ), plugin );
+        _workgroupConfigService.removeByTask( config.getIdTask(  ), WorkflowUtils.getPlugin(  ) );
 
-        List<WorkgroupConfig> listWorkgroups = config.getWorkgroups(  );
+        TaskAssignmentConfig taskAssignmentConfig = getConfigBean( config );
 
-        if ( listWorkgroups != null )
+        if ( taskAssignmentConfig != null )
         {
-            for ( WorkgroupConfig workgroupConfig : listWorkgroups )
+            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups(  );
+
+            if ( listWorkgroups != null )
             {
-                _workgroupConfigService.create( workgroupConfig, plugin );
+                for ( WorkgroupConfig workgroupConfig : listWorkgroups )
+                {
+                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin(  ) );
+                }
             }
         }
     }
@@ -105,25 +114,25 @@ public class TaskAssignmentConfigService implements ITaskAssignmentConfigService
      */
     @Override
     @Transactional( "workflow.transactionManager" )
-    public void remove( int nIdTask, Plugin plugin )
+    public void remove( int nIdTask )
     {
-        _workgroupConfigService.removeByTask( nIdTask, plugin );
-        _taskAssignmentConfigDAO.delete( nIdTask, plugin );
+        _workgroupConfigService.removeByTask( nIdTask, WorkflowUtils.getPlugin(  ) );
+        super.remove( nIdTask );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TaskAssignmentConfig findByPrimaryKey( int nIdTask, Plugin plugin )
+    public <T> T findByPrimaryKey( int nIdTask )
     {
-        TaskAssignmentConfig config = _taskAssignmentConfigDAO.load( nIdTask, plugin );
+        TaskAssignmentConfig config = super.findByPrimaryKey( nIdTask );
 
         if ( config != null )
         {
-            config.setWorkgroups( _workgroupConfigService.getListByConfig( nIdTask, plugin ) );
+            config.setWorkgroups( _workgroupConfigService.getListByConfig( nIdTask, WorkflowUtils.getPlugin(  ) ) );
         }
 
-        return config;
+        return (T) config;
     }
 }

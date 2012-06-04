@@ -3,12 +3,12 @@
  	
  	
  	<p>
-	      <label for="id_mailing_list">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} * :</label>
+	      <label for="idMailingList">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} * :</label>
 		   <#if config?exists>
-		    	<@combo name="id_mailing_list"  items=mailing_list default_value=config.idMailingList />
+		    	<@combo name="idMailingList"  items=mailing_list default_value=config.idMailingList />
 			  
 			 <#else>
-			 	<@combo name="id_mailing_list"  items=mailing_list default_value="-1" />
+			 	<@combo name="idMailingList"  items=mailing_list default_value="-1" />
 			  
 			 </#if> 
 			   <br/>
@@ -17,11 +17,11 @@
 		</p>
 		
 		<p>
-	    	<label for="sender_name">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * :</label>
+	    	<label for="senderName">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * :</label>
 		    	<#if config?exists>
-		     			<input type="text" name="sender_name" id="" size="80" value="${config.senderName}"  maxlength="255"/>
+		     			<input type="text" name="senderName" id="" size="80" value="${config.senderName}"  maxlength="255"/>
 		     	<#else>
-		     			<input type="text" name="sender_name" id="" size="80" value="${default_sender_name}"  maxlength="255"/>
+		     			<input type="text" name="senderName" id="" size="80" value="${default_sender_name}"  maxlength="255"/>
 		     	</#if>		
 			   <br/>
 			  <label>&nbsp;</label>

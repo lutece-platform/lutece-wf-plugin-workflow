@@ -31,49 +31,50 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.assignment.service;
+package fr.paris.lutece.plugins.workflow.web.task;
 
-import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  *
+ * This component implements the task that does not require
+ * any configuration.
  *
  */
-public interface ITaskAssignmentConfigService
+public abstract class NoConfigTaskComponent extends AbstractTaskComponent
 {
     /**
-    * Creation of an instance of config
-    * @param config The instance of task which contains the informations to store
-    * @param plugin the plugin
-    */
-    @Transactional( "workflow.transactionManager" )
-    void create( TaskAssignmentConfig config, Plugin plugin );
+     * {@inheritDoc}
+     */
+    @Override
+    public String validateConfig( ITaskConfig config, HttpServletRequest request )
+    {
+        return StringUtils.EMPTY;
+    }
 
     /**
-     * Update of task which is specified in parameter
-     * @param  config The instance of config which contains the informations to update
-     * @param plugin the Plugin
+     * {@inheritDoc}
      */
-    @Transactional( "workflow.transactionManager" )
-    void update( TaskAssignmentConfig config, Plugin plugin );
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 
     /**
-     * Remove config associated to the task which is specified in parameter
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * {@inheritDoc}
      */
-    @Transactional( "workflow.transactionManager" )
-    void remove( int nIdTask, Plugin plugin );
-
-    /**
-     * Load the Config Object
-     * @param nIdTask the task id
-     * @param plugin the plugin
-     * @return the Config Object
-     */
-    TaskAssignmentConfig findByPrimaryKey( int nIdTask, Plugin plugin );
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 }

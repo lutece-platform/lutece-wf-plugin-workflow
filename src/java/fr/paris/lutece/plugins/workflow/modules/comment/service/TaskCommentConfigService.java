@@ -33,13 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.service;
 
-import fr.paris.lutece.plugins.workflow.modules.comment.business.ITaskCommentConfigDAO;
-import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
+import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
 
 
 /**
@@ -47,48 +41,7 @@ import javax.inject.Inject;
  * TaskCommentConfigService
  *
  */
-public class TaskCommentConfigService implements ITaskCommentConfigService
+public class TaskCommentConfigService extends TaskConfigService
 {
     public static final String BEAN_SERVICE = "workflow.taskCommentConfigService";
-    @Inject
-    private ITaskCommentConfigDAO _taskCommentConfigDAO;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void create( TaskCommentConfig config, Plugin plugin )
-    {
-        _taskCommentConfigDAO.insert( config, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void update( TaskCommentConfig config, Plugin plugin )
-    {
-        _taskCommentConfigDAO.store( config, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( "workflow.transactionManager" )
-    public void remove( int nIdTask, Plugin plugin )
-    {
-        _taskCommentConfigDAO.delete( nIdTask, plugin );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskCommentConfig findByPrimaryKey( int nIdTask, Plugin plugin )
-    {
-        return _taskCommentConfigDAO.load( nIdTask, plugin );
-    }
 }

@@ -31,47 +31,45 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.assignment.business;
+package fr.paris.lutece.plugins.workflow.web.task;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.web.constants.Messages;
+import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import javax.validation.ConstraintViolation;
 
 
 /**
- * ITaskAssignmentConfigDAO
- * @author merlinf
+ *
+ * AbstractTaskComponent
  *
  */
-public interface ITaskAssignmentConfigDAO
+public abstract class AbstractTaskComponent extends TaskComponent
 {
     /**
-     * Insert a new record in the table.
-     *
-     * @param config instance of the TaskCommentConfig object to insert
-     * @param plugin the plugin
+     * {@inheritDoc}
      */
-    void insert( TaskAssignmentConfig config, Plugin plugin );
+    @Override
+    public String validateConfig( ITaskConfig config, HttpServletRequest request )
+    {
+        // Check mandatory fields
+        Set<ConstraintViolation<ITaskConfig>> constraintViolations = BeanValidationUtil.validate( config );
 
-    /**
-     * update record in the table.
-     *
-     * @param  config instance of config object to update
-     * @param plugin the plugin
-     */
-    void store( TaskAssignmentConfig config, Plugin plugin );
+        if ( constraintViolations.size(  ) > 0 )
+        {
+            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+        }
 
-    /**
-     * Load the config Object
-     * @param nIdTask the task id
-     * @param plugin the plugin
-     * @return the TaskCommentConfig object
-     *
-     */
-    TaskAssignmentConfig load( int nIdTask, Plugin plugin );
-
-    /**
-     * Delete the config Object
-     * @param nIdTask the task id
-     * @param plugin the plugin
-     */
-    void delete( int nIdTask, Plugin plugin );
+        return StringUtils.EMPTY;
+    }
 }

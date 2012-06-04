@@ -33,16 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.notification.web;
 
-import fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationtConfig;
-import fr.paris.lutece.plugins.workflow.modules.notification.service.ITaskNotificationConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.web.task.NoFormTaskComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -50,8 +47,6 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -71,88 +66,11 @@ public class NotificationTaskComponent extends NoFormTaskComponent
     private static final String MARK_MAILING_LIST = "mailing_list";
     private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
 
-    // PARAMETERS
-    private static final String PARAMETER_ID_MAILING_LIST = "id_mailing_list";
-    private static final String PARAMETER_SUBJECT = "subject";
-    private static final String PARAMETER_MESSAGE = "message";
-    private static final String PARAMETER_SENDER_NAME = "sender_name";
-
     // PROPERTIES
     private static final String PROPERTY_NOTIFICATION_MAIL_DEFAULT_SENDER_NAME = "module.workflow.notification.notification_mail.default_sender_name";
     private static final String PROPERTY_SELECT_EMPTY_CHOICE = "module.workflow.notification.task_notification_config.label_empty_choice";
-    private static final String FIELD_MAILING_LIST = "module.workflow.notification.task_notification_config.label_mailing_list";
-    private static final String FIELD_SENDER_NAME = "module.workflow.notification.task_notification_config.label_sender_name";
-    private static final String FIELD_SUBJECT = "module.workflow.notification.task_notification_config.label_subject";
-    private static final String FIELD_MESSAGE = "module.workflow.notification.task_notification_config.label_message";
-    private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.comment.task_comment_config.message.mandatory.field";
 
     // SERVICES
-    @Inject
-    private ITaskNotificationConfigService _taskNotificationConfigService;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
-    {
-        String strError = WorkflowUtils.EMPTY_STRING;
-
-        String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
-        String strSubject = request.getParameter( PARAMETER_SUBJECT );
-        String strMessage = request.getParameter( PARAMETER_MESSAGE );
-        String strIdMailingList = request.getParameter( PARAMETER_ID_MAILING_LIST );
-        int nIdMailingList = WorkflowUtils.convertStringToInt( strIdMailingList );
-
-        if ( nIdMailingList == WorkflowUtils.CONSTANT_ID_NULL )
-        {
-            strError = FIELD_MAILING_LIST;
-        }
-        else if ( ( strSenderName == null ) || strSenderName.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            strError = FIELD_SENDER_NAME;
-        }
-        else if ( ( strSubject == null ) || strSubject.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            strError = FIELD_SUBJECT;
-        }
-        else if ( ( strMessage == null ) || strMessage.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            strError = FIELD_MESSAGE;
-        }
-
-        if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
-
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
-        }
-
-        TaskNotificationtConfig config = _taskNotificationConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
-
-        if ( config == null )
-        {
-            config = new TaskNotificationtConfig(  );
-            config.setIdTask( task.getId(  ) );
-            config.setIdMailingList( nIdMailingList );
-            config.setSenderName( strSenderName );
-            config.setSubject( strSubject );
-            config.setMessage( strMessage );
-            _taskNotificationConfigService.create( config, WorkflowUtils.getPlugin(  ) );
-        }
-        else
-        {
-            config.setIdMailingList( nIdMailingList );
-            config.setSenderName( strSenderName );
-            config.setSubject( strSubject );
-            config.setMessage( strMessage );
-            _taskNotificationConfigService.update( config, WorkflowUtils.getPlugin(  ) );
-        }
-
-        return null;
-    }
 
     /**
      * {@inheritDoc}
@@ -166,8 +84,7 @@ public class NotificationTaskComponent extends NoFormTaskComponent
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
         refMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        TaskNotificationtConfig config = _taskNotificationConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        ITaskConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         String strDefaultSenderName = I18nService.getLocalizedString( PROPERTY_NOTIFICATION_MAIL_DEFAULT_SENDER_NAME,
                 locale );
         model.put( MARK_CONFIG, config );

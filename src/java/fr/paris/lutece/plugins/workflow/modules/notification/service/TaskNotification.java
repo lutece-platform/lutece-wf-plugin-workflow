@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.notification.service;
 
-import fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationtConfig;
+import fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationConfig;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.mail.MailService;
@@ -48,6 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,7 +64,8 @@ public class TaskNotification extends Task
     private static final String TEMPLATE_TASK_NOTIFICATION_MAIL = "admin/plugins/workflow/modules/notification/task_notification_mail.html";
     private static final String MARK_MESSAGE = "message";
     @Inject
-    private ITaskNotificationConfigService _taskNotificationConfigService;
+    @Named( "workflow.taskNotificationConfigService" )
+    private ITaskConfigService _taskNotificationConfigService;
 
     /**
      * {@inheritDoc}
@@ -78,8 +81,7 @@ public class TaskNotification extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        TaskNotificationtConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
@@ -106,7 +108,7 @@ public class TaskNotification extends Task
     @Override
     public void doRemoveConfig(  )
     {
-        _taskNotificationConfigService.remove( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskNotificationConfigService.remove( this.getId(  ) );
     }
 
     /**
@@ -123,8 +125,7 @@ public class TaskNotification extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskNotificationtConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {

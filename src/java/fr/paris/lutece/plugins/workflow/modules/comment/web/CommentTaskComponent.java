@@ -36,11 +36,9 @@ package fr.paris.lutece.plugins.workflow.modules.comment.web;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
-import fr.paris.lutece.plugins.workflow.modules.comment.service.ITaskCommentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -63,7 +61,7 @@ import javax.servlet.http.HttpServletRequest;
  * CommentTaskComponent
  *
  */
-public class CommentTaskComponent extends TaskComponent
+public class CommentTaskComponent extends AbstractTaskComponent
 {
     // XML
     private static final String TAG_COMMENT = "comment";
@@ -78,12 +76,7 @@ public class CommentTaskComponent extends TaskComponent
     private static final String MARK_COMMENT_VALUE = "comment_value";
 
     // PARAMETERS
-    private static final String PARAMETER_TITLE = "title";
-    private static final String PARAMETER_IS_MANDATORY = "is_mandatory";
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";
-
-    // PROPERTIES
-    private static final String FIELD_TITLE = "module.workflow.comment.task_comment_config.label_title";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.comment.task_comment_config.message.mandatory.field";
@@ -91,53 +84,7 @@ public class CommentTaskComponent extends TaskComponent
 
     // SERVICES
     @Inject
-    private ITaskCommentConfigService _taskCommentConfigService;
-    @Inject
     private ICommentValueService _commentValueService;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
-    {
-        String strError = WorkflowUtils.EMPTY_STRING;
-        String strTitle = request.getParameter( PARAMETER_TITLE );
-        String strIsMandatory = request.getParameter( PARAMETER_IS_MANDATORY );
-
-        if ( ( strTitle == null ) || strTitle.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            strError = FIELD_TITLE;
-        }
-
-        if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
-        {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
-
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
-        }
-
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
-
-        if ( config == null )
-        {
-            config = new TaskCommentConfig(  );
-            config.setIdTask( task.getId(  ) );
-            config.setMandatory( strIsMandatory != null );
-            config.setTitle( strTitle );
-            _taskCommentConfigService.create( config, WorkflowUtils.getPlugin(  ) );
-        }
-        else
-        {
-            config.setMandatory( strIsMandatory != null );
-            config.setTitle( strTitle );
-            _taskCommentConfigService.update( config, WorkflowUtils.getPlugin(  ) );
-        }
-
-        return null;
-    }
 
     /**
      * {@inheritDoc}
@@ -148,8 +95,7 @@ public class CommentTaskComponent extends TaskComponent
     {
         String strError = WorkflowUtils.EMPTY_STRING;
         String strCommentValue = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId(  ) );
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
 
         if ( config == null )
         {
@@ -182,8 +128,7 @@ public class CommentTaskComponent extends TaskComponent
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
 
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_CONFIG, locale, model );
@@ -199,8 +144,7 @@ public class CommentTaskComponent extends TaskComponent
         Locale locale, ITask task )
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_FORM, locale, model );
@@ -218,8 +162,7 @@ public class CommentTaskComponent extends TaskComponent
                 WorkflowUtils.getPlugin(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
 

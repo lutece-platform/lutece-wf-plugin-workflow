@@ -33,15 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+
 
 /**
  *
  * TaskCommentConfig
  *
  */
-public class TaskCommentConfig
+public class TaskCommentConfig extends TaskConfig
 {
-    private int _nIdTask;
     private String _strTitle;
     private boolean _bMandatory;
 
@@ -75,21 +76,5 @@ public class TaskCommentConfig
     public void setTitle( String strTitle )
     {
         _strTitle = strTitle;
-    }
-
-    /**
-     * @return the id task
-     */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     * @param nIdTask the id task
-     */
-    public void setIdTask( int nIdTask )
-    {
-        _nIdTask = nIdTask;
     }
 }
