@@ -60,7 +60,7 @@ public class TaskComment extends Task
 {
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";
     @Inject
-    @Named( "workflow.taskCommentConfigService" )
+    @Named( TaskCommentConfigService.BEAN_SERVICE )
     private ITaskConfigService _taskCommentConfigService;
     @Inject
     private ICommentValueService _commentValueService;

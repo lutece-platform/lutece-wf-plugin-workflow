@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHi
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
+import fr.paris.lutece.plugins.workflow.modules.comment.service.TaskCommentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
@@ -79,12 +80,12 @@ public class TaskAssignment extends Task
     private static final String MARK_MESSAGE = "message";
     private static final String PROPERTY_MAIL_SENDER_NAME = "module.workflow.assignment.task_assignment_config.mailSenderName";
     @Inject
-    @Named( "workflow.taskCommentConfigService" )
+    @Named( TaskCommentConfigService.BEAN_SERVICE )
     private ITaskConfigService _taskCommentConfigService;
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;
     @Inject
-    @Named( "workflow.taskAssignmentConfigService" )
+    @Named( TaskAssignmentConfigService.BEAN_SERVICE )
     private ITaskConfigService _taskAssignmentConfigService;
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;

@@ -64,7 +64,7 @@ public class TaskNotification extends Task
     private static final String TEMPLATE_TASK_NOTIFICATION_MAIL = "admin/plugins/workflow/modules/notification/task_notification_mail.html";
     private static final String MARK_MESSAGE = "message";
     @Inject
-    @Named( "workflow.taskNotificationConfigService" )
+    @Named( TaskNotificationConfigService.BEAN_SERVICE )
     private ITaskConfigService _taskNotificationConfigService;
 
     /**
