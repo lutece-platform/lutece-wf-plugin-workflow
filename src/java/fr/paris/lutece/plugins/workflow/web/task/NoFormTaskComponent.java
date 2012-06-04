@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.workflow.web.task;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
+import org.springframework.util.Assert;
+
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,5 +68,15 @@ public abstract class NoFormTaskComponent extends AbstractTaskComponent
         Locale locale, ITask task )
     {
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterPropertiesSet(  ) throws Exception
+    {
+        super.afterPropertiesSet(  );
+        Assert.notNull( this.getTaskConfigService(  ), "The config service must be set." );
     }
 }
