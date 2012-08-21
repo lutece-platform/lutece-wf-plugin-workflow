@@ -1,3 +1,15 @@
+<#macro comboOrders name default_value max >
+	<select id="${name}" name="${name}" >
+		<#list 1..max as i>
+			<#if "${default_value}" == "${i}">
+  				<option selected="selected" value="${i}" >${i}</option>
+  			<#else>
+  				<option value="${i}" >${i}</option>
+  			</#if>
+		</#list>
+	</select>
+</#macro>
+
 <div class="content-box">
 	  <h2> #i18n{workflow.modify_workflow.title}</h2>
 	  <form action="jsp/admin/plugins/workflow/DoModifyWorkflow.jsp" method="post" name="" id=""  >
@@ -37,11 +49,21 @@
 	<table width="100%">
 			<tr>
 				<th>#i18n{workflow.modify_workflow.manage_state.row_name}</th>
+				<th>#i18n{workflow.modify_workflow.order}</th>
 				<th>#i18n{workflow.modify_workflow.manage_state.row_actions}</th>
 			</tr>
 			<#list state_list as state>
 				<tr>
 					<td>${state.name}</td>
+					<td>
+					<!-- SELECT LIST FOR ORDER CHANGE -->
+						<form method="post" action="jsp/admin/plugins/workflow/DoChangeOrderState.jsp">
+					        	<@comboOrders name="order_id" default_value=state.order max=number_state />
+				            	<input type="hidden" name="id_workflow" value="${workflow.id}" />
+				            	<input type="hidden" name="id_state" value="${state.id}" />
+				            	<input class="button" type="submit" value="#i18n{workflow.modify_workflow.move}" />
+				         </form>
+					</td>
 					<td>
 						<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">
 							<img src="images/admin/skin/plugins/workflow/actions/modify.png"
@@ -73,6 +95,7 @@
 	<table width="100%">
 			<tr>
 				<th>#i18n{workflow.modify_workflow.manage_action.row_name}</th>
+				<th>#i18n{workflow.modify_workflow.order}</th>
 				<th>#i18n{workflow.modify_workflow.manage_action.row_state_before}</th>
 				<th>#i18n{workflow.modify_workflow.manage_action.row_state_after}</th>
 				<th>#i18n{workflow.modify_workflow.manage_action.row_actions}</th>
@@ -80,6 +103,15 @@
 			<#list action_list as action>
 				<tr>
 					<td>${action.name}</td>
+					<td>
+					<!-- SELECT LIST FOR ORDER CHANGE -->
+						<form method="post" action="jsp/admin/plugins/workflow/DoChangeOrderAction.jsp">
+					        	<@comboOrders name="order_action_id" default_value=action.order max=number_action />
+				            	<input type="hidden" name="id_workflow" value="${workflow.id}" />
+				            	<input type="hidden" name="id_action" value="${action.id}" />
+				            	<input class="button" type="submit" value="#i18n{workflow.modify_workflow.move}" />
+				         </form>
+					</td>
 					<td>${action.stateBefore.name}</td>
 					<td>${action.stateAfter.name}</td>
 					<td>
@@ -106,6 +138,5 @@
 		       		</form>
 		</p> 
 </div>
-
 
 

@@ -44,6 +44,7 @@ CREATE TABLE workflow_state
 	is_initial_state SMALLINT DEFAULT 0,
 	is_required_workgroup_assigned SMALLINT DEFAULT 0,
 	id_icon int DEFAULT NULL,
+	display_order INT DEFAULT 0,
 	PRIMARY KEY (id_state)
 );
 
@@ -61,6 +62,7 @@ CREATE TABLE workflow_action
 	id_icon INT DEFAULT NULL,
 	is_automatic SMALLINT DEFAULT 0,
 	is_mass_action SMALLINT DEFAULT 0,
+	display_order INT DEFAULT 0,
 	PRIMARY KEY (id_action)
 );
 
@@ -128,6 +130,7 @@ CREATE TABLE workflow_task
 	id_task INT DEFAULT 0 NOT NULL,
 	task_type_key VARCHAR(50) DEFAULT NULL, 
 	id_action INT DEFAULT 0 NOT NULL,
+	display_order INT DEFAULT 0,
 	PRIMARY KEY (id_task)
 );
 

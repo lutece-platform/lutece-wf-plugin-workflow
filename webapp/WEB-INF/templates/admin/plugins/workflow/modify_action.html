@@ -115,33 +115,29 @@
    	</form>
    	<table>
 	    <tr>
-	      <th>
-	       #i18n{workflow.modify_action.manage_task.row_number}
-	      </th>
-	      <th>
-	       #i18n{workflow.modify_action.manage_task.row_title}
-	      </th>
-	       <th>
-	        #i18n{workflow.modify_action.manage_task.row_task_type}
-	      </th>
-	      <th>
-	        #i18n{workflow.modify_action.manage_task.row_actions}
-	      </th>
+	      <th> #i18n{workflow.modify_action.manage_task.row_number} </th>
+	      <th> #i18n{workflow.modify_action.manage_task.row_title} </th>
+	      <th> #i18n{workflow.modify_action.manage_task.row_task_type} </th>
+	      <th> #i18n{workflow.modify_workflow.order} </th>
+	      <th> #i18n{workflow.modify_action.manage_task.row_actions} </th>
 	    </tr>
 	   <#assign cpt=0>	
 	   <#list task_list as task>
 	   
 	   <#assign cpt=cpt+1>
 	   <tr>
+	      <td> ${cpt} </td>
+	      <td> ${task.getTitle(locale)} </td>
+	      <td> ${task.taskType.title} </td>
 	      <td>
-	      ${cpt}
-	      </td>
-	      <td>
-	      	${task.getTitle(locale)}
-	      </td>
-	      <td>
-	       	${task.taskType.title}
-	      </td>
+		  <!-- SELECT LIST FOR ORDER CHANGE -->
+			<form method="post" action="jsp/admin/plugins/workflow/DoChangeOrderTask.jsp">
+		        	<@comboOrders name="order_task_id" default_value=task.order max=number_task />
+	            	<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
+	            	<input type="hidden" name="id_task" value="${task.id}" />
+	            	<input class="button" type="submit" value="#i18n{workflow.modify_workflow.move}" />
+	         </form>
+		  </td>
 	       <td>
 			  <#if task.taskType.configRequired>
 				 <a href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}">

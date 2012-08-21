@@ -60,16 +60,16 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_action,name,description,id_workflow," +
         "id_state_before,id_state_after,id_icon,is_automatic,is_mass_action FROM workflow_action WHERE id_action=?";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
-        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,i.name,i.mime_type,i.file_value,i.width,i.height " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height " +
         " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE a.id_action=?";
     private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
-        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,i.name,i.mime_type,i.file_value,i.width,i.height " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height " +
         " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action " +
-        "(id_action,name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic,is_mass_action)" +
-        " VALUES(?,?,?,?,?,?,?,?,?)";
+        "(id_action,name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic,is_mass_action,display_order)" +
+        " VALUES(?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action  SET id_action=?,name=?,description=?," +
-        "id_workflow=?,id_state_before=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=? " +
+        "id_workflow=?,id_state_before=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=?, display_order=? " +
         " WHERE id_action=?";
     private static final String SQL_QUERY_INSERT_LINKED_ACTION = " INSERT INTO workflow_action_action (id_action, id_linked_action) VALUES ( ?,? ) ";
     private static final String SQL_QUERY_REMOVE_LINKED_ACTION = " DELETE FROM workflow_action_action WHERE id_action = ? OR id_linked_action = ? ";
@@ -82,7 +82,11 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_FILTER_ID_ICON = " a.id_icon = ? ";
     private static final String SQL_FILTER_IS_AUTOMATIC = " is_automatic = ? ";
     private static final String SQL_FILTER_IS_MASS_ACTION = " is_mass_action = ? ";
-    private static final String SQL_ORDER_BY_ID_ACTION = " ORDER BY id_action";
+    private static final String SQL_ORDER_BY_ORDER_DISPLAY = " ORDER BY display_order";
+    private static final String SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE a.display_order=? AND a.id_workflow=?";
+    private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_action WHERE id_workflow=?";
+    private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_action SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
 
     /**
      * Generates a new primary key
@@ -127,6 +131,7 @@ public class ActionDAO implements IActionDAO
         daoUtil.setInt( ++nPos, action.getIcon(  ).getId(  ) );
         daoUtil.setBoolean( ++nPos, action.isAutomaticState(  ) );
         daoUtil.setBoolean( ++nPos, action.isMassAction(  ) );
+        daoUtil.setInt( ++nPos, action.getOrder(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -151,6 +156,7 @@ public class ActionDAO implements IActionDAO
         daoUtil.setInt( ++nPos, action.getIcon(  ).getId(  ) );
         daoUtil.setBoolean( ++nPos, action.isAutomaticState(  ) );
         daoUtil.setBoolean( ++nPos, action.isMassAction(  ) );
+        daoUtil.setInt( ++nPos, action.getOrder(  ) );
 
         daoUtil.setInt( ++nPos, action.getId(  ) );
         daoUtil.executeUpdate(  );
@@ -240,6 +246,7 @@ public class ActionDAO implements IActionDAO
 
             action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
             action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
             icon.setName( daoUtil.getString( ++nPos ) );
             icon.setMimeType( daoUtil.getString( ++nPos ) );
             icon.setValue( daoUtil.getBytes( ++nPos ) );
@@ -309,7 +316,7 @@ public class ActionDAO implements IActionDAO
         }
 
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_ACTION_BY_FILTER, listStrFilter,
-                SQL_ORDER_BY_ID_ACTION );
+                SQL_ORDER_BY_ORDER_DISPLAY );
 
         DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin(  ) );
 
@@ -370,6 +377,7 @@ public class ActionDAO implements IActionDAO
 
             action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
             action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
 
             icon.setName( daoUtil.getString( ++nPos ) );
             icon.setMimeType( daoUtil.getString( ++nPos ) );
@@ -447,5 +455,92 @@ public class ActionDAO implements IActionDAO
         daoUtil.free(  );
 
         return listIdsLinkedAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action findByOrderAndWorkflowId( int nOrder, int nIdWorkflow )
+    {
+        Action action = null;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        int nPos = 0;
+
+        if ( daoUtil.next(  ) )
+        {
+            action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            action.setName( daoUtil.getString( ++nPos ) );
+            action.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            action.setWorkflow( workflow );
+
+            State stateBefore = new State(  );
+            stateBefore.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateBefore( stateBefore );
+
+            State stateAfter = new State(  );
+            stateAfter.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateAfter( stateAfter );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+
+            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
+            icon.setName( daoUtil.getString( ++nPos ) );
+            icon.setMimeType( daoUtil.getString( ++nPos ) );
+            icon.setValue( daoUtil.getBytes( ++nPos ) );
+            icon.setWidth( daoUtil.getInt( ++nPos ) );
+            icon.setHeight( daoUtil.getInt( ++nPos ) );
+
+            action.setIcon( icon );
+        }
+
+        daoUtil.free(  );
+
+        return action;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int findMaximumOrderByWorkflowId( int nWorkflowId )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin(  ) );
+        int nMaximumOrder = 0;
+
+        daoUtil.setInt( 1, nWorkflowId );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nMaximumOrder = daoUtil.getInt( 1 );
+        }
+
+        daoUtil.free(  );
+
+        return nMaximumOrder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void decrementOrderByOne( int nOrder, int nIdWorkflow )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdWorkflow );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 }

@@ -140,6 +140,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_IS_MASS_ACTION = "is_mass_action";
     private static final String PARAMETER_ID_STATE_BEFORE = "id_state_before";
     private static final String PARAMETER_ID_STATE_AFTER = "id_state_after";
+    private static final String PARAMETER_ORDER_ID = "order_id";
+    private static final String PARAMETER_ORDER_ACTION_ID = "order_action_id";
+    private static final String PARAMETER_ORDER_TASK_ID = "order_task_id";
     private static final String PARAMETER_APPLY = "apply";
     private static final String PARAMETER_PAGE_INDEX_STATE = "page_index_state";
     private static final String PARAMETER_PAGE_INDEX_ACTION = "page_index_action";
@@ -197,6 +200,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_STATE = "state";
     private static final String MARK_NUMBER_STATE = "number_state";
     private static final String MARK_NUMBER_ACTION = "number_action";
+    private static final String MARK_NUMBER_TASK = "number_task";
     private static final String MARK_ACTION = "action";
     private static final String MARK_INITIAL_STATE = "initial_state";
     private static final String MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS = "permission_manage_advanced_parameters";
@@ -732,6 +736,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 }
             }
 
+            //get the maximum order number in this workflow and set max+1
+            int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( nIdWorkflow );
+            state.setOrder( nMaximumOrder + 1 );
+
             _stateService.create( state );
         }
 
@@ -908,6 +916,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( state != null )
         {
             _stateService.remove( nIdState );
+            _stateService.decrementOrderByOne( state.getOrder(  ), state.getWorkflow(  ).getId(  ) );
 
             return getJspModifyWorkflow( request, state.getWorkflow(  ).getId(  ) );
         }
@@ -1049,6 +1058,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             {
                 return strError;
             }
+
+            //get the maximum order number in this workflow and set max+1
+            int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( nIdWorkflow );
+            action.setOrder( nMaximumOrder + 1 );
 
             _actionService.create( action );
 
@@ -1225,11 +1238,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         setPageTitleProperty( PROPERTY_MODIFY_ACTION_PAGE_TITLE );
 
+        List<ITask> taskList = _taskService.getListTaskByIdAction( nIdAction, getLocale(  ) );
+
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_ACTION, action );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale(  ) ) );
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
-        model.put( MARK_TASK_LIST, _taskService.getListTaskByIdAction( nIdAction, getLocale(  ) ) );
+        model.put( MARK_TASK_LIST, taskList );
+        model.put( MARK_NUMBER_TASK, taskList.size(  ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin(  ) );
         model.put( MARK_LOCALE, getLocale(  ) );
@@ -1336,6 +1352,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( action != null )
         {
             _actionService.remove( nIdAction );
+            _actionService.decrementOrderByOne( action.getOrder(  ), action.getWorkflow(  ).getId(  ) );
 
             return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) );
         }
@@ -1364,6 +1381,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( ( action != null ) && ( task != null ) )
         {
             task.setAction( action );
+
+            //get the maximum order number in this workflow and set max+1
+            int nMaximumOrder = _taskService.findMaximumOrderByWorkflowId( action.getId(  ) );
+            task.setOrder( nMaximumOrder + 1 );
+
             _taskService.create( task );
 
             // If the task requires a form, then remove any links to the action
@@ -1506,6 +1528,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
 
             _taskService.remove( nIdTask );
+            _taskService.decrementOrderByOne( task.getOrder(  ), task.getAction(  ).getId(  ) );
 
             Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
 
@@ -1591,6 +1614,129 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private String getJspModifyAction( HttpServletRequest request, int nIdAction )
     {
         return AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION + "?" + PARAMETER_ID_ACTION + "=" + nIdAction;
+    }
+
+    /**
+     * Changes the order of a given state (the way it will be displayed in the
+     * list)
+     * @param request The HTTP request
+     * @return return url of the jsp change order state
+     */
+    public String doChangeOrderState( HttpServletRequest request )
+    {
+        //gets the state which needs to be changed (order)
+        String strStateId = request.getParameter( PARAMETER_ID_STATE );
+        String strWorkflowId = request.getParameter( PARAMETER_ID_WORKFLOW );
+        String strOrderToSet = request.getParameter( PARAMETER_ORDER_ID );
+        int nStateId = 0;
+        int nWorkflowId = 0;
+        int nOrderToSet = 0;
+
+        if ( ( strStateId != null ) && !strStateId.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nStateId = WorkflowUtils.convertStringToInt( strStateId );
+        }
+
+        if ( ( strWorkflowId != null ) && !strWorkflowId.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
+        }
+
+        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
+        }
+
+        State stateToChangeOrder = _stateService.findByPrimaryKey( nStateId );
+        State stateWithTheSelectedOrder = _stateService.findByOrderAndWorkflowId( nOrderToSet, nWorkflowId );
+        stateWithTheSelectedOrder.setOrder( stateToChangeOrder.getOrder(  ) );
+        stateToChangeOrder.setOrder( nOrderToSet );
+
+        _stateService.update( stateToChangeOrder );
+        _stateService.update( stateWithTheSelectedOrder );
+
+        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW + "?" + PARAMETER_ID_WORKFLOW + "=" +
+        nWorkflowId;
+    }
+
+    /**
+     * Changes the order of a given action (the way it will be displayed in the
+     * list)
+     * @param request The HTTP request
+     * @return return url of the jsp change order action
+     */
+    public String doChangeOrderAction( HttpServletRequest request )
+    {
+        //gets the action which needs to be changed (order)
+        String strActionId = request.getParameter( PARAMETER_ID_ACTION );
+        String strWorkflowId = request.getParameter( PARAMETER_ID_WORKFLOW );
+        String strOrderToSet = request.getParameter( PARAMETER_ORDER_ACTION_ID );
+        int nActionId = 0;
+        int nWorkflowId = 0;
+        int nOrderToSet = 0;
+
+        if ( ( strActionId != null ) && !strActionId.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nActionId = WorkflowUtils.convertStringToInt( strActionId );
+        }
+
+        if ( ( strWorkflowId != null ) && !strWorkflowId.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
+        }
+
+        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
+        }
+
+        Action actionToChangeOrder = _actionService.findByPrimaryKey( nActionId );
+        Action actionWithTheSelectedOrder = _actionService.findByOrderAndWorkflowId( nOrderToSet, nWorkflowId );
+        actionWithTheSelectedOrder.setOrder( actionToChangeOrder.getOrder(  ) );
+        actionToChangeOrder.setOrder( nOrderToSet );
+
+        _actionService.update( actionToChangeOrder );
+        _actionService.update( actionWithTheSelectedOrder );
+
+        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW + "?" + PARAMETER_ID_WORKFLOW + "=" +
+        nWorkflowId;
+    }
+
+    /**
+     * Changes the order of a given task (the way it will be displayed in the
+     * list)
+     * @param request The HTTP request
+     * @return return url of the jsp change order task
+     */
+    public String doChangeOrderTask( HttpServletRequest request )
+    {
+        //gets the task which needs to be changed (order)
+        String strTaskId = request.getParameter( PARAMETER_ID_TASK );
+        String strOrderToSet = request.getParameter( PARAMETER_ORDER_TASK_ID );
+        int nTaskId = 0;
+        int nOrderToSet = 0;
+
+        if ( ( strTaskId != null ) && !strTaskId.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nTaskId = WorkflowUtils.convertStringToInt( strTaskId );
+        }
+
+        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        {
+            nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
+        }
+
+        ITask taskToChangeOrder = _taskService.findByPrimaryKey( nTaskId, this.getLocale(  ) );
+        ITask taskWithTheSelectedOrder = _taskService.findByOrderAndActionId( nOrderToSet,
+                taskToChangeOrder.getAction(  ).getId(  ), this.getLocale(  ) );
+        taskWithTheSelectedOrder.setOrder( taskToChangeOrder.getOrder(  ) );
+        taskToChangeOrder.setOrder( nOrderToSet );
+
+        _taskService.update( taskToChangeOrder );
+        _taskService.update( taskWithTheSelectedOrder );
+
+        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION + "?" + PARAMETER_ID_ACTION + "=" +
+        taskToChangeOrder.getAction(  ).getId(  );
     }
 
     /**

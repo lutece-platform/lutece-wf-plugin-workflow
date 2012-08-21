@@ -56,15 +56,18 @@ import javax.inject.Inject;
 public class TaskDAO implements ITaskDAO
 {
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_task ) FROM workflow_task";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action" +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order" +
         " FROM workflow_task WHERE id_task=?";
-    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action" +
-        " FROM workflow_task WHERE id_action=? ORDER BY id_task";
+    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order " +
+        " FROM workflow_task WHERE id_action=? ORDER BY display_order";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " +
-        "(id_task,task_type_key,id_action)VALUES(?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?" +
+        "(id_task,task_type_key,id_action, display_order)VALUES(?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?" +
         " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task  WHERE id_task=? ";
+    private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_task WHERE id_action=?";
+    private static final String SQL_QUERY_SELECT_BY_ORDER_AND_ACTION = "SELECT task_type_key, id_task, id_action, display_order FROM workflow_task WHERE display_order=? AND id_action=?";
+    private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_task SET display_order = display_order - 1 WHERE display_order > ? AND id_action=? ";
     @Inject
     private ITaskFactory _taskFactory;
 
@@ -106,6 +109,7 @@ public class TaskDAO implements ITaskDAO
         daoUtil.setInt( ++nPos, task.getId(  ) );
         daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
         daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
+        daoUtil.setInt( ++nPos, task.getOrder(  ) );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }
@@ -123,6 +127,7 @@ public class TaskDAO implements ITaskDAO
         daoUtil.setInt( ++nPos, task.getId(  ) );
         daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
         daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
+        daoUtil.setInt( ++nPos, task.getOrder(  ) );
         daoUtil.setInt( ++nPos, task.getId(  ) );
 
         daoUtil.executeUpdate(  );
@@ -151,6 +156,7 @@ public class TaskDAO implements ITaskDAO
             task.setId( daoUtil.getInt( ++nPos ) );
             action = new Action(  );
             action.setId( daoUtil.getInt( ++nPos ) );
+            task.setOrder( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
         }
 
@@ -198,6 +204,7 @@ public class TaskDAO implements ITaskDAO
             action = new Action(  );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
+            task.setOrder( daoUtil.getInt( ++nPos ) );
 
             listTask.add( task );
         }
@@ -205,5 +212,69 @@ public class TaskDAO implements ITaskDAO
         daoUtil.free(  );
 
         return listTask;
+    }
+
+    /**
+     * {@inheritDoc}s
+     */
+    public int findMaximumOrderByWorkflowId( int nIdAction )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin(  ) );
+        int nMaximumOrder = 0;
+
+        daoUtil.setInt( 1, nIdAction );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nMaximumOrder = daoUtil.getInt( 1 );
+        }
+
+        daoUtil.free(  );
+
+        return nMaximumOrder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITask findByOrderAndActionId( int nOrder, int nIdAction, Locale locale )
+    {
+        ITask task = null;
+        Action action = null;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ORDER_AND_ACTION, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdAction );
+        daoUtil.executeQuery(  );
+
+        int nPos = 0;
+
+        if ( daoUtil.next(  ) )
+        {
+            task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+            task.setId( daoUtil.getInt( ++nPos ) );
+            action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            task.setOrder( daoUtil.getInt( ++nPos ) );
+            task.setAction( action );
+        }
+
+        daoUtil.free(  );
+
+        return task;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void decrementOrderByOne( int nOrder, int nIdAction )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdAction );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 }
