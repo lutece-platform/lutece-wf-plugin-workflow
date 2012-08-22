@@ -83,10 +83,12 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_FILTER_IS_AUTOMATIC = " is_automatic = ? ";
     private static final String SQL_FILTER_IS_MASS_ACTION = " is_mass_action = ? ";
     private static final String SQL_ORDER_BY_ORDER_DISPLAY = " ORDER BY display_order";
-    private static final String SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
-        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE a.display_order=? AND a.id_workflow=?";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_action WHERE id_workflow=?";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_action SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
+    private static final String SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
+    private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
 
     /**
      * Generates a new primary key
@@ -460,59 +462,6 @@ public class ActionDAO implements IActionDAO
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Action findByOrderAndWorkflowId( int nOrder, int nIdWorkflow )
-    {
-        Action action = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW, WorkflowUtils.getPlugin(  ) );
-        daoUtil.setInt( 1, nOrder );
-        daoUtil.setInt( 2, nIdWorkflow );
-        daoUtil.executeQuery(  );
-
-        int nPos = 0;
-
-        if ( daoUtil.next(  ) )
-        {
-            action = new Action(  );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
-
-            Workflow workflow = new Workflow(  );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
-
-            State stateBefore = new State(  );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State(  );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon(  );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
-        }
-
-        daoUtil.free(  );
-
-        return action;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public int findMaximumOrderByWorkflowId( int nWorkflowId )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin(  ) );
@@ -542,5 +491,116 @@ public class ActionDAO implements IActionDAO
         daoUtil.setInt( 2, nIdWorkflow );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Action> findStatesBetweenOrders( int nOrder1, int nOrder2, int nIdWorkflow )
+    {
+        List<Action> listResult = new ArrayList<Action>(  );
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder1 );
+        daoUtil.setInt( 2, nOrder2 );
+        daoUtil.setInt( 3, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nPos = 0;
+
+            Action action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            action.setName( daoUtil.getString( ++nPos ) );
+            action.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            action.setWorkflow( workflow );
+
+            State stateBefore = new State(  );
+            stateBefore.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateBefore( stateBefore );
+
+            State stateAfter = new State(  );
+            stateAfter.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateAfter( stateAfter );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+
+            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
+            icon.setName( daoUtil.getString( ++nPos ) );
+            icon.setMimeType( daoUtil.getString( ++nPos ) );
+            icon.setValue( daoUtil.getBytes( ++nPos ) );
+            icon.setWidth( daoUtil.getInt( ++nPos ) );
+            icon.setHeight( daoUtil.getInt( ++nPos ) );
+
+            action.setIcon( icon );
+            listResult.add( action );
+        }
+
+        daoUtil.free(  );
+
+        return listResult;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Action> findStatesAfterOrder( int nOrder, int nIdWorkflow )
+    {
+        List<Action> listResult = new ArrayList<Action>(  );
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_AFTER_ORDER, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nPos = 0;
+
+            Action action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            action.setName( daoUtil.getString( ++nPos ) );
+            action.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            action.setWorkflow( workflow );
+
+            State stateBefore = new State(  );
+            stateBefore.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateBefore( stateBefore );
+
+            State stateAfter = new State(  );
+            stateAfter.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateAfter( stateAfter );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+
+            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
+            icon.setName( daoUtil.getString( ++nPos ) );
+            icon.setMimeType( daoUtil.getString( ++nPos ) );
+            icon.setValue( daoUtil.getBytes( ++nPos ) );
+            icon.setWidth( daoUtil.getInt( ++nPos ) );
+            icon.setHeight( daoUtil.getInt( ++nPos ) );
+
+            action.setIcon( icon );
+            listResult.add( action );
+        }
+
+        daoUtil.free(  );
+
+        return listResult;
     }
 }

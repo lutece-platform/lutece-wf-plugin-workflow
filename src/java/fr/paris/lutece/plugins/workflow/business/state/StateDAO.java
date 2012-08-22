@@ -62,16 +62,15 @@ public class StateDAO implements IStateDAO
         " FROM workflow_state ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_state " +
         "(id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon)VALUES(?,?,?,?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_state  SET id_state=?,name=?,description=?,id_workflow=?,is_initial_state=?,is_required_workgroup_assigned=?, display_order=?, id_icon=?" +
-        " WHERE id_state=?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_state SET name=?,description=?,id_workflow=?,is_initial_state=?,is_required_workgroup_assigned=?, display_order=?, id_icon=? WHERE id_state=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_state  WHERE id_state=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " id_workflow = ? ";
     private static final String SQL_FILTER_IS_INITIAL_STATE = " is_initial_state = ? ";
     private static final String SQL_ORDER_BY_STATE_ORDER = " ORDER BY display_order ";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_state WHERE id_workflow=?";
-    private static final String SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW = "SELECT id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,id_icon,display_order " +
-        " FROM workflow_state WHERE display_order=? AND id_workflow=? ";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_state SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
+    private static final String SQL_QUERY_STATES_WITH_ORDER_BETWEEN = "SELECT id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,id_icon,display_order FROM workflow_state WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
+    private static final String SQL_QUERY_STATES_AFTER_ORDER = "SELECT id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,id_icon,display_order FROM workflow_state WHERE display_order >=? AND id_workflow=?";
 
     /**
      * Generates a new primary key
@@ -139,7 +138,6 @@ public class StateDAO implements IStateDAO
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, state.getId(  ) );
         daoUtil.setString( ++nPos, state.getName(  ) );
         daoUtil.setString( ++nPos, state.getDescription(  ) );
         daoUtil.setInt( ++nPos, state.getWorkflow(  ).getId(  ) );
@@ -278,43 +276,6 @@ public class StateDAO implements IStateDAO
      * {@inheritDoc}
      */
     @Override
-    public State findByOrderAndWorkflowId( int nOrder, int nIdWorkflow )
-    {
-        State state = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ORDER_AND_WORKFLOW, WorkflowUtils.getPlugin(  ) );
-        daoUtil.setInt( 1, nOrder );
-        daoUtil.setInt( 2, nIdWorkflow );
-        daoUtil.executeQuery(  );
-
-        int nPos = 0;
-
-        if ( daoUtil.next(  ) )
-        {
-            state = new State(  );
-            state.setId( daoUtil.getInt( ++nPos ) );
-            state.setName( daoUtil.getString( ++nPos ) );
-            state.setDescription( daoUtil.getString( ++nPos ) );
-
-            Workflow workflow = new Workflow(  );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            state.setInitialState( daoUtil.getBoolean( ++nPos ) );
-            state.setRequiredWorkgroupAssigned( daoUtil.getBoolean( ++nPos ) );
-            state.setWorkflow( workflow );
-
-            Icon icon = new Icon(  );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-            state.setIcon( icon );
-        }
-
-        daoUtil.free(  );
-
-        return state;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<State> selectStatesByFilter( StateFilter filter )
     {
         List<State> listState = new ArrayList<State>(  );
@@ -386,5 +347,88 @@ public class StateDAO implements IStateDAO
         daoUtil.setInt( 2, nIdWorkflow );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<State> findStatesBetweenOrders( int nOrder1, int nOrder2, int nIdWorkflow )
+    {
+        List<State> listResult = new ArrayList<State>(  );
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_STATES_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder1 );
+        daoUtil.setInt( 2, nOrder2 );
+        daoUtil.setInt( 3, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nPos = 0;
+
+            State state = new State(  );
+
+            state.setId( daoUtil.getInt( ++nPos ) );
+            state.setName( daoUtil.getString( ++nPos ) );
+            state.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            state.setWorkflow( workflow );
+            state.setInitialState( daoUtil.getBoolean( ++nPos ) );
+            state.setRequiredWorkgroupAssigned( daoUtil.getBoolean( ++nPos ) );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+            state.setIcon( icon );
+            state.setOrder( daoUtil.getInt( ++nPos ) );
+            listResult.add( state );
+        }
+
+        daoUtil.free(  );
+
+        return listResult;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<State> findStatesAfterOrder( int nOrder, int nIdWorkflow )
+    {
+        List<State> listResult = new ArrayList<State>(  );
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_STATES_AFTER_ORDER, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nOrder );
+        daoUtil.setInt( 2, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nPos = 0;
+
+            State state = new State(  );
+
+            state.setId( daoUtil.getInt( ++nPos ) );
+            state.setName( daoUtil.getString( ++nPos ) );
+            state.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            state.setWorkflow( workflow );
+            state.setInitialState( daoUtil.getBoolean( ++nPos ) );
+            state.setRequiredWorkgroupAssigned( daoUtil.getBoolean( ++nPos ) );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+            state.setIcon( icon );
+            state.setOrder( daoUtil.getInt( ++nPos ) );
+            listResult.add( state );
+        }
+
+        daoUtil.free(  );
+
+        return listResult;
     }
 }

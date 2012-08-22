@@ -1534,7 +1534,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             if ( action != null )
             {
-                return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) );
+                UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION );
+                url.addParameter( PARAMETER_ID_ACTION, task.getAction(  ).getId(  ) );
+
+                return url.getUrl(  );
             }
         }
 
@@ -1632,31 +1635,68 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         int nWorkflowId = 0;
         int nOrderToSet = 0;
 
-        if ( ( strStateId != null ) && !strStateId.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strStateId ) )
         {
             nStateId = WorkflowUtils.convertStringToInt( strStateId );
         }
 
-        if ( ( strWorkflowId != null ) && !strWorkflowId.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strWorkflowId ) )
         {
             nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
 
-        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strOrderToSet ) )
         {
             nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
         }
 
         State stateToChangeOrder = _stateService.findByPrimaryKey( nStateId );
-        State stateWithTheSelectedOrder = _stateService.findByOrderAndWorkflowId( nOrderToSet, nWorkflowId );
-        stateWithTheSelectedOrder.setOrder( stateToChangeOrder.getOrder(  ) );
+
+        // order goes up
+        if ( nOrderToSet < stateToChangeOrder.getOrder(  ) )
+        {
+            List<State> listWithOrderAfterChosen = _stateService.findStatesAfterOrder( nOrderToSet, nWorkflowId );
+
+            for ( State state : listWithOrderAfterChosen )
+            {
+                if ( state.getOrder(  ) != stateToChangeOrder.getOrder(  ) )
+                {
+                    if ( state.getOrder(  ) < stateToChangeOrder.getOrder(  ) )
+                    {
+                        state.setOrder( state.getOrder(  ) + 1 );
+                    }
+
+                    _stateService.update( state );
+                }
+            }
+        }
+
+        // order goes down
+        else
+        {
+            //get all the states with the order lower that the chosen state
+            List<State> listWithOrderBetweenChosen = _stateService.findStatesBetweenOrders( stateToChangeOrder.getOrder(  ),
+                    nOrderToSet, nWorkflowId );
+
+            //for all those states, we decrement the order
+            for ( State state : listWithOrderBetweenChosen )
+            {
+                if ( state.getOrder(  ) != stateToChangeOrder.getOrder(  ) )
+                {
+                    state.setOrder( state.getOrder(  ) - 1 );
+                    _stateService.update( state );
+                }
+            }
+        }
+
+        // for the chosen one, we change its order too
         stateToChangeOrder.setOrder( nOrderToSet );
-
         _stateService.update( stateToChangeOrder );
-        _stateService.update( stateWithTheSelectedOrder );
 
-        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW + "?" + PARAMETER_ID_WORKFLOW + "=" +
-        nWorkflowId;
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW );
+        url.addParameter( PARAMETER_ID_WORKFLOW, nWorkflowId );
+
+        return url.getUrl(  );
     }
 
     /**
@@ -1675,31 +1715,68 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         int nWorkflowId = 0;
         int nOrderToSet = 0;
 
-        if ( ( strActionId != null ) && !strActionId.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strActionId ) )
         {
             nActionId = WorkflowUtils.convertStringToInt( strActionId );
         }
 
-        if ( ( strWorkflowId != null ) && !strWorkflowId.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strWorkflowId ) )
         {
             nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
 
-        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strOrderToSet ) )
         {
             nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
         }
 
         Action actionToChangeOrder = _actionService.findByPrimaryKey( nActionId );
-        Action actionWithTheSelectedOrder = _actionService.findByOrderAndWorkflowId( nOrderToSet, nWorkflowId );
-        actionWithTheSelectedOrder.setOrder( actionToChangeOrder.getOrder(  ) );
+
+        // order goes up
+        if ( nOrderToSet < actionToChangeOrder.getOrder(  ) )
+        {
+            List<Action> listWithOrderAfterChosen = _actionService.findStatesAfterOrder( nOrderToSet, nWorkflowId );
+
+            for ( Action action : listWithOrderAfterChosen )
+            {
+                if ( action.getOrder(  ) != actionToChangeOrder.getOrder(  ) )
+                {
+                    if ( action.getOrder(  ) < actionToChangeOrder.getOrder(  ) )
+                    {
+                        action.setOrder( action.getOrder(  ) + 1 );
+                    }
+
+                    _actionService.update( action );
+                }
+            }
+        }
+
+        // order goes down
+        else
+        {
+            //get all the actions with the order lower that the chosen action
+            List<Action> listWithOrderBetweenChosen = _actionService.findStatesBetweenOrders( actionToChangeOrder.getOrder(  ),
+                    nOrderToSet, nWorkflowId );
+
+            //for all those action, we decrement the order
+            for ( Action action : listWithOrderBetweenChosen )
+            {
+                if ( action.getOrder(  ) != actionToChangeOrder.getOrder(  ) )
+                {
+                    action.setOrder( action.getOrder(  ) - 1 );
+                    _actionService.update( action );
+                }
+            }
+        }
+
+        // for the chosen one, we change its order too
         actionToChangeOrder.setOrder( nOrderToSet );
-
         _actionService.update( actionToChangeOrder );
-        _actionService.update( actionWithTheSelectedOrder );
 
-        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW + "?" + PARAMETER_ID_WORKFLOW + "=" +
-        nWorkflowId;
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW );
+        url.addParameter( PARAMETER_ID_WORKFLOW, nWorkflowId );
+
+        return url.getUrl(  );
     }
 
     /**
@@ -1716,27 +1793,64 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         int nTaskId = 0;
         int nOrderToSet = 0;
 
-        if ( ( strTaskId != null ) && !strTaskId.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strTaskId ) )
         {
             nTaskId = WorkflowUtils.convertStringToInt( strTaskId );
         }
 
-        if ( ( strOrderToSet != null ) && !strOrderToSet.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isNotBlank( strOrderToSet ) )
         {
             nOrderToSet = WorkflowUtils.convertStringToInt( strOrderToSet );
         }
 
         ITask taskToChangeOrder = _taskService.findByPrimaryKey( nTaskId, this.getLocale(  ) );
-        ITask taskWithTheSelectedOrder = _taskService.findByOrderAndActionId( nOrderToSet,
-                taskToChangeOrder.getAction(  ).getId(  ), this.getLocale(  ) );
-        taskWithTheSelectedOrder.setOrder( taskToChangeOrder.getOrder(  ) );
+
+        // order goes up
+        if ( nOrderToSet < taskToChangeOrder.getOrder(  ) )
+        {
+            List<ITask> listWithOrderAfterChosen = _taskService.findTasksAfterOrder( nOrderToSet,
+                    taskToChangeOrder.getAction(  ).getId(  ), this.getLocale(  ) );
+
+            for ( ITask task : listWithOrderAfterChosen )
+            {
+                if ( task.getOrder(  ) != taskToChangeOrder.getOrder(  ) )
+                {
+                    if ( task.getOrder(  ) < taskToChangeOrder.getOrder(  ) )
+                    {
+                        task.setOrder( task.getOrder(  ) + 1 );
+                    }
+
+                    _taskService.update( task );
+                }
+            }
+        }
+
+        // order goes down
+        else
+        {
+            //get all the actions with the order lower that the chosen action
+            List<ITask> listWithOrderBetweenChosen = _taskService.findTasksBetweenOrders( taskToChangeOrder.getOrder(  ),
+                    nOrderToSet, taskToChangeOrder.getAction(  ).getId(  ), this.getLocale(  ) );
+
+            //for all those action, we decrement the order
+            for ( ITask task : listWithOrderBetweenChosen )
+            {
+                if ( task.getOrder(  ) != taskToChangeOrder.getOrder(  ) )
+                {
+                    task.setOrder( task.getOrder(  ) - 1 );
+                    _taskService.update( task );
+                }
+            }
+        }
+
+        // for the chosen one, we change its order too
         taskToChangeOrder.setOrder( nOrderToSet );
-
         _taskService.update( taskToChangeOrder );
-        _taskService.update( taskWithTheSelectedOrder );
 
-        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION + "?" + PARAMETER_ID_ACTION + "=" +
-        taskToChangeOrder.getAction(  ).getId(  );
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION );
+        url.addParameter( PARAMETER_ID_ACTION, taskToChangeOrder.getAction(  ).getId(  ) );
+
+        return url.getUrl(  );
     }
 
     /**
