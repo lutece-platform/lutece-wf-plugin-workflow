@@ -168,6 +168,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_MODIFY_ACTION_PAGE_TITLE = "workflow.modify_action.page_title";
     private static final String PROPERTY_MODIFY_TASK_PAGE_TITLE = "workflow.modify_task.page_title";
     private static final String PROPERTY_ITEM_PER_PAGE = "workflow.itemsPerPage";
+    private static final String PROPERTY_COPY_OF_STATE = "workflow.manage_workflow.copy_of_state";
+    private static final String PROPERTY_COPY_OF_ACTION = "workflow.manage_workflow.copy_of_action";
     private static final String PROPERTY_ALL = "workflow.manage_workflow.select.all";
     private static final String PROPERTY_YES = "workflow.manage_workflow.select.yes";
     private static final String PROPERTY_NO = "workflow.manage_workflow.select.no";
@@ -2037,5 +2039,71 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         return listIdsLinkedAction;
+    }
+
+    /**
+     * duplicate a state
+     *
+     * @param request
+     *            The HTTP request
+     * @return The URL to go after performing the action
+     */
+    public String doCopyState( HttpServletRequest request )
+    {
+        String strIdState = request.getParameter( PARAMETER_ID_STATE );
+        int nIdState = WorkflowUtils.convertStringToInt( strIdState );
+
+        State stateToCopy = _stateService.findByPrimaryKey( nIdState );
+        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_STATE, request.getLocale(  ) ) +
+            stateToCopy.getName(  );
+        stateToCopy.setName( newNameForCopy );
+
+        //get the maximum order number in this workflow and set max+1
+        int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( stateToCopy.getWorkflow(  ).getId(  ) );
+        stateToCopy.setOrder( nMaximumOrder + 1 );
+
+        _stateService.create( stateToCopy );
+
+        return getJspModifyWorkflow( request, stateToCopy.getWorkflow(  ).getId(  ) );
+    }
+
+    /**
+     * Duplicate an action
+     * @param request the request
+     * @return the URL of the "modify workflow" page
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    public String doCopyAction( HttpServletRequest request )
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
+        int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
+
+        //get the action
+        Action actionToCopy = _actionService.findByPrimaryKey( nIdAction );
+        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_ACTION, request.getLocale(  ) ) +
+            actionToCopy.getName(  );
+        actionToCopy.setName( newNameForCopy );
+
+        //get the maximum order number in this workflow and set max+1
+        int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( actionToCopy.getWorkflow(  ).getId(  ) );
+        actionToCopy.setOrder( nMaximumOrder + 1 );
+        _actionService.create( actionToCopy );
+
+        //get the linked tasks and duplicate them
+        List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( nIdAction, this.getLocale(  ) );
+
+        for ( ITask task : listLinkedTasks )
+        {
+            //for each we change the linked action
+            task.setAction( actionToCopy );
+
+            //and then we create the new task duplicated
+            this.doCopyTaskWithModifiedParam( task, null );
+        }
+
+        return getJspModifyWorkflow( request, actionToCopy.getWorkflow(  ).getId(  ) );
     }
 }
