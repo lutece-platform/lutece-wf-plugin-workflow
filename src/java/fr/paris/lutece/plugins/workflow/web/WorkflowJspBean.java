@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
@@ -48,6 +49,7 @@ import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
@@ -78,9 +80,13 @@ import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
 import org.apache.commons.lang.StringUtils;
+
+import java.lang.reflect.InvocationTargetException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,6 +171,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_ALL = "workflow.manage_workflow.select.all";
     private static final String PROPERTY_YES = "workflow.manage_workflow.select.yes";
     private static final String PROPERTY_NO = "workflow.manage_workflow.select.no";
+    private static final String PROPERTY_COPY_TASK_TITLE = "workflow.copy_task.title";
     private static final String FIELD_WORKFLOW_NAME = "workflow.create_workflow.label_name";
     private static final String FIELD_ACTION_NAME = "workflow.create_action.label_name";
     private static final String FIELD_STATE_NAME = "workflow.create_state.label_name";
@@ -1542,6 +1549,83 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         return getJspManageWorkflow( request );
+    }
+
+    /**
+     * copy the task whose key is specified in the Http request
+     * @param request The HTTP request
+     * @throws AccessDeniedException the {@link AccessDeniedException}
+     * @return The URL to go after performing the action
+     * @throws InvocationTargetException the {@link InvocationTargetException}
+     * @throws IllegalAccessException the {@link IllegalAccessException}
+     * @throws NoSuchMethodException the {@link NoSuchMethodException}
+     */
+    public String doCopyTask( HttpServletRequest request )
+        throws AccessDeniedException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        String strIdTask = request.getParameter( PARAMETER_ID_TASK );
+        ITask taskToCopy;
+        int nIdTaskToCopy = WorkflowUtils.convertStringToInt( strIdTask );
+        taskToCopy = _taskService.findByPrimaryKey( nIdTaskToCopy, request.getLocale(  ) );
+
+        doCopyTaskWithModifiedParam( taskToCopy, null );
+
+        return getJspModifyAction( request, taskToCopy.getAction(  ).getId(  ) );
+    }
+
+    /**
+     * Copy the task whose key is specified in the Http request and update param
+     * if exists
+     * @param taskToCopy the task to copy
+     * @param mapParamToChange the map<String, String> of <Param, Value> to
+     *            change
+     * @throws NoSuchMethodException NoSuchMethodException the
+     *             {@link NoSuchMethodException}
+     * @throws IllegalAccessException IllegalAccessException the
+     *             {@link IllegalAccessException}
+     * @throws InvocationTargetException InvocationTargetException the
+     *             {@link InvocationTargetException}
+     */
+    public void doCopyTaskWithModifiedParam( ITask taskToCopy, Map<String, String> mapParamToChange )
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        // Save nIdTaskToCopy
+        Integer nIdTaskToCopy = taskToCopy.getId(  );
+
+        //get the maximum order number in this workflow and set max+1
+        int nMaximumOrder = _taskService.findMaximumOrderByWorkflowId( taskToCopy.getAction(  ).getId(  ) );
+        taskToCopy.setOrder( nMaximumOrder + 1 );
+
+        // Create the new task (taskToCopy id will be update with the new idTask)
+        _taskService.create( taskToCopy );
+
+        // get all taskConfigService
+        List<ITaskConfigService> listTaskConfigService = SpringContextService.getBeansOfType( ITaskConfigService.class );
+
+        // For each taskConfigService, update parameter if exists
+        for ( ITaskConfigService taskConfigService : listTaskConfigService )
+        {
+            ITaskConfig taskConfig = taskConfigService.findByPrimaryKey( nIdTaskToCopy );
+
+            if ( taskConfig != null )
+            {
+                taskConfig.setIdTask( taskToCopy.getId(  ) );
+
+                if ( mapParamToChange != null )
+                {
+                    EntrySetMapIterator it = new EntrySetMapIterator( mapParamToChange );
+
+                    while ( it.hasNext(  ) )
+                    {
+                        String key = (String) it.next(  );
+                        String value = (String) it.getValue(  );
+                        MethodUtil.set( taskConfig, key, value );
+                    }
+                }
+
+                taskConfigService.create( taskConfig );
+            }
+        }
     }
 
     /**
