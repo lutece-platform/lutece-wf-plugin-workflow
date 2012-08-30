@@ -83,11 +83,7 @@ import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.lang.StringUtils;
-
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -98,6 +94,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -170,6 +169,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_ITEM_PER_PAGE = "workflow.itemsPerPage";
     private static final String PROPERTY_COPY_OF_STATE = "workflow.manage_workflow.copy_of_state";
     private static final String PROPERTY_COPY_OF_ACTION = "workflow.manage_workflow.copy_of_action";
+    private static final String PROPERTY_COPY_OF_WORKFLOW = "workflow.manage_workflow.copy_of_workflow";
     private static final String PROPERTY_ALL = "workflow.manage_workflow.select.all";
     private static final String PROPERTY_YES = "workflow.manage_workflow.select.yes";
     private static final String PROPERTY_NO = "workflow.manage_workflow.select.no";
@@ -2052,17 +2052,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
         int nIdState = WorkflowUtils.convertStringToInt( strIdState );
-
         State stateToCopy = _stateService.findByPrimaryKey( nIdState );
-        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_STATE, request.getLocale(  ) ) +
-            stateToCopy.getName(  );
-        stateToCopy.setName( newNameForCopy );
 
-        //get the maximum order number in this workflow and set max+1
-        int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( stateToCopy.getWorkflow(  ).getId(  ) );
-        stateToCopy.setOrder( nMaximumOrder + 1 );
-
-        _stateService.create( stateToCopy );
+        stateToCopy = copyStateMethod( request, stateToCopy );
 
         return getJspModifyWorkflow( request, stateToCopy.getWorkflow(  ).getId(  ) );
     }
@@ -2081,8 +2073,129 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
 
-        //get the action
         Action actionToCopy = _actionService.findByPrimaryKey( nIdAction );
+
+        actionToCopy = copyActionMethod( request, actionToCopy );
+
+        return getJspModifyWorkflow( request, actionToCopy.getWorkflow(  ).getId(  ) );
+    }
+
+    /**
+     * Duplicate a workflow
+     * @param request the request
+     * @return the URL of the workflow management page
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     */
+    public String doCopyWorkflow( HttpServletRequest request )
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
+        int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
+        Map<Integer, Integer> mapIdStates = new HashMap<Integer, Integer>(  );
+        Map<Integer, Integer> mapIdActions = new HashMap<Integer, Integer>(  );
+
+        Workflow workflowToCopy = _workflowService.findByPrimaryKey( nIdWorkflow );
+
+        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_WORKFLOW, request.getLocale(  ) ) +
+            workflowToCopy.getName(  );
+        workflowToCopy.setName( newNameForCopy );
+
+        _workflowService.create( workflowToCopy );
+
+        //get all the states of the workflow to copy
+        List<State> listStatesOfWorkflow = (List<State>) _workflowService.getAllStateByWorkflow( nIdWorkflow );
+
+        for ( State state : listStatesOfWorkflow )
+        {
+            state.setWorkflow( workflowToCopy );
+
+            //get the maximum order number in this workflow and set max+1
+            int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( state.getWorkflow(  ).getId(  ) );
+            state.setOrder( nMaximumOrder + 1 );
+
+            // Save state to copy id
+            Integer nOldIdState = state.getId(  );
+
+            // Create new state (this action will change state id with the new idState)
+            _stateService.create( state );
+
+            mapIdStates.put( nOldIdState, state.getId(  ) );
+        }
+
+        //get all the actions of the workflow to copy
+        ActionFilter actionFilter = new ActionFilter(  );
+        actionFilter.setIdWorkflow( nIdWorkflow );
+
+        List<Action> listActionsOfWorkflow = _actionService.getListActionByFilter( actionFilter );
+
+        for ( Action action : listActionsOfWorkflow )
+        {
+            action.setWorkflow( workflowToCopy );
+
+            //get the maximum order number in this workflow and set max+1
+            int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( action.getWorkflow(  ).getId(  ) );
+            action.setOrder( nMaximumOrder + 1 );
+
+            // Change idState to set the new state
+            action.getStateBefore(  ).setId( mapIdStates.get( action.getStateBefore(  ).getId(  ) ) );
+            action.getStateAfter(  ).setId( mapIdStates.get( action.getStateAfter(  ).getId(  ) ) );
+
+            int nOldIdAction = action.getId(  );
+
+            //get the linked tasks and duplicate them
+            List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId(  ), this.getLocale(  ) );
+
+            _actionService.create( action );
+
+            mapIdActions.put( nOldIdAction, action.getId(  ) );
+
+            for ( ITask task : listLinkedTasks )
+            {
+                //for each we change the linked action
+                task.setAction( action );
+
+                //and then we create the new task duplicated
+                this.doCopyTaskWithModifiedParam( task, null );
+            }
+        }
+
+        //get all the linked actions
+        actionFilter = new ActionFilter(  );
+        actionFilter.setIdWorkflow( workflowToCopy.getId(  ) );
+
+        List<Action> listActionsOfNewWorkflow = _actionService.getListActionByFilter( actionFilter );
+
+        for ( Action action : listActionsOfNewWorkflow )
+        {
+            List<Integer> newListIdsLinkedAction = new ArrayList<Integer>(  );
+
+            for ( Integer nIdActionLinked : action.getListIdsLinkedAction(  ) )
+            {
+                newListIdsLinkedAction.add( mapIdActions.get( nIdActionLinked ) );
+            }
+
+            action.setListIdsLinkedAction( newListIdsLinkedAction );
+            _actionService.update( action );
+        }
+
+        return getJspModifyWorkflow( request, workflowToCopy.getId(  ) );
+    }
+
+    /**
+     * Copy an action
+     * @param request the request
+     * @param actionToCopy the action to copy
+     * @return action the action
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    private Action copyActionMethod( HttpServletRequest request, Action actionToCopy )
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        //get the action
         String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_ACTION, request.getLocale(  ) ) +
             actionToCopy.getName(  );
         actionToCopy.setName( newNameForCopy );
@@ -2093,7 +2206,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         _actionService.create( actionToCopy );
 
         //get the linked tasks and duplicate them
-        List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( nIdAction, this.getLocale(  ) );
+        List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId(  ), this.getLocale(  ) );
 
         for ( ITask task : listLinkedTasks )
         {
@@ -2104,6 +2217,27 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             this.doCopyTaskWithModifiedParam( task, null );
         }
 
-        return getJspModifyWorkflow( request, actionToCopy.getWorkflow(  ).getId(  ) );
+        return actionToCopy;
+    }
+
+    /**
+     * Method for copying a state
+     * @param request the request
+     * @param stateToCopy the state to copy
+     * @return state the copy of stateToCopy
+     */
+    private State copyStateMethod( HttpServletRequest request, State stateToCopy )
+    {
+        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_STATE, request.getLocale(  ) ) +
+            stateToCopy.getName(  );
+        stateToCopy.setName( newNameForCopy );
+
+        //get the maximum order number in this workflow and set max+1
+        int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( stateToCopy.getWorkflow(  ).getId(  ) );
+        stateToCopy.setOrder( nMaximumOrder + 1 );
+
+        _stateService.create( stateToCopy );
+
+        return stateToCopy;
     }
 }
