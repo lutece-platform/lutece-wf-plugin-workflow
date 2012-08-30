@@ -83,7 +83,11 @@ import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.InvocationTargetException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,9 +98,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -2098,89 +2099,92 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Workflow workflowToCopy = _workflowService.findByPrimaryKey( nIdWorkflow );
 
-        String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_WORKFLOW, request.getLocale(  ) ) +
-            workflowToCopy.getName(  );
-        workflowToCopy.setName( newNameForCopy );
-
-        _workflowService.create( workflowToCopy );
-
-        //get all the states of the workflow to copy
-        List<State> listStatesOfWorkflow = (List<State>) _workflowService.getAllStateByWorkflow( nIdWorkflow );
-
-        for ( State state : listStatesOfWorkflow )
+        if ( workflowToCopy != null )
         {
-            state.setWorkflow( workflowToCopy );
+            String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_WORKFLOW, request.getLocale(  ) ) +
+                workflowToCopy.getName(  );
+            workflowToCopy.setName( newNameForCopy );
 
-            //get the maximum order number in this workflow and set max+1
-            int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( state.getWorkflow(  ).getId(  ) );
-            state.setOrder( nMaximumOrder + 1 );
+            _workflowService.create( workflowToCopy );
 
-            // Save state to copy id
-            Integer nOldIdState = state.getId(  );
+            //get all the states of the workflow to copy
+            List<State> listStatesOfWorkflow = (List<State>) _workflowService.getAllStateByWorkflow( nIdWorkflow );
 
-            // Create new state (this action will change state id with the new idState)
-            _stateService.create( state );
-
-            mapIdStates.put( nOldIdState, state.getId(  ) );
-        }
-
-        //get all the actions of the workflow to copy
-        ActionFilter actionFilter = new ActionFilter(  );
-        actionFilter.setIdWorkflow( nIdWorkflow );
-
-        List<Action> listActionsOfWorkflow = _actionService.getListActionByFilter( actionFilter );
-
-        for ( Action action : listActionsOfWorkflow )
-        {
-            action.setWorkflow( workflowToCopy );
-
-            //get the maximum order number in this workflow and set max+1
-            int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( action.getWorkflow(  ).getId(  ) );
-            action.setOrder( nMaximumOrder + 1 );
-
-            // Change idState to set the new state
-            action.getStateBefore(  ).setId( mapIdStates.get( action.getStateBefore(  ).getId(  ) ) );
-            action.getStateAfter(  ).setId( mapIdStates.get( action.getStateAfter(  ).getId(  ) ) );
-
-            int nOldIdAction = action.getId(  );
-
-            //get the linked tasks and duplicate them
-            List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId(  ), this.getLocale(  ) );
-
-            _actionService.create( action );
-
-            mapIdActions.put( nOldIdAction, action.getId(  ) );
-
-            for ( ITask task : listLinkedTasks )
+            for ( State state : listStatesOfWorkflow )
             {
-                //for each we change the linked action
-                task.setAction( action );
+                state.setWorkflow( workflowToCopy );
 
-                //and then we create the new task duplicated
-                this.doCopyTaskWithModifiedParam( task, null );
+                //get the maximum order number in this workflow and set max+1
+                int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( state.getWorkflow(  ).getId(  ) );
+                state.setOrder( nMaximumOrder + 1 );
+
+                // Save state to copy id
+                Integer nOldIdState = state.getId(  );
+
+                // Create new state (this action will change state id with the new idState)
+                _stateService.create( state );
+
+                mapIdStates.put( nOldIdState, state.getId(  ) );
+            }
+
+            //get all the actions of the workflow to copy
+            ActionFilter actionFilter = new ActionFilter(  );
+            actionFilter.setIdWorkflow( nIdWorkflow );
+
+            List<Action> listActionsOfWorkflow = _actionService.getListActionByFilter( actionFilter );
+
+            for ( Action action : listActionsOfWorkflow )
+            {
+                action.setWorkflow( workflowToCopy );
+
+                //get the maximum order number in this workflow and set max+1
+                int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( action.getWorkflow(  ).getId(  ) );
+                action.setOrder( nMaximumOrder + 1 );
+
+                // Change idState to set the new state
+                action.getStateBefore(  ).setId( mapIdStates.get( action.getStateBefore(  ).getId(  ) ) );
+                action.getStateAfter(  ).setId( mapIdStates.get( action.getStateAfter(  ).getId(  ) ) );
+
+                int nOldIdAction = action.getId(  );
+
+                //get the linked tasks and duplicate them
+                List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId(  ), this.getLocale(  ) );
+
+                _actionService.create( action );
+
+                mapIdActions.put( nOldIdAction, action.getId(  ) );
+
+                for ( ITask task : listLinkedTasks )
+                {
+                    //for each we change the linked action
+                    task.setAction( action );
+
+                    //and then we create the new task duplicated
+                    this.doCopyTaskWithModifiedParam( task, null );
+                }
+            }
+
+            //get all the linked actions
+            actionFilter = new ActionFilter(  );
+            actionFilter.setIdWorkflow( workflowToCopy.getId(  ) );
+
+            List<Action> listActionsOfNewWorkflow = _actionService.getListActionByFilter( actionFilter );
+
+            for ( Action action : listActionsOfNewWorkflow )
+            {
+                List<Integer> newListIdsLinkedAction = new ArrayList<Integer>(  );
+
+                for ( Integer nIdActionLinked : action.getListIdsLinkedAction(  ) )
+                {
+                    newListIdsLinkedAction.add( mapIdActions.get( nIdActionLinked ) );
+                }
+
+                action.setListIdsLinkedAction( newListIdsLinkedAction );
+                _actionService.update( action );
             }
         }
 
-        //get all the linked actions
-        actionFilter = new ActionFilter(  );
-        actionFilter.setIdWorkflow( workflowToCopy.getId(  ) );
-
-        List<Action> listActionsOfNewWorkflow = _actionService.getListActionByFilter( actionFilter );
-
-        for ( Action action : listActionsOfNewWorkflow )
-        {
-            List<Integer> newListIdsLinkedAction = new ArrayList<Integer>(  );
-
-            for ( Integer nIdActionLinked : action.getListIdsLinkedAction(  ) )
-            {
-                newListIdsLinkedAction.add( mapIdActions.get( nIdActionLinked ) );
-            }
-
-            action.setListIdsLinkedAction( newListIdsLinkedAction );
-            _actionService.update( action );
-        }
-
-        return getJspModifyWorkflow( request, workflowToCopy.getId(  ) );
+        return getJspManageWorkflow( request );
     }
 
     /**
@@ -2203,10 +2207,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         //get the maximum order number in this workflow and set max+1
         int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( actionToCopy.getWorkflow(  ).getId(  ) );
         actionToCopy.setOrder( nMaximumOrder + 1 );
-        _actionService.create( actionToCopy );
 
         //get the linked tasks and duplicate them
         List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId(  ), this.getLocale(  ) );
+
+        _actionService.create( actionToCopy );
 
         for ( ITask task : listLinkedTasks )
         {
