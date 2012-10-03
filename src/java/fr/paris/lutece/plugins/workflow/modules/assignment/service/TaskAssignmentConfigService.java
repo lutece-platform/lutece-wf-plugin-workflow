@@ -76,6 +76,8 @@ public class TaskAssignmentConfigService extends TaskConfigService
             {
                 for ( WorkgroupConfig workgroupConfig : listWorkgroups )
                 {
+                    // Workaround in case of task duplication
+                    workgroupConfig.setIdTask( config.getIdTask(  ) );
                     _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin(  ) );
                 }
             }
