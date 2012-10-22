@@ -69,6 +69,8 @@ public class TaskDAO implements ITaskDAO
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_task SET display_order = display_order - 1 WHERE display_order > ? AND id_action=? ";
     private static final String SQL_QUERY_TASKS_WITH_ORDER_BETWEEN = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE (display_order BETWEEN ? AND ?) AND id_action=?";
     private static final String SQL_QUERY_TASKS_AFTER_ORDER = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE display_order >=? AND id_action=?";
+    private static final String SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT = "SELECT task_type_key,id_task,id_action, display_order " +
+        " FROM workflow_task WHERE id_action=? ORDER BY id_task";
     @Inject
     private ITaskFactory _taskFactory;
 
@@ -294,6 +296,38 @@ public class TaskDAO implements ITaskDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_TASKS_AFTER_ORDER, WorkflowUtils.getPlugin(  ) );
         daoUtil.setInt( 1, nOrder );
         daoUtil.setInt( 2, nIdAction );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            ITask task = null;
+            Action action = null;
+            nPos = 0;
+            task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+            task.setId( daoUtil.getInt( ++nPos ) );
+            action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            task.setAction( action );
+            task.setOrder( daoUtil.getInt( ++nPos ) );
+
+            listTask.add( task );
+        }
+
+        daoUtil.free(  );
+
+        return listTask;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ITask> findTasksForOrderInit( int nIdAction, Locale locale )
+    {
+        List<ITask> listTask = new ArrayList<ITask>(  );
+        int nPos = 0;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nIdAction );
         daoUtil.executeQuery(  );
 
         while ( daoUtil.next(  ) )

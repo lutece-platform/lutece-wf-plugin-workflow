@@ -45,7 +45,14 @@
  <a name="list_state" id="list_state"></a>
 <div class="content-box">
 	<h2>#i18n{workflow.modify_workflow.manage_state.title}</h2>
-	<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>
+	<p>
+		<a href="jsp/admin/plugins/workflow/UpdateStateOrder.jsp?id_workflow=${workflow.id}#list_state">
+        	<img src="images/admin/skin/plugins/workflow/actions/initOrder.png"
+				alt="#i18n{workflow.modify_workflow.init_order}"
+				title="#i18n{workflow.modify_workflow.init_order}" />
+		</a>
+	</p>
+						<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>
 	<table width="100%">
 			<tr>
 				<th>#i18n{workflow.modify_workflow.manage_state.row_name}</th>
@@ -96,6 +103,13 @@
  <a name="list_action" id="list_action"></a>
 <div class="content-box">
 	<h2>#i18n{workflow.modify_workflow.manage_action.title}</h2>
+	<p>
+		<a href="jsp/admin/plugins/workflow/UpdateActionOrder.jsp?id_workflow=${workflow.id}#list_action">
+        	<img src="images/admin/skin/plugins/workflow/actions/initOrder.png"
+				alt="#i18n{workflow.modify_workflow.init_order}"
+				title="#i18n{workflow.modify_workflow.init_order}" />
+		</a>
+	</p>
 	<@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
 	<table width="100%">
 			<tr>

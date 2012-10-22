@@ -2245,4 +2245,97 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         return stateToCopy;
     }
+
+    /**
+     * Updates the order of states
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return The workflow creation page
+     */
+    public String getUpdateStateOrder( HttpServletRequest request )
+        throws AccessDeniedException
+    {
+        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
+        int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
+        Workflow workflow = null;
+
+        if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
+        }
+
+        if ( workflow == null )
+        {
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
+        }
+
+        _stateService.initializeStateOrder( nIdWorkflow );
+
+        return getModifyWorkflow( request );
+    }
+
+    /**
+     * Updates the order of actions
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return The workflow creation page
+     */
+    public String getUpdateActionOrder( HttpServletRequest request )
+        throws AccessDeniedException
+    {
+        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
+        int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
+        Workflow workflow = null;
+
+        if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
+        }
+
+        if ( workflow == null )
+        {
+            throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
+        }
+
+        _actionService.initializeActionOrder( nIdWorkflow );
+
+        return getModifyWorkflow( request );
+    }
+
+    /**
+     * Updates the order of tasks
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return The workflow creation page
+     */
+    public String getUpdateTaskOrder( HttpServletRequest request )
+        throws AccessDeniedException
+    {
+        String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
+        int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
+        Action action = null;
+
+        if ( nIdAction != WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            action = _actionService.findByPrimaryKey( nIdAction );
+        }
+
+        if ( action == null )
+        {
+            throw new AccessDeniedException( "Action not found for ID " + nIdAction );
+        }
+
+        _taskService.initializeTaskOrder( nIdAction, this.getLocale(  ) );
+
+        return getModifyAction( request );
+    }
 }

@@ -89,6 +89,9 @@ public class ActionDAO implements IActionDAO
         " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
     private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
         " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
+    private static final String SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, " +
+        " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,i.name,i.mime_type,i.file_value,i.width,i.height " +
+        " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE id_workflow=? ORDER BY id_action ";
 
     /**
      * Generates a new primary key
@@ -602,5 +605,62 @@ public class ActionDAO implements IActionDAO
         daoUtil.free(  );
 
         return listResult;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Action> findActionsForOrderInit( int nIdWorkflow )
+    {
+        List<Action> listAction = new ArrayList<Action>(  );
+        Action action = null;
+        int nPos = 0;
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT, WorkflowUtils.getPlugin(  ) );
+        daoUtil.setInt( 1, nIdWorkflow );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            nPos = 0;
+            action = new Action(  );
+            action.setId( daoUtil.getInt( ++nPos ) );
+            action.setName( daoUtil.getString( ++nPos ) );
+            action.setDescription( daoUtil.getString( ++nPos ) );
+
+            Workflow workflow = new Workflow(  );
+            workflow.setId( daoUtil.getInt( ++nPos ) );
+            action.setWorkflow( workflow );
+
+            State stateBefore = new State(  );
+            stateBefore.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateBefore( stateBefore );
+
+            State stateAfter = new State(  );
+            stateAfter.setId( daoUtil.getInt( ++nPos ) );
+            action.setStateAfter( stateAfter );
+
+            Icon icon = new Icon(  );
+            icon.setId( daoUtil.getInt( ++nPos ) );
+
+            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+            action.setOrder( daoUtil.getInt( ++nPos ) );
+
+            icon.setName( daoUtil.getString( ++nPos ) );
+            icon.setMimeType( daoUtil.getString( ++nPos ) );
+            icon.setValue( daoUtil.getBytes( ++nPos ) );
+            icon.setWidth( daoUtil.getInt( ++nPos ) );
+            icon.setHeight( daoUtil.getInt( ++nPos ) );
+
+            action.setIcon( icon );
+
+            listAction.add( action );
+        }
+
+        daoUtil.free(  );
+
+        return listAction;
     }
 }
