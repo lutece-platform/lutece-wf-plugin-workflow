@@ -1,72 +1,93 @@
 <#include "macro_workflows.html" />
-<div class="content-box">
-  <h2> #i18n{workflow.create_action.title}</h2>
-   <form action="jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
-	   <input name="id_workflow" value="${workflow.id}" type="hidden">
-	   <div>
-			<p>
-		    	<label for="name">#i18n{workflow.create_action.label_name} * : </label>
-		    	<input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
-			 	<br/>
-				<label>&nbsp;</label>#i18n{workflow.create_action.label_name_comment}
-		   	</p>
-		   	<p>
-		     	<label for="description"> #i18n{workflow.create_action.label_description} * : </label>
-		     	<textarea name="description" cols="80" rows="2"></textarea>
-		   		<br/>
-		    	<label>&nbsp;</label>
-				#i18n{workflow.create_action.label_description_comment}
-		   	</p>
-		   	<p>
-		     	<label for="id_state_before"> #i18n{workflow.create_action.label_state_before} * : </label>
-				<@combo name="id_state_before"  items=state_list default_value=-1 />	
-		   		<br/>
-		    	<label>&nbsp;</label>
-				#i18n{workflow.create_action.label_state_before_comment}
-		   	</p>
-		   	<p>
-		    	<label for="id_state_after"> #i18n{workflow.create_action.label_state_after} * : </label>
-		    	<@combo name="id_state_after"  items=state_list default_value=-1 />	
-		   		<br/>
-		    	<label>&nbsp;</label>
-				#i18n{workflow.create_action.label_state_after_comment}
-			</p>
-		    <p>
-				<label for="id_icon"> #i18n{workflow.create_action.label_icon} * : </label>
-				<@radioIconList name="id_icon" default_value=-1 icons=icon_list />	
-				<br/>
-			    <label>&nbsp;</label>
-				#i18n{workflow.create_action.label_icon_comment}
-			</p>
-			<p>
-				<label for="automatic">#i18n{workflow.create_action.label_automatic} : </label>
-		    	<input type="checkbox" name="automatic" value="1"/>
-			 	<br/>
-				<label>&nbsp;</label>#i18n{workflow.create_action.label_automatic_comment}
-		   	</p>
-		   	<p>
-				<label for="is_mass_action">#i18n{workflow.create_action.label_mass_action} : </label>
-		    	<input type="checkbox" name="is_mass_action" value="1"/>
-			 	<br/>
-				<label>&nbsp;</label>#i18n{workflow.create_action.label_mass_action_comment}
-		   	</p>
-		   	<p>
-				<label for="">#i18n{workflow.create_action.label_link_actions} :</label>
-				#i18n{workflow.create_action.label_link_actions_comment}
-				<br />
-				<label>&nbsp;</label>
-				#i18n{workflow.create_action.label_link_actions_example}
-			</p>
-		   	<p>
-		   		<label for="selected_linked_actions">#i18n{workflow.create_action.label_available_linked_actions}</label>
-		   		<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:40%;'" items=available_linked_actions max_length=175 />
-		   	</p>
-		</div>
-		<p>
-	  		<input type="submit" value="#i18n{workflow.create_action.button_save}" class="button" name="save" />
-	  		<input type="submit" value="#i18n{workflow.modify_action.button_apply}" class="button"  name="apply"/>
-	  		<input type="submit" value="#i18n{workflow.create_action.button_cancel}" class="button" name="cancel" />
-	   	</p>
- 	</form>
- </div>
+<div class="row-fluid">
+    <legend> #i18n{workflow.create_action.title}</legend>
+    <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
+        <fieldset>
+            <input name="id_workflow" value="${workflow.id}" type="hidden">
+            <div>
 
+                <div class="control-group">
+                    <label class="control-label" for="name">#i18n{workflow.create_action.label_name} * : </label>
+                    <div class="controls">
+                        <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
+                        <span class="help-block">#i18n{workflow.create_action.label_name_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="description"> #i18n{workflow.create_action.label_description} * : </label>
+                    <div class="controls">
+                        <textarea name="description" cols="80" rows="2"></textarea>
+                        <span class="help-block">#i18n{workflow.create_action.label_description_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_state_before"> #i18n{workflow.create_action.label_state_before} * : </label>
+                    <div class="controls">
+                        <@combo name="id_state_before"  items=state_list default_value=-1 />
+                        <span class="help-block">#i18n{workflow.create_action.label_state_before_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * : </label>
+                    <div class="controls">
+                        <@combo name="id_state_after"  items=state_list default_value=-1 />
+                        <span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
+                    </div>
+                </div>	
+
+                <div class="control-group">
+                    <label class="control-label" for="id_icon"> #i18n{workflow.create_action.label_icon} * : </label>
+                    <div class="controls">
+                        <@radioIconList name="id_icon" default_value=-1 icons=icon_list />	
+                        <span class="help-block">#i18n{workflow.create_action.label_icon_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="automatic">#i18n{workflow.create_action.label_automatic} : </label>
+                    <div class="controls">
+                        <input type="checkbox" name="automatic" value="1"/>
+                        <span class="help-block">#i18n{workflow.create_action.label_automatic_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="is_mass_action">#i18n{workflow.create_action.label_mass_action} : </label>
+                    <div class="controls">
+                        <input type="checkbox" name="is_mass_action" value="1"/>
+                        <span class="help-block">#i18n{workflow.create_action.label_mass_action_comment}</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="">#i18n{workflow.create_action.label_link_actions} :</label>
+                    #i18n{workflow.create_action.label_link_actions_comment}
+                    <div class="control-group">
+                        <label class="control-label" > &nbsp;</label>
+                        #i18n{workflow.create_action.label_link_actions_example}
+
+
+                        <div class="control-group">
+                            <label class="control-label" for="selected_linked_actions">#i18n{workflow.create_action.label_available_linked_actions}</label>
+                            <div class="controls">
+                                <@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:40%;'" items=available_linked_actions max_length=175 />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit" >#i18n{workflow.create_action.button_save}</button>
+                    <button class="btn btn-primary" type="submit" >#i18n{workflow.modify_action.button_apply}</button>
+                    <button class="btn" onclick="javascript:history.go(-1)"  >#i18n{workflow.create_action.button_cancel}</button>
+                </div>
+
+            </div>
+
+        </fieldset>
+    </form>
+</div>

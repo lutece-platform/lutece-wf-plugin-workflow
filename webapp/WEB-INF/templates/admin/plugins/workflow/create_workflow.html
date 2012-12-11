@@ -1,32 +1,37 @@
-<div class="content-box">
-  <h2> #i18n{workflow.create_workflow.title}</h2>
-   <form action="jsp/admin/plugins/workflow/DoCreateWorkflow.jsp?plugin_name=workflow" method="post" name="" id=""  >
-	   <div>
-		   <p>
-		    <label for="name">#i18n{workflow.create_workflow.label_name} * : </label>
-		    <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
-			 <br/>
-			<label>&nbsp;</label>#i18n{workflow.create_workflow.label_name_comment}
-		   </p>
-		   <p>
-		     <label for="description"> #i18n{workflow.create_workflow.label_description} * : </label>
-		     <textarea name="description" cols="80" rows="2"></textarea>
-		   <br/>
-		    <label>&nbsp;</label>
-			#i18n{workflow.create_workflow.label_description_comment}
-		   </p>
-		   	<p>
-			    <label for="">#i18n{workflow.create_workflow.label_workgroup}  : </label>
-			     <@combo name="workgroup"  items=user_workgroup_list default_value="${workgroup_key_default_value}" />
-				 <br/>
-				<label>&nbsp;</label>
-				#i18n{workflow.create_workflow.label_workgroup_comment}
-		   	</p>
-	</div>
-    <p>
-  		<input type="submit" value="#i18n{workflow.create_workflow.button_save}" class="button" name="save" />
-  		<input type="submit" value="#i18n{workflow.create_workflow.button_cancel}" class="button" name="cancel" />
-   </p>
- 	</form>
- </div>
+<div class="row-fluid">
+    <legend> #i18n{workflow.create_workflow.title}</legend>
+    <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateWorkflow.jsp?plugin_name=workflow" method="post" name="" id=""  >
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="name">#i18n{workflow.create_workflow.label_name} * : </label>
+                <div class="controls">
+                    <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
+                    <span class="help-block">#i18n{workflow.create_workflow.label_name_comment}</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="description"> #i18n{workflow.create_workflow.label_description} * : </label>
+                <div class="controls">
+                    <textarea name="description" rows="2"></textarea>
+                    <span class="help-block">#i18n{workflow.create_workflow.label_description_comment}</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="workgroup">#i18n{workflow.create_workflow.label_workgroup}  : </label>
+                <div class="controls">
+                    <@combo name="workgroup"  items=user_workgroup_list default_value="${workgroup_key_default_value}" />
+                    <span class="help-block">#i18n{workflow.create_workflow.label_workgroup_comment}</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" type="submit" >#i18n{workflow.create_workflow.button_save}</button>
+                <button class="btn" onclick="javascript:history.go(-1)" >#i18n{workflow.create_workflow.button_cancel}</button>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
 
