@@ -105,7 +105,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WorkflowJspBean extends PluginAdminPageJspBean
 {
-    public static final String RIGHT_MANAGE_DIRECTORY = "WORKFLOW_MANAGEMENT";
+    public static final String RIGHT_MANAGE_WORKFLOW = "WORKFLOW_MANAGEMENT";
 
     // jsp
     private static final String JSP_MODIFY_WORKFLOW = "jsp/admin/plugins/workflow/ModifyWorkflow.jsp";

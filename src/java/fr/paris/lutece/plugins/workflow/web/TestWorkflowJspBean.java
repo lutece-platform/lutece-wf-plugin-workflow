@@ -67,8 +67,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TestWorkflowJspBean extends PluginAdminPageJspBean
 {
-    public static final String RIGHT_MANAGE_DIRECTORY = "WORKFLOW_MANAGEMENT";
-
     // jsp
     private static final String JSP_MANAGE_TEST_WORKFLOW = "jsp/admin/plugins/workflow/ManageTestWorkflow.jsp";
     private static final String JSP_TASKS_FORM_TEST_WORKFLOW = "jsp/admin/plugins/workflow/TasksFormTestWorkflow.jsp";

@@ -1,47 +1,48 @@
 <div class="row-fluid">
-    <legend> #i18n{workflow.create_icon.title}</legend>
-    <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data" >
-        <fieldset>
+    <div class="span12">
+        <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data" >
+            <fieldset>
+                <legend> #i18n{workflow.create_icon.title}</legend>
 
-
-            <div class="control-group">
-                <label class="control-label" for="name">#i18n{workflow.create_icon.label_name} * : </label>
-                <div class="controls">
-                    <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
-                    <span class="help-block">#i18n{workflow.create_icon.label_name_comment}</span>
+                <div class="control-group">
+                    <label class="control-label" for="name">#i18n{workflow.create_icon.label_name} * : </label>
+                    <div class="controls">
+                        <input type="text" name="name" value=""  maxlength="255"/>
+                        <span class="help-block">#i18n{workflow.create_icon.label_name_comment}</span>
+                    </div>
                 </div>
-            </div>
-  
-            <div class="control-group">
-                <label class="control-label" for="id_file" >#i18n{workflow.create_icon.label_file} * : </label>
-                <div class="controls">
-                    <input type="file" id="id_file" name="id_file" size="60" />
-                    <span class="help-block">#i18n{workflow.create_icon.label_file_comment}</span>
+
+                <div class="control-group">
+                    <label class="control-label" for="id_file" >#i18n{workflow.create_icon.label_file} * : </label>
+                    <div class="controls">
+                        <input type="file" id="id_file" name="id_file" />
+                        <span class="help-block">#i18n{workflow.create_icon.label_file_comment}</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="control-group">
-                <label class="control-label" for="width">#i18n{workflow.create_icon.label_width} : </label>
-                <div class="controls">
-                    <input type="text" name="width" id="" size="4" value=""  maxlength="255"/>
-                    <span class="help-block">#i18n{workflow.create_icon.label_width_comment}</span>
+                <div class="control-group">
+                    <label class="control-label" for="width">#i18n{workflow.create_icon.label_width} : </label>
+                    <div class="controls">
+                        <input type="text" name="width" value=""  maxlength="255"/>
+                        <span class="help-block">#i18n{workflow.create_icon.label_width_comment}</span>
+                    </div>
                 </div>
-            </div>
 
-             <div class="control-group">
-                <label class="control-label" for="height">#i18n{workflow.create_icon.label_height} : </label>
-                <div class="controls">
-                    <input type="text" name="height" id="" size="4" value=""  maxlength="255"/>
-                    <span class="help-block">#i18n{workflow.create_icon.label_height_comment}</span>
+                <div class="control-group">
+                    <label class="control-label" for="height">#i18n{workflow.create_icon.label_height} : </label>
+                    <div class="controls">
+                        <input type="text" name="height" value=""  maxlength="255"/>
+                        <span class="help-block">#i18n{workflow.create_icon.label_height_comment}</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-actions">
-                <button class="btn btn-primary" type="submit" >#i18n{workflow.create_icon.button_save}</button>
-                <button class="btn" onclick="javascript:history.go(-1)" >#i18n{workflow.create_icon.button_cancel}</button>
-            </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.create_icon.button_save}</button>
+                    <button class="btn btn-small" onclick="javascript:history.go(-1)" >#i18n{workflow.create_icon.button_cancel}</button>
+                </div>
 
-        </fieldset>
-    </form>
+            </fieldset>
+        </form>
+    </div>
 </div>
 

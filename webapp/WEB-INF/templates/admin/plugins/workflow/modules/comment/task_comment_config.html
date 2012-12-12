@@ -1,23 +1,27 @@
 <div>
-  <h2> #i18n{module.workflow.comment.task_comment_config.title}</h2>
-	  	<p>
-	    	<label for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
-		    	<#if config?exists>
-					<input type="text" name="title" id="" size="80" value="${config.title}"  maxlength="255"/>
-		     	<#else>
-		     		<input type="text" name="title" id="" size="80" value=""  maxlength="255"/>
-		     	</#if>		
-			   <br/>
-			  <label>&nbsp;</label>
-			#i18n{module.workflow.comment.task_comment_config.label_title_comment}
-		</p>
-		 <p>
-			<label for="is_mandatory">#i18n{module.workflow.comment.task_comment_config.label_mandatory} :</label>
-			<input name="mandatory" value="true" type="radio" <#if config?exists && config.mandatory>checked="checked"</#if> />
-			#i18n{module.workflow.comment.task_comment_config.label_yes}
- 		 	<input name="mandatory" value="false" type="radio" <#if config?exists && !config.mandatory>checked="checked"</#if> />
- 		 	#i18n{module.workflow.comment.task_comment_config.label_no}
-   			<br/>
- 			<label>&nbsp;</label>#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}
-	 	</p>
- </div>
+    <fieldset>
+        <legend> #i18n{module.workflow.comment.task_comment_config.title}</legend>
+        <div class="control-group">
+            <label class="control-label" for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
+            <div class="controls">
+                <#if config?exists>
+                <input type="text" name="title" id="" value="${config.title}"  maxlength="255"/>
+                <#else>
+                <input type="text" name="title" id="" value=""  maxlength="255"/>
+                </#if>
+                <span class="help-block">#i18n{module.workflow.comment.task_comment_config.label_title_comment}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="is_mandatory">#i18n{module.workflow.comment.task_comment_config.label_mandatory} :</label>
+            <div class="controls">
+            <input name="mandatory" value="true" type="radio" <#if config?exists && config.mandatory>checked="checked"</#if> />
+                   #i18n{module.workflow.comment.task_comment_config.label_yes}
+                   <input name="mandatory" value="false" type="radio" <#if config?exists && !config.mandatory>checked="checked"</#if> />
+                   #i18n{module.workflow.comment.task_comment_config.label_no}
+                   <br/>
+            <span class="help-block">#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}</span>
+            </div>
+        </div>
+     </fieldset>
+</div>

@@ -25,7 +25,7 @@
 </#macro>
 
 <#macro comboOrders name default_value max >
-	<select id="${name}" name="${name}" >
+	<select id="${name}" name="${name}" class="input-mini" >
 		<#list 1..max as i>
 			<#if "${default_value}" == "${i}">
   				<option selected="selected" value="${i}" >${i}</option>

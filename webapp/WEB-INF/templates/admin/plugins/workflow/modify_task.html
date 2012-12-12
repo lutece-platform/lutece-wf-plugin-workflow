@@ -1,13 +1,19 @@
-<div class="content-box">
-	<h2>#i18n{workflow.modify_task.title}</h2>
-   	<form action="jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
-	   <input name="id_task" value="${task.id!}" type="hidden">
-	  	<div class="highlight-box">
-	  		${task_config!}
-	    </div>
-	    <p>
-	  		<input type="submit" value="#i18n{workflow.modify_task.button_save}" class="button" name="save" />
-	  		<input type="submit" value="#i18n{workflow.modify_task.button_cancel}" class="button" name="cancel" />
-	   </p>
-	</form>
+<div class="row-fluid">
+    <div class="span12">
+        <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
+            <fieldset>
+                <legend>#i18n{workflow.modify_task.title}</legend>
+                <input name="id_task" value="${task.id!}" type="hidden">
+
+                <div class="well">
+                    ${task_config!}
+                </div>
+
+                <div class="form-actions" >
+                    <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.modify_task.button_save}</button>
+                    <button class="btn btn-small" onclick="javascript:history.go(-1)" >#i18n{workflow.modify_task.button_cancel}</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
 </div>
