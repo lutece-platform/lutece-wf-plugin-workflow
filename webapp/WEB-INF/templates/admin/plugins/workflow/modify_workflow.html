@@ -42,9 +42,9 @@
                 </div>
 
                 <div class="form-actions" >
-                    <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.create_workflow.button_save}</button>
-                    <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.modify_workflow.button_apply}</button>
-                    <button class="btn btn-small" onclick="javascript:history.go(-1)" >#i18n{workflow.create_workflow.button_cancel}</button>
+                    <button class="btn btn-primary btn-small" type="submit" name="save" >#i18n{workflow.create_workflow.button_save}</button>
+                    <button class="btn btn-primary btn-small" type="submit" name="apply" >#i18n{workflow.modify_workflow.button_apply}</button>
+                    <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.create_workflow.button_cancel}</button>
                 </div>
 
             </fieldset>
@@ -53,13 +53,18 @@
 
     <div class="span8">
         <ul id="tabs" class="nav nav-tabs">
-            <li class="active"><a href="#pane-states" data-toggle="tab">#i18n{workflow.modify_workflow.manage_state.title}</a></li>
-            <li><a href="#pane-actions" data-toggle="tab">#i18n{workflow.modify_workflow.manage_action.title}</a></li>
+            
+            <li <#if pane="pane-states">class="active"</#if> >
+                <a href="#pane-states" data-toggle="tab">#i18n{workflow.modify_workflow.manage_state.title}</a>
+            </li>
+            <li <#if pane="pane-actions">class="active"</#if> >
+                <a href="#pane-actions" data-toggle="tab">#i18n{workflow.modify_workflow.manage_action.title}</a>
+            </li>
         </ul>
 
         <div class="tab-content">
 
-            <div class="tab-pane active" id="pane-states">
+            <div class="tab-pane <#if pane="pane-states">active</#if>" id="pane-states">
                 <div class="btn-group pull-right">
                     <form class="form-horizontal"  method="post"  action="jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state">
                         <button class="btn btn-primary btn-small" type="submit" >
@@ -91,6 +96,7 @@
                                 <@comboOrders name="order_id" default_value=state.order max=number_state />
                                 <input type="hidden" name="id_workflow" value="${workflow.id}" />
                                 <input type="hidden" name="id_state" value="${state.id}" />
+                                <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.modify_workflow.move}</button>
                             </form>
                         </td>
                         <td>
@@ -110,7 +116,7 @@
                 <@paginationAdmin paginator=paginator_state nb_items_per_page=nb_items_per_page_state/>
 
             </div>
-            <div class="tab-pane" id="pane-actions">
+            <div class="tab-pane <#if pane="pane-actions">active</#if>" id="pane-actions">
                 <div class="btn-group pull-right">
                     <form class="form-horizontal"  method="post"  action="jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action">
                         <button class="btn btn-primary btn-small" type="submit" >

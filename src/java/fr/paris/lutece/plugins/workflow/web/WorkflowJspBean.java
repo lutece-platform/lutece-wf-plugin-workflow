@@ -157,6 +157,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_TASK_TYPE_KEY = "task_type_key";
     private static final String PARAMETER_SELECT_LINKED_ACTIONS = "select_linked_actions";
     private static final String PARAMETER_UNSELECT_LINKED_ACTIONS = "unselect_linked_actions";
+    private static final String PARAMETER_PANE = "pane";
 
     // properties
     private static final String PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE = "workflow.manage_workflow.page_title";
@@ -218,6 +219,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_AVAILABLE_LINKED_ACTIONS = "available_linked_actions";
     private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
     private static final String MARK_DISPLAY_TASKS_FORM = "display_tasks_form";
+    private static final String MARK_PANE = "pane";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
@@ -233,6 +235,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CAN_NOT_DISABLE_WORKFLOW = "workflow.message.can_not_disable_workflow";
     private static final String MESSAGE_TASK_IS_NOT_AUTOMATIC = "workflow.message.task_not_automatic";
     private static final String MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC = "workflow.message.mass_action_cannot_be_automatic";
+    
+    private static final String PANE_STATES = "pane-states";
+    private static final String PANE_ACTIONS = "pane-actions";
+    private static final String PANE_DEFAULT = PANE_STATES;
 
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
@@ -383,6 +389,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         AdminUser adminUser = getUser(  );
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
+        String strPane = request.getParameter( PARAMETER_PANE );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
         Workflow workflow = null;
 
@@ -394,6 +401,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( workflow == null )
         {
             throw new AccessDeniedException( "Workflow not found for ID " + nIdWorkflow );
+        }
+        
+        if( strPane == null )
+        {
+            strPane = PANE_DEFAULT;
         }
 
         StateFilter stateFilter = new StateFilter(  );
@@ -444,6 +456,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NUMBER_ACTION, listAction.size(  ) );
         model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
         model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
+        model.put( MARK_PANE, strPane );
 
         setPageTitleProperty( PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE );
 
@@ -1081,7 +1094,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
         }
 
-        return getJspModifyWorkflow( request, nIdWorkflow );
+        return getJspModifyWorkflow( request, nIdWorkflow  , PANE_ACTIONS );
     }
 
     /**
@@ -1319,7 +1332,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             return getJspModifyAction( request, nIdAction );
         }
 
-        return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) );
+        return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  )  , PANE_ACTIONS );
     }
 
     /**
@@ -1364,7 +1377,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             _actionService.remove( nIdAction );
             _actionService.decrementOrderByOne( action.getOrder(  ), action.getWorkflow(  ).getId(  ) );
 
-            return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) );
+            return getJspModifyWorkflow( request, action.getWorkflow(  ).getId(  ) , PANE_ACTIONS );
         }
 
         return getJspManageWorkflow( request );
@@ -1680,9 +1693,30 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     private String getJspModifyWorkflow( HttpServletRequest request, int nIdWorkflow )
     {
-        return AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW + "?" + PARAMETER_ID_WORKFLOW + "=" +
-        nIdWorkflow;
+        return getJspModifyWorkflow( request, nIdWorkflow, null );
+        
     }
+    
+    /**
+     * return url of the jsp modify workflow
+     *
+     * @param request The HTTP request
+     * @param nIdWorkflow the key of workflow to modify
+     * @return return url of the jsp modify workflows
+     */
+    private String getJspModifyWorkflow( HttpServletRequest request, int nIdWorkflow, String strPane )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW );
+        url.addParameter( PARAMETER_ID_WORKFLOW, nIdWorkflow );
+        if( strPane != null )
+        {
+            url.addParameter( PARAMETER_PANE, strPane );
+        }
+        return url.getUrl();
+        
+    }
+    
+    
 
     /**
      * Return url of the jsp modify action
@@ -1860,10 +1894,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         actionToChangeOrder.setOrder( nOrderToSet );
         _actionService.update( actionToChangeOrder );
 
-        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_WORKFLOW );
-        url.addParameter( PARAMETER_ID_WORKFLOW, nWorkflowId );
-
-        return url.getUrl(  );
+        return getJspModifyWorkflow(request, nWorkflowId, PANE_ACTIONS );
     }
 
     /**
@@ -2078,7 +2109,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         actionToCopy = copyActionMethod( request, actionToCopy );
 
-        return getJspModifyWorkflow( request, actionToCopy.getWorkflow(  ).getId(  ) );
+        return getJspModifyWorkflow( request, actionToCopy.getWorkflow(  ).getId(  ) ,  PANE_ACTIONS );
     }
 
     /**
@@ -2286,7 +2317,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *             the {@link AccessDeniedException}
      * @return The workflow creation page
      */
-    public String getUpdateActionOrder( HttpServletRequest request )
+    public String doUpdateActionOrder( HttpServletRequest request )
         throws AccessDeniedException
     {
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
@@ -2305,7 +2336,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         _actionService.initializeActionOrder( nIdWorkflow );
 
-        return getModifyWorkflow( request );
+        return getJspModifyWorkflow( request , nIdWorkflow , PANE_ACTIONS );
     }
 
     /**

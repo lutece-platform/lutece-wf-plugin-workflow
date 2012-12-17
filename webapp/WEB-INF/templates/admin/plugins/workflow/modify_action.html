@@ -90,7 +90,7 @@
                             </td>
                             <td>
                                 <div align="center">
-                                    <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.create_action.label_select_unselect_linked_actions}</button>
+                                    <button class="btn btn-primary btn-small" type="submit" name="apply" >#i18n{workflow.create_action.label_select_unselect_linked_actions}</button>
                                 </div>
                             </td>
                             <td>
@@ -108,9 +108,9 @@
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.create_action.button_save}</button>
-                        <button class="btn btn-primary btn-small" type="submit" >#i18n{workflow.modify_action.button_apply}</button><!--todo-->
-                        <button class="btn btn-small" onclick="javascript:history.go(-1)" >#i18n{workflow.create_action.button_cancel}</button>
+                        <button class="btn btn-primary btn-small" type="submit" name="save"> #i18n{workflow.create_action.button_save}</button>
+                        <button class="btn btn-primary btn-small" type="submit"  name="apply" >#i18n{workflow.modify_action.button_apply}</button><!--todo-->
+                        <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.create_action.button_cancel}</button>
                     </div>
 
             </fieldset>
