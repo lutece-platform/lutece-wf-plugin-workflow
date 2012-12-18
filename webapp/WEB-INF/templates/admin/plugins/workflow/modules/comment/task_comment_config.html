@@ -5,9 +5,9 @@
             <label class="control-label" for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
             <div class="controls">
                 <#if config?exists>
-                <input type="text" name="title" id="" value="${config.title}"  maxlength="255"/>
+                    <input type="text" name="title" id="" value="${config.title}"  maxlength="255"/>
                 <#else>
-                <input type="text" name="title" id="" value=""  maxlength="255"/>
+                    <input type="text" name="title" id="" value=""  maxlength="255"/>
                 </#if>
                 <span class="help-block">#i18n{module.workflow.comment.task_comment_config.label_title_comment}</span>
             </div>

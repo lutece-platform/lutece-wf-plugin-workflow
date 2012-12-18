@@ -6,9 +6,9 @@
             <label class="control-label" for="title">#i18n{module.workflow.assignment.task_assignment_config.label_title} * :</label>
             <div class="controls">
                 <#if config?exists>
-                <input type="text" name="title" id="" size="80" value="${config.title}"  maxlength="255"/>
+                    <input type="text" name="title" id="" size="80" value="${config.title}"  maxlength="255"/>
                 <#else>
-                <input type="text" name="title" id="" size="80" value=""  maxlength="255"/>
+                    <input type="text" name="title" id="" size="80" value=""  maxlength="255"/>
                 </#if>		
                 <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_title}</span>
             </div>
@@ -18,9 +18,9 @@
             <label class="control-label" for="is_multiple_owner">#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner} :</label>
             <div class="controls">
                 <#if config?exists&&config.multipleOwner>
-                <input name="is_multiple_owner" value="1" type="checkbox" checked="checked"/>
+                    <input name="is_multiple_owner" value="1" type="checkbox" checked="checked"/>
                 <#else>
-                <input name="is_multiple_owner" value="1" type="checkbox"/>
+                    <input name="is_multiple_owner" value="1" type="checkbox"/>
                 </#if>
                 <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner_comment}</span>
             </div>
@@ -39,9 +39,9 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     #i18n{module.workflow.assignment.task_assignment_config.label_notification} :
                     <#if workgroup.config?exists>
-                    <@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
+                        <@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
                     <#else>
-                    <@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
+                        <@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
                     </#if>
                     
                 </span>
@@ -55,9 +55,9 @@
             <label class="control-label" for="is_notify">#i18n{module.workflow.assignment.task_assignment_config.label_notification} :</label>
             <div class="controls">
                 <#if config?exists && config.notify>
-                <input type="checkbox" name="is_notify" value="1" checked="checked" onclick="javascript:notification();" />
+                    <input type="checkbox" name="is_notify" value="1" checked="checked" onclick="javascript:notification();" />
                 <#else>
-                <input type="checkbox" name="is_notify" value="1" onclick="javascript:notification();" />
+                    <input type="checkbox" name="is_notify" value="1" onclick="javascript:notification();" />
                 </#if>
             </div>
         </div>
@@ -67,9 +67,9 @@
                 <label class="control-label" for="is_use_user_name">#i18n{module.workflow.assignment.task_assignment_config.label_user_name} :</label>
                 <div class="controls">
                     <#if config?exists && config.useUserName>
-                    <input name="is_use_user_name" value="1" type="checkbox" checked="checked"/>
+                        <input name="is_use_user_name" value="1" type="checkbox" checked="checked"/>
                     <#else>
-                    <input name="is_use_user_name" value="1" type="checkbox"/>
+                        <input name="is_use_user_name" value="1" type="checkbox"/>
                     </#if>
                     <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}</span>
                 </div>
@@ -78,9 +78,9 @@
                 <label class="control-label" for="suject">#i18n{module.workflow.assignment.task_assignment_config.label_subject} * :</label>
                 <div class="controls">
                     <#if config?exists && config.subject?exists>
-                    <input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
+                        <input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
                     <#else>
-                    <input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
+                        <input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
                     </#if>	
                     <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_subject_comment}</span>
                 </div>
@@ -89,9 +89,9 @@
                     <label class="control-label" for="message">#i18n{module.workflow.assignment.task_assignment_config.label_message} * :</label>
                     <div class="controls">
                         <#if config?exists && config.message?exists>
-                        <textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
+                            <textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
                         <#else>
-                        <textarea name="message" id="" rows="5" cols="80"></textarea>
+                            <textarea name="message" id="" rows="5" cols="80"></textarea>
                         </#if>	
                         <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_message_comment}</span>
                     </div>
