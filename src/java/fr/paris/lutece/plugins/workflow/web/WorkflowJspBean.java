@@ -2283,7 +2283,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *             the {@link AccessDeniedException}
      * @return The workflow creation page
      */
-    public String getUpdateStateOrder( HttpServletRequest request )
+    public String doUpdateStateOrder( HttpServletRequest request )
         throws AccessDeniedException
     {
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
@@ -2302,7 +2302,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         _stateService.initializeStateOrder( nIdWorkflow );
 
-        return getModifyWorkflow( request );
+        return getJspModifyWorkflow( request, nIdWorkflow, PANE_STATES );
     }
 
     /**
@@ -2345,7 +2345,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *             the {@link AccessDeniedException}
      * @return The workflow creation page
      */
-    public String getUpdateTaskOrder( HttpServletRequest request )
+    public String doUpdateTaskOrder( HttpServletRequest request )
         throws AccessDeniedException
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
@@ -2364,6 +2364,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         _taskService.initializeTaskOrder( nIdAction, this.getLocale(  ) );
 
-        return getModifyAction( request );
+        return getJspModifyAction( request, nIdAction );
     }
 }
