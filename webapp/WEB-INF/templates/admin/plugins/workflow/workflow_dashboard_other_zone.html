@@ -1,16 +1,19 @@
-<div class="content-box">
-	<h2>
-	    <img src="${icon}" width="24" height="24" align="middle"/>
-	    <a href="${url}" >
-	        #i18n{workflow.dashboard.workflowList}
-	    </a>
-	    <a class="top" href="jsp/admin/AdminMenu.jsp#top">
-            <img alt="#i18n{workflow.dashboard.top}" src="images/admin/skin/sign-up.png">
-        </a>
-	    <a class="top" href="jsp/admin/plugins/workflow/CreateWorkflow.jsp">
-	    	<img src="images/admin/skin/plugins/workflow/actions/add.png" title="#i18n{workflow.dashboard.addWorkflow}" alt="#i18n{workflow.dashboard.addWorkflow}" />
-	    </a>
-    </h2>
-    <br />
-    <#include "workflow_dashboard.html" />
+<div class="well">
+	<fieldset>
+		<legend>
+			<img src="${icon}" alt="logo" title="">
+			<a href="${url}" >
+				#i18n{workflow.dashboard.workflowList}
+			</a>
+			<div class="pull-right">
+				<a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/CreateWorkflow.jsp" title="#i18n{workflow.dashboard.addWorkflow}" alt="#i18n{workflow.dashboard.addWorkflow}">
+					<i class="icon-plus icon-white"></i>
+				</a>
+				<a title="#i18n{workflow.dashboard.top}" href="jsp/admin/AdminMenu.jsp#top">
+					<i class="icon-arrow-up"></i>
+				</a>
+				</div>
+		</legend>
+		<#include "workflow_dashboard.html" />
+	</fieldset>
 </div>

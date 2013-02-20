@@ -1,13 +1,10 @@
-<div class="content-box">
-  <h2> #i18n{workflow.resource_history_test_workflow.title}</h2>
-   	<div class="highlight-box">
-   		<p>
-			${resource_history}
-		</p>
-   	</div>
-	<p>
-		<input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{workflow.resource_history_test_workflow.buttonBack}" />
-	</p>
-	<br/>
+<div class="well">
+	<fieldset>
+	<legend> #i18n{workflow.resource_history_test_workflow.title}</legend>
+   	<p>${resource_history}</p>
+   	<button class="btn btn-small" type="button" onclick="javascript:history.go(-1)" >
+		<i class="icon-remove-circle"></i>&nbsp;#i18n{workflow.resource_history_test_workflow.buttonBack}
+	</button>
+	</fieldset>
 </div>
 

@@ -1,14 +1,12 @@
 <div class="row-fluid">
     <div class="span12">
-        <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
+        <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow" method="post" name="" id="">
             <fieldset>
                 <legend>#i18n{workflow.modify_task.title}</legend>
                 <input name="id_task" value="${task.id!}" type="hidden">
-
                 <div class="well">
                     ${task_config!}
                 </div>
-
                 <div class="form-actions" >
                     <button class="btn btn-primary btn-small" type="submit" name="save" >#i18n{workflow.modify_task.button_save}</button>
                     <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.modify_task.button_cancel}</button>

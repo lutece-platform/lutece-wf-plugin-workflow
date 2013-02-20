@@ -1,19 +1,17 @@
 <#include "macro_workflows.html" />
 <div class="row-fluid">
     <div class="span12">
-        <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow" method="post" name="" id=""  >
             <fieldset>
                 <legend> #i18n{workflow.modify_state.title}</legend>
+				<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow" method="post" name="" id=""  >
                 <input name="id_state" value="${state.id}" type="hidden">
-
-                <div class="control-group">
+				<div class="control-group">
                     <label class="control-label" for="name">#i18n{workflow.create_state.label_name} * : </label>
                     <div class="controls">
                         <input type="text" name="name" id="" size="80" value="${state.name}"  maxlength="255"/>
                         <span class="help-block">#i18n{workflow.create_state.label_name_comment}</span>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label" for="description"> #i18n{workflow.create_state.label_description} * : </label>
                     <div class="controls">
@@ -21,19 +19,17 @@
                         <span class="help-block">#i18n{workflow.create_state.label_description_comment}</span>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label" for="is_initial_state">#i18n{workflow.create_state.label_initial_state} :</label>
                     <div class="controls">
                         <#if state.isInitialState()>
-                        <input name="is_initial_state" value="1" type="checkbox" checked="checked">
+							<input name="is_initial_state" value="1" type="checkbox" checked="checked">
                         <#else>
-                        <input name="is_initial_state" value="1" type="checkbox">
+							<input name="is_initial_state" value="1" type="checkbox">
                         </#if>
                         <span class="help-block">#i18n{workflow.create_state.label_initial_state_comment}</span>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label" for="is_required_user_assigned">#i18n{workflow.create_state.label_required_workgroup_assigned} :</label>
                     <div class="controls">
@@ -45,24 +41,23 @@
                         <span class="help-block">#i18n{workflow.create_state.label_required_workgroup_assigned_comment}</span>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label" for="id_icon"> #i18n{workflow.create_state.label_icon} : </label>
                     <div class="controls">
                         <@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
-
-                        <input type="radio" name="id_icon" value="-1" 
-                               <#if state.icon.id = 0> checked="checked" </#if>
-                               /> #i18n{workflow.create_state.label_no_icon}	
-                               <span class="help-block">#i18n{workflow.create_state.label_icon_comment}</span>
+                        <input type="radio" name="id_icon" value="-1" <#if state.icon.id = 0> checked="checked" </#if>>
+						#i18n{workflow.create_state.label_no_icon}	
+                       <span class="help-block">#i18n{workflow.create_state.label_icon_comment}</span>
                     </div>
                 </div>
-
                 <div class="form-actions">
-                    <button class="btn btn-primary btn-small" type="submit" name="save" >#i18n{workflow.create_state.button_save}</button>
-                    <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.create_state.button_cancel}</button>
+                    <button class="btn btn-primary btn-small" type="submit" name="save" >
+						<i class="icon-ok icon-white"></i> #i18n{workflow.create_state.button_save}
+					</button>
+                    <button class="btn btn-small" type="submit" name="cancel" >
+						<i class="icon-remove-circle"></i> #i18n{workflow.create_state.button_cancel}
+					</button>
                 </div>
-
             </fieldset>
         </form>
     </div>
