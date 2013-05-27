@@ -2,27 +2,20 @@
     <div class="span12">
         <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data">
             <fieldset>
-                <legend>#i18n{workflow.modify_icon.title} : ${icon.name}</legend>
+                <legend>#i18n{workflow.modify_icon.title} : <img  src="image?resource_type=workflow_icon_img&id=${icon.id}"<#if icon.width!=-1>width="${icon.width}"</#if><#if icon.height!=-1> height="${icon.height}" </#if>> ${icon.name} </legend>
                 <input name="id_icon" value="${icon.id}" type="hidden">
 
                 <div class="control-group">
                     <label class="control-label" for="name">#i18n{workflow.create_icon.label_name} * : </label>
                     <div class="controls">
-                        <input type="text" name="name" id="" value="${icon.name}"  maxlength="255"/>
+                        <input type="text" name="name" id="" value="${icon.name}"  maxlength="255"  class="input-large">
                         <span class="help-block">#i18n{workflow.create_icon.label_name_comment}</span>
                     </div>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label" for="id_file" >#i18n{workflow.create_icon.label_file} * : </label>
-                    <img  src="image?resource_type=workflow_icon_img&id=${icon.id}"
-                          <#if icon.width!=-1>
-                          width="${icon.width}"
-                          </#if> 
-                          <#if icon.height!=-1>
-                          height="${icon.height}"
-                          </#if> 
-                          />
+                   
                           <div class="controls">
                         <input type="file" id="id_file" name="id_file" size="60" />
                         <span class="help-block">#i18n{workflow.create_icon.label_file_comment}</span>
@@ -33,9 +26,9 @@
                     <label class="control-label" for="width">#i18n{workflow.create_icon.label_width} : </label>
                     <div class="controls">
                         <#if icon.width?exists&&icon.width!=-1>
-                        <input type="text" name="width" id="" value="${icon.width}"  maxlength="255"/>
+							<input type="text" name="width" id="" value="${icon.width}"  maxlength="255" class="input-mini">
                         <#else>
-                        <input type="text" name="width" id="" value=""  maxlength="255"/>
+							<input type="text" name="width" id="" value=""  maxlength="255"  class="input-mini">
                         </#if> 
                         <span class="help-block">#i18n{workflow.create_icon.label_width_comment}</span>
                     </div>
@@ -45,17 +38,20 @@
                     <label class="control-label" for="height">#i18n{workflow.create_icon.label_height} : </label>
                     <div class="controls">
                         <#if icon.height?exists&&icon.height!=-1>
-                        <input type="text" name="height" id="" value="${icon.height}"  maxlength="255"/>
+							<input type="text" name="height" id="" value="${icon.height}"  maxlength="255" class="input-mini">
                         <#else>
-                        <input type="text" name="height" id="" value=""  maxlength="255"/>
+							<input type="text" name="height" id="" value=""  maxlength="255"  class="input-mini">
                         </#if>
                         <span class="help-block">#i18n{workflow.create_icon.label_height_comment}</span>
                     </div>
                 </div>
-
                 <div class="form-actions">
-                    <button class="btn btn-primary btn-small" type="submit" name="save">#i18n{workflow.create_icon.button_save}</button>
-                    <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.create_icon.button_cancel}</button>
+                    <button class="btn btn-primary btn-small" type="submit" name="save">
+						<i class="icon-ok icon-white"></i>&nbsp;#i18n{workflow.create_icon.button_save}
+					</button>
+                    <button class="btn btn-small" type="submit" name="cancel">
+						<i class="icon-remove-circle"></i>&nbsp;#i18n{workflow.create_icon.button_cancel}
+					</button>
                 </div>
             </fieldset>
         </form>

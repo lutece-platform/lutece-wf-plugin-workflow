@@ -1,9 +1,8 @@
-<div>
+<div class="row-fluid">
+	<div class="span12">
     <fieldset>
         <legend> #i18n{module.workflow.notification.task_notification_config.title}</legend>>
-
-
-        <div class="control-group">
+		<div class="control-group">
             <label class="control-label" for="idMailingList">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} * :</label>
             <div class="controls">
                 <#if config?exists>
@@ -14,7 +13,6 @@
                 <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_mailing_list_comment}</span>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label" for="senderName">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * :</label>
             <div class="controls">
@@ -37,7 +35,6 @@
                 <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_subject_comment}</span>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label" for="message">#i18n{module.workflow.notification.task_notification_config.label_message} * :</label>
             <div class="controls">
@@ -49,7 +46,8 @@
                 <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_message_comment}</span>
             </div>
         </div>
-    </fieldset>
+		</fieldset>
+	</div>
 </div>
 
 

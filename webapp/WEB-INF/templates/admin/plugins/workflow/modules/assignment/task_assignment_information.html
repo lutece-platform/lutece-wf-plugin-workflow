@@ -1,14 +1,8 @@
- 
-<p>
-    <#if config?exists&&config.title?exists >
-        <label>${config.title}:</label>
-    </#if>
-</p>
-<br/>
+<#if config?exists&&config.title?exists >
+    <label>${config.title}</label>
+</#if>
 <#list workgroup_list as workgroup>
-    <p>
-        <label> &nbsp;</label>${workgroup.name}
-    </p>
+     <p>${workgroup.name}</p>
 </#list>
 
 

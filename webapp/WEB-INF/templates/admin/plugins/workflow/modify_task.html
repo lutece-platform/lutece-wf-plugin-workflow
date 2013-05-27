@@ -4,12 +4,14 @@
             <fieldset>
                 <legend>#i18n{workflow.modify_task.title}</legend>
                 <input name="id_task" value="${task.id!}" type="hidden">
-                <div class="well">
-                    ${task_config!}
-                </div>
+                 ${task_config!}
                 <div class="form-actions" >
-                    <button class="btn btn-primary btn-small" type="submit" name="save" >#i18n{workflow.modify_task.button_save}</button>
-                    <button class="btn btn-small" type="submit" name="cancel" >#i18n{workflow.modify_task.button_cancel}</button>
+                    <button class="btn btn-primary btn-small" type="submit" name="save" >
+						<i class="icon-ok icon-white"></i>&nbsp;#i18n{workflow.modify_task.button_save}
+					</button>
+                    <button class="btn btn-small" type="submit" name="cancel" >
+						<i class="icon-remove-circle"></i>&nbsp;#i18n{workflow.modify_task.button_cancel}
+					</button>
                 </div>
             </fieldset>
         </form>
