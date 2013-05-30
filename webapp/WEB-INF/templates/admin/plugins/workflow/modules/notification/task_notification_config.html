@@ -1,9 +1,9 @@
 <div class="row-fluid">
 	<div class="span12">
     <fieldset>
-        <legend> #i18n{module.workflow.notification.task_notification_config.title}</legend>>
+        <legend> #i18n{module.workflow.notification.task_notification_config.title}</legend>
 		<div class="control-group">
-            <label class="control-label" for="idMailingList">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} * :</label>
+            <label class="control-label" for="idMailingList">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} *</label>
             <div class="controls">
                 <#if config?exists>
                     <@combo name="idMailingList"  items=mailing_list default_value=config.idMailingList />
@@ -14,34 +14,34 @@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="senderName">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * :</label>
+            <label class="control-label" for="senderName">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * </label>
             <div class="controls">
             <#if config?exists>
-                <input type="text" name="senderName" id="" size="80" value="${config.senderName}"  maxlength="255"/>
+                <input type="text" name="senderName" id="" class="input-xlarge" value="${config.senderName}"  maxlength="255"/>
             <#else>
-                <input type="text" name="senderName" id="" size="80" value="${default_sender_name}"  maxlength="255"/>
+                <input type="text" name="senderName" id="" class="input-xlarge" value="${default_sender_name}"  maxlength="255"/>
             </#if>		
             <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_sender_name_comment}</span>
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="suject">#i18n{module.workflow.notification.task_notification_config.label_subject} * :</label>
+            <label class="control-label" for="suject">#i18n{module.workflow.notification.task_notification_config.label_subject} *</label>
             <div class="controls">
                 <#if config?exists>
-                    <input type="text" name="subject" id="" size="80" value="${config.subject}"  maxlength="255"/>
+                    <input type="text" name="subject" id="" class="input-xlarge" value="${config.subject}"  maxlength="255"/>
                 <#else>
-                    <input type="text" name="subject" id="" size="80" value=""  maxlength="255"/>
+                    <input type="text" name="subject" id="" class="input-xlarge" value=""  maxlength="255"/>
                 </#if>		
                 <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_subject_comment}</span>
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="message">#i18n{module.workflow.notification.task_notification_config.label_message} * :</label>
+            <label class="control-label" for="message">#i18n{module.workflow.notification.task_notification_config.label_message} * </label>
             <div class="controls">
                 <#if config?exists>
-                    <textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
+                    <textarea name="message" id="" rows="5" style="width:50%">${config.message}</textarea>
                 <#else>
-                    <textarea name="message" id="" rows="5" cols="80"></textarea>
+                    <textarea name="message" id="" rows="5" style="width:50%"></textarea>
                 </#if>		
                 <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_message_comment}</span>
             </div>
