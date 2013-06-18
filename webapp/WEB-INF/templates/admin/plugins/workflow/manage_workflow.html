@@ -1,7 +1,6 @@
 <div class="row-fluid">
     <div class="span12">
-		<fieldset>
-			<legend>
+		
 				<div class="pull-right">
 					<#if permission_manage_advanced_parameters>
 					<a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp">
@@ -14,8 +13,7 @@
 						<span class="hidden-phone" >#i18n{workflow.manage_workflow.button_create}</span>
 					</a>
 				</div>
-			</legend>
-			<form action="" method="" name="" id="" class="form-inline span7">
+			<form action="" method="" name="" id="" class="form-inline span12 pull-left">
 				<label class="control-label" for="">#i18n{workflow.manage_workflow.label_active} :</label>
                 <@comboWithParams name="is_enabled" items=active_list default_value="active_selected" additionalParameters="class=\"input-small\""/>
                 <label class="control-label" for="">#i18n{workflow.manage_workflow.label_workgroup} :</label>
@@ -69,6 +67,5 @@
                 </#list>
             </table>
             <@paginationAdmin paginator=paginator/>
-		</fieldset>
     </div>
 </div>
