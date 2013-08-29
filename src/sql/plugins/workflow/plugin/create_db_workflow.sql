@@ -63,6 +63,7 @@ CREATE TABLE workflow_action
 	is_automatic SMALLINT DEFAULT 0,
 	is_mass_action SMALLINT DEFAULT 0,
 	display_order INT DEFAULT 0,
+	is_automatic_reflexive_action SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_action)
 );
 

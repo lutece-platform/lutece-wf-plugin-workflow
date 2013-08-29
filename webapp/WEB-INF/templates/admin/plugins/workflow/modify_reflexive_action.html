@@ -1,0 +1,89 @@
+<#include "macro_workflows.html" />
+<div class="row-fluid">
+	<div class="span12">
+		<fieldset>
+			<legend>#i18n{workflow.modify_reflexive_action.title}</legend>
+			<ul class="nav nav-tabs">
+				<li>
+					<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">#i18n{workflow.modify_state.title}</a>
+				</li>
+				<li class="active">
+					<a href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}">#i18n{workflow.modify_reflexive_action.title}</a>
+				</li>
+			</ul>
+			<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
+				<input name="id_state" value="${state.id}" type="hidden">
+				<div class="pull-left">
+					<p class="help-block">
+						#i18n{workflow.modify_reflexive_action.help}
+					</p>
+				</div>
+				<div class="control-group pull-right">
+					<label class="control-label" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
+					<div class="controls">
+						<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list />
+						<button class="btn btn-primary btn-small" type="submit" >
+							<i class="icon-plus icon-white"> </i>
+							#i18n{workflow.create_action.button_insert_new_task}
+						</button>
+						<#if action??>
+							<a href="jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}" class="btn btn-primary btn-small">
+								<i class="icon-resize-vertical icon-white">&nbsp;</i>&nbsp;#i18n{workflow.modify_workflow.init_order}
+							</a>
+						</#if>
+					</div>
+				</div>
+			</form>
+			<br>
+			<table class="table table-striped table-condensed">
+			<tr>
+				<th> #i18n{workflow.modify_action.manage_task.title}</th>
+				<!-- th> #i18n{workflow.modify_action.manage_task.row_number} </th>
+				<th> #i18n{workflow.modify_action.manage_task.row_title} </th>
+                <th> #i18n{workflow.modify_action.manage_task.row_task_type} </th -->
+                <th> #i18n{workflow.modify_workflow.order} </th>
+                <th> #i18n{workflow.modify_action.manage_task.row_actions} </th>
+            </tr>
+            <#assign cpt=0>	
+            <#list task_list as task>
+                <#assign cpt=cpt+1>
+				<tr>
+					<td>
+                    <!-- SELECT LIST FOR ORDER CHANGE -->
+                    <form class="form-horizontal" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderTask.jsp">
+						<@comboOrders name="order_task_id" default_value=task.order max=number_task />
+						<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
+						<input type="hidden" name="id_task" value="${task.id}" />
+						<button class="btn btn-primary btn-small" type="submit" title="#i18n{workflow.modify_workflow.move}">
+							<i class="icon-ok icon-white"></i>
+						</button>
+					</form>
+					</td>
+                    <td>
+						<#if task.taskType.title!="">${task.taskType.title}</#if>
+						<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
+					</td>
+                    <td>
+						<#if task.taskType.configRequired>
+                            <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
+                                <i class="icon-edit icon-white"></i>
+                            </a>
+                        </#if>
+                        <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
+                               <i class="icon-plus-sign icon-white"></i>
+                        </a>
+						<a class="btn btn-danger btn-small" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}"  title="#i18n{workflow.modify_action.manage_task.title_delete}" >
+							<i class="icon-trash icon-white"></i>
+                        </a>
+					</td>
+                </tr>
+            </#list>
+			</table>
+			<div class="form-actions">
+				<a href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}" title="#i18n{portal.util.labelBack}" class="btn btn-small btn-primary">
+					<i class="icon-remove-circle icon-white">&nbsp;</i>&nbsp;#i18n{portal.util.labelBack}
+				</a>
+			</div>
+		</fieldset>
+	</div>
+</div>

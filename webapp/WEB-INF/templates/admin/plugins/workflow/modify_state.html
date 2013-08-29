@@ -3,6 +3,14 @@
     <div class="span12">
             <fieldset>
                 <legend> #i18n{workflow.modify_state.title}</legend>
+                <ul class="nav nav-tabs">
+					<li class="active">
+						<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">#i18n{workflow.modify_state.title}</a>
+					</li>
+					<li>
+						<a href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}">#i18n{workflow.modify_reflexive_action.title}</a>
+					</li>
+				</ul>
 				<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow" method="post" name="" id=""  >
                 <input name="id_state" value="${state.id}" type="hidden">
 				<div class="control-group">
