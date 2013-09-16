@@ -2,5 +2,5 @@
     <#if config.title?exists >
     <label for="comment_value_${config.idTask}">  ${config.title} <#if config.mandatory>*</#if> :</label>
     </#if>
-	<textarea name="comment_value_${config.idTask}" rows="4" cols="80"></textarea>
+	<textarea name="comment_value_${config.idTask}" rows="4" cols="80" >${comment_value!}</textarea>
 </#if>	
