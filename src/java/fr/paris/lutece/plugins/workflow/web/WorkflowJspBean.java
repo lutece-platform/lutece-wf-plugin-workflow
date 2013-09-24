@@ -33,6 +33,21 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
@@ -83,21 +98,6 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -438,8 +438,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         _strCurrentPageIndexAction = Paginator.getPageIndex( request, PARAMETER_PAGE_INDEX_ACTION,
                 _strCurrentPageIndexAction );
+        int nOldItemsPerPageAction = _nItemsPerPageAction;
         _nItemsPerPageAction = Paginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_ACTION,
                 _nItemsPerPageAction, _nDefaultItemsPerPage );
+        // Boolean that indicates if the action table or the state table should be displayed 
+        if ( nOldItemsPerPageAction != _nItemsPerPageAction && nOldItemsPerPageAction > 0 )
+        {
+            strPane = PANE_ACTIONS;
+        }
 
         LocalizedPaginator<Action> paginatorAction = new LocalizedPaginator<Action>( listAction, _nItemsPerPageAction,
                 getJspModifyWorkflow( request, nIdWorkflow ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction,
