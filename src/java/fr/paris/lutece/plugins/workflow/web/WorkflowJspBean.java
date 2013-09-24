@@ -1453,18 +1453,20 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
+        if ( request.getParameter( PARAMETER_CANCEL ) != null && nIdTask > 0 )
+        {
+            return getJspModifyTask( request, nIdTask );
+        }
+
         ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale( ) );
 
         if ( task != null )
         {
-            if ( request.getParameter( PARAMETER_CANCEL ) == null )
-            {
-                String strError = _taskComponentManager.doSaveConfig( request, getLocale( ), task );
+            String strError = _taskComponentManager.doSaveConfig( request, getLocale( ), task );
 
-                if ( strError != null )
-                {
-                    return strError;
-                }
+            if ( strError != null )
+            {
+                return strError;
             }
 
             if ( request.getParameter( PARAMETER_APPLY ) != null )
