@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
@@ -44,15 +53,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -144,7 +144,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE );
+        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, strComment );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_FORM, locale, model );
