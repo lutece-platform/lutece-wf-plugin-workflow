@@ -61,4 +61,13 @@
         </dashboard-component>
     </dashboard-components>
 
+	<daemons>
+        <daemon>
+            <daemon-id>automaticActionDaemon</daemon-id>
+            <daemon-name>workflow.daemon.automaticActionDaemon.name</daemon-name>
+            <daemon-description>workflow.daemon.automaticActionDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.service.prerequisite.AutomaticActionDaemon</daemon-class>
+        </daemon>
+	</daemons>
+
 </plug-in>
