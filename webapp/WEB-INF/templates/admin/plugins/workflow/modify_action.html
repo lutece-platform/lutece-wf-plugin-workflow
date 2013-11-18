@@ -102,9 +102,6 @@
 			<table class="table table-striped table-condensed">
 			<tr>
 				<th> #i18n{workflow.modify_action.manage_task.title}</th>
-				<!-- th> #i18n{workflow.modify_action.manage_task.row_number} </th>
-				<th> #i18n{workflow.modify_action.manage_task.row_title} </th>
-                <th> #i18n{workflow.modify_action.manage_task.row_task_type} </th -->
                 <th> #i18n{workflow.modify_workflow.order} </th>
                 <th> #i18n{workflow.modify_action.manage_task.row_actions} </th>
             </tr>
@@ -119,7 +116,7 @@
 						<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
 						<input type="hidden" name="id_task" value="${task.id}" />
 						<button class="btn btn-primary btn-small" type="submit" title="#i18n{workflow.modify_workflow.move}">
-							<i class="icon-ok icon-white"></i>
+							<i class="icon-ok icon-white">&nbsp;</i>
 						</button>
 					</form>
 					</td>
@@ -130,20 +127,65 @@
                     <td>
 						<#if task.taskType.configRequired>
                             <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
-                                <i class="icon-edit icon-white"></i>
+                                <i class="icon-edit icon-white">&nbsp;</i>
                             </a>
                         </#if>
                         <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
-                               <i class="icon-plus-sign icon-white"></i>
+                               <i class="icon-plus-sign icon-white">&nbsp;</i>
                         </a>
-						<a class="btn btn-danger btn-small" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}"  title="#i18n{workflow.modify_action.manage_task.title_delete}" >
-							<i class="icon-trash icon-white"></i>
+						<a class="btn btn-danger btn-small" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}" >
+							<i class="icon-trash icon-white">&nbsp;</i>
                         </a>
 					</td>
                 </tr>
             </#list>
 			</table>
 		</fieldset>
+		<#if action.isAutomaticState( )>
+			<br />
+			<br />
+			<br />
+			<fieldset>
+				<legend>
+					#i18n{workflow.modify_action.manage_prerequisite.title}
+					<form class="form-inline pull-right" action="jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp" method="post">
+						<@combo name="prerequisite_type" items=list_prerequisite_type default_value="" />
+                		<input type="hidden" name="id_action" value="${action.id}">
+                		<button class="btn btn-small btn-primary">
+                			<i class="icon-plus icon-white">&nbsp;</i>&nbsp;#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}
+                		</button>
+					</form>
+				</legend>
+				<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
+					<table class="table table-striped table-condensed">
+						<tr>
+							<th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</th>
+							<th>#i18n{workflow.modify_action.manage_task.row_actions}</th>
+						</tr>
+						<#list listPrerequisite as prerequisite>
+							<tr>
+								<td>
+									#i18n{${prerequisite.title}}
+								</td>
+								<td>
+									<#if prerequisite.hasConfiguration>
+										<a class="btn btn-small btn-primary" href="jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.manage_workflow.title_modify}">
+											<i class="icon-edit icon-white">&nbsp;</i>
+										</a>
+									</#if>
+									<a class="btn btn-small btn-danger" href="jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}">
+										<i class="icon-trash icon-white">&nbsp;</i>
+									</a>
+								</td>
+							</tr>
+						</#list>
+					</table>
+				<#else>
+					<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
+				</#if>
+				<span class="help-block">#i18n{workflow.modify_action.manage_prerequisite.help}</span>
+			</fieldset>
+		</#if>
     </div>
 </div>
 

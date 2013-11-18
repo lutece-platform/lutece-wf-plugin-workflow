@@ -1,0 +1,29 @@
+<form action="jsp/admin/plugins/workflow/prerequisite/<#if id_prerequisite??>DoModifyPrerequisite.jsp<#else>DoCreatePrerequisite.jsp</#if>" method="post">
+	<input type="hidden" name="id_action" value="${id_action}">
+	<input type="hidden" name="prerequisite_type" value="${prerequisite_type}">
+	<#if id_prerequisite??>	
+		<input type="hidden" name="id_prerequisite" value="${id_prerequisite}">
+	</#if>
+	
+	<#if errors??>
+		<#list errors as error>
+			<div class="alert alert-error">
+			    <a href="#" data-dismiss="alert" class="close">x</a>
+			    <i class="icon-remove-circle">&nbsp;</i>&nbsp;#i18n{${error.message}}
+			</div>
+		</#list>
+	</#if>
+	
+	${content}
+	
+	<div class="form-actions">
+		<div class="form-actions">
+			<button class="btn btn-primary btn-small" type="submit" name="save" >
+				<i class="icon-ok icon-white">&nbsp;</i>&nbsp;#i18n{workflow.create_state.button_save}
+			</button>
+			<button class="btn btn-small" type="submit" name="cancel" value="cancel" >
+				<i class="icon-remove-circle">&nbsp;</i>&nbsp;#i18n{workflow.create_state.button_cancel}
+			</button>
+		</div>
+	</div>
+</form>

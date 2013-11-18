@@ -1,0 +1,157 @@
+/*
+ * Copyright (c) 2002-2013, Mairie de Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
+package fr.paris.lutece.plugins.workflow.business.prerequisite;
+
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.sql.DAOUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * DAO for prerequisite
+ */
+public class PrerequisiteDAO implements IPrerequisiteDAO
+{
+    private static final String SQL_QUERY_NEW_PRIMARY_KEY = "SELECT MAX(id_prerequisite) FROM workflow_prerequisite";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_prerequisite = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_prerequisite SET id_action = ?, prerequisite_type = ? WHERE id_prerequisite = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_prerequisite,id_action,prerequisite_type) VALUES(?,?,?)";
+    private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_prerequisite WHERE id_prerequisite = ?";
+    private static final String SQL_QUERY_FIND_BY_ID_ACTION = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_action = ?";
+
+    /**
+     * Get a new primary key
+     * @param plugin The plugin
+     * @return The new primary key
+     */
+    private int newPrimaryKey( Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PRIMARY_KEY, plugin );
+        daoUtil.executeQuery( );
+        int nRes = 1;
+        if ( daoUtil.next( ) )
+        {
+            nRes = daoUtil.getInt( 1 ) + 1;
+        }
+        daoUtil.free( );
+        return nRes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Prerequisite findByPrimaryKey( int nIdPrerequisite, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        daoUtil.setInt( 1, nIdPrerequisite );
+        daoUtil.executeQuery( );
+        Prerequisite prerequisite = null;
+        if ( daoUtil.next( ) )
+        {
+            prerequisite = new Prerequisite( );
+            prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
+            prerequisite.setIdAction( daoUtil.getInt( 2 ) );
+            prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
+        }
+        daoUtil.free( );
+        return prerequisite;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void create( Prerequisite prerequisite, Plugin plugin )
+    {
+        prerequisite.setIdPrerequisite( newPrimaryKey( plugin ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        daoUtil.setInt( 1, prerequisite.getIdPrerequisite( ) );
+        daoUtil.setInt( 2, prerequisite.getIdAction( ) );
+        daoUtil.setString( 3, prerequisite.getPrerequisiteType( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void update( Prerequisite prerequisite, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        daoUtil.setInt( 1, prerequisite.getIdAction( ) );
+        daoUtil.setString( 2, prerequisite.getPrerequisiteType( ) );
+        daoUtil.setInt( 3, prerequisite.getIdPrerequisite( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove( int nIdPrerequisite, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        daoUtil.setInt( 1, nIdPrerequisite );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+
+    public List<Prerequisite> findByIdAction( int nIdAction, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_ACTION, plugin );
+        daoUtil.setInt( 1, nIdAction );
+        daoUtil.executeQuery( );
+        List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>( );
+
+        while ( daoUtil.next( ) )
+        {
+            Prerequisite prerequisite = new Prerequisite( );
+            prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
+            prerequisite.setIdAction( daoUtil.getInt( 2 ) );
+            prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
+            listPrerequisites.add( prerequisite );
+        }
+
+        daoUtil.free( );
+
+        return listPrerequisites;
+    }
+
+}

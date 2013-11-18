@@ -33,23 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.lang.StringUtils;
-
+import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
+import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
@@ -57,6 +44,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
@@ -67,6 +55,7 @@ import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -98,6 +87,21 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -181,6 +185,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_ALL = "workflow.manage_workflow.select.all";
     private static final String PROPERTY_YES = "workflow.manage_workflow.select.yes";
     private static final String PROPERTY_NO = "workflow.manage_workflow.select.no";
+
     private static final String FIELD_WORKFLOW_NAME = "workflow.create_workflow.label_name";
     private static final String FIELD_ACTION_NAME = "workflow.create_action.label_name";
     private static final String FIELD_STATE_NAME = "workflow.create_state.label_name";
@@ -225,6 +230,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
     private static final String MARK_DISPLAY_TASKS_FORM = "display_tasks_form";
     private static final String MARK_PANE = "pane";
+    private static final String MARK_LIST_PREREQUISITE_TYPE = "list_prerequisite_type";
+    private static final String MARK_LIST_PREREQUISITE = "listPrerequisite";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
@@ -263,6 +270,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
     private ITaskComponentManager _taskComponentManager = SpringContextService
             .getBean( TaskComponentManager.BEAN_MANAGER );
+    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService
+            .getBean( PrerequisiteManagementService.BEAN_NAME );
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -1234,6 +1243,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         ReferenceList refListTaskType = new ReferenceList( );
         Collection<ITaskType> taskTypeList = _taskFactory.getAllTaskTypes( );
 
+        List<PrerequisiteDTO> listPrerequisiteDTO = null;
+
         if ( action.isAutomaticState( ) )
         {
             for ( ITaskType taskType : taskTypeList )
@@ -1242,6 +1253,19 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 {
                     refListTaskType.addItem( taskType.getKey( ),
                             I18nService.getLocalizedString( taskType.getTitleI18nKey( ), getLocale( ) ) );
+                }
+            }
+            List<Prerequisite> listPrerequisite = _prerequisiteManagementService.getListPrerequisite( action.getId( ) );
+            if ( listPrerequisite.size( ) > 0 )
+            {
+                listPrerequisiteDTO = new ArrayList<PrerequisiteDTO>( listPrerequisite.size( ) );
+                for ( Prerequisite prerequisite : listPrerequisite )
+                {
+                    IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService
+                            .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+                    PrerequisiteDTO dto = new PrerequisiteDTO( prerequisite, prerequisiteService.getTitleI18nKey( ),
+                            prerequisiteService.hasConfiguration( ) );
+                    listPrerequisiteDTO.add( dto );
                 }
             }
         }
@@ -1263,6 +1287,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin( ) );
         model.put( MARK_LOCALE, getLocale( ) );
+        if ( action.isAutomaticState( ) )
+        {
+            model.put( MARK_LIST_PREREQUISITE, listPrerequisiteDTO );
+            model.put( MARK_LIST_PREREQUISITE_TYPE,
+                    _prerequisiteManagementService.getPrerequisiteServiceRefList( getLocale( ) ) );
+        }
 
         boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale( ) );
         model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
