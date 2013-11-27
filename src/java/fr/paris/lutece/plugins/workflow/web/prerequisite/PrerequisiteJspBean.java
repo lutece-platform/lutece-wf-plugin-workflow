@@ -167,33 +167,35 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         {
             IAutomaticActionPrerequisiteService service = _prerequisiteManagementService
                     .getPrerequisiteService( strPrerequisiteType );
-
-            IPrerequisiteConfig config = service.getEmptyConfiguration( );
-            if ( config != null )
+            if ( service != null )
             {
-                BeanUtil.populate( config, request );
-
-                Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
-                if ( listErrors != null && listErrors.size( ) > 0 )
+                IPrerequisiteConfig config = service.getEmptyConfiguration( );
+                if ( config != null )
                 {
-                    request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
-                    request.getSession( ).setAttribute( SESSION_CONFIG, config );
-                    UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PREREQUISITE );
-                    url.addParameter( MARK_ID_ACTION, nIdAction );
-                    url.addParameter( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
-                    return url.getUrl( );
+                    BeanUtil.populate( config, request );
+
+                    Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
+                    if ( listErrors != null && listErrors.size( ) > 0 )
+                    {
+                        request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
+                        request.getSession( ).setAttribute( SESSION_CONFIG, config );
+                        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PREREQUISITE );
+                        url.addParameter( MARK_ID_ACTION, nIdAction );
+                        url.addParameter( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
+                        return url.getUrl( );
+                    }
                 }
-            }
 
-            Prerequisite prerequisite = new Prerequisite( );
-            prerequisite.setIdAction( nIdAction );
-            prerequisite.setPrerequisiteType( strPrerequisiteType );
+                Prerequisite prerequisite = new Prerequisite( );
+                prerequisite.setIdAction( nIdAction );
+                prerequisite.setPrerequisiteType( strPrerequisiteType );
 
-            _prerequisiteManagementService.createPrerequisite( prerequisite );
-            if ( config != null )
-            {
-                config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
-                _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
+                _prerequisiteManagementService.createPrerequisite( prerequisite );
+                if ( config != null )
+                {
+                    config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+                    _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
+                }
             }
         }
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
