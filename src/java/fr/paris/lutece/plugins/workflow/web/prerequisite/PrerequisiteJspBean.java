@@ -192,6 +192,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             _prerequisiteManagementService.createPrerequisite( prerequisite );
             if ( config != null )
             {
+                config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
                 _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
             }
         }
