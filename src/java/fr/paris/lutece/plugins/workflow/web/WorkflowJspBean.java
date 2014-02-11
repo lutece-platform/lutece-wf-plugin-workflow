@@ -1520,7 +1520,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
 
-            if ( request.getParameter( PARAMETER_CANCEL ) != null )
+            if ( request.getParameter( PARAMETER_CANCEL ) == null )
             {
                 String strError = _taskComponentManager.doSaveConfig( request, getLocale(  ), task );
 
