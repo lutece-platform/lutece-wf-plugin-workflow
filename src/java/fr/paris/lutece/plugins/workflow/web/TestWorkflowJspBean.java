@@ -63,10 +63,15 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * class TestWorkflowJspBean
+ * JspBean to test a workflow
  */
 public class TestWorkflowJspBean extends PluginAdminPageJspBean
 {
+    /**
+     * Generated serial version UID
+     */
+    private static final long serialVersionUID = 5346965060190990925L;
+
     // jsp
     private static final String JSP_MANAGE_TEST_WORKFLOW = "jsp/admin/plugins/workflow/ManageTestWorkflow.jsp";
     private static final String JSP_TASKS_FORM_TEST_WORKFLOW = "jsp/admin/plugins/workflow/TasksFormTestWorkflow.jsp";

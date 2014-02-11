@@ -120,7 +120,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        String strError = WorkflowUtils.EMPTY_STRING;
+        String strError = null;
         String strTitle = request.getParameter( PARAMETER_TITLE );
         String strIsMultipleOwner = request.getParameter( PARAMETER_IS_MULTIPLE_OWNER );
         String strIsNotification = request.getParameter( PARAMETER_IS_NOTIFICATION );
@@ -149,7 +149,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             strError = FIELD_MAILINGLIST_MESSAGE;
         }
 
-        if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( strError != null )
         {
             Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
 
@@ -171,6 +171,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>(  );
         WorkgroupConfig workgroupConfig;
 
+        // Ignore potential null pointer : tabWorkgroups can not be null here
         for ( int i = 0; i < tabWorkgroups.length; i++ )
         {
             workgroupConfig = new WorkgroupConfig(  );

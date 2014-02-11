@@ -257,6 +257,7 @@ public class StateDAO implements IStateDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public int findMaximumOrderByWorkflowId( int nWorkflowId )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin(  ) );

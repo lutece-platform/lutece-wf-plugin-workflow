@@ -72,6 +72,7 @@ public class TaskComment extends Task
     @Override
     public void init(  )
     {
+        // Do nothing
     }
 
     /**

@@ -79,6 +79,7 @@ public class TaskNotification extends Task
     @Override
     public void init(  )
     {
+        // Do nothing
     }
 
     /**
@@ -123,6 +124,7 @@ public class TaskNotification extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
+        // Do nothing
     }
 
     /**

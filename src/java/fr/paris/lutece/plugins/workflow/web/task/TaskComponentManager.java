@@ -51,6 +51,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskComponentManager implements ITaskComponentManager
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_MANAGER = "workflow.taskComponentManager";
 
     /**

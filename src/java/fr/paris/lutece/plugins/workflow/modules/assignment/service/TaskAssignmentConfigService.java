@@ -53,6 +53,9 @@ import javax.inject.Inject;
  */
 public class TaskAssignmentConfigService extends TaskConfigService
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_SERVICE = "workflow.taskAssignmentConfigService";
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;

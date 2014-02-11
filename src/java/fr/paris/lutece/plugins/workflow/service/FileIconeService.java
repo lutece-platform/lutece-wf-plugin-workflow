@@ -80,10 +80,9 @@ public final class FileIconeService implements ImageResourceProvider
     }
 
     /**
-    * Return the Resource id
-    * @param nIdResource The resource identifier
-    * @return The Resource Image
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public ImageResource getImageResource( int nIdResource )
     {
         IIconService iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
@@ -102,9 +101,9 @@ public final class FileIconeService implements ImageResourceProvider
     }
 
     /**
-     * Return the Resource Type id
-     * @return The Resource Type Id
+     * {@inheritDoc}
      */
+    @Override
     public String getResourceTypeId(  )
     {
         return IMAGE_RESOURCE_TYPE_ID;

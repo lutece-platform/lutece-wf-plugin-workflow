@@ -49,6 +49,9 @@ import javax.inject.Inject;
  */
 public class CommentValueService implements ICommentValueService
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_SERVICE = "workflow.commentValueService";
     @Inject
     private ICommentValueDAO _dao;

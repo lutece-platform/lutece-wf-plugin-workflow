@@ -50,8 +50,9 @@ public class WorkflowPostStartupService implements PostStartUpService
     private ITaskFactory _taskFactory;
 
     /**
-     * Initializes all ITaskType
+     * {@inheritDoc}
      */
+    @Override
     public void process(  )
     {
         for ( ITaskType taskType : _taskFactory.getAllTaskTypes(  ) )
@@ -63,6 +64,7 @@ public class WorkflowPostStartupService implements PostStartUpService
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName(  )
     {
         return "Workflow post startup service";

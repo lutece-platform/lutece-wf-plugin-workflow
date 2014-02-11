@@ -51,6 +51,9 @@ import javax.inject.Inject;
  */
 public class TestResourceService implements ITestResourceService
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_SERVICE = "workflow.testResourceService";
     @Inject
     private ITestResourceDAO _testResourceDAO;

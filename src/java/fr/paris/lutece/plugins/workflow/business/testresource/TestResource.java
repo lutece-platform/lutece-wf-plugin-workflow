@@ -41,6 +41,9 @@ package fr.paris.lutece.plugins.workflow.business.testresource;
  */
 public class TestResource
 {
+    /**
+     * The resource type
+     */
     public static final String RESOURCE_TYPE = "TEST_RESOURCE";
     private int _nIdResource;
     private String _strTitle;

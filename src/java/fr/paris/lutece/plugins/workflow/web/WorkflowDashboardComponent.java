@@ -82,11 +82,9 @@ public class WorkflowDashboardComponent extends DashboardComponent
     private static final int FILTER_NO_STATUS = -1;
 
     /**
-     * The HTML code of the component
-     * @param user The Admin User
-         * @param request HttpServletRequest
-     * @return The dashboard component
+     * {@inheritDoc}
      */
+    @Override
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
         Right right = RightHome.findByPrimaryKey( getRight(  ) );

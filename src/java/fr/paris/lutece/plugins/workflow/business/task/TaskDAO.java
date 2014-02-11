@@ -218,8 +218,9 @@ public class TaskDAO implements ITaskDAO
     }
 
     /**
-     * {@inheritDoc}s
+     * {@inheritDoc}
      */
+    @Override
     public int findMaximumOrderByActionId( int nIdAction )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION, WorkflowUtils.getPlugin(  ) );

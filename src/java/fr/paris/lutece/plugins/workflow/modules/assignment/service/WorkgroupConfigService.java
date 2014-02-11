@@ -51,6 +51,9 @@ import javax.inject.Inject;
  */
 public class WorkgroupConfigService implements IWorkgroupConfigService
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_SERVICE = "workflow.workgroupConfigService";
     @Inject
     private IWorkgroupConfigDAO _workgroupConfigDAO;

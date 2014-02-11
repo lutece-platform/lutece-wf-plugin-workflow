@@ -55,41 +55,42 @@ import java.util.Locale;
  */
 public class AutomaticActionDaemon extends Daemon
 {
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void run( )
+    public void run(  )
     {
-        IWorkflowService workflowService = SpringContextService
-                .getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
-        WorkflowFilter workflowFilter = new WorkflowFilter( );
+        IWorkflowService workflowService = SpringContextService.getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
+        WorkflowFilter workflowFilter = new WorkflowFilter(  );
         List<Workflow> listWorkflows = workflowService.getListWorkflowsByFilter( workflowFilter );
-        IResourceWorkflowService resourceWorkflowService = SpringContextService
-                .getBean( ResourceWorkflowService.BEAN_SERVICE );
+        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
         int nNbResourcesFound = 0;
+
         for ( Workflow workflow : listWorkflows )
         {
             IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-            ActionFilter filter = new ActionFilter( );
+            ActionFilter filter = new ActionFilter(  );
 
             filter.setIsAutomaticState( 1 );
-            filter.setIdWorkflow( workflow.getId( ) );
+            filter.setIdWorkflow( workflow.getId(  ) );
+
             List<Action> listAutomaticActions = actionService.getListActionByFilter( filter );
+
             for ( Action action : listAutomaticActions )
             {
-                List<ResourceWorkflow> listResource = resourceWorkflowService.getAllResourceWorkflowByState( action
-                        .getStateBefore( ).getId( ) );
+                List<ResourceWorkflow> listResource = resourceWorkflowService.getAllResourceWorkflowByState( action.getStateBefore(  )
+                                                                                                                   .getId(  ) );
+
                 for ( ResourceWorkflow resource : listResource )
                 {
-                    workflowService.doProcessAction( resource.getIdResource( ), resource.getResourceType( ),
-                            action.getId( ), resource.getExternalParentId( ), null, Locale.getDefault( ), true, null );
+                    workflowService.doProcessAction( resource.getIdResource(  ), resource.getResourceType(  ),
+                        action.getId(  ), resource.getExternalParentId(  ), null, Locale.getDefault(  ), true, null );
                     nNbResourcesFound++;
                 }
             }
         }
+
         setLastRunLogs( "Found " + nNbResourcesFound + " resource(s). Automatic actions performed on those resources" );
     }
-
 }

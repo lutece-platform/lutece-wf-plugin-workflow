@@ -519,7 +519,7 @@ public class WorkflowProvider implements IWorkflowProvider
         {
             if ( RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW, user ) )
             {
-                if ( resourceState.isRequiredWorkgroupAssigned(  ) )
+                if ( resourceState.isRequiredWorkgroupAssigned(  ) && ( resourceWorkflow != null ) )
                 {
                     for ( String strWorkgroup : resourceWorkflow.getWorkgroups(  ) )
                     {
@@ -616,7 +616,7 @@ public class WorkflowProvider implements IWorkflowProvider
             resourceWorkflow.setExternalParentId( nExternalParentId );
             _resourceWorkflowService.update( resourceWorkflow );
 
-            if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
+            if ( action.getStateAfter(  ) != null )
             {
                 State state = action.getStateAfter(  );
                 ActionFilter actionFilter = new ActionFilter(  );

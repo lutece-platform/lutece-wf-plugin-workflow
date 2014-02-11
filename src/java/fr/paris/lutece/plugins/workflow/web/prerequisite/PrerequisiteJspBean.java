@@ -48,16 +48,18 @@ import fr.paris.lutece.util.bean.BeanUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
 
-import org.apache.commons.lang.StringUtils;
+import javax.validation.ConstraintViolation;
 
 
 /**
@@ -66,28 +68,21 @@ import org.apache.commons.lang.StringUtils;
 public class PrerequisiteJspBean extends PluginAdminPageJspBean
 {
     private static final long serialVersionUID = 2375784363589766595L;
-
     private static final String MESSAGE_CONFIRM_REMOVE_PREREQUISITE = "workflow.modify_action.manage_prerequisite.confirmRemovePrerequisite";
-
     private static final String MARK_PREREQUISITE_TYPE = "prerequisite_type";
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_CONTENT = "content";
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_ID_PREREQUISITE = "id_prerequisite";
     private static final String MARK_CANCEL = "cancel";
-
     private static final String TEMPLATE_CREATE_MODIFY_PREREQUISITE = "admin/plugins/workflow/create_modify_prerequisite.html";
-
     private static final String JSP_URL_MODIFY_ACTION = "jsp/admin/plugins/workflow/ModifyAction.jsp";
     private static final String JSP_URL_CREATE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp";
     private static final String JSP_URL_MODIFY_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp";
     private static final String JSP_URL_DO_REMOVE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/DoRemovePrerequisite.jsp";
-
     private static final String SESSION_ERRORS = "workflow.prerequisite.session.errors";
     private static final String SESSION_CONFIG = "workflow.prerequisite.session.config";
-
-    PrerequisiteManagementService _prerequisiteManagementService = SpringContextService
-            .getBean( PrerequisiteManagementService.BEAN_NAME );
+    PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     /**
      * Creates a new prerequisite. If the prerequisite needs to display a
@@ -103,54 +98,59 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         String strPrerequisiteType = request.getParameter( MARK_PREREQUISITE_TYPE );
         int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
 
-        IAutomaticActionPrerequisiteService service = _prerequisiteManagementService
-                .getPrerequisiteService( strPrerequisiteType );
+        IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( strPrerequisiteType );
 
-        if ( !service.hasConfiguration( ) )
+        if ( !service.hasConfiguration(  ) )
         {
-            Prerequisite prerequisite = new Prerequisite( );
+            Prerequisite prerequisite = new Prerequisite(  );
             prerequisite.setIdAction( nIdAction );
             prerequisite.setPrerequisiteType( strPrerequisiteType );
             _prerequisiteManagementService.createPrerequisite( prerequisite );
+
             UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
             url.addParameter( MARK_ID_ACTION, nIdAction );
+
             try
             {
-                response.sendRedirect( url.getUrl( ) );
+                response.sendRedirect( url.getUrl(  ) );
             }
             catch ( IOException e )
             {
-                AppLogService.error( e.getMessage( ), e );
+                AppLogService.error( e.getMessage(  ), e );
             }
+
             return null;
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
         model.put( MARK_ID_ACTION, nIdAction );
-        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request
-                .getSession( ).getAttribute( SESSION_ERRORS );
+
+        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession(  )
+                                                                                                                          .getAttribute( SESSION_ERRORS );
         IPrerequisiteConfig config;
+
         if ( listErrors != null )
         {
             model.put( MARK_ERRORS, listErrors );
-            request.getSession( ).removeAttribute( SESSION_ERRORS );
-            config = (IPrerequisiteConfig) request.getSession( ).getAttribute( SESSION_CONFIG );
-            request.getSession( ).removeAttribute( SESSION_CONFIG );
+            request.getSession(  ).removeAttribute( SESSION_ERRORS );
+            config = (IPrerequisiteConfig) request.getSession(  ).getAttribute( SESSION_CONFIG );
+            request.getSession(  ).removeAttribute( SESSION_CONFIG );
         }
         else
         {
-            config = service.getEmptyConfiguration( );
+            config = service.getEmptyConfiguration(  );
         }
+
         config.setPrerequisiteType( strPrerequisiteType );
 
-        String strContent = service.getConfigHtml( config, request, getLocale( ) );
+        String strContent = service.getConfigHtml( config, request, getLocale(  ) );
         model.put( MARK_CONTENT, strContent );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ),
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale(  ),
                 model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -165,42 +165,49 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         if ( StringUtils.isEmpty( request.getParameter( MARK_CANCEL ) ) )
         {
-            IAutomaticActionPrerequisiteService service = _prerequisiteManagementService
-                    .getPrerequisiteService( strPrerequisiteType );
+            IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( strPrerequisiteType );
+
             if ( service != null )
             {
-                IPrerequisiteConfig config = service.getEmptyConfiguration( );
+                IPrerequisiteConfig config = service.getEmptyConfiguration(  );
+
                 if ( config != null )
                 {
                     BeanUtil.populate( config, request );
 
                     Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
-                    if ( listErrors != null && listErrors.size( ) > 0 )
+
+                    if ( ( listErrors != null ) && ( listErrors.size(  ) > 0 ) )
                     {
-                        request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
-                        request.getSession( ).setAttribute( SESSION_CONFIG, config );
+                        request.getSession(  ).setAttribute( SESSION_ERRORS, listErrors );
+                        request.getSession(  ).setAttribute( SESSION_CONFIG, config );
+
                         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PREREQUISITE );
                         url.addParameter( MARK_ID_ACTION, nIdAction );
                         url.addParameter( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
-                        return url.getUrl( );
+
+                        return url.getUrl(  );
                     }
                 }
 
-                Prerequisite prerequisite = new Prerequisite( );
+                Prerequisite prerequisite = new Prerequisite(  );
                 prerequisite.setIdAction( nIdAction );
                 prerequisite.setPrerequisiteType( strPrerequisiteType );
 
                 _prerequisiteManagementService.createPrerequisite( prerequisite );
+
                 if ( config != null )
                 {
-                    config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+                    config.setIdPrerequisite( prerequisite.getIdPrerequisite(  ) );
                     _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
                 }
             }
         }
+
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
         url.addParameter( MARK_ID_ACTION, nIdAction );
-        return url.getUrl( );
+
+        return url.getUrl(  );
     }
 
     /**
@@ -216,51 +223,57 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         int nIdPrerequisite = Integer.parseInt( request.getParameter( MARK_ID_PREREQUISITE ) );
         Prerequisite prerequisite = _prerequisiteManagementService.findPrerequisite( nIdPrerequisite );
 
-        IAutomaticActionPrerequisiteService service = _prerequisiteManagementService
-                .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+        IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( prerequisite.getPrerequisiteType(  ) );
 
-        if ( !service.hasConfiguration( ) )
+        if ( !service.hasConfiguration(  ) )
         {
             UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
             url.addParameter( MARK_ID_ACTION, nIdAction );
+
             try
             {
-                response.sendRedirect( url.getUrl( ) );
+                response.sendRedirect( url.getUrl(  ) );
             }
             catch ( IOException e )
             {
-                AppLogService.error( e.getMessage( ), e );
+                AppLogService.error( e.getMessage(  ), e );
             }
+
             return null;
         }
+
         IPrerequisiteConfig config;
 
-        Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType( ) );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        model.put( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType(  ) );
         model.put( MARK_ID_ACTION, nIdAction );
         model.put( MARK_ID_PREREQUISITE, nIdPrerequisite );
-        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request
-                .getSession( ).getAttribute( SESSION_ERRORS );
+
+        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession(  )
+                                                                                                                          .getAttribute( SESSION_ERRORS );
+
         if ( listErrors != null )
         {
             model.put( MARK_ERRORS, listErrors );
-            request.getSession( ).removeAttribute( SESSION_ERRORS );
-            config = (IPrerequisiteConfig) request.getSession( ).getAttribute( SESSION_CONFIG );
-            request.getSession( ).removeAttribute( SESSION_CONFIG );
+            request.getSession(  ).removeAttribute( SESSION_ERRORS );
+            config = (IPrerequisiteConfig) request.getSession(  ).getAttribute( SESSION_CONFIG );
+            request.getSession(  ).removeAttribute( SESSION_CONFIG );
         }
         else
         {
             config = _prerequisiteManagementService.getPrerequisiteConfiguration( nIdPrerequisite, service );
         }
+
         config.setIdPrerequisite( nIdPrerequisite );
-        config.setPrerequisiteType( prerequisite.getPrerequisiteType( ) );
-        String strContent = service.getConfigHtml( config, request, getLocale( ) );
+        config.setPrerequisiteType( prerequisite.getPrerequisiteType(  ) );
+
+        String strContent = service.getConfigHtml( config, request, getLocale(  ) );
         model.put( MARK_CONTENT, strContent );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ),
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale(  ),
                 model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -271,36 +284,43 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     public String doModifyPrerequisite( HttpServletRequest request )
     {
         int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
+
         if ( StringUtils.isEmpty( request.getParameter( MARK_CANCEL ) ) )
         {
             int nIdPrerequisite = Integer.parseInt( request.getParameter( MARK_ID_PREREQUISITE ) );
             Prerequisite prerequisite = _prerequisiteManagementService.findPrerequisite( nIdPrerequisite );
-            IAutomaticActionPrerequisiteService service = _prerequisiteManagementService
-                    .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+            IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( prerequisite.getPrerequisiteType(  ) );
 
             IPrerequisiteConfig config = _prerequisiteManagementService.getPrerequisiteConfiguration( nIdPrerequisite,
                     service );
+
             if ( config != null )
             {
                 BeanUtil.populate( config, request );
 
                 Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
-                if ( listErrors != null && listErrors.size( ) > 0 )
+
+                if ( ( listErrors != null ) && ( listErrors.size(  ) > 0 ) )
                 {
-                    request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
-                    request.getSession( ).setAttribute( SESSION_CONFIG, config );
+                    request.getSession(  ).setAttribute( SESSION_ERRORS, listErrors );
+                    request.getSession(  ).setAttribute( SESSION_CONFIG, config );
+
                     UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_PREREQUISITE );
                     url.addParameter( MARK_ID_ACTION, nIdAction );
-                    url.addParameter( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType( ) );
+                    url.addParameter( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType(  ) );
                     url.addParameter( MARK_ID_PREREQUISITE, nIdPrerequisite );
-                    return url.getUrl( );
+
+                    return url.getUrl(  );
                 }
+
                 _prerequisiteManagementService.updatePrerequisiteConfiguration( config, service );
             }
         }
+
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
         url.addParameter( MARK_ID_ACTION, nIdAction );
-        return url.getUrl( );
+
+        return url.getUrl(  );
     }
 
     /**
@@ -313,8 +333,9 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         UrlItem urlItem = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_DO_REMOVE_PREREQUISITE );
         urlItem.addParameter( MARK_ID_ACTION, request.getParameter( MARK_ID_ACTION ) );
         urlItem.addParameter( MARK_ID_PREREQUISITE, request.getParameter( MARK_ID_PREREQUISITE ) );
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PREREQUISITE, urlItem.getUrl( ),
-                AdminMessage.TYPE_CONFIRMATION );
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PREREQUISITE, urlItem.getUrl(  ),
+            AdminMessage.TYPE_CONFIRMATION );
     }
 
     /**
@@ -331,6 +352,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
         url.addParameter( MARK_ID_ACTION, nIdAction );
-        return url.getUrl( );
+
+        return url.getUrl(  );
     }
 }

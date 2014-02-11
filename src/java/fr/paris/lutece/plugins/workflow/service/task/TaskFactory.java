@@ -58,6 +58,9 @@ import java.util.Locale;
  */
 public class TaskFactory implements ITaskFactory
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_SERVICE = "workflow.taskFactory";
 
     /**

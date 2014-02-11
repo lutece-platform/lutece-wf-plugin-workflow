@@ -42,11 +42,15 @@ import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
  */
 public class WorkflowPlugin extends PluginDefaultImplementation
 {
+    /**
+     * The name of the workflow plugin
+     */
     public static final String PLUGIN_NAME = "workflow";
 
     /**
-     * Initialize the plugin
+     * {@inheritDoc}
      */
+    @Override
     public void init(  )
     {
         Workflow.init(  );

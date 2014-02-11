@@ -33,15 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
@@ -53,6 +44,16 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -102,7 +103,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
                 AdminMessage.TYPE_STOP );
         }
 
-        if ( ( config != null ) && config.isMandatory(  ) &&
+        if ( config.isMandatory(  ) &&
                 ( ( strCommentValue == null ) || strCommentValue.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) ) )
         {
             strError = config.getTitle(  );
@@ -144,9 +145,10 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
+        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId(  ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, strComment );
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_FORM, locale, model );
 
         return template.getHtml(  );

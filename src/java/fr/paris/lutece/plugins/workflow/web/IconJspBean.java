@@ -66,12 +66,15 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- *
- * class DirectoryXslJspBean
- *
+ * JspBean to manage workflow icons
  */
 public class IconJspBean extends PluginAdminPageJspBean
 {
+    /**
+     * Serial version UID
+     */
+    private static final long serialVersionUID = 1953322601057873584L;
+
     //	templates
     private static final String TEMPLATE_MANAGE_ICON = "admin/plugins/workflow/manage_icon.html";
     private static final String TEMPLATE_CREATE_ICON = "admin/plugins/workflow/create_icon.html";

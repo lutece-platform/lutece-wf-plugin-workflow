@@ -74,8 +74,9 @@ public class ActionResourceIdService extends ResourceIdService
     }
 
     /**
-     * Initializes the service
+     * {@inheritDoc}
      */
+    @Override
     public void register(  )
     {
         ResourceType rt = new ResourceType(  );

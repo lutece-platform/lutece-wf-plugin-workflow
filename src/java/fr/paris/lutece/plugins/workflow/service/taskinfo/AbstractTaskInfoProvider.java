@@ -48,6 +48,7 @@ public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setTaskType( ITaskType taskType )
     {
         _taskType = taskType;
@@ -56,6 +57,7 @@ public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
     /**
      * {@inheritDoc}
      */
+    @Override
     public ITaskType getTaskType(  )
     {
         return _taskType;

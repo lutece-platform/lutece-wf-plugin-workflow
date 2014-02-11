@@ -60,6 +60,10 @@ public class StateResourceIdService extends ResourceIdService
 {
     /** Permission for viewing the resource associated to the state */
     public static final String PERMISSION_VIEW = "VIEW";
+
+    /**
+     * Permission to view every workgroups
+     */
     public static final String PERMISSION_VIEW_ALL_WORKGROUP = "VIEW_ALL_WORKGROUP";
     private static final String PROPERTY_LABEL_RESOURCE_TYPE = "workflow.permission.label.resource_type_state";
     private static final String PROPERTY_LABEL_VIEW = "workflow.permission.label.view_state";
@@ -72,8 +76,9 @@ public class StateResourceIdService extends ResourceIdService
     }
 
     /**
-     * Initializes the service
+     * {@inheritDoc}
      */
+    @Override
     public void register(  )
     {
         ResourceType rt = new ResourceType(  );
@@ -96,10 +101,9 @@ public class StateResourceIdService extends ResourceIdService
     }
 
     /**
-     * Returns a list of Testresource ids
-     * @param locale The current locale
-     * @return A list of resource ids
+     * {@inheritDoc}
      */
+    @Override
     public ReferenceList getResourceIdList( Locale locale )
     {
         IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
@@ -118,11 +122,9 @@ public class StateResourceIdService extends ResourceIdService
     }
 
     /**
-     * Returns the Title of a given resource
-     * @param strId The Id of the resource
-     * @param locale The current locale
-     * @return The Title of a given resource
+     * {@inheritDoc}
      */
+    @Override
     public String getTitle( String strId, Locale locale )
     {
         IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );

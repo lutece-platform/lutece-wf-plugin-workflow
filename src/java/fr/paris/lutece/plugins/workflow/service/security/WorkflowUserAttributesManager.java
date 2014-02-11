@@ -47,43 +47,43 @@ import java.util.Map;
  */
 public class WorkflowUserAttributesManager implements IWorkflowUserAttributesManager
 {
+    /**
+     * The name of the bean of this service
+     */
     public static final String BEAN_MANAGER = "workflow.userAttributesManager";
     private UserAttributesService _userAttributesService;
 
     /**
-     * Check if the UserAttributesService is enabled
-     * @return true if the service is enabled, false otherwise
+     * {@inheritDoc}
      */
+    @Override
     public boolean isEnabled(  )
     {
         return _userAttributesService != null;
     }
 
     /**
-     * Set the UserAttributesService
-     * @param userAttributesService the UserAttributesService
+     * {@inheritDoc}
      */
+    @Override
     public void setUserAttributesService( UserAttributesService userAttributesService )
     {
         _userAttributesService = userAttributesService;
     }
 
     /**
-     * Get the attribute
-     * @param strUserId the id user guid
-     * @param strAttribute the attribute
-     * @return the attribute value
+     * {@inheritDoc}
      */
+    @Override
     public String getAttribute( String strUserId, String strAttribute )
     {
         return isEnabled(  ) ? _userAttributesService.getAttribute( strUserId, strAttribute ) : StringUtils.EMPTY;
     }
 
     /**
-     * Get the attributes
-     * @param strUserId the user id
-     * @return a map of attribute key - attribute value
+     * {@inheritDoc}
      */
+    @Override
     public Map<String, String> getAttributes( String strUserId )
     {
         return isEnabled(  ) ? _userAttributesService.getAttributes( strUserId ) : null;
