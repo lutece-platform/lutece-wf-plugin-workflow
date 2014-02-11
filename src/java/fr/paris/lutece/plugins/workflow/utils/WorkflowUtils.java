@@ -256,6 +256,6 @@ public final class WorkflowUtils
             return listConverted;
         }
 
-        return null;
+        return new Integer[0];
     }
 }

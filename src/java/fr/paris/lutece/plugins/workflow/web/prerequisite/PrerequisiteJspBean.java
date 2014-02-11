@@ -82,7 +82,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String JSP_URL_DO_REMOVE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/DoRemovePrerequisite.jsp";
     private static final String SESSION_ERRORS = "workflow.prerequisite.session.errors";
     private static final String SESSION_CONFIG = "workflow.prerequisite.session.config";
-    PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     /**
      * Creates a new prerequisite. If the prerequisite needs to display a

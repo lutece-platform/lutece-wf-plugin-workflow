@@ -1778,7 +1778,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *
      * @param request The HTTP request
      * @param nIdWorkflow the key of workflow to modify
-     * @param strPane
+     * @param strPane The pane to display
      * @return return url of the jsp modify workflows
      */
     private String getJspModifyWorkflow( HttpServletRequest request, int nIdWorkflow, String strPane )
@@ -2322,9 +2322,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param request the request
      * @param actionToCopy the action to copy
      * @return action the action
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
+     * @throws NoSuchMethodException If the method was not found
+     * @throws IllegalAccessException The an illegal access occurs
+     * @throws InvocationTargetException The an error occurs
      */
     private Action copyActionMethod( HttpServletRequest request, Action actionToCopy )
         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException

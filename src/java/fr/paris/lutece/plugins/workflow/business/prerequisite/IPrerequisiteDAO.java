@@ -47,7 +47,7 @@ public interface IPrerequisiteDAO
     /**
      * The name of the bean of this service
      */
-    public static final String BEAN_NAME = "workflow.prerequisiteDAO";
+    static final String BEAN_NAME = "workflow.prerequisiteDAO";
 
     /**
      * Get a prerequisite by its primary key

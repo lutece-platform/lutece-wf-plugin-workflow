@@ -434,7 +434,7 @@ public class ActionDAO implements IActionDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_REMOVE_LINKED_ACTION, WorkflowUtils.getPlugin(  ) );
         int nIndex = 1;
         daoUtil.setInt( nIndex++, nIdAction );
-        daoUtil.setInt( nIndex++, nIdAction );
+        daoUtil.setInt( nIndex, nIdAction );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
