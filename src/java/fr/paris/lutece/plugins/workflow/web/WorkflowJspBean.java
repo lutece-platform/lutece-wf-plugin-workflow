@@ -88,7 +88,11 @@ import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.InvocationTargetException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,9 +103,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -1521,12 +1522,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             if ( request.getParameter( PARAMETER_CANCEL ) != null )
             {
-                String strError = _taskComponentManager.doSaveConfig( request, getLocale( ), task );
+                String strError = _taskComponentManager.doSaveConfig( request, getLocale(  ), task );
 
                 if ( strError != null )
                 {
                     return strError;
                 }
+
                 if ( request.getParameter( PARAMETER_APPLY ) != null )
                 {
                     return getJspModifyTask( request, nIdTask );
