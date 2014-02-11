@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS workflow_resource_workflow;
 DROP TABLE IF EXISTS workflow_state;
 DROP TABLE IF EXISTS workflow_icon;
 DROP TABLE IF EXISTS workflow_task_comment_config;
-DROP TABLE IF EXISTS workflow_test_resource;
 DROP TABLE IF EXISTS workflow_task_notification_cf;
 DROP TABLE IF EXISTS workflow_task_assignment_cf;
 DROP TABLE IF EXISTS workflow_workgroup_cf;
@@ -162,16 +161,6 @@ CREATE TABLE workflow_task_comment_value
 
 CREATE INDEX comment_value_id_history_fk ON workflow_task_comment_value(id_history);
 CREATE INDEX comment_value_id_task_fk ON workflow_task_comment_value(id_task);
-
--- ----------------------------------------------------
--- Table structure for table workflow_test_resource --
--- ----------------------------------------------------
-CREATE TABLE workflow_test_resource
-(
-	id_test_resource INT DEFAULT 0 NOT NULL,
-	title VARCHAR(255) DEFAULT NULL,
-	PRIMARY KEY (id_test_resource)
-);
 
 -- -----------------------------------------------------------
 -- Table structure for table workflow_task_notification_cf --

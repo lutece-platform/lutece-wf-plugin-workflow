@@ -22,7 +22,6 @@
 	<bean id="workflow.resourceWorkflowDAO" class="fr.paris.lutece.plugins.workflow.business.resource.ResourceWorkflowDAO" />
 	<bean id="workflow.resourceHistoryDAO" class="fr.paris.lutece.plugins.workflow.business.resource.ResourceHistoryDAO" />	 
 	<bean id="workflow.taskDAO" class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
-	<bean id="workflow.testResourceDAO" class="fr.paris.lutece.plugins.workflow.business.testresource.TestResourceDAO" />
 	<bean id="workflow.prerequisiteDAO" class="fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO" />
 	 
 	 
@@ -42,7 +41,6 @@
 	<bean id="workflow.resourceWorkflowService" class="fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowService" />
 	<bean id="workflow.stateService" class="fr.paris.lutece.plugins.workflowcore.service.state.StateService" />
 	<bean id="workflow.taskService" class="fr.paris.lutece.plugins.workflowcore.service.task.TaskService" />
-	<bean id="workflow.testResourceService" class="fr.paris.lutece.plugins.workflow.service.testresource.TestResourceService" />
 	<bean id="workflow.workflowService" class="fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService" />
 	<bean id="workflow.taskComponentManager" class="fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager" />
 	<bean id="workflow.prerequisiteManagementService" class="fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService" />
