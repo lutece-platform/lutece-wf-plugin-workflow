@@ -10,7 +10,7 @@
 	<groupId>fr.paris.lutece.plugins</groupId>
 	<artifactId>plugin-workflow</artifactId>
 	<packaging>lutece-plugin</packaging>
-	<version>4.1.0</version>
+	<version>4.1.1-SNAPSHOT</version>
 	<name>Lutece workflow plugin</name>
 
 	<repositories>
@@ -45,8 +45,8 @@
 		<jiraComponentId>10202</jiraComponentId>
 	</properties>
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/tags/plugin-workflow-4.1.0</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/tags/plugin-workflow-4.1.0</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/tags/plugin-workflow-4.1.0</url>
+        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/directory-form-workflow/plugin-workflow</connection>
+        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/directory-form-workflow/plugin-workflow</developerConnection>
+        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/directory-form-workflow/plugin-workflow</url>
     </scm>
 </project>
