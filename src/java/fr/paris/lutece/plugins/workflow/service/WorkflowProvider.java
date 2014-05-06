@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.service;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryFactory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
@@ -572,68 +571,13 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public void doSaveTasksForm( int nIdResource, String strResourceType, int nIdAction, Integer nExternalParentId,
         HttpServletRequest request, Locale locale, String strUserAccessCode )
     {
-        Action action = _actionService.findByPrimaryKey( nIdAction );
-
-        if ( ( action != null ) &&
-                WorkflowService.getInstance(  )
-                                   .canProcessAction( nIdResource, strResourceType, nIdAction, nExternalParentId,
-                    request, false ) )
-        {
-            ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource,
-                    strResourceType, action.getWorkflow(  ).getId(  ) );
-
-            if ( resourceWorkflow == null )
-            {
-                resourceWorkflow = _workflowService.getInitialResourceWorkflow( nIdResource, strResourceType,
-                        action.getWorkflow(  ), nExternalParentId );
-
-                if ( resourceWorkflow != null )
-                {
-                    _resourceWorkflowService.create( resourceWorkflow );
-                }
-            }
-
-            // Create ResourceHistory
-            ResourceHistory resourceHistory = _resourceHistoryFactory.newResourceHistory( nIdResource, strResourceType,
-                    action, strUserAccessCode, false );
-            _resourceHistoryService.create( resourceHistory );
-
-            List<ITask> listActionTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
-
-            for ( ITask task : listActionTasks )
-            {
-                task.setAction( action );
-                task.processTask( resourceHistory.getId(  ), request, locale );
-            }
-
-            // Reload resource workflow after process task
-            resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType,
-                    action.getWorkflow(  ).getId(  ) );
-            resourceWorkflow.setState( action.getStateAfter(  ) );
-            resourceWorkflow.setExternalParentId( nExternalParentId );
-            _resourceWorkflowService.update( resourceWorkflow );
-
-            if ( action.getStateAfter(  ) != null )
-            {
-                State state = action.getStateAfter(  );
-                ActionFilter actionFilter = new ActionFilter(  );
-                actionFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
-                actionFilter.setIdStateBefore( state.getId(  ) );
-                actionFilter.setIsAutomaticState( 1 );
-
-                List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
-
-                if ( ( listAction != null ) && !listAction.isEmpty(  ) && ( listAction.get( 0 ) != null ) )
-                {
-                    WorkflowService.getInstance(  )
-                                   .doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId(  ),
-                        nExternalParentId, request, locale, true );
-                }
-            }
-        }
+        WorkflowService.getInstance(  )
+                       .doProcessAction( nIdResource, strResourceType, nIdAction, nExternalParentId, request, locale,
+            false );
     }
 
     // PRIVATE METHODS
