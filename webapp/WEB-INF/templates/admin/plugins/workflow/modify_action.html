@@ -84,7 +84,7 @@
 					<div class="control-group">
 					<label class="control-label" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
 						<div class="controls">
-							<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list />
+							<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list?sort_by("name") />
 							<button class="btn btn-primary btn-small" type="submit" >
 								<i class="icon-plus icon-white"> </i>
 								#i18n{workflow.create_action.button_insert_new_task}
