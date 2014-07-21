@@ -279,5 +279,3 @@ ALTER TABLE workflow_assignment_history ADD CONSTRAINT fk_assignment_id_history 
 	REFERENCES workflow_resource_history(id_history) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_assignment_history ADD CONSTRAINT fk_assignment_id_task FOREIGN KEY (id_task)
 	REFERENCES workflow_task(id_task) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE workflow_state ADD CONSTRAINT fk_state_id_icon FOREIGN KEY (id_icon)
-      REFERENCES workflow_icon(id_icon) ON DELETE RESTRICT ON UPDATE RESTRICT;
