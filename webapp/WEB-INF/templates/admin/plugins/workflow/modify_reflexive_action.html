@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
-<div class="row-fluid">
-	<div class="span12">
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<fieldset>
 			<legend>#i18n{workflow.modify_reflexive_action.title}</legend>
 			<ul class="nav nav-tabs">
@@ -18,17 +18,17 @@
 						#i18n{workflow.modify_reflexive_action.help}
 					</p>
 				</div>
-				<div class="control-group pull-right">
-					<label class="control-label" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
-					<div class="controls">
+				<div class="form-group pull-right">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 						<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list />
-						<button class="btn btn-primary btn-small" type="submit" >
-							<i class="icon-plus icon-white"> </i>
+						<button class="btn btn-primary btn-sm btn-flat" type="submit" >
+							<i class="glyphicon glyphicon-plus"> </i>
 							#i18n{workflow.create_action.button_insert_new_task}
 						</button>
 						<#if action??>
-							<a href="jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}" class="btn btn-primary btn-small">
-								<i class="icon-resize-vertical icon-white">&nbsp;</i>&nbsp;#i18n{workflow.modify_workflow.init_order}
+							<a href="jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}" class="btn btn-primary btn-sm btn-flat">
+								<i class="glyphicon glyphicon-resize-vertical">&nbsp;</i>&nbsp;#i18n{workflow.modify_workflow.init_order}
 							</a>
 						</#if>
 					</div>
@@ -54,8 +54,8 @@
 						<@comboOrders name="order_task_id" default_value=task.order max=number_task />
 						<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
 						<input type="hidden" name="id_task" value="${task.id}" />
-						<button class="btn btn-primary btn-small" type="submit" title="#i18n{workflow.modify_workflow.move}">
-							<i class="icon-ok icon-white"></i>
+						<button class="btn btn-primary btn-sm btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
+							<i class="glyphicon glyphicon-ok"></i>
 						</button>
 					</form>
 					</td>
@@ -65,23 +65,23 @@
 					</td>
                     <td>
 						<#if task.taskType.configRequired>
-                            <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
-                                <i class="icon-edit icon-white"></i>
+                            <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
+                                <i class="glyphicon glyphicon-edit"></i>
                             </a>
                         </#if>
-                        <a class="btn btn-primary btn-small" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
-                               <i class="icon-plus-sign icon-white"></i>
+                        <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
+                               <i class="glyphicon glyphicon-plus-sign"></i>
                         </a>
-						<a class="btn btn-danger btn-small" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}"  title="#i18n{workflow.modify_action.manage_task.title_delete}" >
-							<i class="icon-trash icon-white"></i>
+						<a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}"  title="#i18n{workflow.modify_action.manage_task.title_delete}" >
+							<i class="glyphicon glyphicon-trash"></i>
                         </a>
 					</td>
                 </tr>
             </#list>
 			</table>
-			<div class="form-actions">
-				<a href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}" title="#i18n{portal.util.labelBack}" class="btn btn-small btn-primary">
-					<i class="icon-remove-circle icon-white">&nbsp;</i>&nbsp;#i18n{portal.util.labelBack}
+			<div class="form-group">
+				<a href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}" title="#i18n{portal.util.labelBack}" class="btn btn-sm btn-flat btn-primary">
+					<i class="glyphicon glyphicon-remove-circle">&nbsp;</i>&nbsp;#i18n{portal.util.labelBack}
 				</a>
 			</div>
 		</fieldset>

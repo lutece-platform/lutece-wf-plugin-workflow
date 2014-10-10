@@ -1,89 +1,92 @@
 <#include "macro_workflows.html" />
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
             <fieldset>
                 <legend> #i18n{workflow.create_action.title}</legend>
                 <input name="id_workflow" value="${workflow.id}" type="hidden">
-                <div class="control-group">
-                <label class="control-label" for="name">#i18n{workflow.create_action.label_name} * : </label>
-					<div class="controls">
-						<input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
+                <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_action.label_name} * : </label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<input type="text" name="name" id="" size="80" value="" maxlength="255" class="form-control input-sm">
                         <span class="help-block">#i18n{workflow.create_action.label_name_comment}</span>
                     </div>
                 </div>
-				<div class="control-group">
-				<label class="control-label" for="description"> #i18n{workflow.create_action.label_description} * </label>
-                    <div class="controls">
-						<textarea name="description" cols="80" rows="2"></textarea>
+				<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="description"> #i18n{workflow.create_action.label_description} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<textarea name="description" cols="80" rows="2" class="form-control input-sm"></textarea>
                         <span class="help-block">#i18n{workflow.create_action.label_description_comment}</span>
                     </div>
                 </div>
-				<div class="control-group">
-                <label class="control-label" for="id_state_before"> #i18n{workflow.create_action.label_state_before} * </label>
-					<div class="controls">
-						<@combo name="id_state_before"  items=state_list default_value=-1 />
+				<div class="form-group">
+                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_state_before"> #i18n{workflow.create_action.label_state_before} * </label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<@comboWithParams name="id_state_before"  items=state_list default_value="-1" additionalParameters="class='form-control input-sm'" />
                         <span class="help-block">#i18n{workflow.create_action.label_state_before_comment}</span>
                     </div>
                 </div>
-				<div class="control-group">
-					<label class="control-label" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
-                    <div class="controls">
-						<@combo name="id_state_after"  items=state_list default_value=-1 />
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<@comboWithParams name="id_state_after"  items=state_list default_value="-1" additionalParameters="class='form-control input-sm'"/>
                         <span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
                     </div>
                 </div>	
-				<div class="control-group">
-				<label class="control-label" for="id_icon"> #i18n{workflow.create_action.label_icon} *</label>
-					<div class="controls">
+				<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_icon"> #i18n{workflow.create_action.label_icon} *</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 						<@radioIconList name="id_icon" default_value=-1 icons=icon_list />	
 						<span class="help-block">#i18n{workflow.create_action.label_icon_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                <label class="control-label" for=""></label>
-					<div class="controls">
-						<label class="checkbox" for="automatic">
-							#i18n{workflow.create_action.label_automatic}
-							<input type="checkbox" name="automatic" value="1">
-						</label>
+                <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<div class="checkbox">
+							<label for="automatic">
+								<input type="checkbox" name="automatic" value="1">#i18n{workflow.create_action.label_automatic}
+							</label>
+						</div>
 						<span class="help-block">#i18n{workflow.create_action.label_automatic_comment}</span>
 					</div>
                 </div>
-                <div class="control-group">
-				<label class="control-label" for=""></label>
-					<div class="controls">
-						<label class="checkbox" for="is_mass_action">
-							#i18n{workflow.create_action.label_mass_action}
-							<input type="checkbox" name="is_mass_action" value="1">
-						</label>
+                <div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<div class="checkbox">
+							<label class="checkbox" for="is_mass_action">
+								<input type="checkbox" name="is_mass_action" value="1">#i18n{workflow.create_action.label_mass_action}
+							</label>
                         <span class="help-block">#i18n{workflow.create_action.label_mass_action_comment}</span>
                     </div>
                 </div>
-				<div class="control-group">
-					<label class="control-label" for=""></label>
-					<div class="controls">
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 						<h4>#i18n{workflow.create_action.label_link_actions}</h4>
 						<p class="help-block">#i18n{workflow.create_action.label_link_actions_comment}</p>
 						<em>#i18n{workflow.create_action.label_link_actions_example}</em>
 					 </div>
                 </div>	
-                <div class="control-group">
-				<label class="control-label" for="selected_linked_actions">#i18n{workflow.create_action.label_available_linked_actions}</label>
-					<div class="controls">
-						<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:40%;'" items=available_linked_actions max_length=175 />
+                <div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="selected_linked_actions">#i18n{workflow.create_action.label_available_linked_actions}</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' class='form-control input-sm'" items=available_linked_actions max_length=175 />
                     </div>
                 </div>
-				<div class="form-actions">
-					<button class="btn btn-primary btn-small" type="submit" name="save">
-						<i class="icon-ok icon-white"></i> #i18n{workflow.create_action.button_save}
-					</button>
-                    <button class="btn btn-primary btn-small" type="submit" name="apply">
-						<i class="icon-ok-circle icon-white"></i> #i18n{workflow.modify_action.button_apply}
-					</button>
-                    <button class="btn btn-small" type="submit" name="cancel">
-						<i class="icon-remove-circle"></i> #i18n{workflow.create_action.button_cancel}
-					</button>
+				<div class="form-group">
+					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
+						<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save">
+							<i class="glyphicon glyphicon-ok"></i> #i18n{workflow.create_action.button_save}
+						</button>
+						<button class="btn btn-primary btn-sm btn-flat" type="submit" name="apply">
+							<i class="glyphicon glyphicon-ok-circle"></i> #i18n{workflow.modify_action.button_apply}
+						</button>
+						<button class="btn btn-default btn-sm btn-flat" type="submit" name="cancel">
+							<i class="glyphicon glyphicon-remove-circle"></i> #i18n{workflow.create_action.button_cancel}
+						</button>
+					</div>
                 </div>
             </fieldset>
         </form>

@@ -1,36 +1,38 @@
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateWorkflow.jsp?plugin_name=workflow" method="post" name="" id="">
             <fieldset>
                 <legend>#i18n{workflow.create_workflow.title}</legend>
-                <div class="control-group">
-                    <label class="control-label" for="name">#i18n{workflow.create_workflow.label_name} * </label>
-                    <div class="controls">
-                        <input type="text" name="name" id="" class="input-xlarge" value=""  maxlength="255"/>
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_workflow.label_name} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <input type="text" name="name" id="" class="form-control input-sm" value=""  maxlength="255">
                         <span class="help-block">#i18n{workflow.create_workflow.label_name_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="description"> #i18n{workflow.create_workflow.label_description} * </label>
-                    <div class="controls">
-                        <textarea name="description" class="input-xlarge" rows="2"></textarea>
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="description"> #i18n{workflow.create_workflow.label_description} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <textarea name="description" class="form-control input-sm" rows="2"></textarea>
                         <span class="help-block">#i18n{workflow.create_workflow.label_description_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="workgroup">#i18n{workflow.create_workflow.label_workgroup} </label>
-                    <div class="controls">
-                        <@combo name="workgroup" items=user_workgroup_list default_value="${workgroup_key_default_value}" />
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="workgroup">#i18n{workflow.create_workflow.label_workgroup} </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <@comboWithParams name="workgroup" items=user_workgroup_list default_value="${workgroup_key_default_value}" additionalParameters="class='form-control input-sm'" />
                         <span class="help-block">#i18n{workflow.create_workflow.label_workgroup_comment}</span>
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button class="btn btn-primary btn-small" type="submit">
-						<i class="icon-ok icon-white"></i>&nbsp;#i18n{workflow.create_workflow.button_save}
-					</button>
-                    <a class="btn btn-small" href="jsp/admin/plugins/workflow/ManageWorkflow.jsp" >
-						<i class="icon-remove-circle"></i>&nbsp;#i18n{workflow.create_workflow.button_cancel}
-					</a>
+                <div class="form-group">
+					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
+						<button class="btn btn-primary btn-sm btn-flat" type="submit">
+							<i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{workflow.create_workflow.button_save}
+						</button>
+						<a class="btn btn-default btn-sm btn-flat" href="jsp/admin/plugins/workflow/ManageWorkflow.jsp" >
+							<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{workflow.create_workflow.button_cancel}
+						</a>
+					</div>
                 </div>
             </fieldset>
         </form>

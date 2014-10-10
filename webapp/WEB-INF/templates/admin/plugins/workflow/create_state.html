@@ -1,27 +1,27 @@
 <#include "macro_workflows.html" />
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <fieldset>
 			<legend> #i18n{workflow.create_state.title}</legend>
 			<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateState.jsp?plugin_name=workflow" method="post" name="" id=""  >
 				<input name="id_workflow" value="${workflow.id}" type="hidden">
-					<div class="control-group">
-                    <label class="control-label" for="name">#i18n{workflow.create_state.label_name} *</label>
-                        <div class="controls">
-                            <input type="text" name="name" id="" size="80" value=""  maxlength="255"/>
+					<div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_state.label_name} *</label>
+                        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                            <input type="text" name="name" id="" size="80" value=""  maxlength="255">
                             <span class="help-block">#i18n{workflow.create_state.label_name_comment}</span>
                         </div>
                     </div>
-                    <div class="control-group">
-                    <label class="control-label" for="description"> #i18n{workflow.create_state.label_description} *</label>
-                        <div class="controls">
+                    <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="description"> #i18n{workflow.create_state.label_description} *</label>
+                        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                             <textarea name="description" rows="2"></textarea>
                             <span class="help-block">#i18n{workflow.create_state.label_description_comment}</span>
                         </div>
                     </div>
-                    <div class="control-group">
-                    <label class="control-label" for="is_initial_state">#i18n{workflow.create_state.label_initial_state}</label>
-                        <div class="controls">
+                    <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="is_initial_state">#i18n{workflow.create_state.label_initial_state}</label>
+                        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 							<#if initial_state?exists&&initial_state>
 								<input name="is_initial_state" value="1" type="checkbox"/>
 								<span class="help-block">#i18n{workflow.create_state.label_initial_state_comment}</span>
@@ -31,27 +31,27 @@
 							</#if>	
 						</div>
 					</div>
-                <div class="control-group">
-                    <label class="control-label" for="is_required_workgroup_assigned">#i18n{workflow.create_state.label_required_workgroup_assigned} :</label>
-                    <div class="controls">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="is_required_workgroup_assigned">#i18n{workflow.create_state.label_required_workgroup_assigned} :</label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                         <input name="is_required_workgroup_assigned" value="1" type="checkbox"/>
                         <span class="help-block">#i18n{workflow.create_state.label_required_workgroup_assigned_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="id_icon"> #i18n{workflow.create_state.label_icon} : </label>
-                    <div class="controls">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_icon"> #i18n{workflow.create_state.label_icon} : </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                         <@radioIconList name="id_icon" default_value=-1 icons=icon_list />
                         <input type="radio" name="id_icon" value="-1" checked="checked"/> #i18n{workflow.create_state.label_no_icon}	
                         <span class="help-block">#i18n{workflow.create_state.label_icon_comment}</span>
                     </div>
                 </div> 	
-			<div class="form-actions">
-				<button class="btn btn-primary btn-small" type="submit" name="save" >
-					<i class="icon-ok icon-white"></i>#i18n{workflow.create_state.button_save}
+			<div class="form-group">
+				<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save" >
+					<i class="glyphicon glyphicon-ok"></i>#i18n{workflow.create_state.button_save}
 				</button>
-                <button class="btn btn-small" type="submit" name="cancel">
-					<i class="icon-remove-circle"></i>#i18n{workflow.create_state.button_cancel}
+                <button class="btn btn-sm btn-flat" type="submit" name="cancel">
+					<i class="glyphicon glyphicon-remove-circle"></i>#i18n{workflow.create_state.button_cancel}
 				</button>
             </div>
             </fieldset>

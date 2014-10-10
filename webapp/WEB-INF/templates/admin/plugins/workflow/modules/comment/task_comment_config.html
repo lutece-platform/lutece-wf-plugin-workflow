@@ -1,21 +1,21 @@
-<div class="row-fluid">
-	<div class="span12">
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <fieldset>
         <legend> #i18n{module.workflow.comment.task_comment_config.title}</legend>
-        <div class="control-group">
-            <label class="control-label" for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
-            <div class="controls">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="email_sender">#i18n{module.workflow.comment.task_comment_config.label_title} * :</label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                 <#if config?exists>
-                    <input type="text" name="title" id="" value="${config.title}"  maxlength="255"/>
+                    <input type="text" name="title" id="" value="${config.title}"  maxlength="255">
                 <#else>
-                    <input type="text" name="title" id="" value=""  maxlength="255"/>
+                    <input type="text" name="title" id="" value=""  maxlength="255">
                 </#if>
                 <span class="help-block">#i18n{module.workflow.comment.task_comment_config.label_title_comment}</span>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for="is_mandatory">#i18n{module.workflow.comment.task_comment_config.label_mandatory} :</label>
-            <div class="controls">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="is_mandatory">#i18n{module.workflow.comment.task_comment_config.label_mandatory} :</label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
             <input name="mandatory" value="true" type="radio" <#if config?exists && config.mandatory>checked="checked"</#if> />
                    #i18n{module.workflow.comment.task_comment_config.label_yes}
                    <input name="mandatory" value="false" type="radio" <#if config?exists && !config.mandatory>checked="checked"</#if> />

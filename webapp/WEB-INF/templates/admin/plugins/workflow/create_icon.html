@@ -1,43 +1,45 @@
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <fieldset>
             <legend> #i18n{workflow.create_icon.title}</legend>
 				<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data" >
-                <div class="control-group">
-                    <label class="control-label" for="name">#i18n{workflow.create_icon.label_name} * </label>
-                    <div class="controls">
-                        <input type="text" name="name" value=""  maxlength="255" class="input-large">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_icon.label_name} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <input type="text" name="name" value=""  maxlength="255" class="form-control input-sm">
                         <span class="help-block">#i18n{workflow.create_icon.label_name_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="id_file" >#i18n{workflow.create_icon.label_file} * </label>
-                    <div class="controls">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_file" >#i18n{workflow.create_icon.label_file} * </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                         <input type="file" id="id_file" name="id_file" size="60">
                         <span class="help-block">#i18n{workflow.create_icon.label_file_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="width">#i18n{workflow.create_icon.label_width}  </label>
-                    <div class="controls">
-                        <input type="text" name="width" value=""  maxlength="255" class="input-mini">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="width">#i18n{workflow.create_icon.label_width}  </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <input type="text" name="width" value=""  maxlength="255" class="form-control input-sm">
                         <span class="help-block">#i18n{workflow.create_icon.label_width_comment}</span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="height">#i18n{workflow.create_icon.label_height}  </label>
-                    <div class="controls">
-                        <input type="text" name="height" value=""  maxlength="255" class="input-mini">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="height">#i18n{workflow.create_icon.label_height}  </label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                        <input type="text" name="height" value=""  maxlength="255" class="form-control input-sm">
                         <span class="help-block">#i18n{workflow.create_icon.label_height_comment}</span>
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button class="btn btn-primary btn-small" type="submit" name="save">
-						<i class="icon-ok icon-white"></i> #i18n{workflow.create_icon.button_save}
-					</button>
-                    <button class="btn btn-small" type="submit" name="cancel" >
-						<i class="icon-remove-circle"></i> #i18n{workflow.create_icon.button_cancel}
-					</button>
+                <div class="form-group">
+					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
+						<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save">
+							<i class="glyphicon glyphicon-ok"></i> #i18n{workflow.create_icon.button_save}
+						</button>
+						<button class="btn btn-default btn-sm btn-flat" type="submit" name="cancel" >
+							<i class="glyphicon glyphicon-remove-circle"></i> #i18n{workflow.create_icon.button_cancel}
+						</button>
+					</div>
                 </div>
 			</form>
         </fieldset>

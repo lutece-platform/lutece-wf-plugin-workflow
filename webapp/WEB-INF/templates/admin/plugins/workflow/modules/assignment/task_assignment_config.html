@@ -1,18 +1,18 @@
  <fieldset>
     <legend>#i18n{module.workflow.assignment.task_assignment_config.title}</legend>
-       <div class="control-group">
-            <label class="control-label" for="title">#i18n{module.workflow.assignment.task_assignment_config.label_title} *</label>
-            <div class="controls">
+       <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="title">#i18n{module.workflow.assignment.task_assignment_config.label_title} *</label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                 <#if config?exists>
-                    <input type="text" name="title" id="" class="input-xlarge" value="${config.title}"  maxlength="255"/>
+                    <input type="text" name="title" id="" class="form-control input-sm" value="${config.title}"  maxlength="255">
                 <#else>
-                    <input type="text" name="title" id="" class="input-xlarge" value=""  maxlength="255"/>
+                    <input type="text" name="title" id="" class="form-control input-sm" value=""  maxlength="255">
                 </#if>		
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for=""></label>
-            <div class="controls">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 				<label class="checkbox" for="is_multiple_owner">
                 <#if config?exists&&config.multipleOwner>
                     <input name="is_multiple_owner" value="1" type="checkbox" checked="checked"/>
@@ -25,9 +25,9 @@
             </div>
         </div>
 
-        <div class="control-group">
-            <label class="control-label" for="">#i18n{module.workflow.assignment.task_assignment_config.label_workgroups} *</label>
-            <div class="controls">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="">#i18n{module.workflow.assignment.task_assignment_config.label_workgroups} *</label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 					<#list workgroup_list as workgroup>
 					<label class="checkbox inline" for="workgroups">
 						<input type="checkbox" class="checkbox" name="workgroups" value="${workgroup.item.code}"
@@ -46,9 +46,9 @@
                 <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}</span>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for=""></label>
-            <div class="controls">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
             <label class="checkbox" for="is_notify">
                 <#if config?exists && config.notify>
                     <input type="checkbox" name="is_notify" value="1" checked="checked" onclick="javascript:notification();" />
@@ -59,9 +59,9 @@
             </div>
         </div>
         <div id="notification">
-            <div class="control-group">
-                <label class="control-label" for=""></label>
-                <div class="controls">
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for=""></label>
+                <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 					<label class="checkbox" for="is_use_user_name">
 						<#if config?exists && config.useUserName>
 							<input name="is_use_user_name" value="1" type="checkbox" checked="checked"/>
@@ -73,20 +73,20 @@
                     <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}</span>
                 </div>
             </div>
-            <div class="control-group">
-                <label class="control-label" for="suject">#i18n{module.workflow.assignment.task_assignment_config.label_subject} *</label>
-                <div class="controls">
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="suject">#i18n{module.workflow.assignment.task_assignment_config.label_subject} *</label>
+                <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                     <#if config?exists && config.subject?exists>
-                        <input type="text" name="subject" id="" class="input-xlarge" value="${config.subject}"  maxlength="255"/>
+                        <input type="text" name="subject" id="" class="form-control input-sm" value="${config.subject}"  maxlength="255">
                     <#else>
-                        <input type="text" name="subject" id="" class="input-xlarge" value=""  maxlength="255"/>
+                        <input type="text" name="subject" id="" class="form-control input-sm" value=""  maxlength="255">
                     </#if>	
                     <span class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_subject_comment}</span>
                 </div>
 
-                <div class="control-group">
-                    <label class="control-label" for="message">#i18n{module.workflow.assignment.task_assignment_config.label_message} *</label>
-                    <div class="controls">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="message">#i18n{module.workflow.assignment.task_assignment_config.label_message} *</label>
+                    <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                         <#if config?exists && config.message?exists>
                             <textarea name="message" id="" rows="5" cols="80">${config.message}</textarea>
                         <#else>
