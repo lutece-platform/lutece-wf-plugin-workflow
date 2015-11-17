@@ -64,6 +64,7 @@
 	<bean id="workflow.assignmentHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHistoryDAO" />
 	<bean id="workflow.taskAssignmentConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfigDAO" />
 	<bean id="workflow.workgroupConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfigDAO" />
+	<bean id="workflow.PrerequisiteDurationConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.duration.business.PrerequisiteDurationConfigDAO" />
 	
 	<!-- Task types -->
 	<bean id="workflow.taskTypeComment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
@@ -106,6 +107,9 @@
 	<bean id="workflow.taskCommentConfig" class="fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig" scope="prototype" />
 	<bean id="workflow.taskNotificationConfig" class="fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationConfig" scope="prototype" />
 	
+	<!-- Prerequisites -->
+	<bean id="workflow.PrerequisiteDuration" class="fr.paris.lutece.plugins.workflow.modules.duration.service.PrerequisiteDuration"/>
+
 	<!-- Services -->
 	<bean id="workflow.assignmentHistoryService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.AssignmentHistoryService" />
 	<bean id="workflow.taskAssignmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignmentConfigService" 

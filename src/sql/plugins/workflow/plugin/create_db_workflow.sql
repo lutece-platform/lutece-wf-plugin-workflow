@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS workflow_resource_workgroup;
 DROP TABLE IF EXISTS workflow_workflow;
 DROP TABLE IF EXISTS workflow_action_action;
 DROP TABLE IF EXISTS workflow_prerequisite;
+DROP TABLE IF EXISTS workflow_prerequisite_duration_cf;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
@@ -245,6 +246,14 @@ CREATE TABLE workflow_prerequisite
 	id_prerequisite INT NOT NULL,
 	id_action INT NOT NULL,
 	prerequisite_type VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id_prerequisite)
+);
+
+
+CREATE TABLE workflow_prerequisite_duration_cf
+(
+	id_prerequisite INT NOT NULL,
+	duration INT NOT NULL,
 	PRIMARY KEY (id_prerequisite)
 );
 
