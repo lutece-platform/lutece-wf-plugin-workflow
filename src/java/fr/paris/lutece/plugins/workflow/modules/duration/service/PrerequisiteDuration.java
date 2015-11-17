@@ -31,16 +31,7 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.workflow.modules.duration.service;
-
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.duration.business.PrerequisiteDurationConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
@@ -51,61 +42,78 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistorySer
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-public class PrerequisiteDuration implements
-        IAutomaticActionPrerequisiteService {
+import java.sql.Timestamp;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import javax.servlet.http.HttpServletRequest;
+
+
+public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
+{
     public static final String PREREQUISITE_TITLE_I18N = "module.workflow.duration.prerequisite_title";
     public static final String CONFIG_DAO_BEAN_NAME = "workflow.PrerequisiteDurationConfigDAO";
-
     private static final String TEMPLATE_DURATION_PREREQUISITE_CONFIG = "admin/plugins/workflow/modules/duration/prerequisite_duration_config.html";
     private static final String MARK_CONFIG = "config";
-
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
     private IActionService _actionService;
 
-    public String getPrerequisiteType(  ) {
+    public String getPrerequisiteType(  )
+    {
         return PrerequisiteDurationConfig.PREREQUISITE_TYPE;
     }
 
-    public String getTitleI18nKey(  ) {
+    public String getTitleI18nKey(  )
+    {
         return PREREQUISITE_TITLE_I18N;
     }
 
-    public boolean hasConfiguration(  ) {
+    public boolean hasConfiguration(  )
+    {
         return true;
     }
 
-    public IPrerequisiteConfig getEmptyConfiguration(  ) {
-        return new PrerequisiteDurationConfig();
+    public IPrerequisiteConfig getEmptyConfiguration(  )
+    {
+        return new PrerequisiteDurationConfig(  );
     }
 
-    public String getConfigurationDaoBeanName(  ) {
+    public String getConfigurationDaoBeanName(  )
+    {
         return CONFIG_DAO_BEAN_NAME;
     }
 
-    public String getConfigHtml( IPrerequisiteConfig config, HttpServletRequest request, Locale locale ) {
-        Map<String, Object> model = new HashMap<String, Object>( );
+    public String getConfigHtml( IPrerequisiteConfig config, HttpServletRequest request, Locale locale )
+    {
+        Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_CONFIG, config );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DURATION_PREREQUISITE_CONFIG, locale,
-                model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DURATION_PREREQUISITE_CONFIG, locale, model );
 
-        return template.getHtml( );
+        return template.getHtml(  );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean canActionBePerformed( int nIdResource, String strResourceType, IPrerequisiteConfig config, int nIdAction ) {
-        int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon(nIdAction).getWorkflow().getId();
-        long configNbMinutes = ((PrerequisiteDurationConfig) config).getDuration();
-        long configNbMillis = configNbMinutes * 1000 ;
-        ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType, idWorkflow );
-        Timestamp timestampInState = resourceHistory.getCreationDate();
-        long nowMillis = System.currentTimeMillis();
-        long millisInState = nowMillis - timestampInState.getTime();
+    public boolean canActionBePerformed( int nIdResource, String strResourceType, IPrerequisiteConfig config,
+        int nIdAction )
+    {
+        int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon( nIdAction ).getWorkflow(  ).getId(  );
+        long configNbMinutes = ( (PrerequisiteDurationConfig) config ).getDuration(  );
+        long configNbMillis = configNbMinutes * 1000;
+        ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType,
+                idWorkflow );
+        Timestamp timestampInState = resourceHistory.getCreationDate(  );
+        long nowMillis = System.currentTimeMillis(  );
+        long millisInState = nowMillis - timestampInState.getTime(  );
 
         return millisInState >= configNbMillis;
     }

@@ -31,14 +31,15 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.workflow.modules.duration.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.DefaultPrerequisiteConfig;
 
-public class PrerequisiteDurationConfig extends DefaultPrerequisiteConfig {
 
+public class PrerequisiteDurationConfig extends DefaultPrerequisiteConfig
+{
     public static final String PREREQUISITE_TYPE = "workflow.prerequisite.duration";
+
     /**
      *
      */
@@ -48,14 +49,16 @@ public class PrerequisiteDurationConfig extends DefaultPrerequisiteConfig {
     /**
      * @return the Duration in seconds
      */
-    public int getDuration() {
+    public int getDuration(  )
+    {
         return _nDuration;
     }
 
     /**
      * @param strDuration the Duration in seconds to set
      */
-    public void setDuration(int nDuration) {
+    public void setDuration( int nDuration )
+    {
         this._nDuration = nDuration;
     }
 
@@ -63,7 +66,7 @@ public class PrerequisiteDurationConfig extends DefaultPrerequisiteConfig {
      * {@inheritDoc}
      */
     @Override
-    public String getPrerequisiteType( )
+    public String getPrerequisiteType(  )
     {
         return PREREQUISITE_TYPE;
     }
