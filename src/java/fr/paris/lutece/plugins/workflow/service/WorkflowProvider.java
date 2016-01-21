@@ -55,6 +55,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
@@ -91,6 +92,7 @@ public class WorkflowProvider implements IWorkflowProvider
     private static final String MARK_ADMIN_USER_HISTORY = "admin_user_history";
     private static final String MARK_HISTORY_INFORMATION_LIST = "history_information_list";
     private static final String MARK_TASK_FORM_ENTRY_LIST = "task_form_entry_list";
+    private static final String MARK_ADMIN_AVATAR = "adminAvatar";
 
     // TEMPLATES
     private static final String TEMPLATE_RESOURCE_HISTORY = "admin/plugins/workflow/resource_history.html";
@@ -124,8 +126,6 @@ public class WorkflowProvider implements IWorkflowProvider
     private IWorkflowService _workflowService;
     @Inject
     private ITaskComponentManager _taskComponentManager;
-
-    // GET
 
     /**
      * {@inheritDoc}
@@ -351,6 +351,7 @@ public class WorkflowProvider implements IWorkflowProvider
         }
 
         model.put( MARK_HISTORY_INFORMATION_LIST, listResourceHistoryTaskInformation );
+        model.put( MARK_ADMIN_AVATAR, PluginService.isPluginEnable( "adminavatar" ) );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, model );
 
