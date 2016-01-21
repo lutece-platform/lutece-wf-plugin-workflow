@@ -235,12 +235,12 @@ public class WorkflowProvider implements IWorkflowProvider
                 {
                     if ( RBACService.isAuthorized( state, StateResourceIdService.PERMISSION_VIEW, user ) )
                     {
-                        lListAutorizedIdSate.add( Integer.valueOf( state.getId(  ) ) );
+                        lListAutorizedIdSate.add( state.getId(  ) );
                     }
                 }
                 else //WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
                 {
-                    lListAutorizedIdSate.add( Integer.valueOf( state.getId(  ) ) );
+                    lListAutorizedIdSate.add( state.getId(  ) );
                 }
             }
         }
@@ -248,7 +248,7 @@ public class WorkflowProvider implements IWorkflowProvider
         {
             for ( State state : listState )
             {
-                Integer nIdState = Integer.valueOf( state.getId(  ) );
+                Integer nIdState = state.getId(  );
 
                 if ( lListIdWorkflowState.contains( nIdState ) )
                 {
@@ -293,6 +293,24 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
         HttpServletRequest request, Locale locale )
     {
+        return getDisplayDocumentHistory(nIdResource, strResourceType, nIdWorkflow, request, locale, TEMPLATE_RESOURCE_HISTORY );
+    }
+    
+    /**
+     * Implements IWorkflowProvider of Lutece Core version 5.1
+     * @param nIdResource The resource 
+     * @param strResourceType The resource type
+     * @param nIdWorkflow the workflow id
+     * @param request The request
+     * @param locale The locale 
+     * @param strTemplate The template
+     * @return The HTML code to display
+     */
+    // @Override don't declare as Override to be compatible with older Lutece Core version
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
+        HttpServletRequest request, Locale locale, String strTemplate )
+    {
+
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
                 strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;
@@ -334,7 +352,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         model.put( MARK_HISTORY_INFORMATION_LIST, listResourceHistoryTaskInformation );
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_RESOURCE_HISTORY, locale, model );
+        HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, model );
 
         return templateList.getHtml(  );
     }
