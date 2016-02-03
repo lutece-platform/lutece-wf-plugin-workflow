@@ -33,7 +33,7 @@
 						<div class="form-group">
 							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<@combo name="id_state_after" items=state_list default_value=action.stateAfter.id />
+								<@comboWithParams name="id_state_after" items=state_list default_value="action.stateAfter.id" additionalParameters="class=\"form-control input-sm\"" />
 								<span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
 							</div>
 						</div>
@@ -166,6 +166,7 @@
 													<td>
 														<!-- SELECT LIST FOR ORDER CHANGE -->
 														<form class="form-horizontal" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderTask.jsp">
+															<#if (task_list?size > 1)>
 															<div class="input-group">
 																<@comboOrders name="order_task_id" default_value=task.order max=number_task />
 																<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
@@ -176,6 +177,9 @@
 																	</button>
 																</div>
 															</div>
+															<#else>
+																${task.order}
+															</#if>
 														</form>
 													</td>
 													<td>
