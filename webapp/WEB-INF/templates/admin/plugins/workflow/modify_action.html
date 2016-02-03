@@ -1,192 +1,262 @@
 <#include "macro_workflows.html" />
 <div class="row">
-    <div class="span4">
-        <form class="form well" action="jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
-            <fieldset>
-                <legend> #i18n{workflow.modify_action.title}</legend>
-                <input name="id_action" value="${action.id}" type="hidden">
-                <label for="name">#i18n{workflow.create_action.label_name} *</label>
-                <input type="text" name="name" id="" value="${action.name}"  maxlength="255">
-                <span class="help-block">#i18n{workflow.create_action.label_name_comment}</span>
-                <label for="description"> #i18n{workflow.create_action.label_description} * </label>
-                <textarea name="description" rows="2" >${action.description}</textarea>
-                <span class="help-block">#i18n{workflow.create_action.label_description_comment}</span>
-                <label for="id_state_before"> #i18n{workflow.create_action.label_state_before} * </label>
-                <@comboWithParams name="id_state_before" default_value=action.stateBefore.id?string additionalParameters="class=input-xlarge" items=state_list />
-               <span class="help-block">#i18n{workflow.create_action.label_state_before_comment}</span>
-                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
-                <@combo name="id_state_after"  items=state_list default_value=action.stateAfter.id />
-                <span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
-                <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_icon"> #i18n{workflow.create_action.label_icon} *</label>
-				<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
-				<span class="help-block">#i18n{workflow.create_action.label_icon_comment}</span>
-                <label class="checkbox" for="automatic">#i18n{workflow.create_action.label_automatic}
-                   <#if action.automaticState>
-                        <input type="checkbox" name="automatic" value="1" checked="checked" />
-                        <#else>	
-                        <input type="checkbox" name="automatic" value="1"/>
-                        </#if>
-				</label>
-                <span class="help-block">#i18n{workflow.create_action.label_automatic_comment}</span>
-                <label class="checkbox" for="is_mass_action">#i18n{workflow.create_action.label_mass_action}
-                        <#if action.massAction>
-                        <input type="checkbox" name="is_mass_action" value="1" checked="checked" />
-                        <#else>	
-                        <input type="checkbox" name="is_mass_action" value="1"/>
-                        </#if>
-                        <span class="help-block">#i18n{workflow.create_action.label_mass_action_comment}</span>
-				</label>
-				<span class="help-block">#i18n{workflow.create_action.label_link_actions}</span>
-					<span class="help-block">#i18n{workflow.create_action.label_link_actions_comment}</span>
-					<span class="help-block">#i18n{workflow.create_action.label_link_actions_example}</span>
-					<#if !display_tasks_form>
-							<table class="table table-striped table-condensed">
-								<tr>
-									<th>#i18n{workflow.create_action.label_available_linked_actions}</th>
-									<th>&nbsp;</th>
-									<th>#i18n{workflow.create_action.label_selected_linked_actions}</th>
-								</tr>
-								<tr>
-									<td>
-										<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_linked_actions max_length=175 />
-									</td>
-									<td>
-										<div align="center">
-											<button class="btn btn-primary btn-sm btn-flat" type="submit" name="apply" >#i18n{workflow.create_action.label_select_unselect_linked_actions}</button>
+	<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{workflow.modify_action.title}</h3>
+			</div>
+			<div class="box-body">
+				<form class="form" action="jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
+					<fieldset>
+						<div class="form-group">
+							<input name="id_action" value="${action.id}" type="hidden">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="name">#i18n{workflow.create_action.label_name} *</label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<input type="text" name="name" id="" value="${action.name}" maxlength="255" class="form-control input-sm">
+								<span class="help-block">#i18n{workflow.create_action.label_name_comment}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="description"> #i18n{workflow.create_action.label_description} * </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<textarea name="description" rows="2" class="form-control input-sm">${action.description}</textarea>
+								<span class="help-block">#i18n{workflow.create_action.label_description_comment}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="id_state_before"> #i18n{workflow.create_action.label_state_before} * </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<@comboWithParams name="id_state_before" default_value=action.stateBefore.id?string additionalParameters="class=\"form-control input-sm\"" items=state_list />
+								<span class="help-block">#i18n{workflow.create_action.label_state_before_comment}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<@combo name="id_state_after" items=state_list default_value=action.stateAfter.id />
+								<span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="id_icon"> #i18n{workflow.create_action.label_icon} *</label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
+								<span class="help-block">#i18n{workflow.create_action.label_icon_comment}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="checkbox">
+									<label for="automatic">
+										<#if action.automaticState>
+											<input type="checkbox" name="automatic" value="1" checked="checked" />
+											<#else>	
+												<input type="checkbox" name="automatic" value="1"/>
+											</#if>
+											#i18n{workflow.create_action.label_automatic}
+										</label>
+										<span class="help-block">#i18n{workflow.create_action.label_automatic_comment}</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<div class="checkbox">
+										<label for="is_mass_action">
+											<#if action.massAction>
+												<input type="checkbox" name="is_mass_action" value="1" checked="checked" />
+												<#else>	
+													<input type="checkbox" name="is_mass_action" value="1"/>
+												</#if>
+												#i18n{workflow.create_action.label_mass_action}
+											</label>
+											<span class="help-block">#i18n{workflow.create_action.label_mass_action_comment}</span>
 										</div>
-									</td>
-									<td>
-										<@comboWithParamsAndLength name="unselect_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=selected_linked_actions max_length=175 />
-									</td>
-								</tr>
-							</table>
-					<#else>
-						<div class="callout callout-warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}</div>
-					</#if>
-					<div class="form-group">
-                        <button class="btn btn-primary btn-sm btn-flat" type="submit" name="save">
-							<i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{workflow.create_action.button_save}</button>
-                        <button class="btn btn-primary btn-sm btn-flat" type="submit"  name="apply" >
-							<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;#i18n{workflow.modify_action.button_apply}
-						</button><!--todo-->
-                        <button class="btn btn-sm btn-flat" type="submit" name="cancel" >
-							<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{workflow.create_action.button_cancel}
-						</button>
-                    </div>
-            </fieldset>
-        </form>
-    </div>
-    <div class="span8">
-        <fieldset>
-			<legend>#i18n{workflow.modify_action.manage_task.title}</legend>
-			<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
-				<input name="id_action" value="${action.id}" type="hidden">
-					<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list?sort_by("name") />
-							<button class="btn btn-primary btn-sm btn-flat" type="submit" >
-								<i class="glyphicon glyphicon-plus"> </i>
-								#i18n{workflow.create_action.button_insert_new_task}
-							</button>
+									</div>
+								</div>
+								<div class="form-group">
+									<span class="help-block">#i18n{workflow.create_action.label_link_actions}</span>
+									<span class="help-block">#i18n{workflow.create_action.label_link_actions_comment}</span>
+									<span class="help-block">#i18n{workflow.create_action.label_link_actions_example}</span>
+									<#if !display_tasks_form>
+										<table class="table table-striped table-condensed">
+											<tr>
+												<th>#i18n{workflow.create_action.label_available_linked_actions}</th>
+												<th>&nbsp;</th>
+												<th>#i18n{workflow.create_action.label_selected_linked_actions}</th>
+											</tr>
+											<tr>
+												<td>
+													<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_linked_actions max_length=175 />
+												</td>
+												<td>
+													<div align="center">
+														<button class="btn btn-primary btn-sm btn-flat" type="submit" name="apply" >#i18n{workflow.create_action.label_select_unselect_linked_actions}</button>
+													</div>
+												</td>
+												<td>
+													<@comboWithParamsAndLength name="unselect_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=selected_linked_actions max_length=175 />
+												</td>
+											</tr>
+										</table>
+										<#else>
+											<div class="callout callout-warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}</div>
+										</#if>
+									</div>
+									<div class="form-group">
+										<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save">
+										<i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{workflow.create_action.button_save}</button>
+										<button class="btn btn-primary btn-sm btn-flat" type="submit"  name="apply" >
+											<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;#i18n{workflow.modify_action.button_apply}
+										</button><!--todo-->
+										<button class="btn btn-sm btn-flat" type="submit" name="cancel" >
+											<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{workflow.create_action.button_cancel}
+										</button>
+									</div>
+								</fieldset>
+							</form>
 						</div>
 					</div>
-				<p class="label label-info"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;#i18n{workflow.modify_action.manage_task.warning_assignment}</p>
-				<div class="pull-right">
-					<a href="jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}" class="btn btn-primary btn-sm btn-flat">
-						#i18n{workflow.modify_workflow.init_order} <i class="glyphicon glyphicon-resize-vertical"></i>
-					</a>
 				</div>
-			</form>
-			<br>
-			<table class="table table-striped table-condensed">
-			<tr>
 				
-                <th> #i18n{workflow.modify_workflow.order} </th>
-                <th> #i18n{workflow.modify_action.manage_task.title}</th>
-                <th> #i18n{workflow.modify_action.manage_task.row_actions} </th>
-            </tr>
-            <#assign cpt=0>	
-            <#list task_list as task>
-                <#assign cpt=cpt+1>
-				<tr>
-					<td>
-                    <!-- SELECT LIST FOR ORDER CHANGE -->
-                    <form class="form-horizontal" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderTask.jsp">
-						<@comboOrders name="order_task_id" default_value=task.order max=number_task />
-						<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
-						<input type="hidden" name="id_task" value="${task.id}" />
-						<button class="btn btn-primary btn-sm btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
-							<i class="glyphicon glyphicon-ok">&nbsp;</i>
-						</button>
-					</form>
-					</td>
-                    <td>
-						<#if task.taskType.title!="">${task.taskType.title}</#if>
-						<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
-					</td>
-                    <td>
-						<#if task.taskType.configRequired>
-                            <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
-                                <i class="glyphicon glyphicon-edit">&nbsp;</i>
-                            </a>
-                        </#if>
-                        <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
-                               <i class="glyphicon glyphicon-plus-sign">&nbsp;</i>
-                        </a>
-						<a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}" >
-							<i class="glyphicon glyphicon-trash">&nbsp;</i>
-                        </a>
-					</td>
-                </tr>
-            </#list>
-			</table>
-		</fieldset>
-		<#if action.isAutomaticState( )>
-			<br />
-			<br />
-			<br />
-			<fieldset>
-				<legend>
-					#i18n{workflow.modify_action.manage_prerequisite.title}
-					<form class="form-inline pull-right" action="jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp" method="post">
-						<@combo name="prerequisite_type" items=list_prerequisite_type default_value="" />
-                		<input type="hidden" name="id_action" value="${action.id}">
-                		<button class="btn btn-sm btn-flat btn-primary">
-                			<i class="glyphicon glyphicon-plus">&nbsp;</i>&nbsp;#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}
-                		</button>
-					</form>
-				</legend>
-				<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
-					<table class="table table-striped table-condensed">
-						<tr>
-							<th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</th>
-							<th>#i18n{workflow.modify_action.manage_task.row_actions}</th>
-						</tr>
-						<#list listPrerequisite as prerequisite>
-							<tr>
-								<td>
-									#i18n{${prerequisite.title}}
-								</td>
-								<td>
-									<#if prerequisite.hasConfiguration>
-										<a class="btn btn-sm btn-flat btn-primary" href="jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.manage_workflow.title_modify}">
-											<i class="glyphicon glyphicon-edit">&nbsp;</i>
+				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+					<div class="box box-primary">
+						<div class="box-header">
+							<h3 class="box-title">#i18n{workflow.modify_action.manage_task.title}</h3>
+						</div>
+						
+						<div class="box-body">
+							<fieldset>
+								<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow" method="post" name="" id=""  >
+									<input name="id_action" value="${action.id}" type="hidden">
+									<div class="form-group">
+										<label class="col-xs-12 col-sm-12 col-md-2 col-lg-2" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
+										<div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+											<div class="input-group">
+												<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"form-control input-sm\"" items=task_type_list?sort_by("name") />
+												<div class="input-group-btn">
+													<button class="btn btn-primary btn-sm btn-flat" type="submit">
+														<i class="glyphicon glyphicon-plus"> </i>
+														#i18n{workflow.create_action.button_insert_new_task}
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<p class="label label-info"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;#i18n{workflow.modify_action.manage_task.warning_assignment}</p>
+									<div class="pull-right">
+										<a href="jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}" class="btn btn-primary btn-sm btn-flat">
+											#i18n{workflow.modify_workflow.init_order} <i class="glyphicon glyphicon-resize-vertical"></i>
 										</a>
-									</#if>
-									<a class="btn btn-sm btn-flat btn-danger" href="jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}">
-										<i class="glyphicon glyphicon-trash">&nbsp;</i>
-									</a>
-								</td>
-							</tr>
-						</#list>
-					</table>
-				<#else>
-					<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
-				</#if>
-				<span class="help-block">#i18n{workflow.modify_action.manage_prerequisite.help}</span>
-			</fieldset>
-		</#if>
-    </div>
-</div>
-
+									</div>
+								</form>
+								<br>
+								<table class="table table-striped table-condensed">
+									<tr>
+										
+										<th> #i18n{workflow.modify_workflow.order} </th>
+										<th> #i18n{workflow.modify_action.manage_task.title}</th>
+										<th> #i18n{workflow.modify_action.manage_task.row_actions} </th>
+									</tr>
+									<#assign cpt=0>	
+										<#list task_list as task>
+											<#assign cpt=cpt+1>
+												<tr>
+													<td>
+														<!-- SELECT LIST FOR ORDER CHANGE -->
+														<form class="form-horizontal" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderTask.jsp">
+															<div class="input-group">
+																<@comboOrders name="order_task_id" default_value=task.order max=number_task />
+																<input type="hidden" name="id_workflow" value="${action.workflow.id}" />
+																<input type="hidden" name="id_task" value="${task.id}" />
+																<div class="input-group-btn">
+																	<button class="btn btn-primary btn-sm btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
+																		<i class="glyphicon glyphicon-ok"></i>
+																	</button>
+																</div>
+															</div>
+														</form>
+													</td>
+													<td>
+														<#if task.taskType.title!="">${task.taskType.title}</#if>
+														<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
+													</td>
+													<td>
+														<#if task.taskType.configRequired>
+															<a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}"  title="#i18n{workflow.manage_workflow.title_modify}" >
+																<i class="glyphicon glyphicon-edit"></i>
+															</a>
+														</#if>
+														<a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id!}"  title="#i18n{workflow.modify_action.manage_task.title_copy}" >
+															<i class="glyphicon glyphicon-plus-sign"></i>
+														</a>
+														<a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}" >
+															<i class="glyphicon glyphicon-trash"></i>
+														</a>
+													</td>
+												</tr>
+											</#list>
+										</table>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+							<div class="box box-primary">
+								<div class="box-header">
+									<h3 class="box-title">
+										#i18n{workflow.modify_action.manage_prerequisite.title}
+									</h3>
+									<span class="pull-right">
+										<form class="form-inline pull-right" action="jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp" method="post">
+											<div class="input-group">
+												<@comboWithParams name="prerequisite_type" items=list_prerequisite_type default_value="" additionalParameters="class=\"form-control input-sm\"" />
+												<input type="hidden" name="id_action" value="${action.id}">
+												<div class="input-group-btn">
+													<button class="btn btn-sm btn-flat btn-primary">
+														<i class="glyphicon glyphicon-plus">&nbsp;</i>&nbsp;#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}
+													</button>
+												</div>
+											</div>
+										</form>
+									</span>
+								</div>
+								<div class="box-body">
+									<#if action.isAutomaticState( )>
+										<fieldset>
+											<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
+												<table class="table table-striped table-condensed">
+													<tr>
+														<th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</th>
+														<th>#i18n{workflow.modify_action.manage_task.row_actions}</th>
+													</tr>
+													<#list listPrerequisite as prerequisite>
+														<tr>
+															<td>
+																#i18n{${prerequisite.title}}
+															</td>
+															<td>
+																<#if prerequisite.hasConfiguration>
+																	<a class="btn btn-sm btn-flat btn-primary" href="jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.manage_workflow.title_modify}">
+																		<i class="glyphicon glyphicon-edit">&nbsp;</i>
+																	</a>
+																</#if>
+																<a class="btn btn-sm btn-flat btn-danger" href="jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}">
+																	<i class="glyphicon glyphicon-trash">&nbsp;</i>
+																</a>
+															</td>
+														</tr>
+													</#list>
+												</table>
+												<#else>
+													<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
+												</#if>
+												<span class="help-block">#i18n{workflow.modify_action.manage_prerequisite.help}</span>
+											</fieldset>
+										</#if>
+									</div>
+								</div>
+							</div>
+						</div>						
