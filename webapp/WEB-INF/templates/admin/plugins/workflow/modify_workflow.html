@@ -1,195 +1,199 @@
 <#macro comboOrders name default_value max >
 <select id="${name}" name="${name}" class="form-control input-xs">
-    <#list 1..max as i>
-    <#if "${default_value}" == "${i}">
-    <option selected="selected" value="${i}" >${i}</option>
-    <#else>
-    <option value="${i}" >${i}</option>
-    </#if>
-    </#list>
+	<#list 1..max as i>
+		<#if "${default_value}" == "${i}">
+			<option selected="selected" value="${i}" >${i}</option>
+		<#else>
+			<option value="${i}" >${i}</option>
+		</#if>
+	</#list>
 </select>
 </#macro>
 
 <div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 		<div class="box box-primary">
 			<div class="box-header">
 				<h3 class="box-title">#i18n{workflow.modify_workflow.title}</h3>
 			</div>
-		<div class="box-body">
-			<div class="row">
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-				<form class="form" action="jsp/admin/plugins/workflow/DoModifyWorkflow.jsp" method="post" name="" id=""  >
-					<input name="id_workflow" value="${workflow.id}" type="hidden">
-
-					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="name">#i18n{workflow.create_workflow.label_name} * : </label>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<input type="text" name="name" id="" value="${workflow.name}" maxlength="255" class="form-control input-sm">
-							<span class="help-block">#i18n{workflow.create_workflow.label_name_comment}</span>
+			<div class="box-body">
+				<div class="row">
+					<form class="form" action="jsp/admin/plugins/workflow/DoModifyWorkflow.jsp" method="post" name="" id=""  >
+						<input name="id_workflow" value="${workflow.id}" type="hidden">
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="name">#i18n{workflow.create_workflow.label_name} * : </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<input type="text" name="name" id="" value="${workflow.name}" maxlength="255" class="form-control input-sm">
+								<span class="help-block">#i18n{workflow.create_workflow.label_name_comment}</span>
+							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="description"> #i18n{workflow.create_workflow.label_description} * : </label>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<textarea name="description" cols="80" rows="2" class="form-control input-sm">${workflow.description}</textarea>
-							<span class="help-block">#i18n{workflow.create_workflow.label_description_comment}</span>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="description"> #i18n{workflow.create_workflow.label_description} * : </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<textarea name="description" cols="80" rows="2" class="form-control input-sm">${workflow.description}</textarea>
+								<span class="help-block">#i18n{workflow.create_workflow.label_description_comment}</span>
+							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="">#i18n{workflow.create_workflow.label_workgroup}  : </label>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<@comboWithParams name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup additionalParameters="class='form-control input-sm'"/>
-							<span class="help-block">#i18n{workflow.create_workflow.label_workgroup_comment}</span>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-12 col-md-12 col-lg-12" for="">#i18n{workflow.create_workflow.label_workgroup}  : </label>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<@comboWithParams name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup additionalParameters="class='form-control input-sm'"/>
+								<span class="help-block">#i18n{workflow.create_workflow.label_workgroup_comment}</span>
+							</div>
 						</div>
+						<div class="form-group">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<button class="btn btn-primary btn-sm btn-block btn-flat" type="submit" name="save">
+									<i class="glyphicon glyphicon-ok"> </i> #i18n{workflow.create_workflow.button_save}
+								</button>
+								<button class="btn btn-primary btn-sm btn-block btn-flat" type="submit" name="apply">
+									<i class="glyphicon glyphicon-ok-circle"> </i> #i18n{workflow.modify_workflow.button_apply}
+								</button>
+								<!-- button class="btn btn-sm btn-block btn-flat" type="submit" name="cancel" >
+									<i class="glyphicon glyphicon-remove-circle"> </i> #i18n{workflow.create_workflow.button_cancel}
+								</button -->
+								</div>
+							</div>
+						</form>
 					</div>
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<button class="btn btn-primary btn-sm btn-block btn-flat" type="submit" name="save">
-								<i class="glyphicon glyphicon-ok"> </i> #i18n{workflow.create_workflow.button_save}
-							</button>
-							<button class="btn btn-primary btn-sm btn-block btn-flat" type="submit" name="apply">
-								<i class="glyphicon glyphicon-ok-circle"> </i> #i18n{workflow.modify_workflow.button_apply}
-							</button>
-							<!-- button class="btn btn-sm btn-block btn-flat" type="submit" name="cancel" >
-								<i class="glyphicon glyphicon-remove-circle"> </i> #i18n{workflow.create_workflow.button_cancel}
-							</button -->
-						</div>
-					</div>
-				</form>
+				</div>
 			</div>
+		</div>
+		
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-			<ul id="tabs" class="nav nav-tabs">
-				<li <#if pane="pane-states">class="active"</#if> >
+			<div class="nav-tabs-custom">
+				<ul id="tabs" class="nav nav-tabs">
+					<li <#if pane="pane-states">class="active"</#if> >
 					<a href="#pane-states" data-toggle="tab">&nbsp;#i18n{workflow.modify_workflow.manage_state.title}</a>
 				</li>
 				<li <#if pane="pane-actions">class="active"</#if> >
-					<a href="#pane-actions" data-toggle="tab">&nbsp;#i18n{workflow.modify_workflow.manage_action.title}</a>
-				</li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane <#if pane="pane-states">active</#if>" id="pane-states">
-					<div class="clearfix">
-						<form class="form-inline pull-right" method="post" action="jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state">
-							<button class="btn btn-primary btn-sm btn-flat" type="submit">
-								<i class="glyphicon glyphicon-plus"> </i> 
-								#i18n{workflow.modify_workflow.manage_state.button_insert_state}
-							</button>
-						</form>
-	<!--                 	<a class="btn btn-primary btn-sm btn-flat pull-right spaced" href="jsp/admin/plugins/workflow/DoUpdateStateOrder.jsp?id_workflow=${workflow.id}" title="#i18n{workflow.modify_workflow.init_order}"> -->
-	<!-- 						<i class="glyphicon glyphicon-refresh"></i>	 -->
-	<!-- 					</a> -->
-					</div>
-					<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>&nbsp;
-					<table class="table table-striped table-condensed">
-						<tr>
-							<th>#i18n{workflow.modify_workflow.manage_state.row_name}</th>
-							<th>#i18n{workflow.modify_workflow.order}</th>
-							<th>#i18n{workflow.modify_workflow.manage_state.row_actions}</th>
-						</tr>
-						<#list state_list as state>
-						<tr>
-							<td class="col-xs-8 col-sm-8 col-md-8 col-lg-8">${state.name}</td>
-							<td>
-								<!-- SELECT LIST FOR ORDER CHANGE -->
-								<form class="form-inline" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderState.jsp">
-									<div class="input-group">
+				<a href="#pane-actions" data-toggle="tab">&nbsp;#i18n{workflow.modify_workflow.manage_action.title}</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane <#if pane="pane-states">active</#if>" id="pane-states">
+			<div class="clearfix">
+				<form class="form-inline pull-right" method="post" action="jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state">
+					<button class="btn btn-primary btn-sm btn-flat" type="submit">
+						<i class="glyphicon glyphicon-plus"> </i> 
+						#i18n{workflow.modify_workflow.manage_state.button_insert_state}
+					</button>
+				</form>
+				<!--                 	<a class="btn btn-primary btn-sm btn-flat pull-right spaced" href="jsp/admin/plugins/workflow/DoUpdateStateOrder.jsp?id_workflow=${workflow.id}" title="#i18n{workflow.modify_workflow.init_order}"> -->
+				<!-- 						<i class="glyphicon glyphicon-refresh"></i>	 -->
+				<!-- 					</a> -->
+			</div>
+			<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>&nbsp;
+			<table class="table table-striped table-condensed">
+				<tr>
+					<th>#i18n{workflow.modify_workflow.manage_state.row_name}</th>
+					<th>#i18n{workflow.modify_workflow.order}</th>
+					<th>#i18n{workflow.modify_workflow.manage_state.row_actions}</th>
+				</tr>
+				<#list state_list as state>
+					<tr>
+						<td class="col-xs-8 col-sm-8 col-md-8 col-lg-8">${state.name}</td>
+						<td>
+							<!-- SELECT LIST FOR ORDER CHANGE -->
+							<form class="form-inline" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderState.jsp">
+								<div class="input-group">
 									<input type="hidden" name="id_workflow" value="${workflow.id}">
 									<input type="hidden" name="id_state" value="${state.id}">
 									<@comboOrders name="order_id" default_value=state.order max=number_state />
 									<span class="input-group-btn">
+										<button class="btn btn-default btn-xs btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
+											<i class="glyphicon glyphicon-ok"></i>
+										</button>
+									</span>
+								</div>
+							</form>
+						</td>
+						<td>
+							<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_modify}" >
+								<i class="glyphicon glyphicon-edit"></i>
+							</a>
+							<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_reflexive_action.title}" >
+								<i class="glyphicon glyphicon-tasks"></i>
+							</a>
+							<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_copy_state}" >
+								<i class="glyphicon glyphicon-plus-sign"></i>
+							</a>
+							<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_delete}" >
+								<i class="glyphicon glyphicon-trash"></i>
+							</a>
+						</td>
+					</tr>
+				</#list>
+			</table>
+			<@paginationAdmin paginator=paginator_state nb_items_per_page=nb_items_per_page_state/>
+			&#160;
+		</div>
+		
+		
+		<div class="tab-pane <#if pane="pane-actions">active</#if>" id="pane-actions">
+		<div class="clearfix">
+			<form class="form-inline pull-right"  method="post" action="jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action">
+				<button class="btn btn-primary btn-sm btn-flat" type="submit" >
+					<i class="glyphicon glyphicon-plus"> </i> 
+					#i18n{workflow.modify_workflow.manage_action.button_insert_action}
+				</button>
+			</form>
+			<!-- 					<a class="btn btn-primary btn-sm btn-flat pull-right spaced" href="jsp/admin/plugins/workflow/DoUpdateActionOrder.jsp?id_workflow=${workflow.id}#list_action" title="#i18n{workflow.modify_workflow.init_order}" > -->
+			<!-- 						<i class="glyphicon glyphicon-refresh"></i>	 -->
+			<!-- 					</a> -->
+		</div>
+		<@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
+		<br>
+		<table class="table table-striped table-condensed">
+			<tr>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_name}</th>
+				<th>#i18n{workflow.modify_workflow.order}</th>
+				<th>#i18n{workflow.modify_workflow.manage_action.row_actions}</th>
+			</tr>
+			<#list action_list as action>
+				<tr>
+					<td class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+						<strong>${action.name}</strong>
+						<p>
+							<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">${action.stateBefore.name}</small>
+							<i class="glyphicon glyphicon-arrow-right"></i>
+							<small title="#i18n{workflow.modify_workflow.manage_action.row_state_after}"> ${action.stateAfter.name}</small>
+						</p>
+					</td>
+					<td>
+						<!-- SELECT LIST FOR ORDER CHANGE -->
+						<form class="form-inline" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderAction.jsp">
+							<input type="hidden" name="id_workflow" value="${workflow.id}">
+							<input type="hidden" name="id_action" value="${action.id}">
+							<div class="input-group">
+                                <@comboOrders name="order_action_id" default_value=action.order max=number_action />
+								<span class="input-group-btn">
 									<button class="btn btn-default btn-xs btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
 										<i class="glyphicon glyphicon-ok"></i>
 									</button>
-									</span>
-									</div>
-								</form>
-							</td>
-							<td>
-								<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_modify}" >
-									<i class="glyphicon glyphicon-edit"></i>
-								</a>
-								<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_reflexive_action.title}" >
-									<i class="glyphicon glyphicon-tasks"></i>
-								</a>
-								<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_copy_state}" >
-									<i class="glyphicon glyphicon-plus-sign"></i>
-								</a>
-								<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_delete}" >
-									<i class="glyphicon glyphicon-trash"></i>
-								</a>
-							</td>
-						</tr>
-						</#list>
-					</table>
-					<@paginationAdmin paginator=paginator_state nb_items_per_page=nb_items_per_page_state/>
-            </div>
-			
-			
-            <div class="tab-pane <#if pane="pane-actions">active</#if>" id="pane-actions">
-                <div class="clearfix">
-                    <form class="form-inline pull-right"  method="post" action="jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action">
-                        <button class="btn btn-primary btn-sm btn-flat" type="submit" >
-                            <i class="glyphicon glyphicon-plus"> </i> 
-                            #i18n{workflow.modify_workflow.manage_action.button_insert_action}
-                        </button>
-                    </form>
-<!-- 					<a class="btn btn-primary btn-sm btn-flat pull-right spaced" href="jsp/admin/plugins/workflow/DoUpdateActionOrder.jsp?id_workflow=${workflow.id}#list_action" title="#i18n{workflow.modify_workflow.init_order}" > -->
-<!-- 						<i class="glyphicon glyphicon-refresh"></i>	 -->
-<!-- 					</a> -->
-                </div>
-                <@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
-				<br>
-                <table class="table table-striped table-condensed">
-                    <tr>
-                        <th>#i18n{workflow.modify_workflow.manage_action.row_name}</th>
-                        <th>#i18n{workflow.modify_workflow.order}</th>
-						<th>#i18n{workflow.modify_workflow.manage_action.row_actions}</th>
-                    </tr>
-                    <#list action_list as action>
-                    <tr>
-                        <td class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-							<strong>${action.name}</strong>
-							<p>
-								<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">${action.stateBefore.name}</small>
-								<i class="glyphicon glyphicon-arrow-right"></i>
-								<small title="#i18n{workflow.modify_workflow.manage_action.row_state_after}"> ${action.stateAfter.name}</small>
-							</p>
-						</td>
-                        <td>
-                            <!-- SELECT LIST FOR ORDER CHANGE -->
-                            <form class="form-inline" method="post" action="jsp/admin/plugins/workflow/DoChangeOrderAction.jsp">
-                                <input type="hidden" name="id_workflow" value="${workflow.id}">
-                                <input type="hidden" name="id_action" value="${action.id}">
-								<div class="input-group">
-                                <@comboOrders name="order_action_id" default_value=action.order max=number_action />
-								<span class="input-group-btn">
-                                <button class="btn btn-default btn-xs btn-flat" type="submit" title="#i18n{workflow.modify_workflow.move}">
-									<i class="glyphicon glyphicon-ok"></i>
-								</button>
 								</span>
-								</div>
-                            </form>
-                       </td>
-                        <td>
-                            <a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_action.title_modify}" >
-                                <i class="glyphicon glyphicon-edit"></i>
-                            </a>
-                            <a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_copy_action}" >
-                                <i class="glyphicon glyphicon-plus-sign"></i>
-                            </a>
-                            <a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_action.title_delete}" >
-                                <i class="glyphicon glyphicon-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    </#list>
-                </table>
-                <@paginationAdmin paginator=paginator_action nb_items_per_page=nb_items_per_page_action/>
-            </div>
-        </div>
-    </div>
-    </div>
+							</div>
+						</form>
+					</td>
+					<td>
+						<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_action.title_modify}" >
+							<i class="glyphicon glyphicon-edit"></i>
+						</a>
+						<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_state.title_copy_action}" >
+							<i class="glyphicon glyphicon-plus-sign"></i>
+						</a>
+						<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}"  title="#i18n{workflow.modify_workflow.manage_action.title_delete}" >
+							<i class="glyphicon glyphicon-trash"></i>
+						</a>
+					</td>
+				</tr>
+			</#list>
+		</table>
+		<@paginationAdmin paginator=paginator_action nb_items_per_page=nb_items_per_page_action/>
+		&#160;
+	</div>
+</div>
 </div>
 </div>
 </div>

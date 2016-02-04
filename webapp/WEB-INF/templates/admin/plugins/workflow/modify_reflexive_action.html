@@ -1,15 +1,9 @@
 <#include "macro_workflows.html" />
 <div class="row">
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{workflow.modify_reflexive_action.title}#i18n{workflow.create_action.title}</h3>
-			</div>
-			<div class="box-body">
-				
-				
 		<fieldset>
-			<ul class="nav nav-tabs">
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
 				<li>
 					<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">#i18n{workflow.modify_state.title}</a>
 				</li>
@@ -17,6 +11,7 @@
 					<a href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}">#i18n{workflow.modify_reflexive_action.title}</a>
 				</li>
 			</ul>
+			<div class="tab-content">
 			<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow" method="post" name="" id=""  >
 				<input name="id_state" value="${state.id}" type="hidden">
 				<div class="pull-left">
@@ -27,7 +22,9 @@
 				<div class="form-group pull-right">
 					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="task_type_key"> #i18n{workflow.modify_action.manage_task.insert_new_task}</label>
 					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"input-xlarge\"" items=task_type_list />
+						<div class="input-group">
+						<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"form-control input-sm\"" items=task_type_list />
+						<div class="input-group-btn">
 						<button class="btn btn-primary btn-sm btn-flat" type="submit" >
 							<i class="glyphicon glyphicon-plus"> </i>
 							#i18n{workflow.create_action.button_insert_new_task}
@@ -37,6 +34,8 @@
 								<i class="glyphicon glyphicon-resize-vertical">&nbsp;</i>&nbsp;#i18n{workflow.modify_workflow.init_order}
 							</a>
 						</#if>
+						</div>
+					</div>
 					</div>
 				</div>
 			</form>
@@ -92,6 +91,6 @@
 			</div>
 		</fieldset>
 	</div>
-</div>
-</div>
+	</div>
+	</div>
 </div>
