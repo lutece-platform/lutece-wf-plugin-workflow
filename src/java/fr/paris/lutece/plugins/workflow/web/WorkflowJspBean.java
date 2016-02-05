@@ -1320,6 +1320,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             model.put( MARK_LIST_PREREQUISITE_TYPE,
                 _prerequisiteManagementService.getPrerequisiteServiceRefList( getLocale(  ) ) );
         }
+        //afin d'éviter le null sur l'appel du maccro ComboWithParams si l'action n'est pas automatique
+        else
+        {
+            model.put( MARK_LIST_PREREQUISITE, new ReferenceList() );
+            model.put( MARK_LIST_PREREQUISITE_TYPE, new ReferenceList());
+        }    
 
         boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale(  ) );
         model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
