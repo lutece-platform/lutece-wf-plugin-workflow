@@ -50,23 +50,23 @@
 					        <strong>${workflow.name}</strong>&nbsp;
                 </td>
                 <td>
-                  <a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_modify}">
+                  <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_modify}">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_copy}" >
+                  <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_copy}" >
                     <i class="fa fa-plus-circle"></i>
                   </a>
-                  <a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_delete}" >
-						        <i class="fa fa-trash"></i>
+                  <a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_delete}" >
+					<i class="fa fa-trash"></i>
                   </a>
                   <#if workflow.enabled>
-            				<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_disable}" >
-            					<i class="fa fa-stop"></i>
-            				</a>
+					<a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_disable}" >
+            		<i class="fa fa-stop"></i>
+            		</a>
                   <#else>
-          					<a class="btn btn-success btn-xs btn-flat" href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_enable}" >
-          						<i class="fa fa-play"></i>
-          					</a>
+          			<a class="btn btn-success btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_enable}" >
+          			<i class="fa fa-play"></i>
+          			</a>
                   </#if>
                 </td>
               </tr>
