@@ -33,7 +33,7 @@
 						<div class="form-group">
 							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="id_state_after"> #i18n{workflow.create_action.label_state_after} * </label>
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<@comboWithParams name="id_state_after" items=state_list default_value="action.stateAfter.id" additionalParameters="class=\"form-control input-sm\"" />
+								<@comboWithParams name="id_state_after" items=state_list default_value=action.stateAfter.id?string additionalParameters="class=\"form-control input-sm\"" />
 								<span class="help-block">#i18n{workflow.create_action.label_state_after_comment}</span>
 							</div>
 						</div>
