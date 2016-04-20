@@ -63,6 +63,7 @@ public class WorkflowDAO implements IWorkflowDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_workflow  WHERE id_workflow=? ";
     private static final String SQL_FILTER_IS_ENABLED = " is_enabled = ? ";
     private static final String SQL_FILTER_WORKGROUP = " workgroup_key = ? ";
+    private static final String SQL_FILTRE_NAME = " name = ? " ;
     private static final String SQL_ORDER_BY_DATE_CREATION = " ORDER BY creation_date DESC ";
 
     /**
@@ -194,6 +195,12 @@ public class WorkflowDAO implements IWorkflowDAO
         {
             listStrFilter.add( SQL_FILTER_WORKGROUP );
         }
+        
+        if( filter.containsName())
+        {
+        	listStrFilter.add( SQL_FILTRE_NAME );
+        	
+        }
 
         int nPos = 0;
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_BY_FILTER, listStrFilter,
@@ -208,6 +215,11 @@ public class WorkflowDAO implements IWorkflowDAO
         if ( filter.containsWorkgroupCriteria(  ) )
         {
             daoUtil.setString( ++nPos, filter.getWorkgroup(  ) );
+        }
+        
+        if(filter.containsName()){
+        	
+        	 daoUtil.setString( ++nPos, filter.getName() );
         }
 
         daoUtil.executeQuery(  );
