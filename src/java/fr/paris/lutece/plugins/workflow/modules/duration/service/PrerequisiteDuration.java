@@ -107,10 +107,21 @@ public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
         int nIdAction )
     {
         int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon( nIdAction ).getWorkflow(  ).getId(  );
-        long configNbMinutes = ( (PrerequisiteDurationConfig) config ).getDuration(  );
-        long configNbMillis = configNbMinutes * 1000;
         ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType,
                 idWorkflow );
+        if (resourceHistory == null) {
+            //The prerequisite is configured on an automatic action on the initial state without AutomaticReflexiveActions,
+            //so we don't have a resourceHistory yet. Since state creation occurs only after a call
+            //to getState (state creation is lazy), it is not very meaningful to have a duration
+            //for the initial state anyway. So don't delay.
+            //
+            //Note: If the client forces the state creation by calling getState to have a coherent behavior,
+            //it could also use an extra state and execute an action or use automatic actions, or even use
+            //AutomaticReflexiveAction on the initial state to ensure the resourceHistory is created.
+            return true;
+        }
+        long configNbMinutes = ( (PrerequisiteDurationConfig) config ).getDuration(  );
+        long configNbMillis = configNbMinutes * 1000;
         Timestamp timestampInState = resourceHistory.getCreationDate(  );
         long nowMillis = System.currentTimeMillis(  );
         long millisInState = nowMillis - timestampInState.getTime(  );
