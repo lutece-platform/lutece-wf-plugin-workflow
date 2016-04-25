@@ -293,7 +293,7 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
         HttpServletRequest request, Locale locale )
     {
-        return getDisplayDocumentHistory(nIdResource, strResourceType, nIdWorkflow, request, locale, TEMPLATE_RESOURCE_HISTORY );
+        return getDisplayDocumentHistory(nIdResource, strResourceType, nIdWorkflow, request, locale, null, TEMPLATE_RESOURCE_HISTORY );
     }
     
     /**
@@ -307,53 +307,43 @@ public class WorkflowProvider implements IWorkflowProvider
      * @return The HTML code to display
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
+    @Deprecated
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
         HttpServletRequest request, Locale locale, String strTemplate )
     {
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow,
+                request, locale );
 
-        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
-                strResourceType, nIdWorkflow );
-        List<ITask> listActionTasks;
-        List<String> listTaskInformation;
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        Map<String, Object> resourceHistoryTaskInformation;
-        List<Map<String, Object>> listResourceHistoryTaskInformation = new ArrayList<Map<String, Object>>(  );
-        String strTaskinformation;
+        HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, defaultModel );
 
-        for ( ResourceHistory resourceHistory : listResourceHistory )
+        return templateList.getHtml(  );
+    }
+
+    /**
+     * Implements IWorkflowProvider of Lutece Core version 5.1
+     * @param nIdResource The resource 
+     * @param strResourceType The resource type
+     * @param nIdWorkflow the workflow id
+     * @param request The request
+     * @param locale The locale 
+     * @param model The model to add to the default model
+     * @param strTemplate The template
+     * @return The HTML code to display
+     */
+    // @Override don't declare as Override to be compatible with older Lutece Core version
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
+        HttpServletRequest request, Locale locale, Map<String, Object> model, String strTemplate )
+    {
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow,
+                request, locale );
+        
+        
+        if ( model != null )
         {
-            resourceHistoryTaskInformation = new HashMap<String, Object>(  );
-            resourceHistoryTaskInformation.put( MARK_RESOURCE_HISTORY, resourceHistory );
-
-            if ( resourceHistory.getUserAccessCode(  ) != null )
-            {
-                resourceHistoryTaskInformation.put( MARK_ADMIN_USER_HISTORY,
-                    AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) );
-            }
-
-            listTaskInformation = new ArrayList<String>(  );
-            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), locale );
-
-            for ( ITask task : listActionTasks )
-            {
-                strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
-                        request, locale, task );
-
-                if ( strTaskinformation != null )
-                {
-                    listTaskInformation.add( strTaskinformation );
-                }
-            }
-
-            resourceHistoryTaskInformation.put( MARK_TASK_INFORMATION_LIST, listTaskInformation );
-
-            listResourceHistoryTaskInformation.add( resourceHistoryTaskInformation );
+            defaultModel.putAll( model );
         }
 
-        model.put( MARK_HISTORY_INFORMATION_LIST, listResourceHistoryTaskInformation );
-        model.put( MARK_ADMIN_AVATAR, PluginService.isPluginEnable( "adminavatar" ) );
-
-        HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, model );
+        HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, defaultModel );
 
         return templateList.getHtml(  );
     }
@@ -615,4 +605,63 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
     }
+    
+    /**
+     * returns the default model to build history performed on a resource.
+     *
+     * @param nIdResource the resource id
+     * @param strResourceType the resource type
+     * @param nIdWorkflow the workflow id
+     * @param request the request
+     * @param locale the locale
+     * @return the default model
+     */
+    private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
+            HttpServletRequest request, Locale locale )
+    {
+        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
+                strResourceType, nIdWorkflow );
+        List<ITask> listActionTasks;
+        List<String> listTaskInformation;
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> resourceHistoryTaskInformation;
+        List<Map<String, Object>> listResourceHistoryTaskInformation = new ArrayList<Map<String, Object>>(  );
+        String strTaskinformation;
+
+        for ( ResourceHistory resourceHistory : listResourceHistory )
+        {
+            resourceHistoryTaskInformation = new HashMap<String, Object>(  );
+            resourceHistoryTaskInformation.put( MARK_RESOURCE_HISTORY, resourceHistory );
+
+            if ( resourceHistory.getUserAccessCode(  ) != null )
+            {
+                resourceHistoryTaskInformation.put( MARK_ADMIN_USER_HISTORY,
+                    AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) );
+            }
+
+            listTaskInformation = new ArrayList<String>(  );
+            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), locale );
+
+            for ( ITask task : listActionTasks )
+            {
+                strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
+                        request, locale, task );
+
+                if ( strTaskinformation != null )
+                {
+                    listTaskInformation.add( strTaskinformation );
+                }
+            }
+
+            resourceHistoryTaskInformation.put( MARK_TASK_INFORMATION_LIST, listTaskInformation );
+
+            listResourceHistoryTaskInformation.add( resourceHistoryTaskInformation );
+        }
+
+        model.put( MARK_HISTORY_INFORMATION_LIST, listResourceHistoryTaskInformation );
+        model.put( MARK_ADMIN_AVATAR, PluginService.isPluginEnable( "adminavatar" ) );
+        
+        return model;
+    }
+    
 }
