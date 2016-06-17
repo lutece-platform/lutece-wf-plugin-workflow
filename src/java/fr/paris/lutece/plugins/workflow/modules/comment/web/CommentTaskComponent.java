@@ -72,6 +72,8 @@ public class CommentTaskComponent extends AbstractTaskComponent
     private static final String TEMPLATE_TASK_COMMENT_INFORMATION = "admin/plugins/workflow/modules/comment/task_comment_information.html";
 
     // MARKS
+    private static final String MARK_ID_HISTORY = "id_history";
+    private static final String MARK_TASK = "task";
     private static final String MARK_CONFIG = "config";
     private static final String MARK_COMMENT_VALUE = "comment_value";
 
@@ -165,6 +167,8 @@ public class CommentTaskComponent extends AbstractTaskComponent
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        model.put( MARK_ID_HISTORY, nIdHistory );
+        model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
 
