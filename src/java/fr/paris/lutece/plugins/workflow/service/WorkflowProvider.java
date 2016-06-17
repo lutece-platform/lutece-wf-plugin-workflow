@@ -293,19 +293,21 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
         HttpServletRequest request, Locale locale )
     {
-        return getDisplayDocumentHistory(nIdResource, strResourceType, nIdWorkflow, request, locale, null, TEMPLATE_RESOURCE_HISTORY );
+        return getDisplayDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, null,
+            TEMPLATE_RESOURCE_HISTORY );
     }
-    
+
     /**
      * Implements IWorkflowProvider of Lutece Core version 5.1
-     * @param nIdResource The resource 
+     * @param nIdResource The resource
      * @param strResourceType The resource type
      * @param nIdWorkflow the workflow id
      * @param request The request
-     * @param locale The locale 
+     * @param locale The locale
      * @param strTemplate The template
      * @return The HTML code to display
      */
+
     // @Override don't declare as Override to be compatible with older Lutece Core version
     @Deprecated
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
@@ -321,23 +323,23 @@ public class WorkflowProvider implements IWorkflowProvider
 
     /**
      * Implements IWorkflowProvider of Lutece Core version 5.1
-     * @param nIdResource The resource 
+     * @param nIdResource The resource
      * @param strResourceType The resource type
      * @param nIdWorkflow the workflow id
      * @param request The request
-     * @param locale The locale 
+     * @param locale The locale
      * @param model The model to add to the default model
      * @param strTemplate The template
      * @return The HTML code to display
      */
+
     // @Override don't declare as Override to be compatible with older Lutece Core version
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
         HttpServletRequest request, Locale locale, Map<String, Object> model, String strTemplate )
     {
         Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow,
                 request, locale );
-        
-        
+
         if ( model != null )
         {
             defaultModel.putAll( model );
@@ -605,7 +607,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
     }
-    
+
     /**
      * returns the default model to build history performed on a resource.
      *
@@ -616,8 +618,8 @@ public class WorkflowProvider implements IWorkflowProvider
      * @param locale the locale
      * @return the default model
      */
-    private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
-            HttpServletRequest request, Locale locale )
+    private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType,
+        int nIdWorkflow, HttpServletRequest request, Locale locale )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
                 strResourceType, nIdWorkflow );
@@ -660,8 +662,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         model.put( MARK_HISTORY_INFORMATION_LIST, listResourceHistoryTaskInformation );
         model.put( MARK_ADMIN_AVATAR, PluginService.isPluginEnable( "adminavatar" ) );
-        
+
         return model;
     }
-    
 }
