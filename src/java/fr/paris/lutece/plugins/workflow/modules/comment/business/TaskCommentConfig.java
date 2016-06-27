@@ -45,6 +45,7 @@ public class TaskCommentConfig extends TaskConfig
 {
     private String _strTitle;
     private boolean _bMandatory;
+    private boolean _bRichText;
 
     /**
      * @return true if the comment is mandatory, false otherwise
@@ -76,5 +77,21 @@ public class TaskCommentConfig extends TaskConfig
     public void setTitle( String strTitle )
     {
         _strTitle = strTitle;
+    }
+
+    /**
+     * @return the _bRichText
+     */
+    public boolean isRichText(  )
+    {
+        return _bRichText;
+    }
+
+    /**
+     * @param bRichText the bRichText to set
+     */
+    public void setRichText( boolean bRichText )
+    {
+        this._bRichText = bRichText;
     }
 }

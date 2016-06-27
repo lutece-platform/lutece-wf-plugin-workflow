@@ -146,6 +146,7 @@ CREATE TABLE workflow_task_comment_config
 	id_task INT DEFAULT 0 NOT NULL,
 	title VARCHAR(255) DEFAULT NULL, 
 	is_mandatory SMALLINT DEFAULT 0,
+	is_richtext SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_task)
 );
 
