@@ -81,8 +81,8 @@ public class CommentTaskComponent extends AbstractTaskComponent
     private static final String MARK_TASK = "task";
     private static final String MARK_CONFIG = "config";
     private static final String MARK_COMMENT_VALUE = "comment_value";
-    public static final String MARK_WEBAPP_URL = "webapp_url";
-    public static final String MARK_LOCALE = "locale";
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_LOCALE = "locale";
     private static final String MARK_HAS_PERMISSION_DELETE = "has_permission_delete";
     private static final String MARK_IS_OWNER = "is_owner";
 
