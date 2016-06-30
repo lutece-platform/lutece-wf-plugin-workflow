@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.comment.service;
 
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -79,4 +80,12 @@ public interface ICommentValueService
      * @return the Config Object
      */
     CommentValue findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin );
+
+    /**
+     * Tests whether the specified user is the owner of the comment
+     * @param nIdHistory the history id used to retrieve the comment
+     * @param adminUser the user
+     * @return {@code true} if the user is the owner, {@code false} otherwise
+     */
+    boolean isOwner( int nIdHistory, AdminUser adminUser );
 }

@@ -35,13 +35,16 @@ package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
+import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -80,6 +83,8 @@ public class CommentTaskComponent extends AbstractTaskComponent
     private static final String MARK_COMMENT_VALUE = "comment_value";
     public static final String MARK_WEBAPP_URL = "webapp_url";
     public static final String MARK_LOCALE = "locale";
+    private static final String MARK_HAS_PERMISSION_DELETE = "has_permission_delete";
+    private static final String MARK_IS_OWNER = "is_owner";
 
     // PARAMETERS
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";
@@ -177,10 +182,15 @@ public class CommentTaskComponent extends AbstractTaskComponent
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        AdminUser userConnected = AdminUserService.getAdminUser( request );
+
         model.put( MARK_ID_HISTORY, nIdHistory );
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
+        model.put( MARK_HAS_PERMISSION_DELETE,
+            RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected ) );
+        model.put( MARK_IS_OWNER, _commentValueService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );
 

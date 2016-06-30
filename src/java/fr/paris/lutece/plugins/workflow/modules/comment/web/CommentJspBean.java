@@ -33,12 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
+import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
+import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.util.url.UrlItem;
@@ -92,6 +97,11 @@ public class CommentJspBean extends MVCAdminJspBean
     public String getConfirmRemoveComment( HttpServletRequest request )
         throws AccessDeniedException, UnsupportedEncodingException
     {
+        if ( !canDeleteComment( request ) )
+        {
+            throw new AccessDeniedException( "The connected user is not allowed to delete this comment" );
+        }
+
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
@@ -118,6 +128,11 @@ public class CommentJspBean extends MVCAdminJspBean
     public String doRemoveComment( HttpServletRequest request )
         throws AccessDeniedException, UnsupportedEncodingException
     {
+        if ( !canDeleteComment( request ) )
+        {
+            throw new AccessDeniedException( "The connected user is not allowed to delete this comment" );
+        }
+
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         int nIdHistory = WorkflowUtils.convertStringToInt( strIdHistory );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
@@ -126,5 +141,28 @@ public class CommentJspBean extends MVCAdminJspBean
         _commentValueService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
 
         return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
+    }
+
+    /**
+     * Tests whether the comment can be delete or not
+     * @param request the request
+     * @return {@code true} if the comment can be deleted, {@code false} otherwise
+     */
+    private boolean canDeleteComment( HttpServletRequest request )
+    {
+        String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
+        int nIdHistory = WorkflowUtils.convertStringToInt( strIdHistory );
+        String strIdTask = request.getParameter( PARAMETER_ID_TASK );
+        int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
+        AdminUser userConnected = AdminUserService.getAdminUser( request );
+
+        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, nIdTask,
+                WorkflowUtils.getPlugin(  ) );
+
+        boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue,
+                CommentResourceIdService.PERMISSION_DELETE, userConnected );
+        boolean bIsOwner = _commentValueService.isOwner( nIdHistory, userConnected );
+
+        return bHasPermissionDeletion || bIsOwner;
     }
 }

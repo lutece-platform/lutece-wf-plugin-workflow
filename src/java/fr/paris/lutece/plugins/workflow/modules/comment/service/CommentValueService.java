@@ -35,6 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.comment.service;
 
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.ICommentValueDAO;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +59,8 @@ public class CommentValueService implements ICommentValueService
     public static final String BEAN_SERVICE = "workflow.commentValueService";
     @Inject
     private ICommentValueDAO _dao;
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
 
     /**
      * {@inheritDoc}
@@ -93,5 +99,17 @@ public class CommentValueService implements ICommentValueService
     public CommentValue findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin )
     {
         return _dao.load( nIdHistory, nIdTask, plugin );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isOwner( int nIdHistory, AdminUser adminUser )
+    {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+        AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) );
+
+        return userOwner.getUserId(  ) == adminUser.getUserId(  );
     }
 }

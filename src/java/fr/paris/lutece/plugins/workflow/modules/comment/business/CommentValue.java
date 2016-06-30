@@ -33,14 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
+import fr.paris.lutece.portal.service.rbac.RBACResource;
+
 
 /**
  *
  * CommentValue
  *
  */
-public class CommentValue
+public class CommentValue implements RBACResource
 {
+    public static final String COMMENT_RESOURCE_TYPE = "COMMENT";
+    private static final String SEPARATOR = "-";
     private int _nIdResourceHistory;
     private int _nIdTask;
     private String _strValue;
@@ -97,5 +101,20 @@ public class CommentValue
     public void setValue( String value )
     {
         _strValue = value;
+    }
+
+    @Override
+    public String getResourceId(  )
+    {
+        StringBuilder sb = new StringBuilder( _nIdResourceHistory );
+        sb.append( SEPARATOR ).append( _nIdTask );
+
+        return sb.toString(  );
+    }
+
+    @Override
+    public String getResourceTypeCode(  )
+    {
+        return COMMENT_RESOURCE_TYPE;
     }
 }
