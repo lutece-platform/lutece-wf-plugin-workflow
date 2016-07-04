@@ -48,7 +48,7 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_mandatory,is_richtext" +
         " FROM workflow_task_comment_config  WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_comment_config  " +
-        "(id_task,title,is_mandatory,is_richtext)VALUES(?,?,?)";
+        "(id_task,title,is_mandatory,is_richtext)VALUES(?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_comment_config " +
         "SET id_task=?,title=?,is_mandatory=?,is_richtext=? " + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_comment_config  WHERE id_task=? ";
