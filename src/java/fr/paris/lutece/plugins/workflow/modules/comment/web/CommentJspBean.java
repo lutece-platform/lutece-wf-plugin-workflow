@@ -38,6 +38,14 @@ import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceI
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -49,11 +57,14 @@ import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.util.url.UrlItem;
 
 import java.io.UnsupportedEncodingException;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -83,7 +94,10 @@ public class CommentJspBean extends MVCAdminJspBean
 
     // Services
     private ICommentValueService _commentValueService = SpringContextService.getBean( CommentValueService.BEAN_SERVICE );
-
+    private IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
+    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
+    
     /**
      * Gets the confirmation page to remove a comment
      *
@@ -139,6 +153,29 @@ public class CommentJspBean extends MVCAdminJspBean
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
 
         _commentValueService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
+        
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), request.getLocale(  ) );
+
+        Iterator<ITask> iterator = listActionTasks.iterator(  );
+        boolean informationToDisplay = false;
+        while ( iterator.hasNext(  ) )
+        {
+            ITask task = iterator.next(  );
+
+            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
+                    request, request.getLocale(  ), task );
+            if ( !StringUtils.isEmpty( strTaskinformation ) )
+            {
+                informationToDisplay = true;
+                break;
+            }
+        }
+        
+        if ( !informationToDisplay )
+        {
+            _resourceHistoryService.remove( nIdHistory );
+        }
 
         return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
     }
