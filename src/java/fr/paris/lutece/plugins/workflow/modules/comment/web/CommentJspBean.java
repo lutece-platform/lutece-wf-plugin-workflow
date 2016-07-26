@@ -154,6 +154,7 @@ public class CommentJspBean extends MVCAdminJspBean
 
         _commentValueService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
         
+        // Remove history if no other task information to display
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
         List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), request.getLocale(  ) );
 

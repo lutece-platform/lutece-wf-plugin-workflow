@@ -8,7 +8,7 @@
     </div>
     <div class="pull-right">
       <#if has_permission_delete >
-        <a class="btn btn-danger btn-sm" href="#" onclick="removeComment(${id_history}, ${task.id});return false;" title="#i18n{module.workflow.comment.button.remove_comment}">
+        <a class="btn btn-danger btn-xs" href="#" onclick="removeComment(${id_history}, ${task.id});return false;" title="#i18n{module.workflow.comment.button.remove_comment}">
           <i class="fa fa-trash"></i>
         </a>
       </#if>
