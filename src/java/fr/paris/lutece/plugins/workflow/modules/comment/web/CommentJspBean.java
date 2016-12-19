@@ -175,6 +175,11 @@ public class CommentJspBean extends MVCAdminJspBean
         
         if ( !informationToDisplay )
         {
+        	// Does the action resource should really be deleted if no information is displayed in history ?
+        	for( ITask actionTask : listActionTasks )
+        	{
+        		actionTask.doRemoveTaskInformation( nIdHistory );
+        	}
             _resourceHistoryService.remove( nIdHistory );
         }
 
