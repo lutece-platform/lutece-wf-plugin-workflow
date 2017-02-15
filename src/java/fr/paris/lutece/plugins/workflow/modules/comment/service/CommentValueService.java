@@ -45,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * CommentValueService
@@ -108,8 +107,8 @@ public class CommentValueService implements ICommentValueService
     public boolean isOwner( int nIdHistory, AdminUser adminUser )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) );
+        AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) );
 
-        return userOwner.getUserId(  ) == adminUser.getUserId(  );
+        return ( ( userOwner != null ) && ( userOwner.getUserId( ) == adminUser.getUserId( ) ) );
     }
 }
