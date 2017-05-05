@@ -79,9 +79,9 @@ CREATE INDEX action_id_icon_fk ON workflow_action(id_icon);
 CREATE TABLE workflow_resource_workflow
 (
 	id_resource INT DEFAULT 0 NOT NULL,
-	resource_type VARCHAR(255) DEFAULT NULL,
+	resource_type VARCHAR(255) NOT NULL,
 	id_state INT DEFAULT NULL,
-	id_workflow INT DEFAULT NULL,
+	id_workflow INT NOT NULL,
 	id_external_parent INT DEFAULT NULL,
 	is_associated_workgroups SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_resource, resource_type, id_workflow)
@@ -156,7 +156,7 @@ CREATE TABLE workflow_task_comment_config
 CREATE TABLE workflow_task_comment_value
 (
 	id_history INT DEFAULT 0 NOT NULL,
-	id_task INT DEFAULT NULL,
+	id_task INT NOT NULL,
 	comment_value LONG VARCHAR DEFAULT NULL,
 	PRIMARY KEY (id_history, id_task)
 );
@@ -198,7 +198,7 @@ CREATE TABLE workflow_task_assignment_cf
 CREATE TABLE workflow_workgroup_cf
 (
 	id_task INT DEFAULT 0 NOT NULL,
-	workgroup_key VARCHAR(255) DEFAULT NULL,
+	workgroup_key VARCHAR(255) NOT NULL,
 	id_mailing_list INT DEFAULT NULL,	
 	PRIMARY KEY (id_task, workgroup_key)
 );
@@ -209,8 +209,8 @@ CREATE TABLE workflow_workgroup_cf
 CREATE TABLE workflow_assignment_history
 (
 	id_history INT DEFAULT 0 NOT NULL,
-	id_task INT DEFAULT NULL,
-	workgroup_key VARCHAR(255) DEFAULT NULL,
+	id_task INT NOT NULL,
+	workgroup_key VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id_history, id_task, workgroup_key)
 );
 
