@@ -2828,7 +2828,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean {
 		int nIdWorkflow = WorkflowUtils.convertStringToInt(strIdWorkflow);
 		List<Action> listActionsOfWorkflow = null;
 		List<ITask> listLinkedTasks = null;
-		Map<String, Object> colTasks;
 		ITaskConfig taskConfig = null;
 		Workflow workflowExport = _workflowService
 				.findByPrimaryKey(nIdWorkflow);
@@ -3016,7 +3015,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean {
 		Map<Integer, Integer> mapAction = new HashMap<>();
 		Map<Integer, String> mapConfig = new HashMap<>();
 		Map<Integer, Integer> mapTask = new HashMap<>();
-		Map<Integer, Integer> mapPrequi = new HashMap<>();
 
 		ObjectMapper mapper = new ObjectMapper();
 		JSONObject jsstate;
