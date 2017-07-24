@@ -61,7 +61,6 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
 
-
 /**
  *
  * CommentTaskComponent
@@ -98,12 +97,12 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Inject
     private ICommentValueService _commentValueService;
     private List<ContentPostProcessor> _listContentPostProcessors;
-    
+
     public CommentTaskComponent( )
     {
         super( );
     }
-    
+
     public CommentTaskComponent( List<ContentPostProcessor> listContentPostProcessors )
     {
         this( );
@@ -114,31 +113,29 @@ public class CommentTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         String strError = WorkflowUtils.EMPTY_STRING;
-        String strCommentValue = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId(  ) );
-        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String strCommentValue = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
+        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_COMMENT,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_COMMENT, AdminMessage.TYPE_STOP );
         }
 
-        if ( config.isMandatory(  ) &&
-                ( ( strCommentValue == null ) || strCommentValue.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) ) )
+        if ( config.isMandatory( ) && ( ( strCommentValue == null ) || strCommentValue.trim( ).equals( WorkflowUtils.EMPTY_STRING ) ) )
         {
-            strError = config.getTitle(  );
+            strError = config.getTitle( );
         }
 
         if ( StringUtils.isNotBlank( strError ) )
         {
-            Object[] tabRequiredFields = { strError };
+            Object [ ] tabRequiredFields = {
+                strError
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         return null;
@@ -150,38 +147,37 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId(  ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, strComment );
 
-        if ( config.isRichText(  ) )
+        if ( config.isRichText( ) )
         {
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-            model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
+            model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -190,9 +186,8 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
-       
+        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
+
         if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
         {
             if ( _listContentPostProcessors != null && !_listContentPostProcessors.isEmpty( ) )
@@ -205,22 +200,21 @@ public class CommentTaskComponent extends AbstractTaskComponent
                 commentValue.setValue( strComment );
             }
         }
-        
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
         model.put( MARK_ID_HISTORY, nIdHistory );
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
-        model.put( MARK_HAS_PERMISSION_DELETE,
-            RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected ) );
         model.put( MARK_IS_OWNER, _commentValueService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -229,19 +223,18 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        StringBuffer strXml = new StringBuffer(  );
-        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        StringBuffer strXml = new StringBuffer( );
+        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
         if ( commentValue != null )
         {
-            XmlUtil.addElementHtml( strXml, TAG_COMMENT, commentValue.getValue(  ) );
+            XmlUtil.addElementHtml( strXml, TAG_COMMENT, commentValue.getValue( ) );
         }
         else
         {
             XmlUtil.addEmptyElement( strXml, TAG_COMMENT, null );
         }
 
-        return strXml.toString(  );
+        return strXml.toString( );
     }
 }
