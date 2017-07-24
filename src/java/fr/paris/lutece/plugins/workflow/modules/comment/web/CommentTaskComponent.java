@@ -33,6 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
@@ -42,6 +52,7 @@ import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.content.ContentPostProcessor;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
@@ -49,16 +60,6 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -96,6 +97,18 @@ public class CommentTaskComponent extends AbstractTaskComponent
     // SERVICES
     @Inject
     private ICommentValueService _commentValueService;
+    private List<ContentPostProcessor> _listContentPostProcessors;
+    
+    public CommentTaskComponent( )
+    {
+        super( );
+    }
+    
+    public CommentTaskComponent( List<ContentPostProcessor> listContentPostProcessors )
+    {
+        this( );
+        _listContentPostProcessors = listContentPostProcessors;
+    }
 
     /**
      * {@inheritDoc}
@@ -179,7 +192,20 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId(  ),
                 WorkflowUtils.getPlugin(  ) );
-
+       
+        if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
+        {
+            if ( _listContentPostProcessors != null && !_listContentPostProcessors.isEmpty( ) )
+            {
+                String strComment = commentValue.getValue( );
+                for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
+                {
+                    strComment = contentPostProcessor.process( request, strComment );
+                }
+                commentValue.setValue( strComment );
+            }
+        }
+        
         Map<String, Object> model = new HashMap<String, Object>(  );
         TaskCommentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
