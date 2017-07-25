@@ -82,7 +82,7 @@ public class IconJspBean extends PluginAdminPageJspBean
 
     //	Markers
     private static final String MARK_ICON_LIST = "icon_list";
-    private static final String MARK_ICON = "icon";
+    private static final String MARK_MODIFY_ICON = "modify_icon";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
 
@@ -208,7 +208,7 @@ public class IconJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<String, Object>(  );
 
-        model.put( MARK_ICON, icon );
+        model.put( MARK_MODIFY_ICON, icon );
         setPageTitleProperty( PROPERTY_MODIFY_ICON );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ICON, getLocale(  ), model );
