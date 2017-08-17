@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * TaskCommentConfig
@@ -45,12 +44,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_mandatory,is_richtext" +
-        " FROM workflow_task_comment_config  WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_comment_config  " +
-        "(id_task,title,is_mandatory,is_richtext)VALUES(?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_comment_config " +
-        "SET id_task=?,title=?,is_mandatory=?,is_richtext=? " + " WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_mandatory,is_richtext"
+            + " FROM workflow_task_comment_config  WHERE id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_comment_config  " + "(id_task,title,is_mandatory,is_richtext)VALUES(?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_comment_config " + "SET id_task=?,title=?,is_mandatory=?,is_richtext=? "
+            + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_comment_config  WHERE id_task=? ";
 
     /**
@@ -59,17 +57,17 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public synchronized void insert( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
-        daoUtil.setBoolean( ++nPos, config.isRichText(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
+        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
+        daoUtil.setBoolean( ++nPos, config.isRichText( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -78,18 +76,18 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public void store( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
-        daoUtil.setBoolean( ++nPos, config.isRichText(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
+        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
+        daoUtil.setBoolean( ++nPos, config.isRichText( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -99,24 +97,24 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     public TaskCommentConfig load( int nIdState )
     {
         TaskCommentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdState );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nPos = 0;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            config = new TaskCommentConfig(  );
+            config = new TaskCommentConfig( );
             config.setIdTask( daoUtil.getInt( ++nPos ) );
             config.setTitle( daoUtil.getString( ++nPos ) );
             config.setMandatory( daoUtil.getBoolean( ++nPos ) );
             config.setRichText( daoUtil.getBoolean( ++nPos ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return config;
     }
@@ -127,10 +125,10 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdState );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

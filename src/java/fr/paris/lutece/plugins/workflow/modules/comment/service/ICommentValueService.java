@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  *
  * ICommentValueService
@@ -48,43 +47,60 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ICommentValueService
 {
     /**
-    * Creation of an instance of comment value
-    * @param commentValue The instance of comment value which contains the informations to store
-    * @param plugin the plugin
-    */
+     * Creation of an instance of comment value
+     * 
+     * @param commentValue
+     *            The instance of comment value which contains the informations to store
+     * @param plugin
+     *            the plugin
+     */
     @Transactional( "workflow.transactionManager" )
     void create( CommentValue commentValue, Plugin plugin );
 
     /**
      * Remove comment value by history
-     * @param nIdHistory the history key
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdHistory
+     *            the history key
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove comment value by task
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**
      * Load the CommentValue Object
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return the Config Object
      */
     CommentValue findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Tests whether the specified user is the owner of the comment
-     * @param nIdHistory the history id used to retrieve the comment
-     * @param adminUser the user
+     * 
+     * @param nIdHistory
+     *            the history id used to retrieve the comment
+     * @param adminUser
+     *            the user
      * @return {@code true} if the user is the owner, {@code false} otherwise
      */
     boolean isOwner( int nIdHistory, AdminUser adminUser );

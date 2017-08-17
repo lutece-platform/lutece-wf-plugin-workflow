@@ -66,7 +66,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskAssignment
@@ -103,7 +102,7 @@ public class TaskAssignment extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
         // Do nothing
     }
@@ -114,40 +113,38 @@ public class TaskAssignment extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String[] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + this.getId(  ) );
+        String [ ] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + this.getId( ) );
         AdminUser admin = AdminUserService.getAdminUser( request );
-        List<String> listWorkgroup = new ArrayList<String>(  );
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ) );
+        List<String> listWorkgroup = new ArrayList<String>( );
+        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId( ) );
 
         for ( int i = 0; i < tabWorkgroups.length; i++ )
         {
-            listWorkgroup.add( tabWorkgroups[i] );
+            listWorkgroup.add( tabWorkgroups [i] );
 
-            //add history 
-            AssignmentHistory history = new AssignmentHistory(  );
+            // add history
+            AssignmentHistory history = new AssignmentHistory( );
             history.setIdResourceHistory( nIdResourceHistory );
-            history.setIdTask( this.getId(  ) );
-            history.setWorkgroup( tabWorkgroups[i] );
-            _assignmentHistoryService.create( history, WorkflowUtils.getPlugin(  ) );
+            history.setIdTask( this.getId( ) );
+            history.setWorkgroup( tabWorkgroups [i] );
+            _assignmentHistoryService.create( history, WorkflowUtils.getPlugin( ) );
 
-            if ( config.isNotify(  ) )
+            if ( config.isNotify( ) )
             {
-                WorkgroupConfig workgroupConfig = _workgroupConfigService.findByPrimaryKey( this.getId(  ),
-                        tabWorkgroups[i], WorkflowUtils.getPlugin(  ) );
+                WorkgroupConfig workgroupConfig = _workgroupConfigService.findByPrimaryKey( this.getId( ), tabWorkgroups [i], WorkflowUtils.getPlugin( ) );
 
-                if ( ( workgroupConfig != null ) &&
-                        ( workgroupConfig.getIdMailingList(  ) != WorkflowUtils.CONSTANT_ID_NULL ) )
+                if ( ( workgroupConfig != null ) && ( workgroupConfig.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL ) )
                 {
-                    Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList(  ) );
+                    Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList( ) );
 
-                    String strSenderEmail = MailService.getNoReplyEmail(  );
+                    String strSenderEmail = MailService.getNoReplyEmail( );
 
-                    Map<String, Object> model = new HashMap<String, Object>(  );
-                    model.put( MARK_MESSAGE, config.getMessage(  ) );
+                    Map<String, Object> model = new HashMap<String, Object>( );
+                    model.put( MARK_MESSAGE, config.getMessage( ) );
 
                     HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
 
-                    if ( config.isUseUserName(  ) )
+                    if ( config.isUseUserName( ) )
                     {
                         String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
 
@@ -155,8 +152,7 @@ public class TaskAssignment extends Task
                         for ( Recipient recipient : listRecipients )
                         {
                             // Build the mail message
-                            MailService.sendMailHtml( recipient.getEmail(  ), strSenderName, strSenderEmail,
-                                config.getSubject(  ), t.getHtml(  ) );
+                            MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, config.getSubject( ), t.getHtml( ) );
                         }
                     }
                     else
@@ -164,24 +160,21 @@ public class TaskAssignment extends Task
                         for ( Recipient recipient : listRecipients )
                         {
                             // Build the mail message
-                            MailService.sendMailHtml( recipient.getEmail(  ),
-                                admin.getFirstName(  ) + " " + admin.getLastName(  ), admin.getEmail(  ),
-                                config.getSubject(  ), t.getHtml(  ) );
+                            MailService.sendMailHtml( recipient.getEmail( ), admin.getFirstName( ) + " " + admin.getLastName( ), admin.getEmail( ),
+                                    config.getSubject( ), t.getHtml( ) );
                         }
                     }
                 }
             }
         }
 
-        IResourceHistoryService resourceHistoryService = SpringContextService.getBean( 
-                "workflow.resourceHistoryService" );
-        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( 
-                "workflow.resourceWorkflowService" );
+        IResourceHistoryService resourceHistoryService = SpringContextService.getBean( "workflow.resourceHistoryService" );
+        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( "workflow.resourceWorkflowService" );
 
-        //update resource workflow 
+        // update resource workflow
         ResourceHistory resourceHistory = resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        ResourceWorkflow resourceWorkflow = resourceWorkflowService.findByPrimaryKey( resourceHistory.getIdResource(  ),
-                resourceHistory.getResourceType(  ), resourceHistory.getWorkflow(  ).getId(  ) );
+        ResourceWorkflow resourceWorkflow = resourceWorkflowService.findByPrimaryKey( resourceHistory.getIdResource( ), resourceHistory.getResourceType( ),
+                resourceHistory.getWorkflow( ).getId( ) );
         resourceWorkflow.setWorkgroups( listWorkgroup );
         resourceWorkflowService.update( resourceWorkflow );
     }
@@ -190,13 +183,13 @@ public class TaskAssignment extends Task
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        //remove config
-        _taskAssignmentConfigService.remove( this.getId(  ) );
-        //remove task information
-        _assignmentHistoryService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
-        _workgroupConfigService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        // remove config
+        _taskAssignmentConfigService.remove( this.getId( ) );
+        // remove task information
+        _assignmentHistoryService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
+        _workgroupConfigService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -205,7 +198,7 @@ public class TaskAssignment extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        _assignmentHistoryService.removeByHistory( nIdHistory, this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _assignmentHistoryService.removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -214,11 +207,11 @@ public class TaskAssignment extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            return config.getTitle(  );
+            return config.getTitle( );
         }
 
         return WorkflowUtils.EMPTY_STRING;
@@ -231,12 +224,12 @@ public class TaskAssignment extends Task
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         Map<String, String> mapEntriesForm = null;
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            mapEntriesForm = new HashMap<String, String>(  );
-            mapEntriesForm.put( PARAMETER_WORKGROUPS + "_" + this.getId(  ), config.getTitle(  ) );
+            mapEntriesForm = new HashMap<String, String>( );
+            mapEntriesForm.put( PARAMETER_WORKGROUPS + "_" + this.getId( ), config.getTitle( ) );
         }
 
         return mapEntriesForm;

@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 
-
 /**
  *
  * AssignmentHistory
@@ -49,14 +48,16 @@ public class AssignmentHistory
      *
      * @return the resource history id
      */
-    public int getIdResourceHistory(  )
+    public int getIdResourceHistory( )
     {
         return _nIdResourceHistory;
     }
 
     /**
      * the resource history id
-     * @param id the resource history id
+     * 
+     * @param id
+     *            the resource history id
      */
     public void setIdResourceHistory( int id )
     {
@@ -67,14 +68,16 @@ public class AssignmentHistory
      *
      * @return the task id
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      * the task id
-     * @param idTask the task id
+     * 
+     * @param idTask
+     *            the task id
      */
     public void setIdTask( int idTask )
     {
@@ -82,17 +85,19 @@ public class AssignmentHistory
     }
 
     /**
-    *
-    * @return the work group associate to the resource
-    */
-    public String getWorkgroup(  )
+     *
+     * @return the work group associate to the resource
+     */
+    public String getWorkgroup( )
     {
         return _strWorkgroupKey;
     }
 
     /**
-     * set  the work group associate to the resource
-     * @param workGroup  the work group associate to the resource
+     * set the work group associate to the resource
+     * 
+     * @param workGroup
+     *            the work group associate to the resource
      */
     public void setWorkgroup( String workGroup )
     {

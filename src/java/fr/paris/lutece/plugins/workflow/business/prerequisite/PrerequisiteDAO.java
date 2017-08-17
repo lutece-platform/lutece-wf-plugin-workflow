@@ -40,7 +40,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * DAO for prerequisite
  */
@@ -55,22 +54,24 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
 
     /**
      * Get a new primary key
-     * @param plugin The plugin
+     * 
+     * @param plugin
+     *            The plugin
      * @return The new primary key
      */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PRIMARY_KEY, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nRes = 1;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             nRes = daoUtil.getInt( 1 ) + 1;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return nRes;
     }
@@ -83,19 +84,19 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
         daoUtil.setInt( 1, nIdPrerequisite );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         Prerequisite prerequisite = null;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            prerequisite = new Prerequisite(  );
+            prerequisite = new Prerequisite( );
             prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
             prerequisite.setIdAction( daoUtil.getInt( 2 ) );
             prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return prerequisite;
     }
@@ -109,11 +110,11 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
         prerequisite.setIdPrerequisite( newPrimaryKey( plugin ) );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( 1, prerequisite.getIdPrerequisite(  ) );
-        daoUtil.setInt( 2, prerequisite.getIdAction(  ) );
-        daoUtil.setString( 3, prerequisite.getPrerequisiteType(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( 1, prerequisite.getIdPrerequisite( ) );
+        daoUtil.setInt( 2, prerequisite.getIdAction( ) );
+        daoUtil.setString( 3, prerequisite.getPrerequisiteType( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -123,11 +124,11 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
     public void update( Prerequisite prerequisite, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setInt( 1, prerequisite.getIdAction(  ) );
-        daoUtil.setString( 2, prerequisite.getPrerequisiteType(  ) );
-        daoUtil.setInt( 3, prerequisite.getIdPrerequisite(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( 1, prerequisite.getIdAction( ) );
+        daoUtil.setString( 2, prerequisite.getPrerequisiteType( ) );
+        daoUtil.setInt( 3, prerequisite.getIdPrerequisite( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -138,8 +139,8 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nIdPrerequisite );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -150,20 +151,20 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_ACTION, plugin );
         daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>(  );
+        List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            Prerequisite prerequisite = new Prerequisite(  );
+            Prerequisite prerequisite = new Prerequisite( );
             prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
             prerequisite.setIdAction( daoUtil.getInt( 2 ) );
             prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
             listPrerequisites.add( prerequisite );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listPrerequisites;
     }

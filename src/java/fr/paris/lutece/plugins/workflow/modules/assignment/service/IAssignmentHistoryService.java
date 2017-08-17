@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 /**
  *
  * IAssignmentHistoryService
@@ -49,35 +48,49 @@ import java.util.List;
 public interface IAssignmentHistoryService
 {
     /**
-    * Creation of an instance of assignmentHistory
-    * @param assignmentHistory the history of the assignmennt
-    * @param plugin the plugin
-    */
+     * Creation of an instance of assignmentHistory
+     * 
+     * @param assignmentHistory
+     *            the history of the assignmennt
+     * @param plugin
+     *            the plugin
+     */
     @Transactional( "workflow.transactionManager" )
     void create( AssignmentHistory assignmentHistory, Plugin plugin );
 
     /**
      * Remove all assignment associated width the history specified in parameter
-     * @param nIdHistory the history key
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdHistory
+     *            the history key
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove all assignment associated width the task specified in parameter
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**
      * Return the list of assignment associated width the history specified in parameter
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return the Config Object
      */
     List<AssignmentHistory> getListByHistory( int nIdHistory, int nIdTask, Plugin plugin );

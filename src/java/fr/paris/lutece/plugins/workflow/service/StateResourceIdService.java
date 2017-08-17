@@ -50,10 +50,9 @@ import fr.paris.lutece.util.ReferenceList;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  *
- * class  StateResourceIdService
+ * class StateResourceIdService
  *
  */
 public class StateResourceIdService extends ResourceIdService
@@ -70,7 +69,7 @@ public class StateResourceIdService extends ResourceIdService
     private static final String PROPERTY_LABEL_VIEW_ALL_WORKGROUP = "workflow.permission.label.view_all_workgroup";
 
     /** Creates a new instance of DocumentTypeResourceIdService */
-    public StateResourceIdService(  )
+    public StateResourceIdService( )
     {
         setPluginName( WorkflowPlugin.PLUGIN_NAME );
     }
@@ -79,20 +78,20 @@ public class StateResourceIdService extends ResourceIdService
      * {@inheritDoc}
      */
     @Override
-    public void register(  )
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( StateResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( StateResourceIdService.class.getName( ) );
         rt.setPluginName( WorkflowPlugin.PLUGIN_NAME );
         rt.setResourceTypeKey( State.RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_VIEW );
         p.setPermissionTitleKey( PROPERTY_LABEL_VIEW );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_VIEW_ALL_WORKGROUP );
         p.setPermissionTitleKey( PROPERTY_LABEL_VIEW_ALL_WORKGROUP );
         rt.registerPermission( p );
@@ -108,14 +107,14 @@ public class StateResourceIdService extends ResourceIdService
     {
         IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
         IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-        List<State> listState = stateService.getListStateByFilter( new StateFilter(  ) );
+        List<State> listState = stateService.getListStateByFilter( new StateFilter( ) );
 
-        ReferenceList reflistState = new ReferenceList(  );
+        ReferenceList reflistState = new ReferenceList( );
 
         for ( State state : listState )
         {
-            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow(  ).getId(  ) ) );
-            reflistState.addItem( state.getId(  ), state.getWorkflow(  ).getName(  ) + "/" + state.getName(  ) );
+            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ) );
+            reflistState.addItem( state.getId( ), state.getWorkflow( ).getName( ) + "/" + state.getName( ) );
         }
 
         return reflistState;
@@ -134,9 +133,9 @@ public class StateResourceIdService extends ResourceIdService
 
         if ( state != null )
         {
-            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow(  ).getId(  ) ) );
+            state.setWorkflow( workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ) );
         }
 
-        return ( state != null ) ? ( state.getWorkflow(  ).getName(  ) + "/" + state.getName(  ) ) : null;
+        return ( state != null ) ? ( state.getWorkflow( ).getName( ) + "/" + state.getName( ) ) : null;
     }
 }

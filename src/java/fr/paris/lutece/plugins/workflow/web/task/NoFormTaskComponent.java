@@ -39,11 +39,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
- * This component implements task that does not require
- * any task form.
+ * This component implements task that does not require any task form.
  *
  */
 public abstract class NoFormTaskComponent extends AbstractTaskComponent
@@ -52,8 +50,7 @@ public abstract class NoFormTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }
@@ -62,8 +59,7 @@ public abstract class NoFormTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }

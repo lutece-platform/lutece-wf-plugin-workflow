@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  * Implementation of the prerequisite management service
  */
@@ -68,7 +67,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
      * {@inheritDoc}
      */
     @Override
-    public List<IAutomaticActionPrerequisiteService> getPrerequisiteServiceList(  )
+    public List<IAutomaticActionPrerequisiteService> getPrerequisiteServiceList( )
     {
         return SpringContextService.getBeansOfType( IAutomaticActionPrerequisiteService.class );
     }
@@ -79,9 +78,9 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     @Override
     public IAutomaticActionPrerequisiteService getPrerequisiteService( String strPrerequisiteType )
     {
-        for ( IAutomaticActionPrerequisiteService prerequisiteService : getPrerequisiteServiceList(  ) )
+        for ( IAutomaticActionPrerequisiteService prerequisiteService : getPrerequisiteServiceList( ) )
         {
-            if ( StringUtils.equals( strPrerequisiteType, prerequisiteService.getPrerequisiteType(  ) ) )
+            if ( StringUtils.equals( strPrerequisiteType, prerequisiteService.getPrerequisiteType( ) ) )
             {
                 return prerequisiteService;
             }
@@ -96,26 +95,30 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     @Override
     public List<Prerequisite> getListPrerequisite( int nIdAction )
     {
-        return getPrerequisiteDao(  ).findByIdAction( nIdAction, getPlugin(  ) );
+        return getPrerequisiteDao( ).findByIdAction( nIdAction, getPlugin( ) );
     }
 
     /**
      * Get a prerequisite by its primary key
-     * @param nIdPrerequisite the id of the prerequisite
+     * 
+     * @param nIdPrerequisite
+     *            the id of the prerequisite
      * @return The prerequisite, or null if no prerequisite was found
      */
     public Prerequisite findPrerequisite( int nIdPrerequisite )
     {
-        return getPrerequisiteDao(  ).findByPrimaryKey( nIdPrerequisite, getPlugin(  ) );
+        return getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
     }
 
     /**
      * Create a prerequisite configuration
-     * @param config The configuration to insert
-     * @param prerequisiteService the prerequisite service
+     * 
+     * @param config
+     *            The configuration to insert
+     * @param prerequisiteService
+     *            the prerequisite service
      */
-    public void createPrerequisiteConfiguration( IPrerequisiteConfig config,
-        IAutomaticActionPrerequisiteService prerequisiteService )
+    public void createPrerequisiteConfiguration( IPrerequisiteConfig config, IAutomaticActionPrerequisiteService prerequisiteService )
     {
         IPrerequisiteConfigDAO configDAO = getConfigurationDAO( prerequisiteService );
 
@@ -127,11 +130,13 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Update a prerequisite configuration
-     * @param config The configuration to insert
-     * @param prerequisiteService the prerequisite service
+     * 
+     * @param config
+     *            The configuration to insert
+     * @param prerequisiteService
+     *            the prerequisite service
      */
-    public void updatePrerequisiteConfiguration( IPrerequisiteConfig config,
-        IAutomaticActionPrerequisiteService prerequisiteService )
+    public void updatePrerequisiteConfiguration( IPrerequisiteConfig config, IAutomaticActionPrerequisiteService prerequisiteService )
     {
         IPrerequisiteConfigDAO configDAO = getConfigurationDAO( prerequisiteService );
 
@@ -145,8 +150,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
      * {@inheritDoc}
      */
     @Override
-    public IPrerequisiteConfig getPrerequisiteConfiguration( int nIdPrerequisite,
-        IAutomaticActionPrerequisiteService prerequisiteService )
+    public IPrerequisiteConfig getPrerequisiteConfiguration( int nIdPrerequisite, IAutomaticActionPrerequisiteService prerequisiteService )
     {
         IPrerequisiteConfigDAO configDAO = getConfigurationDAO( prerequisiteService );
 
@@ -160,17 +164,18 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Get the list of prerequisites services
-     * @param locale The locale
+     * 
+     * @param locale
+     *            The locale
      * @return The list of prerequisite services
      */
     public ReferenceList getPrerequisiteServiceRefList( Locale locale )
     {
-        ReferenceList refList = new ReferenceList(  );
+        ReferenceList refList = new ReferenceList( );
 
-        for ( IAutomaticActionPrerequisiteService service : getPrerequisiteServiceList(  ) )
+        for ( IAutomaticActionPrerequisiteService service : getPrerequisiteServiceList( ) )
         {
-            refList.addItem( service.getPrerequisiteType(  ),
-                I18nService.getLocalizedString( service.getTitleI18nKey(  ), locale ) );
+            refList.addItem( service.getPrerequisiteType( ), I18nService.getLocalizedString( service.getTitleI18nKey( ), locale ) );
         }
 
         return refList;
@@ -178,34 +183,40 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Create a new prerequisite
-     * @param prerequisite the prerequisite to create
+     * 
+     * @param prerequisite
+     *            the prerequisite to create
      */
     public void createPrerequisite( Prerequisite prerequisite )
     {
-        getPrerequisiteDao(  ).create( prerequisite, getPlugin(  ) );
+        getPrerequisiteDao( ).create( prerequisite, getPlugin( ) );
     }
 
     /**
      * Modify a prerequisite
-     * @param prerequisite the prerequisite to update
+     * 
+     * @param prerequisite
+     *            the prerequisite to update
      */
     public void modifyPrerequisite( Prerequisite prerequisite )
     {
-        getPrerequisiteDao(  ).update( prerequisite, getPlugin(  ) );
+        getPrerequisiteDao( ).update( prerequisite, getPlugin( ) );
     }
 
     /**
      * Delete a prerequisite and the underlying prerequisite configuration
-     * @param nIdPrerequisite The id of the prerequisite to remove
+     * 
+     * @param nIdPrerequisite
+     *            The id of the prerequisite to remove
      */
     public void deletePrerequisite( int nIdPrerequisite )
     {
-        Prerequisite prerequisite = getPrerequisiteDao(  ).findByPrimaryKey( nIdPrerequisite, getPlugin(  ) );
-        getPrerequisiteDao(  ).remove( nIdPrerequisite, getPlugin(  ) );
+        Prerequisite prerequisite = getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
+        getPrerequisiteDao( ).remove( nIdPrerequisite, getPlugin( ) );
 
-        IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType(  ) );
+        IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
 
-        if ( prerequisiteService.hasConfiguration(  ) )
+        if ( prerequisiteService.hasConfiguration( ) )
         {
             IPrerequisiteConfigDAO dao = getConfigurationDAO( prerequisiteService );
 
@@ -218,9 +229,10 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Get the prerequisite DAO
+     * 
      * @return The prerequisite DAO
      */
-    private IPrerequisiteDAO getPrerequisiteDao(  )
+    private IPrerequisiteDAO getPrerequisiteDao( )
     {
         if ( _dao == null )
         {
@@ -232,9 +244,10 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Get the workflow plugin
+     * 
      * @return The workflow plugin
      */
-    private Plugin getPlugin(  )
+    private Plugin getPlugin( )
     {
         if ( _plugin == null )
         {
@@ -246,12 +259,14 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
     /**
      * Get the configuration DAO of a prerequisite service
-     * @param prerequisiteService the service
+     * 
+     * @param prerequisiteService
+     *            the service
      * @return The DAO, or null if no DAO was found
      */
     private IPrerequisiteConfigDAO getConfigurationDAO( IAutomaticActionPrerequisiteService prerequisiteService )
     {
-        String strDaoBeanName = prerequisiteService.getConfigurationDaoBeanName(  );
+        String strDaoBeanName = prerequisiteService.getConfigurationDaoBeanName( );
 
         if ( StringUtils.isEmpty( strDaoBeanName ) )
         {

@@ -37,42 +37,54 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
- *  IWorkgroupConfigDAO
+ * IWorkgroupConfigDAO
  *
  */
 public interface IWorkgroupConfigDAO
 {
     /**
      * load a workgroup by primarey key
-     * @param nIdTask the task id
-     * @param strWorkgroupKey the workgroup key
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param strWorkgroupKey
+     *            the workgroup key
+     * @param plugin
+     *            the plugin
      * @return a workgroupConfig object
      */
     WorkgroupConfig load( int nIdTask, String strWorkgroupKey, Plugin plugin );
 
     /**
-    * Select the workgroups associated to the configuration
-    * @param nIdTask the task id
-    * @param plugin the plugin
-    * @return a list of EntityOwner Object
-    */
+     * Select the workgroups associated to the configuration
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
+     * @return a list of EntityOwner Object
+     */
     List<WorkgroupConfig> selectByConfig( int nIdTask, Plugin plugin );
 
     /**
-    * Delete all workgroups associated to the configuration
-    * @param nIdTask the task id
-    * @param plugin the plugin
-    */
+     * Delete all workgroups associated to the configuration
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
+     */
     void deleteByTask( int nIdTask, Plugin plugin );
 
     /**
-    * Insert a new workgroup
-    * @param workgroupConf workgroupConfig Object
-    * @param plugin the plugin
-    */
+     * Insert a new workgroup
+     * 
+     * @param workgroupConf
+     *            workgroupConfig Object
+     * @param plugin
+     *            the plugin
+     */
     void insert( WorkgroupConfig workgroupConf, Plugin plugin );
 }

@@ -45,7 +45,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
 
-
 /**
  * This class manages permissions for Comment
  *
@@ -59,7 +58,7 @@ public class CommentResourceIdService extends ResourceIdService
     /**
      * Constructor
      */
-    public CommentResourceIdService(  )
+    public CommentResourceIdService( )
     {
         setPluginName( WorkflowPlugin.PLUGIN_NAME );
     }
@@ -67,15 +66,15 @@ public class CommentResourceIdService extends ResourceIdService
     /**
      * Initializes the service
      */
-    public void register(  )
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( CommentResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( CommentResourceIdService.class.getName( ) );
         rt.setPluginName( WorkflowPlugin.PLUGIN_NAME );
         rt.setResourceTypeKey( CommentValue.COMMENT_RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_DELETE );
         p.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
         rt.registerPermission( p );
@@ -85,7 +84,9 @@ public class CommentResourceIdService extends ResourceIdService
 
     /**
      * Returns a list of resource ids
-     * @param locale The current locale
+     * 
+     * @param locale
+     *            The current locale
      * @return A list of resource ids
      */
     public ReferenceList getResourceIdList( Locale locale )

@@ -52,7 +52,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
 {
     public static final String PREREQUISITE_TITLE_I18N = "module.workflow.duration.prerequisite_title";
@@ -64,70 +63,68 @@ public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
     @Inject
     private IActionService _actionService;
 
-    public String getPrerequisiteType(  )
+    public String getPrerequisiteType( )
     {
         return PrerequisiteDurationConfig.PREREQUISITE_TYPE;
     }
 
-    public String getTitleI18nKey(  )
+    public String getTitleI18nKey( )
     {
         return PREREQUISITE_TITLE_I18N;
     }
 
-    public boolean hasConfiguration(  )
+    public boolean hasConfiguration( )
     {
         return true;
     }
 
-    public IPrerequisiteConfig getEmptyConfiguration(  )
+    public IPrerequisiteConfig getEmptyConfiguration( )
     {
-        return new PrerequisiteDurationConfig(  );
+        return new PrerequisiteDurationConfig( );
     }
 
-    public String getConfigurationDaoBeanName(  )
+    public String getConfigurationDaoBeanName( )
     {
         return CONFIG_DAO_BEAN_NAME;
     }
 
     public String getConfigHtml( IPrerequisiteConfig config, HttpServletRequest request, Locale locale )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DURATION_PREREQUISITE_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean canActionBePerformed( int nIdResource, String strResourceType, IPrerequisiteConfig config,
-        int nIdAction )
+    public boolean canActionBePerformed( int nIdResource, String strResourceType, IPrerequisiteConfig config, int nIdAction )
     {
-        int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon( nIdAction ).getWorkflow(  ).getId(  );
-        ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType,
-                idWorkflow );
+        int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon( nIdAction ).getWorkflow( ).getId( );
+        ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType, idWorkflow );
 
         if ( resourceHistory == null )
         {
-            //The prerequisite is configured on an automatic action on the initial state without AutomaticReflexiveActions,
-            //so we don't have a resourceHistory yet. Since state creation occurs only after a call
-            //to getState (state creation is lazy), it is not very meaningful to have a duration
-            //for the initial state anyway. So don't delay.
+            // The prerequisite is configured on an automatic action on the initial state without AutomaticReflexiveActions,
+            // so we don't have a resourceHistory yet. Since state creation occurs only after a call
+            // to getState (state creation is lazy), it is not very meaningful to have a duration
+            // for the initial state anyway. So don't delay.
             //
-            //Note: If the client forces the state creation by calling getState to have a coherent behavior,
-            //it could also use an extra state and execute an action or use automatic actions, or even use
-            //AutomaticReflexiveAction on the initial state to ensure the resourceHistory is created.
+            // Note: If the client forces the state creation by calling getState to have a coherent behavior,
+            // it could also use an extra state and execute an action or use automatic actions, or even use
+            // AutomaticReflexiveAction on the initial state to ensure the resourceHistory is created.
             return true;
         }
 
-        long configNbMinutes = ( (PrerequisiteDurationConfig) config ).getDuration(  );
+        long configNbMinutes = ( (PrerequisiteDurationConfig) config ).getDuration( );
         long configNbMillis = configNbMinutes * 1000;
-        Timestamp timestampInState = resourceHistory.getCreationDate(  );
-        long nowMillis = System.currentTimeMillis(  );
-        long millisInState = nowMillis - timestampInState.getTime(  );
+        Timestamp timestampInState = resourceHistory.getCreationDate( );
+        long nowMillis = System.currentTimeMillis( );
+        long millisInState = nowMillis - timestampInState.getTime( );
 
         return millisInState >= configNbMillis;
     }

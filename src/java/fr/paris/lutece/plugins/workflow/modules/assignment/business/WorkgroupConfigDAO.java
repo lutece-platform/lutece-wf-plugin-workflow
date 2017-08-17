@@ -40,7 +40,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * TaskAssignmentConfigDAO
@@ -67,18 +66,18 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
         daoUtil.setInt( 1, nIdTask );
         daoUtil.setString( 2, strWorkgroupKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             nPos = 0;
-            workgroupConfig = new WorkgroupConfig(  );
+            workgroupConfig = new WorkgroupConfig( );
             workgroupConfig.setIdTask( nIdTask );
             workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
             workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return workgroupConfig;
     }
@@ -90,19 +89,19 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     public List<WorkgroupConfig> selectByConfig( int nIdTask, Plugin plugin )
     {
         WorkgroupConfig workgroupConfig = null;
-        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>(  );
+        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>( );
         int nPos;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CONFIG, plugin );
 
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             nPos = 0;
-            workgroupConfig = new WorkgroupConfig(  );
+            workgroupConfig = new WorkgroupConfig( );
             workgroupConfig.setIdTask( nIdTask );
             workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
             workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
@@ -110,7 +109,7 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
             listWorkgroupConfig.add( workgroupConfig );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listWorkgroupConfig;
     }
@@ -123,8 +122,8 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_CONFIG, plugin );
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -136,19 +135,19 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
         int nPos = 0;
-        daoUtil.setInt( ++nPos, workgroupConf.getIdTask(  ) );
-        daoUtil.setString( ++nPos, workgroupConf.getWorkgroupKey(  ) );
+        daoUtil.setInt( ++nPos, workgroupConf.getIdTask( ) );
+        daoUtil.setString( ++nPos, workgroupConf.getWorkgroupKey( ) );
 
-        if ( workgroupConf.getIdMailingList(  ) != WorkflowUtils.CONSTANT_ID_NULL )
+        if ( workgroupConf.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL )
         {
-            daoUtil.setInt( ++nPos, workgroupConf.getIdMailingList(  ) );
+            daoUtil.setInt( ++nPos, workgroupConf.getIdMailingList( ) );
         }
         else
         {
             daoUtil.setIntNull( ++nPos );
         }
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

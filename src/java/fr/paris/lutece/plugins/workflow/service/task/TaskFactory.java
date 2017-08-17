@@ -50,7 +50,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import java.util.Collection;
 import java.util.Locale;
 
-
 /**
  *
  * TaskFactory
@@ -73,11 +72,9 @@ public class TaskFactory implements ITaskFactory
 
         if ( task != null )
         {
-            if ( ( locale != null ) && ( task.getTaskType(  ) != null ) &&
-                    StringUtils.isNotBlank( task.getTaskType(  ).getTitleI18nKey(  ) ) )
+            if ( ( locale != null ) && ( task.getTaskType( ) != null ) && StringUtils.isNotBlank( task.getTaskType( ).getTitleI18nKey( ) ) )
             {
-                task.getTaskType(  )
-                    .setTitle( I18nService.getLocalizedString( task.getTaskType(  ).getTitleI18nKey(  ), locale ) );
+                task.getTaskType( ).setTitle( I18nService.getLocalizedString( task.getTaskType( ).getTitleI18nKey( ), locale ) );
             }
         }
 
@@ -97,32 +94,29 @@ public class TaskFactory implements ITaskFactory
             return null;
         }
 
-        Collection<ITaskType> listTaskType = getAllTaskTypes(  );
+        Collection<ITaskType> listTaskType = getAllTaskTypes( );
 
         for ( ITaskType taskType : listTaskType )
         {
-            if ( strKey.equals( taskType.getKey(  ) ) )
+            if ( strKey.equals( taskType.getKey( ) ) )
             {
                 try
                 {
-                    ITaskConfig config = SpringContextService.getBean( taskType.getConfigBeanName(  ) );
+                    ITaskConfig config = SpringContextService.getBean( taskType.getConfigBeanName( ) );
 
                     return config;
                 }
-                catch ( BeanDefinitionStoreException e )
+                catch( BeanDefinitionStoreException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
-                catch ( NoSuchBeanDefinitionException e )
+                catch( NoSuchBeanDefinitionException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
-                catch ( CannotLoadBeanClassException e )
+                catch( CannotLoadBeanClassException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
             }
         }
@@ -136,26 +130,26 @@ public class TaskFactory implements ITaskFactory
      * {@inheritDoc}
      */
     @Override
-    public Collection<ITaskType> getAllTaskTypes(  )
+    public Collection<ITaskType> getAllTaskTypes( )
     {
         return SpringContextService.getBeansOfType( ITaskType.class );
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public Collection<ITaskType> getAllTaskTypes( Locale locale )
     {
-        Collection<ITaskType> listTaskTypes = getAllTaskTypes(  );
+        Collection<ITaskType> listTaskTypes = getAllTaskTypes( );
 
         if ( locale != null )
         {
-            if ( ( listTaskTypes != null ) && !listTaskTypes.isEmpty(  ) )
+            if ( ( listTaskTypes != null ) && !listTaskTypes.isEmpty( ) )
             {
                 for ( ITaskType taskType : listTaskTypes )
                 {
-                    taskType.setTitle( I18nService.getLocalizedString( taskType.getTitleI18nKey(  ), locale ) );
+                    taskType.setTitle( I18nService.getLocalizedString( taskType.getTitleI18nKey( ), locale ) );
                 }
             }
         }
@@ -165,7 +159,9 @@ public class TaskFactory implements ITaskFactory
 
     /**
      * Get new instance of {@link ITask}
-     * @param strKey the task type key
+     * 
+     * @param strKey
+     *            the task type key
      * @return a new instance of {@link ITask}
      */
     private ITask newTask( String strKey )
@@ -177,33 +173,30 @@ public class TaskFactory implements ITaskFactory
             return null;
         }
 
-        Collection<ITaskType> listTaskType = getAllTaskTypes(  );
+        Collection<ITaskType> listTaskType = getAllTaskTypes( );
 
         for ( ITaskType taskType : listTaskType )
         {
-            if ( strKey.equals( taskType.getKey(  ) ) )
+            if ( strKey.equals( taskType.getKey( ) ) )
             {
                 try
                 {
-                    ITask task = SpringContextService.getBean( taskType.getBeanName(  ) );
+                    ITask task = SpringContextService.getBean( taskType.getBeanName( ) );
                     task.setTaskType( taskType );
 
                     return task;
                 }
-                catch ( BeanDefinitionStoreException e )
+                catch( BeanDefinitionStoreException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
-                catch ( NoSuchBeanDefinitionException e )
+                catch( NoSuchBeanDefinitionException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
-                catch ( CannotLoadBeanClassException e )
+                catch( CannotLoadBeanClassException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName(  ) +
-                        "' - CAUSE : " + e.getMessage(  ), e );
+                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
                 }
             }
         }

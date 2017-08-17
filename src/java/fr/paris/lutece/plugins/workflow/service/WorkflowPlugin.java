@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.service;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 
-
 /**
  * class WorkflowPlugin
  */
@@ -51,10 +50,10 @@ public class WorkflowPlugin extends PluginDefaultImplementation
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
-        Workflow.init(  );
-        //ImageResourceManager
-        FileIconeService.getInstance(  ).register(  );
+        Workflow.init( );
+        // ImageResourceManager
+        FileIconeService.getInstance( ).register( );
     }
 }

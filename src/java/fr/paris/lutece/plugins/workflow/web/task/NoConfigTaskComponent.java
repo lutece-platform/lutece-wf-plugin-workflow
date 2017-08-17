@@ -42,11 +42,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
- * This component implements the task that does not require
- * any configuration.
+ * This component implements the task that does not require any configuration.
  *
  */
 public abstract class NoConfigTaskComponent extends AbstractTaskComponent

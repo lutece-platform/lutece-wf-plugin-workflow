@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
  * IAssignmentHistoryDAO
@@ -47,33 +46,47 @@ public interface IAssignmentHistoryDAO
 {
     /**
      * insert new history assignment
-     * @param history history assignment
+     * 
+     * @param history
+     *            history assignment
      *
-     * @param plugin the plugin
+     * @param plugin
+     *            the plugin
      */
     void insert( AssignmentHistory history, Plugin plugin );
 
     /**
      * return for a history the list of assignments
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return a list of AssignmentHistory
      */
     List<AssignmentHistory> selectByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * delete all assignments associated width the task specified in parameter
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByTask( int nIdTask, Plugin plugin );
 
     /**
      * delete all assignments associated width the history specified in parameter
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 }

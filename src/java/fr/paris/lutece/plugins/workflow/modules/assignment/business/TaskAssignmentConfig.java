@@ -37,10 +37,9 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 import java.util.List;
 
-
 /**
  *
- *TaskCommentConfig
+ * TaskCommentConfig
  *
  */
 public class TaskAssignmentConfig extends TaskConfig
@@ -58,13 +57,14 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return the _bUseUserName
      */
-    public boolean isUseUserName(  )
+    public boolean isUseUserName( )
     {
         return _bUseUserName;
     }
 
     /**
-     * @param useUserName the _bUseUserName to set
+     * @param useUserName
+     *            the _bUseUserName to set
      */
     public void setUseUserName( boolean useUserName )
     {
@@ -74,13 +74,14 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return the _strSubject
      */
-    public String getSubject(  )
+    public String getSubject( )
     {
         return _strSubject;
     }
 
     /**
-     * @param subject the _strSubject to set
+     * @param subject
+     *            the _strSubject to set
      */
     public void setSubject( String subject )
     {
@@ -90,13 +91,14 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return the _bNotification
      */
-    public boolean isNotify(  )
+    public boolean isNotify( )
     {
         return _bNotify;
     }
 
     /**
-     * @param bNotify the _bNotify to set
+     * @param bNotify
+     *            the _bNotify to set
      */
     public void setNotify( boolean bNotify )
     {
@@ -106,13 +108,14 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return the _strMessage
      */
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
 
     /**
-     * @param message the _strMessage to set
+     * @param message
+     *            the _strMessage to set
      */
     public void setMessage( String message )
     {
@@ -123,14 +126,16 @@ public class TaskAssignmentConfig extends TaskConfig
      *
      * @return the title of the field insert in tasks form
      */
-    public String getTitle(  )
+    public String getTitle( )
     {
         return _strTitle;
     }
 
     /**
-     * set  the title of the field insert in tasks form
-     * @param title the title of the field insert in tasks form
+     * set the title of the field insert in tasks form
+     * 
+     * @param title
+     *            the title of the field insert in tasks form
      */
     public void setTitle( String title )
     {
@@ -140,14 +145,16 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return a list wich contains the differents workgroups to displayed in task form
      */
-    public List<WorkgroupConfig> getWorkgroups(  )
+    public List<WorkgroupConfig> getWorkgroups( )
     {
         return _workgroups;
     }
 
     /**
      * Set a list wich contains the differents workgroups to displayed in task form
-     * @param worgroups the list of workgroups
+     * 
+     * @param worgroups
+     *            the list of workgroups
      */
     public void setWorkgroups( List<WorkgroupConfig> worgroups )
     {
@@ -157,14 +164,16 @@ public class TaskAssignmentConfig extends TaskConfig
     /**
      * @return true if the user can choose multiple entity
      */
-    public boolean isMultipleOwner(  )
+    public boolean isMultipleOwner( )
     {
         return _bMultipleOwner;
     }
 
     /**
      * set true if the user can choose multiple entity
-     * @param multipleOwner true if the user can choose multiple entity
+     * 
+     * @param multipleOwner
+     *            true if the user can choose multiple entity
      */
     public void setMultipleOwner( boolean multipleOwner )
     {

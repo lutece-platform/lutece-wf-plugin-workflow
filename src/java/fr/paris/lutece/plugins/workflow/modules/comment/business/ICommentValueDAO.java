@@ -35,42 +35,55 @@ package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-
 /**
  *
- *  ICommentValueDAO
+ * ICommentValueDAO
  *
  */
 public interface ICommentValueDAO
 {
     /**
      * Insert new record
-     * @param commentValue the CommmentValue Object
-     * @param plugin the plugin
+     * 
+     * @param commentValue
+     *            the CommmentValue Object
+     * @param plugin
+     *            the plugin
      */
     void insert( CommentValue commentValue, Plugin plugin );
 
     /**
      * Load a record by primary key
-     * @param nIdHistory the action history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the action history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return CommentValue Object
      */
     CommentValue load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove comment by history
-     * @param nIdHistory the History id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the History id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove comment by task
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByTask( int nIdTask, Plugin plugin );
 }

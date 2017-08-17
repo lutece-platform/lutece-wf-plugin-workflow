@@ -39,7 +39,6 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * ITaskInfoProvider
@@ -49,28 +48,36 @@ public interface ITaskInfoProvider extends InitializingBean
 {
     /**
      * Set the task type
-     * @param taskType the task type
+     * 
+     * @param taskType
+     *            the task type
      */
     void setTaskType( ITaskType taskType );
 
     /**
      * Get the task type
+     * 
      * @return the task type
      */
-    ITaskType getTaskType(  );
+    ITaskType getTaskType( );
 
     /**
      * Get the task resource info
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
-     * @param request the HTTP request
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the id task
+     * @param request
+     *            the HTTP request
      * @return the task resource info
      */
     String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request );
 
     /**
      * Get the plugin name
+     * 
      * @return the plugin name
      */
-    String getPluginName(  );
+    String getPluginName( );
 }

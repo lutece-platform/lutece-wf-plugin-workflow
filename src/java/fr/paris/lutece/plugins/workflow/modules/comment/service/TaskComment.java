@@ -50,7 +50,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskComment
@@ -70,7 +69,7 @@ public class TaskComment extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
         // Do nothing
     }
@@ -81,22 +80,22 @@ public class TaskComment extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strCommentValue = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + this.getId(  ) );
-        CommentValue commentValue = new CommentValue(  );
+        String strCommentValue = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + this.getId( ) );
+        CommentValue commentValue = new CommentValue( );
         commentValue.setIdResourceHistory( nIdResourceHistory );
-        commentValue.setIdTask( this.getId(  ) );
+        commentValue.setIdTask( this.getId( ) );
         commentValue.setValue( strCommentValue );
-        _commentValueService.create( commentValue, WorkflowUtils.getPlugin(  ) );
+        _commentValueService.create( commentValue, WorkflowUtils.getPlugin( ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskCommentConfigService.remove( this.getId(  ) );
-        _commentValueService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskCommentConfigService.remove( this.getId( ) );
+        _commentValueService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -105,7 +104,7 @@ public class TaskComment extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        _commentValueService.removeByHistory( nIdHistory, this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _commentValueService.removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -114,11 +113,11 @@ public class TaskComment extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            return config.getTitle(  );
+            return config.getTitle( );
         }
 
         return StringUtils.EMPTY;
@@ -131,12 +130,12 @@ public class TaskComment extends Task
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         Map<String, String> mapEntriesForm = null;
-        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskCommentConfig config = _taskCommentConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            mapEntriesForm = new HashMap<String, String>(  );
-            mapEntriesForm.put( PARAMETER_COMMENT_VALUE + "_" + this.getId(  ), config.getTitle(  ) );
+            mapEntriesForm = new HashMap<String, String>( );
+            mapEntriesForm.put( PARAMETER_COMMENT_VALUE + "_" + this.getId( ), config.getTitle( ) );
         }
 
         return mapEntriesForm;

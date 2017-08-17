@@ -45,7 +45,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * TaskAssignmentConfigService
@@ -73,15 +72,15 @@ public class TaskAssignmentConfigService extends TaskConfigService
 
         if ( taskAssignmentConfig != null )
         {
-            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups(  );
+            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups( );
 
             if ( listWorkgroups != null )
             {
                 for ( WorkgroupConfig workgroupConfig : listWorkgroups )
                 {
                     // Workaround in case of task duplication
-                    workgroupConfig.setIdTask( config.getIdTask(  ) );
-                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin(  ) );
+                    workgroupConfig.setIdTask( config.getIdTask( ) );
+                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin( ) );
                 }
             }
         }
@@ -95,20 +94,20 @@ public class TaskAssignmentConfigService extends TaskConfigService
     public void update( ITaskConfig config )
     {
         super.update( config );
-        //update workgroups
-        _workgroupConfigService.removeByTask( config.getIdTask(  ), WorkflowUtils.getPlugin(  ) );
+        // update workgroups
+        _workgroupConfigService.removeByTask( config.getIdTask( ), WorkflowUtils.getPlugin( ) );
 
         TaskAssignmentConfig taskAssignmentConfig = getConfigBean( config );
 
         if ( taskAssignmentConfig != null )
         {
-            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups(  );
+            List<WorkgroupConfig> listWorkgroups = taskAssignmentConfig.getWorkgroups( );
 
             if ( listWorkgroups != null )
             {
                 for ( WorkgroupConfig workgroupConfig : listWorkgroups )
                 {
-                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin(  ) );
+                    _workgroupConfigService.create( workgroupConfig, WorkflowUtils.getPlugin( ) );
                 }
             }
         }
@@ -121,7 +120,7 @@ public class TaskAssignmentConfigService extends TaskConfigService
     @Transactional( "workflow.transactionManager" )
     public void remove( int nIdTask )
     {
-        _workgroupConfigService.removeByTask( nIdTask, WorkflowUtils.getPlugin(  ) );
+        _workgroupConfigService.removeByTask( nIdTask, WorkflowUtils.getPlugin( ) );
         super.remove( nIdTask );
     }
 
@@ -135,7 +134,7 @@ public class TaskAssignmentConfigService extends TaskConfigService
 
         if ( config != null )
         {
-            config.setWorkgroups( _workgroupConfigService.getListByConfig( nIdTask, WorkflowUtils.getPlugin(  ) ) );
+            config.setWorkgroups( _workgroupConfigService.getListByConfig( nIdTask, WorkflowUtils.getPlugin( ) ) );
         }
 
         return (T) config;

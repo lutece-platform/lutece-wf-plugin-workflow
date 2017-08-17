@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.validation.ConstraintViolation;
 
-
 /**
  *
  * AbstractTaskComponent
@@ -65,7 +64,7 @@ public abstract class AbstractTaskComponent extends TaskComponent
         // Check mandatory fields
         Set<ConstraintViolation<ITaskConfig>> constraintViolations = BeanValidationUtil.validate( config );
 
-        if ( constraintViolations.size(  ) > 0 )
+        if ( constraintViolations.size( ) > 0 )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }

@@ -35,10 +35,9 @@ package fr.paris.lutece.plugins.workflow.modules.notification.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
-
 /**
  *
- *TaskNotificationtConfig
+ * TaskNotificationtConfig
  *
  */
 public class TaskNotificationConfig extends TaskConfig
@@ -50,16 +49,19 @@ public class TaskNotificationConfig extends TaskConfig
 
     /**
      * return the mailing list id
+     * 
      * @return the mailing list id
      */
-    public int getIdMailingList(  )
+    public int getIdMailingList( )
     {
         return _nIdMailingList;
     }
 
     /**
      * set the mailing list id
-     * @param idMailingList the mailing list id
+     * 
+     * @param idMailingList
+     *            the mailing list id
      */
     public void setIdMailingList( int idMailingList )
     {
@@ -70,14 +72,16 @@ public class TaskNotificationConfig extends TaskConfig
      *
      * @return the subject of the message
      */
-    public String getSubject(  )
+    public String getSubject( )
     {
         return _strSubject;
     }
 
     /**
      * set the subject of the message
-     * @param subject the subject of the message
+     * 
+     * @param subject
+     *            the subject of the message
      */
     public void setSubject( String subject )
     {
@@ -88,14 +92,16 @@ public class TaskNotificationConfig extends TaskConfig
      *
      * @return the message of the notification
      */
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
 
     /**
      * set the message of the notification
-     * @param message the message of the notifictaion
+     * 
+     * @param message
+     *            the message of the notifictaion
      */
     public void setMessage( String message )
     {
@@ -106,14 +112,16 @@ public class TaskNotificationConfig extends TaskConfig
      *
      * @return the sender name
      */
-    public String getSenderName(  )
+    public String getSenderName( )
     {
         return _strSenderName;
     }
 
     /**
      * set the sender name
-     * @param senderName  the sender name
+     * 
+     * @param senderName
+     *            the sender name
      */
     public void setSenderName( String senderName )
     {

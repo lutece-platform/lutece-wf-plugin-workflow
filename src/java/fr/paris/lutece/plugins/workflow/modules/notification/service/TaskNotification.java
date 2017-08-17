@@ -53,7 +53,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskNotification
@@ -77,7 +76,7 @@ public class TaskNotification extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
         // Do nothing
     }
@@ -88,14 +87,14 @@ public class TaskNotification extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            String strSenderEmail = MailService.getNoReplyEmail(  );
-            Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList(  ) );
-            Map<String, Object> model = new HashMap<String, Object>(  );
-            model.put( MARK_MESSAGE, config.getMessage(  ) );
+            String strSenderEmail = MailService.getNoReplyEmail( );
+            Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList( ) );
+            Map<String, Object> model = new HashMap<String, Object>( );
+            model.put( MARK_MESSAGE, config.getMessage( ) );
 
             HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
 
@@ -103,8 +102,7 @@ public class TaskNotification extends Task
             for ( Recipient recipient : listRecipients )
             {
                 // Build the mail message
-                MailService.sendMailHtml( recipient.getEmail(  ), config.getSenderName(  ), strSenderEmail,
-                    config.getSubject(  ), t.getHtml(  ) );
+                MailService.sendMailHtml( recipient.getEmail( ), config.getSenderName( ), strSenderEmail, config.getSubject( ), t.getHtml( ) );
             }
         }
     }
@@ -113,9 +111,9 @@ public class TaskNotification extends Task
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskNotificationConfigService.remove( this.getId(  ) );
+        _taskNotificationConfigService.remove( this.getId( ) );
     }
 
     /**
@@ -133,11 +131,11 @@ public class TaskNotification extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskNotificationConfig config = _taskNotificationConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            return config.getSubject(  );
+            return config.getSubject( );
         }
 
         return WorkflowUtils.EMPTY_STRING;

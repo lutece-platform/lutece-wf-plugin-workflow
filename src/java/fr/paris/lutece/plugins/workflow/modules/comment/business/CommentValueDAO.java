@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.comment.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * CommentValueDAO
@@ -44,10 +43,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class CommentValueDAO implements ICommentValueDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,comment_value  " +
-        "FROM workflow_task_comment_value WHERE id_history=? AND id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_comment_value " +
-        "(id_history,id_task,comment_value )VALUES(?,?,?)";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,comment_value  "
+            + "FROM workflow_task_comment_value WHERE id_history=? AND id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_comment_value " + "(id_history,id_task,comment_value )VALUES(?,?,?)";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_comment_value  WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_comment_value  WHERE id_task=?";
 
@@ -61,12 +59,12 @@ public class CommentValueDAO implements ICommentValueDAO
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, commentValue.getIdResourceHistory(  ) );
-        daoUtil.setInt( ++nPos, commentValue.getIdTask(  ) );
-        daoUtil.setString( ++nPos, commentValue.getValue(  ) );
+        daoUtil.setInt( ++nPos, commentValue.getIdResourceHistory( ) );
+        daoUtil.setInt( ++nPos, commentValue.getIdTask( ) );
+        daoUtil.setString( ++nPos, commentValue.getValue( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -84,17 +82,17 @@ public class CommentValueDAO implements ICommentValueDAO
 
         nPos = 0;
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            commentValue = new CommentValue(  );
+            commentValue = new CommentValue( );
             commentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
             commentValue.setIdTask( daoUtil.getInt( ++nPos ) );
             commentValue.setValue( daoUtil.getString( ++nPos ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return commentValue;
     }
@@ -110,8 +108,8 @@ public class CommentValueDAO implements ICommentValueDAO
         daoUtil.setInt( ++nPos, nIdHistory );
         daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -123,7 +121,7 @@ public class CommentValueDAO implements ICommentValueDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 
-
 /**
  *
  * CommentValue
@@ -53,14 +52,16 @@ public class CommentValue implements RBACResource
      *
      * @return the coment value id
      */
-    public int getIdResourceHistory(  )
+    public int getIdResourceHistory( )
     {
         return _nIdResourceHistory;
     }
 
     /**
      * the comment value id
-     * @param id the comment value id
+     * 
+     * @param id
+     *            the comment value id
      */
     public void setIdResourceHistory( int id )
     {
@@ -71,14 +72,16 @@ public class CommentValue implements RBACResource
      *
      * @return the task id
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      * the task id
-     * @param idTask the task id
+     * 
+     * @param idTask
+     *            the task id
      */
     public void setIdTask( int idTask )
     {
@@ -87,16 +90,19 @@ public class CommentValue implements RBACResource
 
     /**
      * return the value
+     * 
      * @return the value
      */
-    public String getValue(  )
+    public String getValue( )
     {
         return _strValue;
     }
 
     /**
      * set the value
-     * @param value the value
+     * 
+     * @param value
+     *            the value
      */
     public void setValue( String value )
     {
@@ -104,16 +110,16 @@ public class CommentValue implements RBACResource
     }
 
     @Override
-    public String getResourceId(  )
+    public String getResourceId( )
     {
         StringBuilder sb = new StringBuilder( _nIdResourceHistory );
         sb.append( SEPARATOR ).append( _nIdTask );
 
-        return sb.toString(  );
+        return sb.toString( );
     }
 
     @Override
-    public String getResourceTypeCode(  )
+    public String getResourceTypeCode( )
     {
         return COMMENT_RESOURCE_TYPE;
     }

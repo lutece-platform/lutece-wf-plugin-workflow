@@ -43,7 +43,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskComponentManager
@@ -60,18 +59,18 @@ public class TaskComponentManager implements ITaskComponentManager
      * {@inheritDoc}
      */
     @Override
-    public List<ITaskComponent> getTaskComponents(  )
+    public List<ITaskComponent> getTaskComponents( )
     {
         return SpringContextService.getBeansOfType( ITaskComponent.class );
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public ITaskComponent getTaskComponent( String strKey )
     {
-        for ( ITaskComponent component : getTaskComponents(  ) )
+        for ( ITaskComponent component : getTaskComponents( ) )
         {
             if ( component.isInvoked( strKey ) )
             {
@@ -83,25 +82,24 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public ITaskComponent getTaskComponent( ITask task )
     {
-        if ( ( task != null ) && ( task.getTaskType(  ) != null ) )
+        if ( ( task != null ) && ( task.getTaskType( ) != null ) )
         {
-            return getTaskComponent( task.getTaskType(  ).getKey(  ) );
+            return getTaskComponent( task.getTaskType( ).getKey( ) );
         }
 
         return null;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -114,8 +112,8 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
@@ -130,8 +128,8 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
@@ -146,8 +144,8 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
@@ -162,11 +160,10 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
 
@@ -179,8 +176,8 @@ public class TaskComponentManager implements ITaskComponentManager
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {

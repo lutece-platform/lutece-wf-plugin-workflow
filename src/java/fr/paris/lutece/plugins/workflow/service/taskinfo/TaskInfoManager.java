@@ -46,7 +46,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskInfoManager
@@ -57,32 +56,34 @@ public final class TaskInfoManager
     /**
      * Private constructor
      */
-    private TaskInfoManager(  )
+    private TaskInfoManager( )
     {
     }
 
     /**
      * Get the list of provider
+     * 
      * @return the list of providers
      */
-    public static List<ITaskInfoProvider> getProvidersList(  )
+    public static List<ITaskInfoProvider> getProvidersList( )
     {
         return SpringContextService.getBeansOfType( ITaskInfoProvider.class );
     }
 
     /**
      * Get the provider from a given provider key
-     * @param strProviderKey the provider key
+     * 
+     * @param strProviderKey
+     *            the provider key
      * @return the provider
      */
     public static ITaskInfoProvider getProvider( String strProviderKey )
     {
         if ( StringUtils.isNotBlank( strProviderKey ) )
         {
-            for ( ITaskInfoProvider provider : getProvidersList(  ) )
+            for ( ITaskInfoProvider provider : getProvidersList( ) )
             {
-                if ( ( provider != null ) && ( provider.getTaskType(  ) != null ) &&
-                        strProviderKey.equals( provider.getTaskType(  ).getKey(  ) ) )
+                if ( ( provider != null ) && ( provider.getTaskType( ) != null ) && strProviderKey.equals( provider.getTaskType( ).getKey( ) ) )
                 {
                     return provider;
                 }
@@ -93,11 +94,14 @@ public final class TaskInfoManager
     }
 
     /**
-     * Get the task resource info. This method will first get
-     * the appropriate provider from the given id task.
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
-     * @param request the HTTP request
+     * Get the task resource info. This method will first get the appropriate provider from the given id task.
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the id task
+     * @param request
+     *            the HTTP request
      * @return the task resource info
      */
     public static String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
@@ -109,7 +113,7 @@ public final class TaskInfoManager
 
         if ( task != null )
         {
-            ITaskInfoProvider provider = getProvider( task.getTaskType(  ).getKey(  ) );
+            ITaskInfoProvider provider = getProvider( task.getTaskType( ).getKey( ) );
 
             if ( provider != null )
             {
@@ -122,7 +126,9 @@ public final class TaskInfoManager
 
     /**
      * Get the locale
-     * @param request the HTTP request
+     * 
+     * @param request
+     *            the HTTP request
      * @return the locale
      */
     private static Locale getLocale( HttpServletRequest request )
@@ -131,11 +137,11 @@ public final class TaskInfoManager
 
         if ( request != null )
         {
-            locale = request.getLocale(  );
+            locale = request.getLocale( );
         }
         else
         {
-            locale = I18nService.getDefaultLocale(  );
+            locale = I18nService.getDefaultLocale( );
         }
 
         return locale;

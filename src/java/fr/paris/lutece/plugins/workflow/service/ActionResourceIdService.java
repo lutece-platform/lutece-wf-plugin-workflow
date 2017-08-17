@@ -50,10 +50,9 @@ import fr.paris.lutece.util.ReferenceList;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  *
- * class  ActionResourceIdService
+ * class ActionResourceIdService
  *
  */
 public class ActionResourceIdService extends ResourceIdService
@@ -68,7 +67,7 @@ public class ActionResourceIdService extends ResourceIdService
     private static final String PROPERTY_LABEL_MANAGE_ADVANCED_PARAMETERS = "workflow.permission.label.manage_advanced_parameters";
 
     /** Creates a new instance of DocumentTypeResourceIdService */
-    public ActionResourceIdService(  )
+    public ActionResourceIdService( )
     {
         setPluginName( WorkflowPlugin.PLUGIN_NAME );
     }
@@ -77,20 +76,20 @@ public class ActionResourceIdService extends ResourceIdService
      * {@inheritDoc}
      */
     @Override
-    public void register(  )
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( ActionResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( ActionResourceIdService.class.getName( ) );
         rt.setPluginName( WorkflowPlugin.PLUGIN_NAME );
         rt.setResourceTypeKey( Action.RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_VIEW );
         p.setPermissionTitleKey( PROPERTY_LABEL_VIEW );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_ADVANCED_PARAMETERS );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_ADVANCED_PARAMETERS );
         rt.registerPermission( p );
@@ -100,20 +99,22 @@ public class ActionResourceIdService extends ResourceIdService
 
     /**
      * Returns a list of action resource ids
-     * @param locale The current locale
+     * 
+     * @param locale
+     *            The current locale
      * @return A list of resource ids
      */
     public ReferenceList getResourceIdList( Locale locale )
     {
         IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
         IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-        List<Action> listAction = actionService.getListActionByFilter( new ActionFilter(  ) );
-        ReferenceList reflistAction = new ReferenceList(  );
+        List<Action> listAction = actionService.getListActionByFilter( new ActionFilter( ) );
+        ReferenceList reflistAction = new ReferenceList( );
 
         for ( Action action : listAction )
         {
-            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow(  ).getId(  ) ) );
-            reflistAction.addItem( action.getId(  ), action.getWorkflow(  ).getName(  ) + "/" + action.getName(  ) );
+            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
+            reflistAction.addItem( action.getId( ), action.getWorkflow( ).getName( ) + "/" + action.getName( ) );
         }
 
         return reflistAction;
@@ -121,8 +122,11 @@ public class ActionResourceIdService extends ResourceIdService
 
     /**
      * Returns the Title of a given resource
-     * @param strId The Id of the resource
-     * @param locale The current locale
+     * 
+     * @param strId
+     *            The Id of the resource
+     * @param locale
+     *            The current locale
      * @return The Title of a given resource
      */
     public String getTitle( String strId, Locale locale )
@@ -134,9 +138,9 @@ public class ActionResourceIdService extends ResourceIdService
 
         if ( action != null )
         {
-            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow(  ).getId(  ) ) );
+            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
         }
 
-        return ( action != null ) ? ( action.getWorkflow(  ).getName(  ) + "/" + action.getName(  ) ) : null;
+        return ( action != null ) ? ( action.getWorkflow( ).getName( ) + "/" + action.getName( ) ) : null;
     }
 }

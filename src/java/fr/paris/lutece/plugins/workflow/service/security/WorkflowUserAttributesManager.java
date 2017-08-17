@@ -39,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
-
 /**
  *
  * WorkflowUserAttributesManager
@@ -57,7 +56,7 @@ public class WorkflowUserAttributesManager implements IWorkflowUserAttributesMan
      * {@inheritDoc}
      */
     @Override
-    public boolean isEnabled(  )
+    public boolean isEnabled( )
     {
         return _userAttributesService != null;
     }
@@ -77,7 +76,7 @@ public class WorkflowUserAttributesManager implements IWorkflowUserAttributesMan
     @Override
     public String getAttribute( String strUserId, String strAttribute )
     {
-        return isEnabled(  ) ? _userAttributesService.getAttribute( strUserId, strAttribute ) : StringUtils.EMPTY;
+        return isEnabled( ) ? _userAttributesService.getAttribute( strUserId, strAttribute ) : StringUtils.EMPTY;
     }
 
     /**
@@ -86,6 +85,6 @@ public class WorkflowUserAttributesManager implements IWorkflowUserAttributesMan
     @Override
     public Map<String, String> getAttributes( String strUserId )
     {
-        return isEnabled(  ) ? _userAttributesService.getAttributes( strUserId ) : null;
+        return isEnabled( ) ? _userAttributesService.getAttributes( strUserId ) : null;
     }
 }

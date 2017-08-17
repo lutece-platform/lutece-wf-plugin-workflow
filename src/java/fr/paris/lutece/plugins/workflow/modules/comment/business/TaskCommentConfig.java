@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
-
 /**
  *
  * TaskCommentConfig
@@ -50,13 +49,14 @@ public class TaskCommentConfig extends TaskConfig
     /**
      * @return true if the comment is mandatory, false otherwise
      */
-    public boolean isMandatory(  )
+    public boolean isMandatory( )
     {
         return _bMandatory;
     }
 
     /**
-     * @param bMandatory true if the comment is mandatory, false otherwise
+     * @param bMandatory
+     *            true if the comment is mandatory, false otherwise
      */
     public void setMandatory( boolean bMandatory )
     {
@@ -66,13 +66,14 @@ public class TaskCommentConfig extends TaskConfig
     /**
      * @return the title
      */
-    public String getTitle(  )
+    public String getTitle( )
     {
         return _strTitle;
     }
 
     /**
-     * @param strTitle the title
+     * @param strTitle
+     *            the title
      */
     public void setTitle( String strTitle )
     {
@@ -82,13 +83,14 @@ public class TaskCommentConfig extends TaskConfig
     /**
      * @return the _bRichText
      */
-    public boolean isRichText(  )
+    public boolean isRichText( )
     {
         return _bRichText;
     }
 
     /**
-     * @param bRichText the bRichText to set
+     * @param bRichText
+     *            the bRichText to set
      */
     public void setRichText( boolean bRichText )
     {

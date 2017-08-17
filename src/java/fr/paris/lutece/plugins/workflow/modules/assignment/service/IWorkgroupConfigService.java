@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 /**
  *
  * IWorkgroupConfigService
@@ -49,34 +48,47 @@ import java.util.List;
 public interface IWorkgroupConfigService
 {
     /**
-    * Creation of an instance of  workgroupconfig
-    * @param workgroupConfig The instance of task which contains the informations to store
-    * @param plugin the plugin
-    */
+     * Creation of an instance of workgroupconfig
+     * 
+     * @param workgroupConfig
+     *            The instance of task which contains the informations to store
+     * @param plugin
+     *            the plugin
+     */
     @Transactional( "workflow.transactionManager" )
     void create( WorkgroupConfig workgroupConfig, Plugin plugin );
 
     /**
      * Remove all all workgroups associated to the configuration
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**
      * load a workgroup by primarey key
-     * @param nIdTask the task id
-     * @param strWorkgroupKey the workgroup key
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param strWorkgroupKey
+     *            the workgroup key
+     * @param plugin
+     *            the plugin
      * @return a workgroupConfig object
      */
     WorkgroupConfig findByPrimaryKey( int nIdTask, String strWorkgroupKey, Plugin plugin );
 
     /**
      * Select the workgroups associated to the configuration
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return a list of EntityOwner Object
      */
     List<WorkgroupConfig> getListByConfig( int nIdTask, Plugin plugin );

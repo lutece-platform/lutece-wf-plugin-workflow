@@ -66,7 +66,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-
 /**
  * Controller for Comments
  *
@@ -97,7 +96,7 @@ public class CommentJspBean extends MVCAdminJspBean
     private IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
     private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
-    
+
     /**
      * Gets the confirmation page to remove a comment
      *
@@ -106,10 +105,10 @@ public class CommentJspBean extends MVCAdminJspBean
      * @throws AccessDeniedException
      *             the {@link AccessDeniedException}
      * @return the confirmation page to remove the comment
-     * @throws UnsupportedEncodingException if there is an exception during the encoding of the return_url parameter
+     * @throws UnsupportedEncodingException
+     *             if there is an exception during the encoding of the return_url parameter
      */
-    public String getConfirmRemoveComment( HttpServletRequest request )
-        throws AccessDeniedException, UnsupportedEncodingException
+    public String getConfirmRemoveComment( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
         if ( !canDeleteComment( request ) )
         {
@@ -125,8 +124,7 @@ public class CommentJspBean extends MVCAdminJspBean
         url.addParameter( PARAMETER_ID_TASK, strIdTask );
         url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_COMMENT, url.getUrl(  ),
-            AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_COMMENT, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
 
     /**
@@ -137,10 +135,10 @@ public class CommentJspBean extends MVCAdminJspBean
      * @throws AccessDeniedException
      *             the {@link AccessDeniedException}
      * @return The URL to go after performing the action
-     * @throws UnsupportedEncodingException if there is an exception during the decoding of the return_url parameter
+     * @throws UnsupportedEncodingException
+     *             if there is an exception during the decoding of the return_url parameter
      */
-    public String doRemoveComment( HttpServletRequest request )
-        throws AccessDeniedException, UnsupportedEncodingException
+    public String doRemoveComment( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
         if ( !canDeleteComment( request ) )
         {
@@ -152,34 +150,33 @@ public class CommentJspBean extends MVCAdminJspBean
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
 
-        _commentValueService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
-        
+        _commentValueService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
+
         // Remove history if no other task information to display
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), request.getLocale(  ) );
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), request.getLocale( ) );
 
-        Iterator<ITask> iterator = listActionTasks.iterator(  );
+        Iterator<ITask> iterator = listActionTasks.iterator( );
         boolean informationToDisplay = false;
-        while ( iterator.hasNext(  ) )
+        while ( iterator.hasNext( ) )
         {
-            ITask task = iterator.next(  );
+            ITask task = iterator.next( );
 
-            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
-                    request, request.getLocale(  ), task );
+            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId( ), request, request.getLocale( ), task );
             if ( !StringUtils.isEmpty( strTaskinformation ) )
             {
                 informationToDisplay = true;
                 break;
             }
         }
-        
+
         if ( !informationToDisplay )
         {
-        	// Does the action resource should really be deleted if no information is displayed in history ?
-        	for( ITask actionTask : listActionTasks )
-        	{
-        		actionTask.doRemoveTaskInformation( nIdHistory );
-        	}
+            // Does the action resource should really be deleted if no information is displayed in history ?
+            for ( ITask actionTask : listActionTasks )
+            {
+                actionTask.doRemoveTaskInformation( nIdHistory );
+            }
             _resourceHistoryService.remove( nIdHistory );
         }
 
@@ -188,7 +185,9 @@ public class CommentJspBean extends MVCAdminJspBean
 
     /**
      * Tests whether the comment can be delete or not
-     * @param request the request
+     * 
+     * @param request
+     *            the request
      * @return {@code true} if the comment can be deleted, {@code false} otherwise
      */
     private boolean canDeleteComment( HttpServletRequest request )
@@ -199,11 +198,9 @@ public class CommentJspBean extends MVCAdminJspBean
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, nIdTask,
-                WorkflowUtils.getPlugin(  ) );
+        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
 
-        boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue,
-                CommentResourceIdService.PERMISSION_DELETE, userConnected );
+        boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected );
         boolean bIsOwner = _commentValueService.isOwner( nIdHistory, userConnected );
 
         return bHasPermissionDeletion || bIsOwner;

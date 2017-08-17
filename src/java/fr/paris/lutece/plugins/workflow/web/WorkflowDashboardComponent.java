@@ -58,10 +58,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
- * Calendar Dashboard Component
- * This component displays directories
+ * Calendar Dashboard Component This component displays directories
  */
 public class WorkflowDashboardComponent extends DashboardComponent
 {
@@ -74,11 +72,11 @@ public class WorkflowDashboardComponent extends DashboardComponent
     private static final String PARAMETER_PLUGIN_NAME = "plugin_name";
 
     // TEMPLATES
-    //    private static final String TEMPLATE_DASHBOARD_ZONE_1 = "/admin/plugins/workflow/workflow_dashboard_zone_1.html";
+    // private static final String TEMPLATE_DASHBOARD_ZONE_1 = "/admin/plugins/workflow/workflow_dashboard_zone_1.html";
     private static final String TEMPLATE_DASHBOARD = "/admin/plugins/workflow/workflow_dashboard.html";
 
     // OTHER CONSTANTS
-    //    private static final int ZONE_1 = 1;
+    // private static final int ZONE_1 = 1;
     private static final int FILTER_NO_STATUS = -1;
 
     /**
@@ -87,48 +85,47 @@ public class WorkflowDashboardComponent extends DashboardComponent
     @Override
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
-        Right right = RightHome.findByPrimaryKey( getRight(  ) );
-        Plugin plugin = PluginService.getPlugin( right.getPluginName(  ) );
+        Right right = RightHome.findByPrimaryKey( getRight( ) );
+        Plugin plugin = PluginService.getPlugin( right.getPluginName( ) );
 
-        if ( !( ( plugin.getDbPoolName(  ) != null ) &&
-                !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName(  ) ) ) )
+        if ( !( ( plugin.getDbPoolName( ) != null ) && !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName( ) ) ) )
         {
             return StringUtils.EMPTY;
         }
 
         IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
 
-        UrlItem url = new UrlItem( right.getUrl(  ) );
-        url.addParameter( PARAMETER_PLUGIN_NAME, right.getPluginName(  ) );
+        UrlItem url = new UrlItem( right.getUrl( ) );
+        url.addParameter( PARAMETER_PLUGIN_NAME, right.getPluginName( ) );
 
-        WorkflowFilter filter = new WorkflowFilter(  );
+        WorkflowFilter filter = new WorkflowFilter( );
         filter.setIsEnabled( FILTER_NO_STATUS );
         filter.setWorkGroup( AdminWorkgroupService.ALL_GROUPS );
 
         List<Workflow> listWorkflow = workflowService.getListWorkflowsByFilter( filter );
         listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_WORKFLOW_LIST, listWorkflow );
-        model.put( MARK_URL, url.getUrl(  ) );
-        model.put( MARK_ICON, plugin.getIconUrl(  ) );
+        model.put( MARK_URL, url.getUrl( ) );
+        model.put( MARK_ICON, plugin.getIconUrl( ) );
 
-        HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale(  ), model );
+        HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 
-        return t.getHtml(  );
+        return t.getHtml( );
     }
 
-    //    /**
-    //     * Get the template
-    //     * @return the template
-    //     */
-    //    private String getTemplateDashboard(  )
-    //    {
-    //        if ( getZone(  ) == ZONE_1 )
-    //        {
-    //            return TEMPLATE_DASHBOARD_ZONE_1;
-    //        }
+    // /**
+    // * Get the template
+    // * @return the template
+    // */
+    // private String getTemplateDashboard( )
+    // {
+    // if ( getZone( ) == ZONE_1 )
+    // {
+    // return TEMPLATE_DASHBOARD_ZONE_1;
+    // }
     //
-    //        return TEMPLATE_DASHBOARD_OTHER_ZONE;
-    //    }
+    // return TEMPLATE_DASHBOARD_OTHER_ZONE;
+    // }
 }

@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.business.task;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.RemovalListenerService;
 
-
 /**
  * TaskRemovalListenerService
  */
@@ -45,17 +44,18 @@ public final class TaskRemovalListenerService
     private static final String BEAN_TASK_REMOVAL_SERVICE = "workflow.taskRemovalService";
 
     /**
-    * Private constructor
-    */
-    private TaskRemovalListenerService(  )
+     * Private constructor
+     */
+    private TaskRemovalListenerService( )
     {
     }
 
     /**
-    * Returns the removal service
-    * @return The removal service
-    */
-    public static RemovalListenerService getService(  )
+     * Returns the removal service
+     * 
+     * @return The removal service
+     */
+    public static RemovalListenerService getService( )
     {
         return SpringContextService.getBean( BEAN_TASK_REMOVAL_SERVICE );
     }

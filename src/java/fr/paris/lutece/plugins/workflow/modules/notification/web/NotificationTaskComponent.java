@@ -50,7 +50,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * NotificationTaskComponent
@@ -78,22 +77,21 @@ public class NotificationTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         String strNothing = I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale );
-        ReferenceList refMailingList = new ReferenceList(  );
+        ReferenceList refMailingList = new ReferenceList( );
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
         refMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        ITaskConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strDefaultSenderName = I18nService.getLocalizedString( PROPERTY_NOTIFICATION_MAIL_DEFAULT_SENDER_NAME,
-                locale );
+        ITaskConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        String strDefaultSenderName = I18nService.getLocalizedString( PROPERTY_NOTIFICATION_MAIL_DEFAULT_SENDER_NAME, locale );
         model.put( MARK_CONFIG, config );
         model.put( MARK_MAILING_LIST, refMailingList );
         model.put( MARK_DEFAULT_SENDER_NAME, strDefaultSenderName );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**

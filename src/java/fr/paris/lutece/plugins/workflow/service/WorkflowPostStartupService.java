@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.init.PostStartUpService;
 
 import javax.inject.Inject;
 
-
 /**
  * WorkflowPostStartupService
  *
@@ -53,11 +52,11 @@ public class WorkflowPostStartupService implements PostStartUpService
      * {@inheritDoc}
      */
     @Override
-    public void process(  )
+    public void process( )
     {
-        for ( ITaskType taskType : _taskFactory.getAllTaskTypes(  ) )
+        for ( ITaskType taskType : _taskFactory.getAllTaskTypes( ) )
         {
-            _taskFactory.newTask( taskType.getKey(  ), null ).init(  );
+            _taskFactory.newTask( taskType.getKey( ), null ).init( );
         }
     }
 
@@ -65,7 +64,7 @@ public class WorkflowPostStartupService implements PostStartUpService
      * {@inheritDoc}
      */
     @Override
-    public String getName(  )
+    public String getName( )
     {
         return "Workflow post startup service";
     }

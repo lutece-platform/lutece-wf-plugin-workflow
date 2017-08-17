@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * TaskAssignmentConfigDAO
@@ -45,13 +44,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name" +
-        " FROM workflow_task_assignment_cf WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_assignment_cf  " +
-        "(id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name)VALUES(?,?,?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_assignment_cf " +
-        "SET id_task=?,title=?,is_multiple_owner=?,is_notify=?,message=?,subject=?,is_use_user_name=? " +
-        " WHERE id_task=? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name"
+            + " FROM workflow_task_assignment_cf WHERE id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_assignment_cf  "
+            + "(id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name)VALUES(?,?,?,?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_assignment_cf "
+            + "SET id_task=?,title=?,is_multiple_owner=?,is_notify=?,message=?,subject=?,is_use_user_name=? " + " WHERE id_task=? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_assignment_cf  WHERE id_task=? ";
 
     /**
@@ -60,20 +58,20 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
     @Override
     public synchronized void insert( TaskAssignmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
 
-        daoUtil.setBoolean( ++nPos, config.isMultipleOwner(  ) );
-        daoUtil.setBoolean( ++nPos, config.isNotify(  ) );
-        daoUtil.setString( ++nPos, config.getMessage(  ) );
-        daoUtil.setString( ++nPos, config.getSubject(  ) );
-        daoUtil.setBoolean( ++nPos, config.isUseUserName(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setBoolean( ++nPos, config.isMultipleOwner( ) );
+        daoUtil.setBoolean( ++nPos, config.isNotify( ) );
+        daoUtil.setString( ++nPos, config.getMessage( ) );
+        daoUtil.setString( ++nPos, config.getSubject( ) );
+        daoUtil.setBoolean( ++nPos, config.isUseUserName( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -82,21 +80,21 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
     @Override
     public void store( TaskAssignmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
 
-        daoUtil.setBoolean( ++nPos, config.isMultipleOwner(  ) );
-        daoUtil.setBoolean( ++nPos, config.isNotify(  ) );
-        daoUtil.setString( ++nPos, config.getMessage(  ) );
-        daoUtil.setString( ++nPos, config.getSubject(  ) );
-        daoUtil.setBoolean( ++nPos, config.isUseUserName(  ) );
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setBoolean( ++nPos, config.isMultipleOwner( ) );
+        daoUtil.setBoolean( ++nPos, config.isNotify( ) );
+        daoUtil.setString( ++nPos, config.getMessage( ) );
+        daoUtil.setString( ++nPos, config.getSubject( ) );
+        daoUtil.setBoolean( ++nPos, config.isUseUserName( ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -106,17 +104,17 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
     public TaskAssignmentConfig load( int nIdTask )
     {
         TaskAssignmentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nPos = 0;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            config = new TaskAssignmentConfig(  );
+            config = new TaskAssignmentConfig( );
             config.setIdTask( daoUtil.getInt( ++nPos ) );
             config.setTitle( daoUtil.getString( ++nPos ) );
 
@@ -127,7 +125,7 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
             config.setUseUserName( daoUtil.getBoolean( ++nPos ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return config;
     }
@@ -138,10 +136,10 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

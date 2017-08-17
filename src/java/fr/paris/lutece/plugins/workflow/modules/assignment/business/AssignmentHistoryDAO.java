@@ -39,18 +39,16 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
- *class AssignmentHistoryDAO
+ * class AssignmentHistoryDAO
  *
  */
 public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
 {
-    private static final String SQL_QUERY_SELECT = "SELECT id_history,id_task,workgroup_key " +
-        "FROM workflow_assignment_history WHERE id_history=? AND id_task=? ";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_assignment_history " +
-        "(id_history,id_task,workgroup_key)VALUES(?,?,?)";
+    private static final String SQL_QUERY_SELECT = "SELECT id_history,id_task,workgroup_key "
+            + "FROM workflow_assignment_history WHERE id_history=? AND id_task=? ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_assignment_history " + "(id_history,id_task,workgroup_key)VALUES(?,?,?)";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_assignment_history  WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_assignment_history  WHERE  id_task=?";
 
@@ -64,12 +62,12 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, history.getIdResourceHistory(  ) );
-        daoUtil.setInt( ++nPos, history.getIdTask(  ) );
-        daoUtil.setString( ++nPos, history.getWorkgroup(  ) );
+        daoUtil.setInt( ++nPos, history.getIdResourceHistory( ) );
+        daoUtil.setInt( ++nPos, history.getIdTask( ) );
+        daoUtil.setString( ++nPos, history.getWorkgroup( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -80,19 +78,19 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
     {
         AssignmentHistory assignmentValue = null;
 
-        List<AssignmentHistory> listAssignmentValue = new ArrayList<AssignmentHistory>(  );
+        List<AssignmentHistory> listAssignmentValue = new ArrayList<AssignmentHistory>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdHistory );
         daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             nPos = 0;
-            assignmentValue = new AssignmentHistory(  );
+            assignmentValue = new AssignmentHistory( );
             assignmentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
             assignmentValue.setIdTask( daoUtil.getInt( ++nPos ) );
             assignmentValue.setWorkgroup( daoUtil.getString( ++nPos ) );
@@ -100,7 +98,7 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
             listAssignmentValue.add( assignmentValue );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listAssignmentValue;
     }
@@ -116,8 +114,8 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
         daoUtil.setInt( ++nPos, nIdHistory );
         daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -130,7 +128,7 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

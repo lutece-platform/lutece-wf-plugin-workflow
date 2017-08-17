@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  * Interface for prerequisite DAO
  */
@@ -51,39 +50,53 @@ public interface IPrerequisiteDAO
 
     /**
      * Get a prerequisite by its primary key
-     * @param nIdPrerequisite The id of the prerequisite to get
-     * @param plugin The plugin
+     * 
+     * @param nIdPrerequisite
+     *            The id of the prerequisite to get
+     * @param plugin
+     *            The plugin
      * @return The prerequisite, or null if no prerequisite has the given id
      */
     Prerequisite findByPrimaryKey( int nIdPrerequisite, Plugin plugin );
 
     /**
      * Creates a new prerequisite
-     * @param prerequisite The prerequisite to create
-     * @param plugin the plugin
+     * 
+     * @param prerequisite
+     *            The prerequisite to create
+     * @param plugin
+     *            the plugin
      */
     void create( Prerequisite prerequisite, Plugin plugin );
 
     /**
      * Updates a prerequisite
-     * @param prerequisite The prerequisite to update
-     * @param plugin The plugin
+     * 
+     * @param prerequisite
+     *            The prerequisite to update
+     * @param plugin
+     *            The plugin
      */
     void update( Prerequisite prerequisite, Plugin plugin );
 
     /**
      * Removes a prerequisite from its id
-     * @param nIdPrerequisite the id of the prerequisite to remove
-     * @param plugin The plugin
+     * 
+     * @param nIdPrerequisite
+     *            the id of the prerequisite to remove
+     * @param plugin
+     *            The plugin
      */
     void remove( int nIdPrerequisite, Plugin plugin );
 
     /**
      * Get a list of prerequisite associated with an action
-     * @param nIdAction The id of the action
-     * @param plugin The plugin
-     * @return The list of prerequisite, or an empty list if no prerequisite is
-     *         associated with the given action
+     * 
+     * @param nIdAction
+     *            The id of the action
+     * @param plugin
+     *            The plugin
+     * @return The list of prerequisite, or an empty list if no prerequisite is associated with the given action
      */
     List<Prerequisite> findByIdAction( int nIdAction, Plugin plugin );
 }

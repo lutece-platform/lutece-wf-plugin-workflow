@@ -43,7 +43,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.url.UrlItem;
 
-
 /**
  *
  * Service for Url entry types. Provide ImageResource management
@@ -51,20 +50,20 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public final class FileIconeService implements ImageResourceProvider
 {
-    private static FileIconeService _singleton = new FileIconeService(  );
+    private static FileIconeService _singleton = new FileIconeService( );
     private static final String IMAGE_RESOURCE_TYPE_ID = "workflow_icon_img";
 
     /**
      * Creates a new instance of FileImgService
      */
-    private FileIconeService(  )
+    private FileIconeService( )
     {
     }
 
     /**
      * Initializes the service
      */
-    public void register(  )
+    public void register( )
     {
         ImageResourceManager.registerProvider( this );
     }
@@ -74,7 +73,7 @@ public final class FileIconeService implements ImageResourceProvider
      *
      * @return The unique instance
      */
-    public static FileIconeService getInstance(  )
+    public static FileIconeService getInstance( )
     {
         return _singleton;
     }
@@ -90,9 +89,9 @@ public final class FileIconeService implements ImageResourceProvider
 
         if ( icon != null )
         {
-            ImageResource imageResource = new ImageResource(  );
-            imageResource.setImage( icon.getValue(  ) );
-            imageResource.setMimeType( icon.getMimeType(  ) );
+            ImageResource imageResource = new ImageResource( );
+            imageResource.setImage( icon.getValue( ) );
+            imageResource.setMimeType( icon.getMimeType( ) );
 
             return imageResource;
         }
@@ -104,23 +103,25 @@ public final class FileIconeService implements ImageResourceProvider
      * {@inheritDoc}
      */
     @Override
-    public String getResourceTypeId(  )
+    public String getResourceTypeId( )
     {
         return IMAGE_RESOURCE_TYPE_ID;
     }
 
     /**
      * Management of the image associated to the {@link EntryUrl}
-     * @param nEntryUrl The {@link EntryUrl} identifier
+     * 
+     * @param nEntryUrl
+     *            The {@link EntryUrl} identifier
      * @return The url of the resource
      */
     public static String getResourceImageEntryUrl( int nEntryUrl )
     {
-        String strResourceType = FileIconeService.getInstance(  ).getResourceTypeId(  );
+        String strResourceType = FileIconeService.getInstance( ).getResourceTypeId( );
         UrlItem url = new UrlItem( Parameters.IMAGE_SERVLET );
         url.addParameter( Parameters.RESOURCE_TYPE, strResourceType );
         url.addParameter( Parameters.RESOURCE_ID, Integer.toString( nEntryUrl ) );
 
-        return url.getUrlWithEntity(  );
+        return url.getUrlWithEntity( );
     }
 }

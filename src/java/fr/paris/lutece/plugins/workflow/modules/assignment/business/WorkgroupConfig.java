@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 
-
 /**
  *
  * WorkgroupConfig
@@ -48,18 +47,19 @@ public class WorkgroupConfig
     private int _nIdMailingList = WorkflowUtils.CONSTANT_ID_NULL;
 
     /**
-    *
-    * @return the task id
-    */
-    public int getIdTask(  )
+     *
+     * @return the task id
+     */
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      *
-     * @param idTask the task id
-      */
+     * @param idTask
+     *            the task id
+     */
     public void setIdTask( int idTask )
     {
         _nIdTask = idTask;
@@ -69,14 +69,16 @@ public class WorkgroupConfig
      *
      * @return the workgroup key
      */
-    public String getWorkgroupKey(  )
+    public String getWorkgroupKey( )
     {
         return _strWorkgroupKey;
     }
 
     /**
      * set the workgroup key
-     * @param workgroup key
+     * 
+     * @param workgroup
+     *            key
      */
     public void setWorkgroupKey( String workgroup )
     {
@@ -87,14 +89,16 @@ public class WorkgroupConfig
      *
      * @return mailing List id
      */
-    public int getIdMailingList(  )
+    public int getIdMailingList( )
     {
         return _nIdMailingList;
     }
 
     /**
      * the mailing List id
-     * @param idMailingList  mailing List id
+     * 
+     * @param idMailingList
+     *            mailing List id
      */
     public void setIdMailingList( int idMailingList )
     {

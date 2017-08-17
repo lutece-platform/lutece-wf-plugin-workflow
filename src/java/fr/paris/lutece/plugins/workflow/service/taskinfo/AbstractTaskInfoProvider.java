@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 
-
 /**
  *
  * AbstractTaskInfoProvider
@@ -58,7 +57,7 @@ public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
      * {@inheritDoc}
      */
     @Override
-    public ITaskType getTaskType(  )
+    public ITaskType getTaskType( )
     {
         return _taskType;
     }
@@ -67,7 +66,7 @@ public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
      * {@inheritDoc}
      */
     @Override
-    public void afterPropertiesSet(  ) throws Exception
+    public void afterPropertiesSet( ) throws Exception
     {
         if ( _taskType == null )
         {

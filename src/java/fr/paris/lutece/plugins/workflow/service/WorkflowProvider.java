@@ -78,7 +78,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * WorkflowProvider
@@ -142,12 +141,11 @@ public class WorkflowProvider implements IWorkflowProvider
     @Override
     public Map<Integer, List<Action>> getActions( Map<Integer, List<Action>> mapActions, AdminUser user )
     {
-        for ( Entry<Integer, List<Action>> entry : mapActions.entrySet(  ) )
+        for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
         {
-            List<Action> listActions = entry.getValue(  );
-            listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions,
-                    ActionResourceIdService.PERMISSION_VIEW, user );
-            mapActions.put( entry.getKey(  ), listActions );
+            List<Action> listActions = entry.getValue( );
+            listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
+            mapActions.put( entry.getKey( ), listActions );
         }
 
         return mapActions;
@@ -166,44 +164,44 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, int nIdWorkflowState,
-        Integer nExternalParentId, AdminUser user )
+    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, int nIdWorkflowState, Integer nExternalParentId, AdminUser user )
     {
         if ( nIdWorkflowState < 1 )
         {
             return this.getAuthorizedResourceList( strResourceType, nIdWorkflowState, null, nExternalParentId, user );
         }
 
-        List<Integer> resourceIdList = new ArrayList<Integer>(  );
+        List<Integer> resourceIdList = new ArrayList<Integer>( );
 
         State state = _stateService.findByPrimaryKey( nIdWorkflowState );
 
-        ResourceWorkflowFilter resourceWorkflowFilter = new ResourceWorkflowFilter(  );
+        ResourceWorkflowFilter resourceWorkflowFilter = new ResourceWorkflowFilter( );
 
         if ( user != null )
         {
             if ( RBACService.isAuthorized( state, StateResourceIdService.PERMISSION_VIEW, user ) )
             {
-                if ( state.isRequiredWorkgroupAssigned(  ) )
+                if ( state.isRequiredWorkgroupAssigned( ) )
                 {
-                    ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale(  ) );
+                    ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale( ) );
 
                     if ( refWorkgroupKey != null )
                     {
-                        resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap(  ) );
+                        resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
                     }
                 }
 
-                resourceWorkflowFilter.setIdState( state.getId(  ) );
+                resourceWorkflowFilter.setIdState( state.getId( ) );
                 resourceWorkflowFilter.setIdWorkflow( nIdWorkflow );
                 resourceWorkflowFilter.setResourceType( strResourceType );
                 resourceWorkflowFilter.setExternalParentId( nExternalParentId );
                 resourceIdList = _resourceWorkflowService.getListResourceIdWorkflowByFilter( resourceWorkflowFilter );
             }
         }
-        else //WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
+        else
+        // WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
         {
-            resourceWorkflowFilter.setIdState( state.getId(  ) );
+            resourceWorkflowFilter.setIdState( state.getId( ) );
             resourceWorkflowFilter.setIdWorkflow( nIdWorkflow );
             resourceWorkflowFilter.setResourceType( strResourceType );
             resourceWorkflowFilter.setExternalParentId( nExternalParentId );
@@ -217,12 +215,12 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow,
-        List<Integer> lListIdWorkflowState, Integer nExternalParentId, AdminUser user )
+    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, List<Integer> lListIdWorkflowState, Integer nExternalParentId,
+            AdminUser user )
     {
-        List<Integer> lListAutorizedIdSate = new ArrayList<Integer>(  );
+        List<Integer> lListAutorizedIdSate = new ArrayList<Integer>( );
 
-        StateFilter stateFilter = new StateFilter(  );
+        StateFilter stateFilter = new StateFilter( );
         stateFilter.setIdWorkflow( nIdWorkflow );
 
         Collection<State> listState = _stateService.getListStateByFilter( stateFilter );
@@ -235,12 +233,13 @@ public class WorkflowProvider implements IWorkflowProvider
                 {
                     if ( RBACService.isAuthorized( state, StateResourceIdService.PERMISSION_VIEW, user ) )
                     {
-                        lListAutorizedIdSate.add( state.getId(  ) );
+                        lListAutorizedIdSate.add( state.getId( ) );
                     }
                 }
-                else //WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
+                else
+                // WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
                 {
-                    lListAutorizedIdSate.add( state.getId(  ) );
+                    lListAutorizedIdSate.add( state.getId( ) );
                 }
             }
         }
@@ -248,7 +247,7 @@ public class WorkflowProvider implements IWorkflowProvider
         {
             for ( State state : listState )
             {
-                Integer nIdState = state.getId(  );
+                Integer nIdState = state.getId( );
 
                 if ( lListIdWorkflowState.contains( nIdState ) )
                 {
@@ -259,7 +258,8 @@ public class WorkflowProvider implements IWorkflowProvider
                             lListAutorizedIdSate.add( nIdState );
                         }
                     }
-                    else //WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
+                    else
+                    // WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
                     {
                         lListAutorizedIdSate.add( nIdState );
                     }
@@ -267,7 +267,7 @@ public class WorkflowProvider implements IWorkflowProvider
             }
         }
 
-        ResourceWorkflowFilter resourceWorkflowFilter = new ResourceWorkflowFilter(  );
+        ResourceWorkflowFilter resourceWorkflowFilter = new ResourceWorkflowFilter( );
         resourceWorkflowFilter.setIdState( ResourceWorkflowFilter.ALL_INT );
         resourceWorkflowFilter.setIdWorkflow( nIdWorkflow );
         resourceWorkflowFilter.setResourceType( strResourceType );
@@ -275,11 +275,11 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( user != null )
         {
-            ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale(  ) );
+            ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale( ) );
 
             if ( refWorkgroupKey != null )
             {
-                resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap(  ) );
+                resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
             }
         }
 
@@ -290,55 +290,66 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
-        HttpServletRequest request, Locale locale )
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale )
     {
-        return getDisplayDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, null,
-            TEMPLATE_RESOURCE_HISTORY );
+        return getDisplayDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, null, TEMPLATE_RESOURCE_HISTORY );
     }
 
     /**
      * Implements IWorkflowProvider of Lutece Core version 5.1
-     * @param nIdResource The resource
-     * @param strResourceType The resource type
-     * @param nIdWorkflow the workflow id
-     * @param request The request
-     * @param locale The locale
-     * @param strTemplate The template
+     * 
+     * @param nIdResource
+     *            The resource
+     * @param strResourceType
+     *            The resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param request
+     *            The request
+     * @param locale
+     *            The locale
+     * @param strTemplate
+     *            The template
      * @return The HTML code to display
      */
 
     // @Override don't declare as Override to be compatible with older Lutece Core version
     @Deprecated
-    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
-        HttpServletRequest request, Locale locale, String strTemplate )
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
+            String strTemplate )
     {
-        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow,
-                request, locale );
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, defaultModel );
 
-        return templateList.getHtml(  );
+        return templateList.getHtml( );
     }
 
     /**
      * Implements IWorkflowProvider of Lutece Core version 5.1
-     * @param nIdResource The resource
-     * @param strResourceType The resource type
-     * @param nIdWorkflow the workflow id
-     * @param request The request
-     * @param locale The locale
-     * @param model The model to add to the default model
-     * @param strTemplate The template
+     * 
+     * @param nIdResource
+     *            The resource
+     * @param strResourceType
+     *            The resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param request
+     *            The request
+     * @param locale
+     *            The locale
+     * @param model
+     *            The model to add to the default model
+     * @param strTemplate
+     *            The template
      * @return The HTML code to display
      */
 
     // @Override don't declare as Override to be compatible with older Lutece Core version
-    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow,
-        HttpServletRequest request, Locale locale, Map<String, Object> model, String strTemplate )
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
+            Map<String, Object> model, String strTemplate )
     {
-        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow,
-                request, locale );
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale );
 
         if ( model != null )
         {
@@ -347,18 +358,17 @@ public class WorkflowProvider implements IWorkflowProvider
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( strTemplate, locale, defaultModel );
 
-        return templateList.getHtml(  );
+        return templateList.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction,
-        HttpServletRequest request, Locale locale )
+    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale )
     {
         List<ITask> listTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
-        List<String> listFormEntry = new ArrayList<String>(  );
+        List<String> listFormEntry = new ArrayList<String>( );
         String strFormEntry;
 
         for ( ITask task : listTasks )
@@ -371,27 +381,25 @@ public class WorkflowProvider implements IWorkflowProvider
             }
         }
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_TASK_FORM_ENTRY_LIST, listFormEntry );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_TASKS_FORM, locale, model );
 
-        return templateList.getHtml(  );
+        return templateList.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow,
-        HttpServletRequest request, Locale locale )
+    public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale )
     {
-        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
-                strResourceType, nIdWorkflow );
+        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;
         String strTaskinformation;
-        StringBuffer strXml = new StringBuffer(  );
+        StringBuffer strXml = new StringBuffer( );
         AdminUser user;
 
         XmlUtil.beginElement( strXml, TAG_HISTORY );
@@ -399,19 +407,17 @@ public class WorkflowProvider implements IWorkflowProvider
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            user = ( resourceHistory.getUserAccessCode(  ) != null )
-                ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) : null;
-            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), locale );
+            user = ( resourceHistory.getUserAccessCode( ) != null ) ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) : null;
+            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 
             XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
-            XmlUtil.addElement( strXml, TAG_CREATION_DATE,
-                DateUtil.getDateString( resourceHistory.getCreationDate(  ), locale ) );
+            XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
             XmlUtil.beginElement( strXml, TAG_USER );
 
             if ( user != null )
             {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, user.getFirstName(  ) );
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, user.getLastName(  ) );
+                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, user.getFirstName( ) );
+                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, user.getLastName( ) );
             }
             else
             {
@@ -425,8 +431,7 @@ public class WorkflowProvider implements IWorkflowProvider
                 for ( ITask task : listActionTasks )
                 {
                     XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-                    strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId(  ),
-                            request, locale, task );
+                    strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
 
                     if ( strTaskinformation != null )
                     {
@@ -445,7 +450,7 @@ public class WorkflowProvider implements IWorkflowProvider
         XmlUtil.endElement( strXml, TAG_LIST_RESOURCE_HISTORY );
         XmlUtil.endElement( strXml, TAG_HISTORY );
 
-        return strXml.toString(  );
+        return strXml.toString( );
     }
 
     /**
@@ -467,7 +472,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( user != null )
         {
-            return user.getAccessCode(  );
+            return user.getAccessCode( );
         }
 
         return null;
@@ -503,23 +508,22 @@ public class WorkflowProvider implements IWorkflowProvider
     {
         boolean bReturn = false;
         State resourceState = null;
-        ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType,
-                nIdWorkflow );
+        ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
 
         if ( resourceWorkflow != null )
         {
-            resourceState = _stateService.findByPrimaryKey( resourceWorkflow.getState(  ).getId(  ) );
+            resourceState = _stateService.findByPrimaryKey( resourceWorkflow.getState( ).getId( ) );
         }
         else
         {
             // Get initial state
-            StateFilter filter = new StateFilter(  );
+            StateFilter filter = new StateFilter( );
             filter.setIsInitialState( StateFilter.FILTER_TRUE );
             filter.setIdWorkflow( nIdWorkflow );
 
             List<State> listState = _stateService.getListStateByFilter( filter );
 
-            if ( listState.size(  ) > 0 )
+            if ( listState.size( ) > 0 )
             {
                 resourceState = listState.get( 0 );
             }
@@ -529,13 +533,12 @@ public class WorkflowProvider implements IWorkflowProvider
         {
             if ( RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW, user ) )
             {
-                if ( resourceState.isRequiredWorkgroupAssigned(  ) && ( resourceWorkflow != null ) )
+                if ( resourceState.isRequiredWorkgroupAssigned( ) && ( resourceWorkflow != null ) )
                 {
-                    for ( String strWorkgroup : resourceWorkflow.getWorkgroups(  ) )
+                    for ( String strWorkgroup : resourceWorkflow.getWorkgroups( ) )
                     {
-                        if ( AdminWorkgroupHome.isUserInWorkgroup( user, strWorkgroup ) ||
-                                RBACService.isAuthorized( resourceState,
-                                    StateResourceIdService.PERMISSION_VIEW_ALL_WORKGROUP, user ) )
+                        if ( AdminWorkgroupHome.isUserInWorkgroup( user, strWorkgroup )
+                                || RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW_ALL_WORKGROUP, user ) )
                         {
                             bReturn = true;
 
@@ -559,8 +562,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTasksForm( int nIdResource, String strResourceType, int nIdAction,
-        HttpServletRequest request, Locale locale )
+    public String doValidateTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale )
     {
         List<ITask> listTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
         String strError = null;
@@ -583,24 +585,24 @@ public class WorkflowProvider implements IWorkflowProvider
      */
     @Override
     @Deprecated
-    public void doSaveTasksForm( int nIdResource, String strResourceType, int nIdAction, Integer nExternalParentId,
-        HttpServletRequest request, Locale locale, String strUserAccessCode )
+    public void doSaveTasksForm( int nIdResource, String strResourceType, int nIdAction, Integer nExternalParentId, HttpServletRequest request, Locale locale,
+            String strUserAccessCode )
     {
-        WorkflowService.getInstance(  )
-                       .doProcessAction( nIdResource, strResourceType, nIdAction, nExternalParentId, request, locale,
-            false );
+        WorkflowService.getInstance( ).doProcessAction( nIdResource, strResourceType, nIdAction, nExternalParentId, request, locale, false );
     }
 
     // PRIVATE METHODS
 
     /**
-    * Return a collection witch contains a list enabled workflow
-    * @param user the AdminUser
-    * @return a collection witch contains a list enabled workflow
-    */
+     * Return a collection witch contains a list enabled workflow
+     * 
+     * @param user
+     *            the AdminUser
+     * @return a collection witch contains a list enabled workflow
+     */
     private Collection<Workflow> getWorkflowsEnabled( AdminUser user )
     {
-        WorkflowFilter filter = new WorkflowFilter(  );
+        WorkflowFilter filter = new WorkflowFilter( );
         filter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
@@ -611,43 +613,45 @@ public class WorkflowProvider implements IWorkflowProvider
     /**
      * returns the default model to build history performed on a resource.
      *
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
-     * @param nIdWorkflow the workflow id
-     * @param request the request
-     * @param locale the locale
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param request
+     *            the request
+     * @param locale
+     *            the locale
      * @return the default model
      */
-    private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType,
-        int nIdWorkflow, HttpServletRequest request, Locale locale )
+    private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request,
+            Locale locale )
     {
-        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
-                strResourceType, nIdWorkflow );
+        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;
         List<String> listTaskInformation;
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         Map<String, Object> resourceHistoryTaskInformation;
-        List<Map<String, Object>> listResourceHistoryTaskInformation = new ArrayList<Map<String, Object>>(  );
+        List<Map<String, Object>> listResourceHistoryTaskInformation = new ArrayList<Map<String, Object>>( );
         String strTaskinformation;
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            resourceHistoryTaskInformation = new HashMap<String, Object>(  );
+            resourceHistoryTaskInformation = new HashMap<String, Object>( );
             resourceHistoryTaskInformation.put( MARK_RESOURCE_HISTORY, resourceHistory );
 
-            if ( resourceHistory.getUserAccessCode(  ) != null )
+            if ( resourceHistory.getUserAccessCode( ) != null )
             {
-                resourceHistoryTaskInformation.put( MARK_ADMIN_USER_HISTORY,
-                    AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) );
+                resourceHistoryTaskInformation.put( MARK_ADMIN_USER_HISTORY, AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) );
             }
 
-            listTaskInformation = new ArrayList<String>(  );
-            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ), locale );
+            listTaskInformation = new ArrayList<String>( );
+            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 
             for ( ITask task : listActionTasks )
             {
-                strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
-                        request, locale, task );
+                strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId( ), request, locale, task );
 
                 if ( strTaskinformation != null )
                 {

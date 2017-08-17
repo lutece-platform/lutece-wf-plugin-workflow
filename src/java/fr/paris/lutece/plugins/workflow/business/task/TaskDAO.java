@@ -47,7 +47,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * TaskDAO
@@ -56,45 +55,43 @@ import javax.inject.Inject;
 public class TaskDAO implements ITaskDAO
 {
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_task ) FROM workflow_task";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order" +
-        " FROM workflow_task WHERE id_task=?";
-    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order " +
-        " FROM workflow_task WHERE id_action=? ORDER BY display_order";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " +
-        "(id_task,task_type_key,id_action, display_order)VALUES(?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?" +
-        " WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order" + " FROM workflow_task WHERE id_task=?";
+    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order "
+            + " FROM workflow_task WHERE id_action=? ORDER BY display_order";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " + "(id_task,task_type_key,id_action, display_order)VALUES(?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?" + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task  WHERE id_task=? ";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION = "SELECT MAX(display_order) FROM workflow_task WHERE id_action=?";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_task SET display_order = display_order - 1 WHERE display_order > ? AND id_action=? ";
     private static final String SQL_QUERY_TASKS_WITH_ORDER_BETWEEN = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE (display_order BETWEEN ? AND ?) AND id_action=?";
     private static final String SQL_QUERY_TASKS_AFTER_ORDER = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE display_order >=? AND id_action=?";
-    private static final String SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT = "SELECT task_type_key,id_task,id_action, display_order " +
-        " FROM workflow_task WHERE id_action=? ORDER BY id_task";
+    private static final String SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT = "SELECT task_type_key,id_task,id_action, display_order "
+            + " FROM workflow_task WHERE id_action=? ORDER BY id_task";
     @Inject
     private ITaskFactory _taskFactory;
 
     /**
      * Generates a new primary key
      *
-     * @param plugin the plugin
+     * @param plugin
+     *            the plugin
      * @return The new primary key
      */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nKey;
 
-        if ( !daoUtil.next(  ) )
+        if ( !daoUtil.next( ) )
         {
             // if the table is empty
             nKey = 1;
         }
 
         nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return nKey;
     }
@@ -106,15 +103,15 @@ public class TaskDAO implements ITaskDAO
     public synchronized void insert( ITask task )
     {
         int nPos = 0;
-        task.setId( newPrimaryKey( WorkflowUtils.getPlugin(  ) ) );
+        task.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
-        daoUtil.setInt( ++nPos, task.getId(  ) );
-        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
-        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
-        daoUtil.setInt( ++nPos, task.getOrder(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
+        daoUtil.setInt( ++nPos, task.getId( ) );
+        daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
+        daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
+        daoUtil.setInt( ++nPos, task.getOrder( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -123,18 +120,18 @@ public class TaskDAO implements ITaskDAO
     @Override
     public void store( ITask task )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, task.getId(  ) );
-        daoUtil.setString( ++nPos, task.getTaskType(  ).getKey(  ) );
-        daoUtil.setInt( ++nPos, task.getAction(  ).getId(  ) );
-        daoUtil.setInt( ++nPos, task.getOrder(  ) );
-        daoUtil.setInt( ++nPos, task.getId(  ) );
+        daoUtil.setInt( ++nPos, task.getId( ) );
+        daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
+        daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
+        daoUtil.setInt( ++nPos, task.getOrder( ) );
+        daoUtil.setInt( ++nPos, task.getId( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -145,25 +142,25 @@ public class TaskDAO implements ITaskDAO
     {
         ITask task = null;
         Action action = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nPos = 0;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
-            action = new Action(  );
+            action = new Action( );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setOrder( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return task;
     }
@@ -174,11 +171,11 @@ public class TaskDAO implements ITaskDAO
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -189,22 +186,22 @@ public class TaskDAO implements ITaskDAO
     {
         ITask task = null;
         Action action = null;
-        List<ITask> listTask = new ArrayList<ITask>(  );
+        List<ITask> listTask = new ArrayList<ITask>( );
 
         int nPos = 0;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_STATE_BY_ID_ACTION, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_STATE_BY_ID_ACTION, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdAction );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             nPos = 0;
             task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
-            action = new Action(  );
+            action = new Action( );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
             task.setOrder( daoUtil.getInt( ++nPos ) );
@@ -212,7 +209,7 @@ public class TaskDAO implements ITaskDAO
             listTask.add( task );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listTask;
     }
@@ -223,18 +220,18 @@ public class TaskDAO implements ITaskDAO
     @Override
     public int findMaximumOrderByActionId( int nIdAction )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION, WorkflowUtils.getPlugin( ) );
         int nMaximumOrder = 0;
 
         daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             nMaximumOrder = daoUtil.getInt( 1 );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return nMaximumOrder;
     }
@@ -245,11 +242,11 @@ public class TaskDAO implements ITaskDAO
     @Override
     public void decrementOrderByOne( int nOrder, int nIdAction )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin( ) );
         daoUtil.setInt( 1, nOrder );
         daoUtil.setInt( 2, nIdAction );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -258,22 +255,22 @@ public class TaskDAO implements ITaskDAO
     @Override
     public List<ITask> findTasksBetweenOrders( int nOrder1, int nOrder2, int nIdAction, Locale locale )
     {
-        List<ITask> listTask = new ArrayList<ITask>(  );
+        List<ITask> listTask = new ArrayList<ITask>( );
         int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_TASKS_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_TASKS_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin( ) );
         daoUtil.setInt( 1, nOrder1 );
         daoUtil.setInt( 2, nOrder2 );
         daoUtil.setInt( 3, nIdAction );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             ITask task = null;
             Action action = null;
             nPos = 0;
             task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
-            action = new Action(  );
+            action = new Action( );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
             task.setOrder( daoUtil.getInt( ++nPos ) );
@@ -281,7 +278,7 @@ public class TaskDAO implements ITaskDAO
             listTask.add( task );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listTask;
     }
@@ -292,21 +289,21 @@ public class TaskDAO implements ITaskDAO
     @Override
     public List<ITask> findTasksAfterOrder( int nOrder, int nIdAction, Locale locale )
     {
-        List<ITask> listTask = new ArrayList<ITask>(  );
+        List<ITask> listTask = new ArrayList<ITask>( );
         int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_TASKS_AFTER_ORDER, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_TASKS_AFTER_ORDER, WorkflowUtils.getPlugin( ) );
         daoUtil.setInt( 1, nOrder );
         daoUtil.setInt( 2, nIdAction );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             ITask task = null;
             Action action = null;
             nPos = 0;
             task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
-            action = new Action(  );
+            action = new Action( );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
             task.setOrder( daoUtil.getInt( ++nPos ) );
@@ -314,7 +311,7 @@ public class TaskDAO implements ITaskDAO
             listTask.add( task );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listTask;
     }
@@ -325,20 +322,20 @@ public class TaskDAO implements ITaskDAO
     @Override
     public List<ITask> findTasksForOrderInit( int nIdAction, Locale locale )
     {
-        List<ITask> listTask = new ArrayList<ITask>(  );
+        List<ITask> listTask = new ArrayList<ITask>( );
         int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT, WorkflowUtils.getPlugin( ) );
         daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             ITask task = null;
             Action action = null;
             nPos = 0;
             task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
             task.setId( daoUtil.getInt( ++nPos ) );
-            action = new Action(  );
+            action = new Action( );
             action.setId( daoUtil.getInt( ++nPos ) );
             task.setAction( action );
             task.setOrder( daoUtil.getInt( ++nPos ) );
@@ -346,7 +343,7 @@ public class TaskDAO implements ITaskDAO
             listTask.add( task );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listTask;
     }

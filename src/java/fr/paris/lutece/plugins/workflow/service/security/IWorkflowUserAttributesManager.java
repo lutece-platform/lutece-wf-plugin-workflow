@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.security.UserAttributesService;
 
 import java.util.Map;
 
-
 /**
  *
  * IWorkflowUserAttributesManager
@@ -46,28 +45,36 @@ import java.util.Map;
 public interface IWorkflowUserAttributesManager
 {
     /**
-    * Check if the UserAttributesService is enabled
-    * @return true if the service is enabled, false otherwise
-    */
-    boolean isEnabled(  );
+     * Check if the UserAttributesService is enabled
+     * 
+     * @return true if the service is enabled, false otherwise
+     */
+    boolean isEnabled( );
 
     /**
      * Set the UserAttributesService
-     * @param userAttributesService the UserAttributesService
+     * 
+     * @param userAttributesService
+     *            the UserAttributesService
      */
     void setUserAttributesService( UserAttributesService userAttributesService );
 
     /**
      * Get the attribute
-     * @param strUserId the id user guid
-     * @param strAttribute the attribute
+     * 
+     * @param strUserId
+     *            the id user guid
+     * @param strAttribute
+     *            the attribute
      * @return the attribute value
      */
     String getAttribute( String strUserId, String strAttribute );
 
     /**
      * Get the attributes
-     * @param strUserId the user id
+     * 
+     * @param strUserId
+     *            the user id
      * @return a map of attribute key - attribute value
      */
     Map<String, String> getAttributes( String strUserId );

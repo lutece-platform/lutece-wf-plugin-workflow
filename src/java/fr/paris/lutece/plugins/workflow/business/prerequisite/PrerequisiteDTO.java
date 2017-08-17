@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.business.prerequisite;
 
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 
-
 /**
  * Business class of prerequisites
  */
@@ -46,32 +45,38 @@ public class PrerequisiteDTO extends Prerequisite
 
     /**
      * Creates a new prerequisite DAO with parameters initialized
-     * @param prerequisite the prerequisite to copy
-     * @param strTitle The title of the type of the underlying prerequisite
-     * @param bHasConfiguration True if the prerequisite has configuration,
-     *            false otherwise
+     * 
+     * @param prerequisite
+     *            the prerequisite to copy
+     * @param strTitle
+     *            The title of the type of the underlying prerequisite
+     * @param bHasConfiguration
+     *            True if the prerequisite has configuration, false otherwise
      */
     public PrerequisiteDTO( Prerequisite prerequisite, String strTitle, boolean bHasConfiguration )
     {
-        this.setIdPrerequisite( prerequisite.getIdPrerequisite(  ) );
-        this.setIdAction( prerequisite.getIdAction(  ) );
-        this.setPrerequisiteType( prerequisite.getPrerequisiteType(  ) );
+        this.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+        this.setIdAction( prerequisite.getIdAction( ) );
+        this.setPrerequisiteType( prerequisite.getPrerequisiteType( ) );
         this._strTitle = strTitle;
         this._bHasConfiguration = bHasConfiguration;
     }
 
     /**
      * Get the title of the type of the underlying prerequisite
+     * 
      * @return The title of the type of the underlying prerequisite
      */
-    public String getTitle(  )
+    public String getTitle( )
     {
         return _strTitle;
     }
 
     /**
      * Set the title of the type of the underlying prerequisite
-     * @param strTitle The title of the type of the underlying prerequisite
+     * 
+     * @param strTitle
+     *            The title of the type of the underlying prerequisite
      */
     public void setTitle( String strTitle )
     {
@@ -79,19 +84,20 @@ public class PrerequisiteDTO extends Prerequisite
     }
 
     /**
-     * Check if the prerequisite type associated with the underlying
-     * prerequisite has a configuration
+     * Check if the prerequisite type associated with the underlying prerequisite has a configuration
+     * 
      * @return True if it has a configuration, false otherwise
      */
-    public boolean getHasConfiguration(  )
+    public boolean getHasConfiguration( )
     {
         return _bHasConfiguration;
     }
 
     /**
-     * Set a boolean value that indicates that the type associated with the
-     * underlying prerequisite has a configuration or not
-     * @param bHasConfiguration True if it has a configuration, false otherwise
+     * Set a boolean value that indicates that the type associated with the underlying prerequisite has a configuration or not
+     * 
+     * @param bHasConfiguration
+     *            True if it has a configuration, false otherwise
      */
     public void setHasConfiguration( boolean bHasConfiguration )
     {

@@ -51,7 +51,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  *
  * class DirectoryUtils
@@ -73,7 +72,7 @@ public final class WorkflowUtils
      * DirectoryUtils
      *
      */
-    private WorkflowUtils(  )
+    private WorkflowUtils( )
     {
     }
 
@@ -82,9 +81,9 @@ public final class WorkflowUtils
      *
      * @return return current Timestamp
      */
-    public static Timestamp getCurrentTimestamp(  )
+    public static Timestamp getCurrentTimestamp( )
     {
-        return new Timestamp( GregorianCalendar.getInstance(  ).getTimeInMillis(  ) );
+        return new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) );
     }
 
     /**
@@ -124,7 +123,7 @@ public final class WorkflowUtils
                 nIdParameter = Integer.parseInt( strParameter );
             }
         }
-        catch ( NumberFormatException ne )
+        catch( NumberFormatException ne )
         {
             AppLogService.error( ne );
         }
@@ -133,19 +132,17 @@ public final class WorkflowUtils
     }
 
     /**
-     * Returns a copy of the string , with leading and trailing whitespace
-     * omitted.
+     * Returns a copy of the string , with leading and trailing whitespace omitted.
      *
      * @param strParameter
      *            the string parameter to convert
-     * @return null if the strParameter is null other return with leading and
-     *         trailing whitespace omitted.
+     * @return null if the strParameter is null other return with leading and trailing whitespace omitted.
      */
     public static String trim( String strParameter )
     {
         if ( strParameter != null )
         {
-            return strParameter.trim(  );
+            return strParameter.trim( );
         }
 
         return strParameter;
@@ -153,14 +150,18 @@ public final class WorkflowUtils
 
     /**
      * Builds a query with filters placed in parameters
-     * @param strSelect the select of the  query
-     * @param listStrFilter the list of filter to add in the query
-     * @param strOrder the order by of the query
+     * 
+     * @param strSelect
+     *            the select of the query
+     * @param listStrFilter
+     *            the list of filter to add in the query
+     * @param strOrder
+     *            the order by of the query
      * @return a query
      */
     public static String buildRequestWithFilter( String strSelect, List<String> listStrFilter, String strOrder )
     {
-        StringBuffer strBuffer = new StringBuffer(  );
+        StringBuffer strBuffer = new StringBuffer( );
         strBuffer.append( strSelect );
 
         int nCount = 0;
@@ -174,7 +175,7 @@ public final class WorkflowUtils
 
             strBuffer.append( strFilter );
 
-            if ( nCount != listStrFilter.size(  ) )
+            if ( nCount != listStrFilter.size( ) )
             {
                 strBuffer.append( CONSTANT_AND );
             }
@@ -185,34 +186,41 @@ public final class WorkflowUtils
             strBuffer.append( strOrder );
         }
 
-        return strBuffer.toString(  );
+        return strBuffer.toString( );
     }
 
     /**
      * return a referenceList
-     * @param listReferenceItem a list of referenc Item
-     * @param bWitdthEmptyChoice true if a empty item must be insert in the reference list
-     * @param locale the locale
+     * 
+     * @param listReferenceItem
+     *            a list of referenc Item
+     * @param bWitdthEmptyChoice
+     *            true if a empty item must be insert in the reference list
+     * @param locale
+     *            the locale
      * @return referencelist
      */
     public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice, Locale locale )
     {
-        return getRefList( listReferenceItem, bWitdthEmptyChoice,
-            I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale ), locale );
+        return getRefList( listReferenceItem, bWitdthEmptyChoice, I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale ), locale );
     }
 
     /**
      * return a referenceList
-     * @param listReferenceItem a list of referenc Item
-     * @param bWitdthEmptyChoice true if a empty item must be insert in the reference list
-     * @param strLabelEmptyChoice the empty choice label
-     * @param locale the locale
+     * 
+     * @param listReferenceItem
+     *            a list of referenc Item
+     * @param bWitdthEmptyChoice
+     *            true if a empty item must be insert in the reference list
+     * @param strLabelEmptyChoice
+     *            the empty choice label
+     * @param locale
+     *            the locale
      * @return referencelist
      */
-    public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice,
-        String strLabelEmptyChoice, Locale locale )
+    public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice, String strLabelEmptyChoice, Locale locale )
     {
-        ReferenceList refList = new ReferenceList(  );
+        ReferenceList refList = new ReferenceList( );
 
         if ( bWitdthEmptyChoice )
         {
@@ -221,7 +229,7 @@ public final class WorkflowUtils
 
         for ( Object item : listReferenceItem )
         {
-            refList.addItem( ( (IReferenceItem) item ).getId(  ), ( (IReferenceItem) item ).getName(  ) );
+            refList.addItem( ( (IReferenceItem) item ).getId( ), ( (IReferenceItem) item ).getName( ) );
         }
 
         return refList;
@@ -229,33 +237,36 @@ public final class WorkflowUtils
 
     /**
      * Get the workflow plugin
+     * 
      * @return the workflow plugin
      */
-    public static Plugin getPlugin(  )
+    public static Plugin getPlugin( )
     {
         return PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
     }
 
     /**
      * Convert an array of Strings into an array of Integers
-     * @param listToConvert the list to convert
+     * 
+     * @param listToConvert
+     *            the list to convert
      * @return an array of Integers
      */
-    public static Integer[] convertStringToInt( String[] listToConvert )
+    public static Integer [ ] convertStringToInt( String [ ] listToConvert )
     {
         if ( ( listToConvert != null ) && ( listToConvert.length > 0 ) )
         {
             int nIndex = 0;
-            Integer[] listConverted = new Integer[listToConvert.length];
+            Integer [ ] listConverted = new Integer [ listToConvert.length];
 
             for ( String strToConvert : listToConvert )
             {
-                listConverted[nIndex++] = convertStringToInt( strToConvert );
+                listConverted [nIndex++] = convertStringToInt( strToConvert );
             }
 
             return listConverted;
         }
 
-        return new Integer[0];
+        return new Integer [ 0];
     }
 }

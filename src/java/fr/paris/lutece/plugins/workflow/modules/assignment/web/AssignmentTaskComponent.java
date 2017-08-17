@@ -64,7 +64,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * AssignmentTaskComponent
@@ -77,7 +76,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     private static final String TEMPLATE_TASK_ASSIGNMENT_FORM = "admin/plugins/workflow/modules/assignment/task_assignment_form.html";
     private static final String TEMPLATE_TASK_ASSIGNMENT_INFORMATION = "admin/plugins/workflow/modules/assignment/task_assignment_information.html";
 
-    //	MARKS
+    // MARKS
     private static final String MARK_CONFIG = "config";
     private static final String MARK_WORKGROUP_LIST = "workgroup_list";
     private static final String MARK_ITEM = "item";
@@ -127,9 +126,9 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         String strIsUseUserName = request.getParameter( PARAMETER_IS_USE_USER_NAME );
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
-        String[] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS );
+        String [ ] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS );
 
-        if ( ( strTitle == null ) || strTitle.trim(  ).equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( ( strTitle == null ) || strTitle.trim( ).equals( WorkflowUtils.EMPTY_STRING ) )
         {
             strError = FIELD_TITLE;
         }
@@ -151,45 +150,44 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         if ( strError != null )
         {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
+            Object [ ] tabRequiredFields = {
+                I18nService.getLocalizedString( strError, locale )
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
-        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
-            config = new TaskAssignmentConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskAssignmentConfig( );
+            config.setIdTask( task.getId( ) );
             bCreate = true;
         }
 
-        //add workgroups
-        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>(  );
+        // add workgroups
+        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>( );
         WorkgroupConfig workgroupConfig;
 
         // Ignore potential null pointer : tabWorkgroups can not be null here
         for ( int i = 0; i < tabWorkgroups.length; i++ )
         {
-            workgroupConfig = new WorkgroupConfig(  );
-            workgroupConfig.setIdTask( task.getId(  ) );
-            workgroupConfig.setWorkgroupKey( tabWorkgroups[i] );
+            workgroupConfig = new WorkgroupConfig( );
+            workgroupConfig.setIdTask( task.getId( ) );
+            workgroupConfig.setWorkgroupKey( tabWorkgroups [i] );
 
             if ( strIsNotification != null )
             {
-                if ( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_" +
-                                tabWorkgroups[i] ) ) != -1 )
+                if ( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_" + tabWorkgroups [i] ) ) != -1 )
                 {
-                    workgroupConfig.setIdMailingList( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST +
-                                "_" + tabWorkgroups[i] ) ) );
+                    workgroupConfig.setIdMailingList( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_"
+                            + tabWorkgroups [i] ) ) );
                 }
                 else
                 {
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_NO_MAILINGLIST_FOR_WORKGROUP,
-                        AdminMessage.TYPE_STOP );
+                    return AdminMessageService.getMessageUrl( request, MESSAGE_NO_MAILINGLIST_FOR_WORKGROUP, AdminMessage.TYPE_STOP );
                 }
             }
 
@@ -206,11 +204,11 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         if ( bCreate )
         {
-            this.getTaskConfigService(  ).create( config );
+            this.getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService(  ).update( config );
+            this.getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -220,30 +218,29 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         String strError = StringUtils.EMPTY;
-        String[] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + task.getId(  ) );
-        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String [ ] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + task.getId( ) );
+        TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_ASSIGNMENT,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_ASSIGNMENT, AdminMessage.TYPE_STOP );
         }
 
         if ( ( tabWorkgroups == null ) || ( tabWorkgroups.length == 0 ) )
         {
-            strError = config.getTitle(  );
+            strError = config.getTitle( );
         }
 
         if ( StringUtils.isNotBlank( strError ) )
         {
-            Object[] tabRequiredFields = { strError };
+            Object [ ] tabRequiredFields = {
+                strError
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         return null;
@@ -257,25 +254,24 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     {
         String strNothing = I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale );
 
-        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        ReferenceList refWorkgroups = AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ),
-                locale );
+        ReferenceList refWorkgroups = AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale );
 
-        List<HashMap<String, Object>> listWorkgroups = new ArrayList<HashMap<String, Object>>(  );
+        List<HashMap<String, Object>> listWorkgroups = new ArrayList<HashMap<String, Object>>( );
 
         for ( ReferenceItem referenceItem : refWorkgroups )
         {
-            if ( !referenceItem.getCode(  ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
             {
-                HashMap<String, Object> workgroupsItem = new HashMap<String, Object>(  );
+                HashMap<String, Object> workgroupsItem = new HashMap<String, Object>( );
                 workgroupsItem.put( MARK_ITEM, referenceItem );
 
-                if ( ( config != null ) && ( config.getWorkgroups(  ) != null ) )
+                if ( ( config != null ) && ( config.getWorkgroups( ) != null ) )
                 {
-                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups(  ) )
+                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups( ) )
                     {
-                        if ( referenceItem.getCode(  ).equals( workgroupSelected.getWorkgroupKey(  ) ) )
+                        if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
                         {
                             workgroupsItem.put( MARK_CONFIG, workgroupSelected );
 
@@ -288,42 +284,40 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             }
         }
 
-        ReferenceList refMailingList = new ReferenceList(  );
+        ReferenceList refMailingList = new ReferenceList( );
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
         refMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_WORKGROUP_LIST, listWorkgroups );
         model.put( MARK_CONFIG, config );
         model.put( MARK_MAILING_LIST, refMailingList );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGNMENT_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        ReferenceList refWorkgroups = new ReferenceList(  );
+        ReferenceList refWorkgroups = new ReferenceList( );
 
-        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( 
-                    request ), locale ) )
+        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode(  ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
             {
-                if ( ( config != null ) && ( config.getWorkgroups(  ) != null ) )
+                if ( ( config != null ) && ( config.getWorkgroups( ) != null ) )
                 {
-                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups(  ) )
+                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups( ) )
                     {
-                        if ( referenceItem.getCode(  ).equals( workgroupSelected.getWorkgroupKey(  ) ) )
+                        if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
                         {
                             refWorkgroups.add( referenceItem );
                         }
@@ -337,7 +331,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGNMENT_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -346,24 +340,22 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory,
-                task.getId(  ), WorkflowUtils.getPlugin(  ) );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-        TaskAssignmentConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        ReferenceList refWorkgroups = new ReferenceList(  );
+        ReferenceList refWorkgroups = new ReferenceList( );
 
-        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( 
-                    request ), locale ) )
+        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode(  ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
             {
                 if ( listAssignmentHistory != null )
                 {
                     for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
                     {
-                        if ( referenceItem.getCode(  ).equals( assignmentHistory.getWorkgroup(  ) ) )
+                        if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
                         {
                             refWorkgroups.add( referenceItem );
                         }
@@ -377,7 +369,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGNMENT_INFORMATION, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -386,26 +378,24 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory,
-                task.getId(  ), WorkflowUtils.getPlugin(  ) );
+        List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
-        StringBuffer strXml = new StringBuffer(  );
+        StringBuffer strXml = new StringBuffer( );
 
         XmlUtil.beginElement( strXml, TAG_ASSIGNMENT );
         XmlUtil.beginElement( strXml, TAG_LIST_WORKGROUP );
 
-        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( 
-                    request ), locale ) )
+        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode(  ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
             {
                 if ( listAssignmentHistory != null )
                 {
                     for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
                     {
-                        if ( referenceItem.getCode(  ).equals( assignmentHistory.getWorkgroup(  ) ) )
+                        if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
                         {
-                            XmlUtil.addElementHtml( strXml, TAG_WORKGROUP, referenceItem.getName(  ) );
+                            XmlUtil.addElementHtml( strXml, TAG_WORKGROUP, referenceItem.getName( ) );
                         }
                     }
                 }
@@ -415,6 +405,6 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         XmlUtil.endElement( strXml, TAG_LIST_WORKGROUP );
         XmlUtil.endElement( strXml, TAG_ASSIGNMENT );
 
-        return strXml.toString(  );
+        return strXml.toString( );
     }
 }
