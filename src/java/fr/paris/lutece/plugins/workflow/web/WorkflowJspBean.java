@@ -2762,8 +2762,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         response.setHeader( "Content-disposition", "attachment; filename=" + strWorkflowName + ".json" );
         OutputStream out = response.getOutputStream( );
         out.write( jsonObject.toString( ).getBytes( ) );
-        out.flush( );
-        System.out.println( jsonObject.toString( ) );
+        out.flush( );        
         return null;
     }
 
