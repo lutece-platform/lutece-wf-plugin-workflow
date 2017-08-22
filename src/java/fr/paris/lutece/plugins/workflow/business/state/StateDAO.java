@@ -39,8 +39,8 @@ import fr.paris.lutece.plugins.workflowcore.business.state.IStateDAO;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,6 @@ import java.util.List;
  */
 public class StateDAO implements IStateDAO
 {
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_state ) FROM workflow_state";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon "
             + " FROM workflow_state WHERE id_state=?";
     private static final String SQL_QUERY_FIND_BY_RESSOURCE = "SELECT s.id_state,s.name,s.description,s.id_workflow,s.is_initial_state,s.is_required_workgroup_assigned,s.id_icon, s.display_order"
@@ -60,7 +59,7 @@ public class StateDAO implements IStateDAO
     private static final String SQL_QUERY_SELECT_STATE_BY_FILTER = "SELECT id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,id_icon,display_order "
             + " FROM workflow_state ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_state "
-            + "(id_state,name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon)VALUES(?,?,?,?,?,?,?,?)";
+            + "(name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon)VALUES(?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_state SET name=?,description=?,id_workflow=?,is_initial_state=?,is_required_workgroup_assigned=?, display_order=?, id_icon=? WHERE id_state=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_state  WHERE id_state=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " id_workflow = ? ";
@@ -74,60 +73,42 @@ public class StateDAO implements IStateDAO
             + " FROM workflow_state WHERE id_workflow=? ORDER BY id_state";
 
     /**
-     * Generates a new primary key
-     *
-     * @param plugin
-     *            the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
-        {
-            // if the table is empty
-            nKey = 1;
-        }
-
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
-
-        return nKey;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public synchronized void insert( State state )
     {
-        int nPos = 0;
-        state.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( ++nPos, state.getId( ) );
-        daoUtil.setString( ++nPos, state.getName( ) );
-        daoUtil.setString( ++nPos, state.getDescription( ) );
-        daoUtil.setInt( ++nPos, state.getWorkflow( ).getId( ) );
-        daoUtil.setBoolean( ++nPos, state.isInitialState( ) );
-        daoUtil.setBoolean( ++nPos, state.isRequiredWorkgroupAssigned( ) );
-        daoUtil.setInt( ++nPos, state.getOrder( ) );
-
-        if ( ( state.getIcon( ) == null ) || ( state.getIcon( ).getId( ) == -1 ) )
+        
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
+        
+        try
         {
-            daoUtil.setIntNull( ++nPos );
-        }
-        else
-        {
-            daoUtil.setInt( ++nPos, state.getIcon( ).getId( ) );
-        }
+            int nPos = 0;
+            daoUtil.setString( ++nPos, state.getName( ) );
+            daoUtil.setString( ++nPos, state.getDescription( ) );
+            daoUtil.setInt( ++nPos, state.getWorkflow( ).getId( ) );
+            daoUtil.setBoolean( ++nPos, state.isInitialState( ) );
+            daoUtil.setBoolean( ++nPos, state.isRequiredWorkgroupAssigned( ) );
+            daoUtil.setInt( ++nPos, state.getOrder( ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            if ( ( state.getIcon( ) == null ) || ( state.getIcon( ).getId( ) == -1 ) )
+            {
+                daoUtil.setIntNull( ++nPos );
+            }
+            else
+            {
+                daoUtil.setInt( ++nPos, state.getIcon( ).getId( ) );
+            }
+
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey() ) {
+                state.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+            daoUtil.free( );  
+        }
     }
 
     /**

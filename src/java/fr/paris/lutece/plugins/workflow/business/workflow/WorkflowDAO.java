@@ -37,8 +37,8 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +50,12 @@ import java.util.List;
  */
 public class WorkflowDAO implements IWorkflowDAO
 {
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_workflow ) FROM workflow_workflow";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key"
             + " FROM workflow_workflow WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_BY_FILTER = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key"
             + " FROM workflow_workflow ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_workflow "
-            + "(id_workflow,name,description,creation_date,is_enabled,workgroup_key)VALUES(?,?,?,?,?,?)";
+            + "(name,description,creation_date,is_enabled,workgroup_key)VALUES(?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_workflow  SET id_workflow=?,name=?,description=?,is_enabled=?,workgroup_key=?"
             + " WHERE id_workflow=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_workflow  WHERE id_workflow=? ";
@@ -66,50 +65,30 @@ public class WorkflowDAO implements IWorkflowDAO
     private static final String SQL_ORDER_BY_DATE_CREATION = " ORDER BY creation_date DESC ";
 
     /**
-     * Generates a new primary key
-     * 
-     * @param plugin
-     *            the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
-        {
-            // if the table is empty
-            nKey = 1;
-        }
-
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
-
-        return nKey;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public synchronized void insert( Workflow workflow )
     {
-        int nPos = 0;
-        workflow.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( ++nPos, workflow.getId( ) );
-        daoUtil.setString( ++nPos, workflow.getName( ) );
-        daoUtil.setString( ++nPos, workflow.getDescription( ) );
-        daoUtil.setTimestamp( ++nPos, workflow.getCreationDate( ) );
-        daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
-        daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
+        try
+        {
+            int nPos = 0;
+            daoUtil.setString( ++nPos, workflow.getName( ) );
+            daoUtil.setString( ++nPos, workflow.getDescription( ) );
+            daoUtil.setTimestamp( ++nPos, workflow.getCreationDate( ) );
+            daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
+            daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
+            
+            daoUtil.executeUpdate();
+            if ( daoUtil.nextGeneratedKey( ) ) {
+                workflow.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+            daoUtil.free( );
+        }
     }
 
     /**

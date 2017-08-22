@@ -38,8 +38,8 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskDAO;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,11 +54,10 @@ import javax.inject.Inject;
  */
 public class TaskDAO implements ITaskDAO
 {
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_task ) FROM workflow_task";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order" + " FROM workflow_task WHERE id_task=?";
     private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order "
             + " FROM workflow_task WHERE id_action=? ORDER BY display_order";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " + "(id_task,task_type_key,id_action, display_order)VALUES(?,?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " + "(task_type_key,id_action, display_order)VALUES(?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?" + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task  WHERE id_task=? ";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION = "SELECT MAX(display_order) FROM workflow_task WHERE id_action=?";
@@ -71,47 +70,29 @@ public class TaskDAO implements ITaskDAO
     private ITaskFactory _taskFactory;
 
     /**
-     * Generates a new primary key
-     *
-     * @param plugin
-     *            the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
-        {
-            // if the table is empty
-            nKey = 1;
-        }
-
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
-
-        return nKey;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public synchronized void insert( ITask task )
     {
-        int nPos = 0;
-        task.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( ++nPos, task.getId( ) );
-        daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
-        daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
-        daoUtil.setInt( ++nPos, task.getOrder( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );   
+        try
+        {
+            int nPos = 0;
+            daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
+            daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
+            daoUtil.setInt( ++nPos, task.getOrder( ) );
+            
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey() ) 
+            {
+                task.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+            daoUtil.free();
+        }
     }
 
     /**

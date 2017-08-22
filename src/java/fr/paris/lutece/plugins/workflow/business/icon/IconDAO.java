@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.workflow.business.icon;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.icon.IIconDAO;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,39 +49,12 @@ import java.util.List;
  */
 public class IconDAO implements IIconDAO
 {
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_icon ) FROM workflow_icon";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_icon,name,mime_type,file_value,width,height" + " FROM workflow_icon WHERE id_icon=?";
     private static final String SQL_QUERY_SELECT_ICON = "SELECT id_icon,name,mime_type,width,height" + " FROM workflow_icon ORDER BY name DESC  ";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_icon " + "(id_icon,name,mime_type,file_value,width,height)VALUES(?,?,?,?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_icon " + "(name,mime_type,file_value,width,height)VALUES(?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_icon  SET id_icon=?,name=?,mime_type=?,file_value=?,width=?,height=?" + " WHERE id_icon=?";
     private static final String SQL_QUERY_UPDATE_METADATA = "UPDATE workflow_icon  SET id_icon=?,name=?,width=?,height=?" + " WHERE id_icon=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_icon  WHERE id_icon=? ";
-
-    /**
-     * Generates a new primary key
-     * 
-     * @param plugin
-     *            the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
-        {
-            // if the table is empty
-            nKey = 1;
-        }
-
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
-
-        return nKey;
-    }
 
     /**
      * {@inheritDoc}
@@ -89,19 +62,27 @@ public class IconDAO implements IIconDAO
     @Override
     public synchronized void insert( Icon icon )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
 
-        int nPos = 0;
-        icon.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
-
-        daoUtil.setInt( ++nPos, icon.getId( ) );
-        daoUtil.setString( ++nPos, icon.getName( ) );
-        daoUtil.setString( ++nPos, icon.getMimeType( ) );
-        daoUtil.setBytes( ++nPos, icon.getValue( ) );
-        daoUtil.setInt( ++nPos, icon.getWidth( ) );
-        daoUtil.setInt( ++nPos, icon.getHeight( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try
+        {
+            int nPos = 0;
+            daoUtil.setString( ++nPos, icon.getName( ) );
+            daoUtil.setString( ++nPos, icon.getMimeType( ) );
+            daoUtil.setBytes( ++nPos, icon.getValue( ) );
+            daoUtil.setInt( ++nPos, icon.getWidth( ) );
+            daoUtil.setInt( ++nPos, icon.getHeight( ) );
+            
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey() ) {
+                icon.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+           daoUtil.free( );  
+        }
+        
     }
 
     /**

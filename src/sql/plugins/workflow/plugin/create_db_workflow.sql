@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS workflow_prerequisite_duration_cf;
 -- -----------------------------------------------
 CREATE TABLE workflow_workflow
 (
-	id_workflow INT DEFAULT 0 NOT NULL,
+	id_workflow INT AUTO_INCREMENT,
 	name VARCHAR(255) DEFAULT NULL,
 	description LONG VARCHAR DEFAULT NULL,
 	creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE workflow_workflow
 -- --------------------------------------------
 CREATE TABLE workflow_state
 (
-	id_state INT DEFAULT 0 NOT NULL,
+	id_state INT AUTO_INCREMENT,
 	name VARCHAR(255) DEFAULT NULL,
 	description LONG VARCHAR DEFAULT NULL,
 	id_workflow INT DEFAULT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE workflow_state
 -- ---------------------------------------------
 CREATE TABLE workflow_action
 (
-	id_action INT DEFAULT 0 NOT NULL,
+	id_action INT AUTO_INCREMENT,
 	name VARCHAR(255) DEFAULT NULL,
 	description LONG VARCHAR DEFAULT NULL,
 	id_workflow INT DEFAULT NULL,
@@ -97,7 +97,7 @@ CREATE INDEX workflow_resource_workflow_id_workflow_fk ON workflow_resource_work
 -- -------------------------------------------------------
 CREATE TABLE workflow_resource_history
 (
-	id_history INT DEFAULT 0 NOT NULL,
+	id_history INT AUTO_INCREMENT,
 	id_resource INT DEFAULT NULL,
 	resource_type VARCHAR(255) DEFAULT NULL,
 	id_workflow INT DEFAULT NULL,
@@ -115,7 +115,7 @@ CREATE INDEX history_id_action_fk ON workflow_resource_history(id_action);
 -- -------------------------------------------
 CREATE TABLE workflow_icon
 (
- 	id_icon INT DEFAULT 0 NOT NULL,
+ 	id_icon INT AUTO_INCREMENT,
 	name VARCHAR(255) DEFAULT NULL,
 	mime_type VARCHAR(50) DEFAULT NULL,
 	file_value LONG VARBINARY,
@@ -129,7 +129,7 @@ CREATE TABLE workflow_icon
 -- --------------------------------------------------
 CREATE TABLE workflow_task
 (
-	id_task INT DEFAULT 0 NOT NULL,
+	id_task INT AUTO_INCREMENT,
 	task_type_key VARCHAR(50) DEFAULT NULL, 
 	id_action INT DEFAULT 0 NOT NULL,
 	display_order INT DEFAULT 0,

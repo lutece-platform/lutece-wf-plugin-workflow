@@ -38,8 +38,8 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,6 @@ import java.util.List;
  */
 public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_history ) FROM workflow_resource_history";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_resource,resource_type,"
             + "id_workflow,id_action,creation_date,user_access_code " + "FROM workflow_resource_history WHERE id_history=?";
     private static final String SQL_QUERY_SELECT_BY_RESSOURCE = "SELECT id_history,id_resource,resource_type,"
@@ -60,7 +59,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     private static final String SQL_QUERY_SELECT_BY_ACTION = "SELECT id_history,id_resource,resource_type,"
             + "id_workflow,id_action,creation_date,user_access_code " + "FROM workflow_resource_history WHERE id_action=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history "
-            + "(id_history,id_resource,resource_type,id_workflow,id_action,creation_date,user_access_code )VALUES(?,?,?,?,?,?,?)";
+            + "(id_resource,resource_type,id_workflow,id_action,creation_date,user_access_code )VALUES(?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_history  WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE = "DELETE FROM workflow_resource_history WHERE id_workflow = ? AND resource_type = ? AND id_resource IN (?";
     private static final String SQL_QUERY_SELECT_LIST_ID_HISTORY_BY_LIST_ID_RESOURCE = "SELECT id_history FROM workflow_resource_history WHERE id_workflow = ? AND resource_type = ? AND id_resource IN (?";
@@ -69,51 +68,32 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     private static final String SQL_ORDER_BY_CREATION_DATE_DESC = " ORDER BY creation_date DESC";
 
     /**
-     * Generates a new primary key
-     * 
-     * @param plugin
-     *            the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
-        {
-            // if the table is empty
-            nKey = 1;
-        }
-
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
-
-        return nKey;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public synchronized void insert( ResourceHistory resourceHistory )
     {
-        resourceHistory.setId( newPrimaryKey( WorkflowUtils.getPlugin( ) ) );
+        
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
+        try
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, resourceHistory.getIdResource( ) );
+            daoUtil.setString( ++nPos, resourceHistory.getResourceType( ) );
+            daoUtil.setInt( ++nPos, resourceHistory.getWorkflow( ).getId( ) );
+            daoUtil.setInt( ++nPos, resourceHistory.getAction( ).getId( ) );
+            daoUtil.setTimestamp( ++nPos, resourceHistory.getCreationDate( ) );
+            daoUtil.setString( ++nPos, resourceHistory.getUserAccessCode( ) );
 
-        int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( ++nPos, resourceHistory.getId( ) );
-        daoUtil.setInt( ++nPos, resourceHistory.getIdResource( ) );
-        daoUtil.setString( ++nPos, resourceHistory.getResourceType( ) );
-        daoUtil.setInt( ++nPos, resourceHistory.getWorkflow( ).getId( ) );
-        daoUtil.setInt( ++nPos, resourceHistory.getAction( ).getId( ) );
-        daoUtil.setTimestamp( ++nPos, resourceHistory.getCreationDate( ) );
-        daoUtil.setString( ++nPos, resourceHistory.getUserAccessCode( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey() ) {
+                resourceHistory.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+            daoUtil.free( );
+        }
     }
 
     /**

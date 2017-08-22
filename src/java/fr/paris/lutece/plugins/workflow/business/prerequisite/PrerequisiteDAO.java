@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.business.prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,36 +46,11 @@ import java.util.List;
  */
 public class PrerequisiteDAO implements IPrerequisiteDAO
 {
-    private static final String SQL_QUERY_NEW_PRIMARY_KEY = "SELECT MAX(id_prerequisite) FROM workflow_prerequisite";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_prerequisite = ?";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_prerequisite SET id_action = ?, prerequisite_type = ? WHERE id_prerequisite = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_prerequisite,id_action,prerequisite_type) VALUES(?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_action,prerequisite_type) VALUES(?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_prerequisite WHERE id_prerequisite = ?";
     private static final String SQL_QUERY_FIND_BY_ID_ACTION = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_action = ?";
-
-    /**
-     * Get a new primary key
-     * 
-     * @param plugin
-     *            The plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PRIMARY_KEY, plugin );
-        daoUtil.executeQuery( );
-
-        int nRes = 1;
-
-        if ( daoUtil.next( ) )
-        {
-            nRes = daoUtil.getInt( 1 ) + 1;
-        }
-
-        daoUtil.free( );
-
-        return nRes;
-    }
 
     /**
      * {@inheritDoc}
@@ -107,14 +83,22 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
     @Override
     public synchronized void create( Prerequisite prerequisite, Plugin plugin )
     {
-        prerequisite.setIdPrerequisite( newPrimaryKey( plugin ) );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( 1, prerequisite.getIdPrerequisite( ) );
-        daoUtil.setInt( 2, prerequisite.getIdAction( ) );
-        daoUtil.setString( 3, prerequisite.getPrerequisiteType( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
+        try
+        {
+            daoUtil.setInt( 1, prerequisite.getIdAction( ) );
+            daoUtil.setString( 2, prerequisite.getPrerequisiteType( ) );
+            
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey() ) {
+                prerequisite.setIdPrerequisite( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+        finally
+        {
+           daoUtil.free( ); 
+        }
     }
 
     /**
