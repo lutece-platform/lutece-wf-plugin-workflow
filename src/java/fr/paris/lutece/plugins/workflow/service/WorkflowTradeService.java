@@ -36,12 +36,19 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class WorkflowTradeService
+/**
+ * Service for import/export Workflow in json
+ * 
+ * @author Laurent Payen
+ *
+ */
+public final class WorkflowTradeService
 {
 
     // PROPERTIES
@@ -64,6 +71,13 @@ public class WorkflowTradeService
 
     private static ObjectMapper _mapper = new ObjectMapper( ).registerModule( new JavaTimeModule( ) ).setSerializationInclusion( Include.NON_NULL );
 
+    /**
+     * Import a workflow from a json object
+     * 
+     * @param jsonObject
+     *            the json object
+     * @return the id of the workflow created
+     */
     public static int importWorkflowFromJson( JSONObject jsonObject )
     {
         int nIdWorkflow = 0;
@@ -86,6 +100,14 @@ public class WorkflowTradeService
                     // Add import in front of the name
                     workflow.setName( IMPORT + StringUtils.SPACE + workflow.getName( ) );
                 }
+                // Check if the workgroup of the imported workflow exists                
+                String strWorkgroup = workflow.getWorkgroup( );
+                if ( StringUtils.isNotEmpty( strWorkgroup ) && AdminWorkgroupHome.checkExistWorkgroup( strWorkgroup ) )
+                {
+                    workflow.setWorkgroup( strWorkgroup );
+                } else {
+                	workflow.setWorkgroup( StringUtils.EMPTY );
+                }
                 _workflowService.create( workflow );
                 nIdWorkflow = workflow.getId( );
                 HashMap<Integer, State> mapIdState = importStates( jsonObject, workflow );
@@ -101,6 +123,15 @@ public class WorkflowTradeService
         return nIdWorkflow;
     }
 
+    /**
+     * Export a workflow to a json object
+     * 
+     * @param nIdWorkflow
+     *            the id of the workflow
+     * @param locale
+     *            the locale
+     * @return the json object of the workflow
+     */
     public static JSONObject exportWorkflowToJson( int nIdWorkflow, Locale locale )
     {
         JSONObject jsonObject = new JSONObject( );
@@ -121,6 +152,18 @@ public class WorkflowTradeService
         return jsonObject;
     }
 
+    /**
+     * Import the states of a workflow
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param workflow
+     *            the workflow
+     * @return a map of the state with key id
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     private static HashMap<Integer, State> importStates( JSONObject jsonObject, Workflow workflow ) throws JsonParseException, JsonMappingException,
             IOException
     {
@@ -146,6 +189,20 @@ public class WorkflowTradeService
         return mapIdState;
     }
 
+    /**
+     * Import the actions of a workflow
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param mapIdState
+     *            the map of the id of the states
+     * @param workflow
+     *            the workflow
+     * @return a map of the action with key id
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     private static HashMap<Integer, Action> importActions( JSONObject jsonObject, HashMap<Integer, State> mapIdState, Workflow workflow )
             throws JsonParseException, JsonMappingException, IOException
     {
@@ -187,6 +244,15 @@ public class WorkflowTradeService
         return mapIdAction;
     }
 
+    /**
+     * Import the tasks of a workflow
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param mapIdAction
+     *            the map of the actions
+     * @return a map of the task with key id
+     */
     private static HashMap<Integer, Integer> importTasks( JSONObject jsonObject, HashMap<Integer, Action> mapIdAction )
     {
         HashMap<Integer, Integer> mapIdTask = new HashMap<>( );
@@ -219,6 +285,18 @@ public class WorkflowTradeService
         return mapIdTask;
     }
 
+    /**
+     * Import the configs of workflow
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param mapIdTask
+     *            the map of the task
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private static void importConfigs( JSONObject jsonObject, HashMap<Integer, Integer> mapIdTask ) throws JsonParseException, JsonMappingException,
             IOException, ClassNotFoundException
     {
@@ -254,6 +332,15 @@ public class WorkflowTradeService
         }
     }
 
+    /**
+     * Export the states of a workflow into a json object
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param nIdWorkflow
+     *            the workflow id
+     * @throws JsonProcessingException
+     */
     private static void exportStates( JSONObject jsonObject, int nIdWorkflow ) throws JsonProcessingException
     {
         JSONArray jsStates = new JSONArray( );
@@ -269,6 +356,17 @@ public class WorkflowTradeService
         }
     }
 
+    /**
+     * Export tha actions, tasks and configs of a workflow to a json object
+     * 
+     * @param jsonObject
+     *            the json object
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param locale
+     *            the locale
+     * @throws JsonProcessingException
+     */
     private static void exportActionsTasksAndConfigs( JSONObject jsonObject, int nIdWorkflow, Locale locale ) throws JsonProcessingException
     {
         Locale localeToUse = Locale.getDefault( );
