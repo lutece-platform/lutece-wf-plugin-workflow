@@ -48,7 +48,7 @@ import net.sf.json.JSONObject;
  * @author Laurent Payen
  *
  */
-public final class WorkflowTradeService
+public final class WorkflowTraderService
 {
 
     // PROPERTIES

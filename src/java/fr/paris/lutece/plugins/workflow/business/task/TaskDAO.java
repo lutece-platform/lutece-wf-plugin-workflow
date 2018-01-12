@@ -75,23 +75,23 @@ public class TaskDAO implements ITaskDAO
     @Override
     public synchronized void insert( ITask task )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );   
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
         try
         {
             int nPos = 0;
             daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
             daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
             daoUtil.setInt( ++nPos, task.getOrder( ) );
-            
+
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) 
+            if ( daoUtil.nextGeneratedKey( ) )
             {
                 task.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
         {
-            daoUtil.free();
+            daoUtil.free( );
         }
     }
 

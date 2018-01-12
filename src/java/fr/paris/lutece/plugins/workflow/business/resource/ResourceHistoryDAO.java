@@ -73,7 +73,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public synchronized void insert( ResourceHistory resourceHistory )
     {
-        
+
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
         try
         {
@@ -86,7 +86,8 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             daoUtil.setString( ++nPos, resourceHistory.getUserAccessCode( ) );
 
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) {
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 resourceHistory.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }

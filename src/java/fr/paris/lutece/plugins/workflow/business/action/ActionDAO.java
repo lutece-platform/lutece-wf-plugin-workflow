@@ -114,7 +114,8 @@ public class ActionDAO implements IActionDAO
             daoUtil.setBoolean( ++nPos, action.isAutomaticReflexiveAction( ) );
 
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) {
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 action.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }

@@ -72,17 +72,18 @@ public class IconDAO implements IIconDAO
             daoUtil.setBytes( ++nPos, icon.getValue( ) );
             daoUtil.setInt( ++nPos, icon.getWidth( ) );
             daoUtil.setInt( ++nPos, icon.getHeight( ) );
-            
+
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) {
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 icon.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
         {
-           daoUtil.free( );  
+            daoUtil.free( );
         }
-        
+
     }
 
     /**

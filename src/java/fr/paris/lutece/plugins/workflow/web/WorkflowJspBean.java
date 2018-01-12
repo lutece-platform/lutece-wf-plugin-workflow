@@ -56,7 +56,7 @@ import org.codehaus.jackson.JsonParseException;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowTradeService;
+import fr.paris.lutece.plugins.workflow.service.WorkflowTraderService;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -2754,7 +2754,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             if ( workflow != null )
             {
                 strWorkflowName = workflow.getName( );
-                jsonObject = WorkflowTradeService.exportWorkflowToJson( nIdWorkflow, getLocale( ) );
+                jsonObject = WorkflowTraderService.exportWorkflowToJson( nIdWorkflow, getLocale( ) );
             }
         }
         String fileType = "text/json";
@@ -2762,7 +2762,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         response.setHeader( "Content-disposition", "attachment; filename=" + strWorkflowName + ".json" );
         OutputStream out = response.getOutputStream( );
         out.write( jsonObject.toString( ).getBytes( ) );
-        out.flush( );        
+        out.flush( );
         return null;
     }
 
@@ -2792,7 +2792,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 byte [ ] bytes = item.get( );
                 String json = new String( bytes );
                 JSONObject jsonObject = JSONObject.fromObject( json );
-                WorkflowTradeService.importWorkflowFromJson( jsonObject );
+                WorkflowTraderService.importWorkflowFromJson( jsonObject );
             }
         }
         return getJspManageWorkflow( request );

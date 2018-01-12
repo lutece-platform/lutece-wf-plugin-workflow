@@ -78,9 +78,9 @@ public class StateDAO implements IStateDAO
     @Override
     public synchronized void insert( State state )
     {
-        
+
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
-        
+
         try
         {
             int nPos = 0;
@@ -101,13 +101,14 @@ public class StateDAO implements IStateDAO
             }
 
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) {
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 state.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
         {
-            daoUtil.free( );  
+            daoUtil.free( );
         }
     }
 

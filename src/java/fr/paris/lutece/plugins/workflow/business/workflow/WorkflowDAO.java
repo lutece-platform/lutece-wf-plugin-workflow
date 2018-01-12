@@ -79,9 +79,10 @@ public class WorkflowDAO implements IWorkflowDAO
             daoUtil.setTimestamp( ++nPos, workflow.getCreationDate( ) );
             daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
             daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
-            
-            daoUtil.executeUpdate();
-            if ( daoUtil.nextGeneratedKey( ) ) {
+
+            daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 workflow.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }

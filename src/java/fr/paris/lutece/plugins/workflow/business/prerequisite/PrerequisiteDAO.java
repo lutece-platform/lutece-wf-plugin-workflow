@@ -89,15 +89,16 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
         {
             daoUtil.setInt( 1, prerequisite.getIdAction( ) );
             daoUtil.setString( 2, prerequisite.getPrerequisiteType( ) );
-            
+
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey() ) {
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
                 prerequisite.setIdPrerequisite( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
         {
-           daoUtil.free( ); 
+            daoUtil.free( );
         }
     }
 
