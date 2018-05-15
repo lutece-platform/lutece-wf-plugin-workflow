@@ -244,7 +244,7 @@ CREATE TABLE workflow_action_action
 
 CREATE TABLE workflow_prerequisite
 (
-	id_prerequisite INT NOT NULL,
+	id_prerequisite INT AUTO_INCREMENT,
 	id_action INT NOT NULL,
 	prerequisite_type VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id_prerequisite)
