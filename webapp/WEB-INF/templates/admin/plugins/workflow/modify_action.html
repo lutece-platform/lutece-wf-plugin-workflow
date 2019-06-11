@@ -228,38 +228,36 @@
 									</span>
 								</div>
 								<div class="box-body">
-									<#if action.isAutomaticState( )>
-										<fieldset>
-											<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
-												<table class="table table-striped table-condensed">
+									<fieldset>
+										<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
+											<table class="table table-striped table-condensed">
+												<tr>
+													<th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</th>
+													<th>#i18n{workflow.modify_action.manage_task.row_actions}</th>
+												</tr>
+												<#list listPrerequisite as prerequisite>
 													<tr>
-														<th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</th>
-														<th>#i18n{workflow.modify_action.manage_task.row_actions}</th>
-													</tr>
-													<#list listPrerequisite as prerequisite>
-														<tr>
-															<td>
-																#i18n{${prerequisite.title}}
-															</td>
-															<td>
-																<#if prerequisite.hasConfiguration>
-																	<a class="btn btn-sm btn-flat btn-primary" href="jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.manage_workflow.title_modify}">
-																		<i class="glyphicon glyphicon-edit">&nbsp;</i>
-																	</a>
-																</#if>
-																<a class="btn btn-sm btn-flat btn-danger" href="jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}">
-																	<i class="glyphicon glyphicon-trash">&nbsp;</i>
+														<td>
+															#i18n{${prerequisite.title}}
+														</td>
+														<td>
+															<#if prerequisite.hasConfiguration>
+																<a class="btn btn-sm btn-flat btn-primary" href="jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.manage_workflow.title_modify}">
+																	<i class="glyphicon glyphicon-edit">&nbsp;</i>
 																</a>
-															</td>
-														</tr>
-													</#list>
-												</table>
-												<#else>
-													<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
-												</#if>
-												<span class="help-block">#i18n{workflow.modify_action.manage_prerequisite.help}</span>
-											</fieldset>
-										</#if>
+															</#if>
+															<a class="btn btn-sm btn-flat btn-danger" href="jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}" title="#i18n{workflow.modify_action.manage_task.title_delete}">
+																<i class="glyphicon glyphicon-trash">&nbsp;</i>
+															</a>
+														</td>
+													</tr>
+												</#list>
+											</table>
+											<#else>
+												<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
+											</#if>
+											<span class="help-block">#i18n{workflow.modify_action.manage_prerequisite.help}</span>
+										</fieldset>
 									</div>
 								</div>
 							</div>

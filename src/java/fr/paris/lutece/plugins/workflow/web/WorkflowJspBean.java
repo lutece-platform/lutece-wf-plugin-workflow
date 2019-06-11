@@ -1268,6 +1268,19 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Collection<ITaskType> taskTypeList = _taskFactory.getAllTaskTypes( );
 
         List<PrerequisiteDTO> listPrerequisiteDTO = null;
+        List<Prerequisite> listPrerequisite = _prerequisiteManagementService.getListPrerequisite( action.getId( ) );
+        if ( listPrerequisite.size( ) > 0 )
+        {
+            listPrerequisiteDTO = new ArrayList<>( listPrerequisite.size( ) );
+
+            for ( Prerequisite prerequisite : listPrerequisite )
+            {
+                IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService.getPrerequisiteService( prerequisite
+                        .getPrerequisiteType( ) );
+                PrerequisiteDTO dto = new PrerequisiteDTO( prerequisite, prerequisiteService.getTitleI18nKey( ), prerequisiteService.hasConfiguration( ) );
+                listPrerequisiteDTO.add( dto );
+            }
+        }
 
         if ( action.isAutomaticState( ) )
         {
@@ -1276,21 +1289,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( _taskFactory.newTask( taskType.getKey( ), getLocale( ) ).getTaskType( ).isTaskForAutomaticAction( ) )
                 {
                     refListTaskType.addItem( taskType.getKey( ), I18nService.getLocalizedString( taskType.getTitleI18nKey( ), getLocale( ) ) );
-                }
-            }
-
-            List<Prerequisite> listPrerequisite = _prerequisiteManagementService.getListPrerequisite( action.getId( ) );
-
-            if ( listPrerequisite.size( ) > 0 )
-            {
-                listPrerequisiteDTO = new ArrayList<PrerequisiteDTO>( listPrerequisite.size( ) );
-
-                for ( Prerequisite prerequisite : listPrerequisite )
-                {
-                    IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService.getPrerequisiteService( prerequisite
-                            .getPrerequisiteType( ) );
-                    PrerequisiteDTO dto = new PrerequisiteDTO( prerequisite, prerequisiteService.getTitleI18nKey( ), prerequisiteService.hasConfiguration( ) );
-                    listPrerequisiteDTO.add( dto );
                 }
             }
         }
@@ -1312,19 +1310,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_PLUGIN, getPlugin( ) );
         model.put( MARK_LOCALE, getLocale( ) );
-
-        if ( action.isAutomaticState( ) )
-        {
-            model.put( MARK_LIST_PREREQUISITE, listPrerequisiteDTO );
-            model.put( MARK_LIST_PREREQUISITE_TYPE, _prerequisiteManagementService.getPrerequisiteServiceRefList( getLocale( ) ) );
-        }
-        // afin d'éviter le null sur l'appel du maccro ComboWithParams si
-        // l'action n'est pas automatique
-        else
-        {
-            model.put( MARK_LIST_PREREQUISITE, new ReferenceList( ) );
-            model.put( MARK_LIST_PREREQUISITE_TYPE, new ReferenceList( ) );
-        }
+        model.put( MARK_LIST_PREREQUISITE, listPrerequisiteDTO );
+        model.put( MARK_LIST_PREREQUISITE_TYPE, _prerequisiteManagementService.getPrerequisiteServiceRefList( getLocale( ) ) );
 
         boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale( ) );
         model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
