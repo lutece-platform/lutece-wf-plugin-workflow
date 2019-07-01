@@ -33,8 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
+import fr.paris.lutece.plugins.workflow.service.prerequisite.IManualActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryFactory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
@@ -44,6 +47,8 @@ import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
@@ -73,6 +78,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -125,13 +131,18 @@ public class WorkflowProvider implements IWorkflowProvider
     private IWorkflowService _workflowService;
     @Inject
     private ITaskComponentManager _taskComponentManager;
+    @Inject
+    private IPrerequisiteManagementService _prerequisiteManagementService;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<Action> getActions( Collection<Action> listActions, AdminUser user )
+    public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, AdminUser user )
     {
+    	listActions = listActions.stream( )
+    		.filter( a -> canActionBeProcessed( user, nIdResource, strResourceType, a.getId( ) ) )
+    		.collect( Collectors.toList( ) );
         return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
     }
 
@@ -139,18 +150,49 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public Map<Integer, List<Action>> getActions( Map<Integer, List<Action>> mapActions, AdminUser user )
+    public Map<Integer, List<Action>> getActions( String strResourceType, Map<Integer, List<Action>> mapActions, AdminUser user )
     {
         for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
         {
             List<Action> listActions = entry.getValue( );
+            listActions = listActions.stream( )
+            		.filter( a -> canActionBeProcessed( user, entry.getKey( ), strResourceType, a.getId( ) ) )
+            		.collect( Collectors.toList( ) );
             listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
             mapActions.put( entry.getKey( ), listActions );
         }
 
         return mapActions;
     }
-
+    
+    private boolean canActionBeProcessed( AdminUser adminUser, int nIdResource, String strResourceType, int nIdAction )
+    {
+        for ( Prerequisite prerequisite : _prerequisiteManagementService.getListPrerequisite( nIdAction ) )
+        {
+            IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService
+                    .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+            
+            IPrerequisiteConfig config = _prerequisiteManagementService.getPrerequisiteConfiguration( prerequisite.getIdPrerequisite( ), prerequisiteService );
+            boolean canBePerformed = false;
+            if ( prerequisiteService instanceof IManualActionPrerequisiteService )
+            {
+            	canBePerformed = ( ( IManualActionPrerequisiteService ) prerequisiteService )
+            			.canManualActionBePerformed(adminUser, nIdResource, strResourceType, config, nIdAction );
+            }
+            else
+            {
+            	canBePerformed = prerequisiteService
+            			.canActionBePerformed( nIdResource, strResourceType, config, nIdAction );
+            }
+            
+            if ( !canBePerformed )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -484,7 +526,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public boolean canProcessAction( int nIdAction, HttpServletRequest request )
+    public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request )
     {
         if ( request != null )
         {
@@ -493,7 +535,8 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( user != null )
             {
-                return RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
+                return canActionBeProcessed( user , nIdResource, strResourceType, nIdAction)
+                		&& RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
             }
         }
 
