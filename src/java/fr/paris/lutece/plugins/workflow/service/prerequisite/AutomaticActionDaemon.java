@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowSer
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 import java.util.List;
 import java.util.Locale;
@@ -82,8 +83,8 @@ public class AutomaticActionDaemon extends Daemon
 
                 for ( ResourceWorkflow resource : listResource )
                 {
-                    workflowService.doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ), resource.getExternalParentId( ),
-                            null, Locale.getDefault( ), true, null );
+                    WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ), resource.getExternalParentId( ),
+                            null, Locale.getDefault( ), true );
                     nNbResourcesFound++;
                 }
             }
