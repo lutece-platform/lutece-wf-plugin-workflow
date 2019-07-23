@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
@@ -2418,6 +2419,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         // get the linked tasks and duplicate them
         List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId( ), this.getLocale( ) );
+        List<Prerequisite> listLinkedPrerequisite = _prerequisiteManagementService.getListPrerequisite( actionToCopy.getId( ) );
 
         _actionService.create( actionToCopy );
 
@@ -2428,6 +2430,21 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             // and then we create the new task duplicated
             this.doCopyTaskWithModifiedParam( task, null );
+        }
+        
+        for ( Prerequisite prerequisite : listLinkedPrerequisite )
+        {
+        	IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService.getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+            IPrerequisiteConfig config = _prerequisiteManagementService.getPrerequisiteConfiguration( prerequisite.getIdPrerequisite( ), prerequisiteService );
+            
+        	prerequisite.setIdAction( actionToCopy.getId( ) );
+        	_prerequisiteManagementService.createPrerequisite( prerequisite );
+        	
+            if ( config != null )
+            {
+            	config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+            	_prerequisiteManagementService.createPrerequisiteConfiguration( config, prerequisiteService );
+            }
         }
 
         return actionToCopy;
