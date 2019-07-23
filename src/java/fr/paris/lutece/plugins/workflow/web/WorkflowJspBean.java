@@ -1410,6 +1410,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( action != null )
         {
+        	List<Prerequisite> listLinkedPrerequisite = _prerequisiteManagementService.getListPrerequisite( nIdAction );
+        	for ( Prerequisite prerequisite : listLinkedPrerequisite )
+            {
+            	_prerequisiteManagementService.deletePrerequisite( prerequisite.getIdPrerequisite( ) );
+            }
+        	
             _actionService.remove( nIdAction );
             _actionService.decrementOrderByOne( action.getOrder( ), action.getWorkflow( ).getId( ) );
 
