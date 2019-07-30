@@ -1409,6 +1409,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( action != null )
         {
+        	_prerequisiteManagementService.deletePrerequisiteByAction( nIdAction );
             _actionService.remove( nIdAction );
             _actionService.decrementOrderByOne( action.getOrder( ), action.getWorkflow( ).getId( ) );
 
@@ -2418,9 +2419,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         // get the linked tasks and duplicate them
         List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId( ), this.getLocale( ) );
-
+        int idActionOld = actionToCopy.getId( );
+        
         _actionService.create( actionToCopy );
-
+        int idActionNew = actionToCopy.getId( );
+        
         for ( ITask task : listLinkedTasks )
         {
             // for each we change the linked action
@@ -2429,7 +2432,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             // and then we create the new task duplicated
             this.doCopyTaskWithModifiedParam( task, null );
         }
-
+        
+        _prerequisiteManagementService.copyPrerequisite( idActionOld, idActionNew );
         return actionToCopy;
     }
 
