@@ -275,4 +275,42 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
         return SpringContextService.getBean( strDaoBeanName );
     }
+    
+    /**
+     * Copy the prerequisites from an action to another.
+     * @param nIdActionSource the id of the source action
+     * @param nIdActionTarget the id of the targetr action
+     */
+    public void copyPrerequisite( int nIdActionSource, int nIdActionTarget )
+    {
+    	List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdActionSource );
+    	
+    	for ( Prerequisite prerequisite : listLinkedPrerequisite )
+        {
+        	IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+            IPrerequisiteConfig config = getPrerequisiteConfiguration( prerequisite.getIdPrerequisite( ), prerequisiteService );
+            
+        	prerequisite.setIdAction( nIdActionTarget );
+        	createPrerequisite( prerequisite );
+        	
+            if ( config != null )
+            {
+            	config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+            	createPrerequisiteConfiguration( config, prerequisiteService );
+            }
+        }
+    }
+    
+    /**
+     * Delete all the prerequisites of an action.
+     * @param nIdAction
+     */
+    public void deletePrerequisiteByAction( int nIdAction )
+    {
+    	List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdAction );
+    	for ( Prerequisite prerequisite : listLinkedPrerequisite )
+        {
+        	deletePrerequisite( prerequisite.getIdPrerequisite( ) );
+        }
+    }
 }
