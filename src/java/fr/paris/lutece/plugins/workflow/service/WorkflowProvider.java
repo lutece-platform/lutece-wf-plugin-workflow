@@ -134,10 +134,19 @@ public class WorkflowProvider implements IWorkflowProvider
     @Inject
     private IPrerequisiteManagementService _prerequisiteManagementService;
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @Deprecated
+   public Collection<Action> getActions( Collection<Action> listActions, AdminUser user )
+   {
+       return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
+    }
     /**
      * {@inheritDoc}
      */
-    @Override
+    // @Override don't declare as Override to be compatible with older Lutece Core version
     public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, AdminUser user )
     {
     	listActions = listActions.stream( )
@@ -145,11 +154,28 @@ public class WorkflowProvider implements IWorkflowProvider
     		.collect( Collectors.toList( ) );
         return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
+    public Map<Integer, List<Action>> getActions( Map<Integer, List<Action>> mapActions, AdminUser user )
+    {
+        for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
+        {
+            List<Action> listActions = entry.getValue( );
+            listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
+            mapActions.put( entry.getKey( ), listActions );
+        }
+
+        return mapActions;
+}
+
+    /**
+     * {@inheritDoc}
+     */
+    // @Override don't declare as Override to be compatible with older Lutece Core version
     public Map<Integer, List<Action>> getActions( String strResourceType, Map<Integer, List<Action>> mapActions, AdminUser user )
     {
         for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
@@ -519,13 +545,33 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return null;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Deprecated
+    public boolean canProcessAction( int nIdAction, HttpServletRequest request )
+    {
+        if ( request != null )
+        {
+            Action action = _actionService.findByPrimaryKey( nIdAction );
+            AdminUser user = AdminUserService.getAdminUser( request );
+
+            if ( user != null )
+            {
+                return RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
+            }
+        }
+
+        return false;
+    } 
 
     // CHECK
 
     /**
      * {@inheritDoc}
      */
-    @Override
+    // @Override don't declare as Override to be compatible with older Lutece Core version
     public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request )
     {
         if ( request != null )
