@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><plug-in>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><plug-in>
     
     <!-- Plugin Informations -->
     <name>workflow</name>
     <class>fr.paris.lutece.plugins.workflow.service.WorkflowPlugin</class>
-    <version>4.3.8-SNAPSHOT</version>
+    <version>4.3.8</version>
     <documentation/>
     <installation/>
     <changes/>
