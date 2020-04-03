@@ -77,7 +77,7 @@ public class NotificationTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         String strNothing = I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale );
         ReferenceList refMailingList = new ReferenceList( );
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );

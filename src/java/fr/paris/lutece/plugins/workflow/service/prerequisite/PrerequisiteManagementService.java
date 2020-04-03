@@ -307,7 +307,8 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     /**
      * Delete all the prerequisites of an action.
      * 
-     * @param nIdAction id of the action
+     * @param nIdAction
+     *            id of the action
      */
     public void deletePrerequisiteByAction( int nIdAction )
     {

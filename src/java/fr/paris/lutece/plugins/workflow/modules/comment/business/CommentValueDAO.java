@@ -55,16 +55,16 @@ public class CommentValueDAO implements ICommentValueDAO
     @Override
     public synchronized void insert( CommentValue commentValue, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, commentValue.getIdResourceHistory( ) );
+            daoUtil.setInt( ++nPos, commentValue.getIdTask( ) );
+            daoUtil.setString( ++nPos, commentValue.getValue( ) );
 
-        daoUtil.setInt( ++nPos, commentValue.getIdResourceHistory( ) );
-        daoUtil.setInt( ++nPos, commentValue.getIdTask( ) );
-        daoUtil.setString( ++nPos, commentValue.getValue( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -74,26 +74,22 @@ public class CommentValueDAO implements ICommentValueDAO
     public CommentValue load( int nIdHistory, int nIdTask, Plugin plugin )
     {
         CommentValue commentValue = null;
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
-
-        nPos = 0;
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            commentValue = new CommentValue( );
-            commentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
-            commentValue.setIdTask( daoUtil.getInt( ++nPos ) );
-            commentValue.setValue( daoUtil.getString( ++nPos ) );
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                nPos = 0;
+                commentValue = new CommentValue( );
+                commentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
+                commentValue.setIdTask( daoUtil.getInt( ++nPos ) );
+                commentValue.setValue( daoUtil.getString( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return commentValue;
     }
 
@@ -103,13 +99,14 @@ public class CommentValueDAO implements ICommentValueDAO
     @Override
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -118,10 +115,11 @@ public class CommentValueDAO implements ICommentValueDAO
     @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

@@ -33,6 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.web.prerequisite;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
@@ -47,19 +59,6 @@ import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.util.bean.BeanUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import javax.validation.ConstraintViolation;
 
 /**
  * JspBean to manage prerequisite of automatic actions
@@ -122,7 +121,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             return null;
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
         model.put( MARK_ID_ACTION, nIdAction );
 
@@ -178,7 +177,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
                     Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
 
-                    if ( ( listErrors != null ) && ( listErrors.size( ) > 0 ) )
+                    if ( CollectionUtils.isNotEmpty( listErrors ) )
                     {
                         request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
                         request.getSession( ).setAttribute( SESSION_CONFIG, config );
@@ -247,7 +246,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         IPrerequisiteConfig config;
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType( ) );
         model.put( MARK_ID_ACTION, nIdAction );
         model.put( MARK_ID_PREREQUISITE, nIdPrerequisite );
@@ -303,7 +302,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
                 Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
 
-                if ( ( listErrors != null ) && ( listErrors.size( ) > 0 ) )
+                if ( CollectionUtils.isNotEmpty( listErrors ) )
                 {
                     request.getSession( ).setAttribute( SESSION_ERRORS, listErrors );
                     request.getSession( ).setAttribute( SESSION_CONFIG, config );

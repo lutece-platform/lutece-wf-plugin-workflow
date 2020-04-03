@@ -41,6 +41,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
@@ -147,7 +148,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         model.put( MARK_CONFIG, config );
@@ -163,7 +164,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
         model.put( MARK_CONFIG, config );
@@ -188,20 +189,17 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
-        if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
+        if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) && CollectionUtils.isNotEmpty( _listContentPostProcessors ) )
         {
-            if ( _listContentPostProcessors != null && !_listContentPostProcessors.isEmpty( ) )
+            String strComment = commentValue.getValue( );
+            for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
             {
-                String strComment = commentValue.getValue( );
-                for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
-                {
-                    strComment = contentPostProcessor.process( request, strComment );
-                }
-                commentValue.setValue( strComment );
+                strComment = contentPostProcessor.process( request, strComment );
             }
+            commentValue.setValue( strComment );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 

@@ -90,7 +90,7 @@ public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
 
     public String getConfigHtml( IPrerequisiteConfig config, HttpServletRequest request, Locale locale )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DURATION_PREREQUISITE_CONFIG, locale, model );

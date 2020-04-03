@@ -41,8 +41,9 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -69,13 +70,14 @@ public class TaskFactory implements ITaskFactory
     public ITask newTask( String strKey, Locale locale )
     {
         ITask task = this.newTask( strKey );
-
-        if ( task != null )
+        if ( task == null )
         {
-            if ( ( locale != null ) && ( task.getTaskType( ) != null ) && StringUtils.isNotBlank( task.getTaskType( ).getTitleI18nKey( ) ) )
-            {
-                task.getTaskType( ).setTitle( I18nService.getLocalizedString( task.getTaskType( ).getTitleI18nKey( ), locale ) );
-            }
+            return null;
+        }
+
+        if ( ( locale != null ) && ( task.getTaskType( ) != null ) && StringUtils.isNotBlank( task.getTaskType( ).getTitleI18nKey( ) ) )
+        {
+            task.getTaskType( ).setTitle( I18nService.getLocalizedString( task.getTaskType( ).getTitleI18nKey( ), locale ) );
         }
 
         return task;
@@ -102,21 +104,11 @@ public class TaskFactory implements ITaskFactory
             {
                 try
                 {
-                    ITaskConfig config = SpringContextService.getBean( taskType.getConfigBeanName( ) );
-
-                    return config;
+                    return SpringContextService.getBean( taskType.getConfigBeanName( ) );
                 }
-                catch( BeanDefinitionStoreException e )
+                catch( BeansException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
-                }
-                catch( NoSuchBeanDefinitionException e )
-                {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
-                }
-                catch( CannotLoadBeanClassException e )
-                {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
+                    logBeanException( e );
                 }
             }
         }
@@ -124,6 +116,24 @@ public class TaskFactory implements ITaskFactory
         AppLogService.error( "TaskFactory ERROR : The task type is not found." );
 
         return null;
+    }
+
+    private void logBeanException( BeansException e )
+    {
+        String beanName = "unknown bean";
+        if ( e instanceof NoSuchBeanDefinitionException )
+        {
+            beanName = ( (NoSuchBeanDefinitionException) e ).getBeanName( );
+        }
+        if ( e instanceof CannotLoadBeanClassException )
+        {
+            beanName = ( (CannotLoadBeanClassException) e ).getBeanName( );
+        }
+        if ( e instanceof BeanDefinitionStoreException )
+        {
+            beanName = ( (BeanDefinitionStoreException) e ).getBeanName( );
+        }
+        AppLogService.error( "TaskFactory ERROR : could not load bean '" + beanName + "' - CAUSE : " + e.getMessage( ), e );
     }
 
     /**
@@ -142,15 +152,16 @@ public class TaskFactory implements ITaskFactory
     public Collection<ITaskType> getAllTaskTypes( Locale locale )
     {
         Collection<ITaskType> listTaskTypes = getAllTaskTypes( );
-
-        if ( locale != null )
+        if ( locale == null )
         {
-            if ( ( listTaskTypes != null ) && !listTaskTypes.isEmpty( ) )
+            return listTaskTypes;
+        }
+
+        if ( CollectionUtils.isNotEmpty( listTaskTypes ) )
+        {
+            for ( ITaskType taskType : listTaskTypes )
             {
-                for ( ITaskType taskType : listTaskTypes )
-                {
-                    taskType.setTitle( I18nService.getLocalizedString( taskType.getTitleI18nKey( ), locale ) );
-                }
+                taskType.setTitle( I18nService.getLocalizedString( taskType.getTitleI18nKey( ), locale ) );
             }
         }
 
@@ -186,17 +197,9 @@ public class TaskFactory implements ITaskFactory
 
                     return task;
                 }
-                catch( BeanDefinitionStoreException e )
+                catch( BeansException e )
                 {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
-                }
-                catch( NoSuchBeanDefinitionException e )
-                {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
-                }
-                catch( CannotLoadBeanClassException e )
-                {
-                    AppLogService.error( "TaskFactory ERROR : could not load bean '" + e.getBeanName( ) + "' - CAUSE : " + e.getMessage( ), e );
+                    logBeanException( e );
                 }
             }
         }

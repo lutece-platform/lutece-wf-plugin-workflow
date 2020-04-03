@@ -44,9 +44,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -103,6 +101,11 @@ public final class WorkflowTraderService
     private static ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
 
     private static ObjectMapper _mapper = new ObjectMapper( ).registerModule( new JavaTimeModule( ) ).setSerializationInclusion( Include.NON_NULL );
+
+    private WorkflowTraderService( )
+    {
+        // Class should not be instanced
+    }
 
     /**
      * Import a workflow from a json object
@@ -195,11 +198,9 @@ public final class WorkflowTraderService
      * @param workflow
      *            the workflow
      * @return a map of the state with key id
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    private static HashMap<Integer, State> importStates( JSONObject jsonObject, Workflow workflow ) throws JsonParseException, JsonMappingException, IOException
+    private static HashMap<Integer, State> importStates( JSONObject jsonObject, Workflow workflow ) throws IOException
     {
         HashMap<Integer, State> mapIdState = new HashMap<>( );
         List<State> listStates = new ArrayList<>( );
@@ -233,12 +234,9 @@ public final class WorkflowTraderService
      * @param workflow
      *            the workflow
      * @return a map of the action with key id
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    private static HashMap<Integer, Action> importActions( JSONObject jsonObject, HashMap<Integer, State> mapIdState, Workflow workflow )
-            throws JsonParseException, JsonMappingException, IOException
+    private static HashMap<Integer, Action> importActions( JSONObject jsonObject, HashMap<Integer, State> mapIdState, Workflow workflow ) throws IOException
     {
         HashMap<Integer, Action> mapIdAction = new HashMap<>( );
         List<Action> listActions = new ArrayList<>( );
@@ -326,13 +324,10 @@ public final class WorkflowTraderService
      *            the json object
      * @param mapIdTask
      *            the map of the task
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private static void importConfigs( JSONObject jsonObject, HashMap<Integer, Integer> mapIdTask )
-            throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException
+    private static void importConfigs( JSONObject jsonObject, HashMap<Integer, Integer> mapIdTask ) throws IOException, ClassNotFoundException
     {
         JSONArray jsArrayConfigs = null;
         if ( jsonObject.containsKey( CONFIGS ) )
@@ -359,7 +354,7 @@ public final class WorkflowTraderService
                     }
                     catch( Exception e )
                     {
-                        continue;
+                        AppLogService.debug( e.getMessage( ) );
                     }
                 }
             }

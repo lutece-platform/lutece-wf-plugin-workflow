@@ -51,13 +51,11 @@ import java.util.List;
  */
 public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_resource,resource_type,"
-            + "id_workflow,id_action,creation_date,user_access_code " + "FROM workflow_resource_history WHERE id_history=?";
-    private static final String SQL_QUERY_SELECT_BY_RESSOURCE = "SELECT id_history,id_resource,resource_type,"
-            + "id_workflow,id_action,creation_date,user_access_code "
-            + "FROM workflow_resource_history WHERE id_resource=? AND resource_type=? AND id_workflow=?";
-    private static final String SQL_QUERY_SELECT_BY_ACTION = "SELECT id_history,id_resource,resource_type,"
-            + "id_workflow,id_action,creation_date,user_access_code " + "FROM workflow_resource_history WHERE id_action=?";
+    private static final String SQL_QUERY_SELECT_ALL = "SELECT id_history,id_resource,resource_type,"
+            + "id_workflow,id_action,creation_date,user_access_code FROM workflow_resource_history ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_QUERY_SELECT_ALL + " WHERE id_history=?";
+    private static final String SQL_QUERY_SELECT_BY_RESSOURCE = SQL_QUERY_SELECT_ALL + " WHERE id_resource=? AND resource_type=? AND id_workflow=?";
+    private static final String SQL_QUERY_SELECT_BY_ACTION = SQL_QUERY_SELECT_ALL + " WHERE id_action=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history "
             + "(id_resource,resource_type,id_workflow,id_action,creation_date,user_access_code )VALUES(?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_history  WHERE id_history=?";
@@ -74,8 +72,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     public synchronized void insert( ResourceHistory resourceHistory )
     {
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
             daoUtil.setInt( ++nPos, resourceHistory.getIdResource( ) );
@@ -91,10 +88,6 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
                 resourceHistory.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.free( );
-        }
     }
 
     /**
@@ -104,37 +97,16 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     public ResourceHistory load( int nIdHistory )
     {
         ResourceHistory resourceHistory = null;
-        Action action;
-        Workflow workflow;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdHistory );
-
-        int nPos = 0;
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            resourceHistory = new ResourceHistory( );
-            resourceHistory.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setIdResource( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setResourceType( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeQuery( );
 
-            workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setWorkFlow( workflow );
-
-            action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setAction( action );
-
-            resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-            resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
+            if ( daoUtil.next( ) )
+            {
+                resourceHistory = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.free( );
-
         return resourceHistory;
     }
 
@@ -144,39 +116,22 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public List<ResourceHistory> selectByResource( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        List<ResourceHistory> listResourceHostory = new ArrayList<ResourceHistory>( );
-        ResourceHistory resourceHistory = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESSOURCE + SQL_ORDER_BY_CREATION_DATE_DESC, WorkflowUtils.getPlugin( ) );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdResource );
-        daoUtil.setString( ++nPos, strResourceType );
-        daoUtil.setInt( ++nPos, nIdWorkflow );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<ResourceHistory> listResourceHostory = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESSOURCE + SQL_ORDER_BY_CREATION_DATE_DESC, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
-            resourceHistory = new ResourceHistory( );
-            resourceHistory.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setIdResource( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setResourceType( daoUtil.getString( ++nPos ) );
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdResource );
+            daoUtil.setString( ++nPos, strResourceType );
+            daoUtil.setInt( ++nPos, nIdWorkflow );
 
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setWorkFlow( workflow );
+            daoUtil.executeQuery( );
 
-            Action action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setAction( action );
-            resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-            resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
-
-            listResourceHostory.add( resourceHistory );
+            while ( daoUtil.next( ) )
+            {
+                ResourceHistory resourceHistory = dataToObject( daoUtil );
+                listResourceHostory.add( resourceHistory );
+            }
         }
-
-        daoUtil.free( );
-
         return listResourceHostory;
     }
 
@@ -186,37 +141,19 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public List<ResourceHistory> selectByAction( int nIdAction )
     {
-        List<ResourceHistory> listResourceHostory = new ArrayList<ResourceHistory>( );
-        ResourceHistory resourceHistory = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ACTION + SQL_ORDER_BY_CREATION_DATE_DESC, WorkflowUtils.getPlugin( ) );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdAction );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<ResourceHistory> listResourceHostory = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ACTION + SQL_ORDER_BY_CREATION_DATE_DESC, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
-            resourceHistory = new ResourceHistory( );
-            resourceHistory.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setIdResource( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setResourceType( daoUtil.getString( ++nPos ) );
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdAction );
+            daoUtil.executeQuery( );
 
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setWorkFlow( workflow );
-
-            Action action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            resourceHistory.setAction( action );
-            resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-            resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
-
-            listResourceHostory.add( resourceHistory );
+            while ( daoUtil.next( ) )
+            {
+                ResourceHistory resourceHistory = dataToObject( daoUtil );
+                listResourceHostory.add( resourceHistory );
+            }
         }
-
-        daoUtil.free( );
-
         return listResourceHostory;
     }
 
@@ -226,10 +163,11 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public void delete( int nIdHistory )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -242,7 +180,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
         if ( nlistIdResourceSize > 0 )
         {
-            StringBuffer sbSQL = new StringBuffer( SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE );
+            StringBuilder sbSQL = new StringBuilder( SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE );
 
             for ( int i = 1; i < nlistIdResourceSize; i++ )
             {
@@ -251,17 +189,16 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
             sbSQL.append( SQL_CLOSE_PARENTHESIS );
 
-            DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), WorkflowUtils.getPlugin( ) );
-            daoUtil.setInt( 1, nIdWorflow );
-            daoUtil.setString( 2, strResourceType );
-
-            for ( int i = 0; i < nlistIdResourceSize; i++ )
+            try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), WorkflowUtils.getPlugin( ) ) )
             {
-                daoUtil.setInt( i + 3, listIdResource.get( i ) );
+                daoUtil.setInt( 1, nIdWorflow );
+                daoUtil.setString( 2, strResourceType );
+                for ( int i = 0; i < nlistIdResourceSize; i++ )
+                {
+                    daoUtil.setInt( i + 3, listIdResource.get( i ) );
+                }
+                daoUtil.executeUpdate( );
             }
-
-            daoUtil.executeUpdate( );
-            daoUtil.free( );
         }
     }
 
@@ -271,13 +208,13 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public List<Integer> getListHistoryIdByListIdResourceId( List<Integer> listIdResource, String strResourceType, Integer nIdWorflow )
     {
-        List<Integer> lListResult = new ArrayList<Integer>( );
+        List<Integer> lListResult = new ArrayList<>( );
 
         int nlistIdResourceSize = listIdResource.size( );
 
         if ( nlistIdResourceSize > 0 )
         {
-            StringBuffer sbSQL = new StringBuffer( SQL_QUERY_SELECT_LIST_ID_HISTORY_BY_LIST_ID_RESOURCE );
+            StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_LIST_ID_HISTORY_BY_LIST_ID_RESOURCE );
 
             for ( int i = 1; i < nlistIdResourceSize; i++ )
             {
@@ -286,25 +223,46 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
             sbSQL.append( SQL_CLOSE_PARENTHESIS );
 
-            DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), WorkflowUtils.getPlugin( ) );
-            daoUtil.setInt( 1, nIdWorflow );
-            daoUtil.setString( 2, strResourceType );
-
-            for ( int i = 0; i < nlistIdResourceSize; i++ )
+            try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), WorkflowUtils.getPlugin( ) ) )
             {
-                daoUtil.setInt( i + 3, listIdResource.get( i ) );
+                daoUtil.setInt( 1, nIdWorflow );
+                daoUtil.setString( 2, strResourceType );
+
+                for ( int i = 0; i < nlistIdResourceSize; i++ )
+                {
+                    daoUtil.setInt( i + 3, listIdResource.get( i ) );
+                }
+
+                daoUtil.executeQuery( );
+
+                while ( daoUtil.next( ) )
+                {
+                    lListResult.add( daoUtil.getInt( 1 ) );
+                }
             }
-
-            daoUtil.executeQuery( );
-
-            while ( daoUtil.next( ) )
-            {
-                lListResult.add( daoUtil.getInt( 1 ) );
-            }
-
-            daoUtil.free( );
         }
-
         return lListResult;
+    }
+    
+    private ResourceHistory dataToObject( DAOUtil daoUtil )
+    {
+        int nPos = 0;
+        ResourceHistory resourceHistory = new ResourceHistory( );
+        resourceHistory.setId( daoUtil.getInt( ++nPos ) );
+        resourceHistory.setIdResource( daoUtil.getInt( ++nPos ) );
+        resourceHistory.setResourceType( daoUtil.getString( ++nPos ) );
+
+        Workflow workflow = new Workflow( );
+        workflow.setId( daoUtil.getInt( ++nPos ) );
+        resourceHistory.setWorkFlow( workflow );
+
+        Action action = new Action( );
+        action.setId( daoUtil.getInt( ++nPos ) );
+        resourceHistory.setAction( action );
+
+        resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
+        resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
+        
+        return resourceHistory;
     }
 }

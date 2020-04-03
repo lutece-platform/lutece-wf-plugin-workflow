@@ -70,8 +70,7 @@ public class WorkflowDAO implements IWorkflowDAO
     @Override
     public synchronized void insert( Workflow workflow )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
             daoUtil.setString( ++nPos, workflow.getName( ) );
@@ -86,10 +85,6 @@ public class WorkflowDAO implements IWorkflowDAO
                 workflow.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.free( );
-        }
     }
 
     /**
@@ -98,19 +93,19 @@ public class WorkflowDAO implements IWorkflowDAO
     @Override
     public void store( Workflow workflow )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, workflow.getId( ) );
+            daoUtil.setString( ++nPos, workflow.getName( ) );
+            daoUtil.setString( ++nPos, workflow.getDescription( ) );
+            daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
+            daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
 
-        daoUtil.setInt( ++nPos, workflow.getId( ) );
-        daoUtil.setString( ++nPos, workflow.getName( ) );
-        daoUtil.setString( ++nPos, workflow.getDescription( ) );
-        daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
-        daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
-
-        daoUtil.setInt( ++nPos, workflow.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, workflow.getId( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -120,27 +115,23 @@ public class WorkflowDAO implements IWorkflowDAO
     public Workflow load( int nIdWorkflow )
     {
         Workflow workflow = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdWorkflow );
-
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            workflow.setName( daoUtil.getString( ++nPos ) );
-            workflow.setDescription( daoUtil.getString( ++nPos ) );
-            workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-            workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
-            workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdWorkflow );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                workflow = new Workflow( );
+                workflow.setId( daoUtil.getInt( ++nPos ) );
+                workflow.setName( daoUtil.getString( ++nPos ) );
+                workflow.setDescription( daoUtil.getString( ++nPos ) );
+                workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
+                workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
+                workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return workflow;
     }
 
@@ -150,11 +141,11 @@ public class WorkflowDAO implements IWorkflowDAO
     @Override
     public void delete( int nIdWorkflow )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdWorkflow );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdWorkflow );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -163,9 +154,9 @@ public class WorkflowDAO implements IWorkflowDAO
     @Override
     public List<Workflow> selectWorkflowByFilter( WorkflowFilter filter )
     {
-        List<Workflow> listWorkflow = new ArrayList<Workflow>( );
+        List<Workflow> listWorkflow = new ArrayList<>( );
         Workflow workflow = null;
-        List<String> listStrFilter = new ArrayList<String>( );
+        List<String> listStrFilter = new ArrayList<>( );
 
         if ( filter.containsIsEnabled( ) )
         {
@@ -181,43 +172,41 @@ public class WorkflowDAO implements IWorkflowDAO
         {
             listStrFilter.add( SQL_FILTRE_NAME );
         }
-
-        int nPos = 0;
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_BY_FILTER, listStrFilter, SQL_ORDER_BY_DATE_CREATION );
-        DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) );
-
-        if ( filter.containsIsEnabled( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) ) )
         {
-            daoUtil.setInt( ++nPos, filter.getIsEnabled( ) );
+            int nPos = 0;
+            if ( filter.containsIsEnabled( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIsEnabled( ) );
+            }
+
+            if ( filter.containsWorkgroupCriteria( ) )
+            {
+                daoUtil.setString( ++nPos, filter.getWorkgroup( ) );
+            }
+
+            if ( filter.containsName( ) )
+            {
+                daoUtil.setString( ++nPos, filter.getName( ) );
+            }
+
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                nPos = 0;
+                workflow = new Workflow( );
+                workflow.setId( daoUtil.getInt( ++nPos ) );
+                workflow.setName( daoUtil.getString( ++nPos ) );
+                workflow.setDescription( daoUtil.getString( ++nPos ) );
+                workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
+                workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
+                workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
+
+                listWorkflow.add( workflow );
+            }
         }
-
-        if ( filter.containsWorkgroupCriteria( ) )
-        {
-            daoUtil.setString( ++nPos, filter.getWorkgroup( ) );
-        }
-
-        if ( filter.containsName( ) )
-        {
-            daoUtil.setString( ++nPos, filter.getName( ) );
-        }
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
-        {
-            nPos = 0;
-            workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            workflow.setName( daoUtil.getString( ++nPos ) );
-            workflow.setDescription( daoUtil.getString( ++nPos ) );
-            workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-            workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
-            workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
-
-            listWorkflow.add( workflow );
-        }
-
-        daoUtil.free( );
 
         return listWorkflow;
     }

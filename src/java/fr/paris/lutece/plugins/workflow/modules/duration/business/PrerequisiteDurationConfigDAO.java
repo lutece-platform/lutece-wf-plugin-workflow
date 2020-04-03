@@ -52,11 +52,12 @@ public class PrerequisiteDurationConfigDAO implements IPrerequisiteConfigDAO
     @Override
     public void createConfig( IPrerequisiteConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( INSERT_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, config.getIdPrerequisite( ) );
-        daoUtil.setInt( 2, ( (PrerequisiteDurationConfig) config ).getDuration( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( INSERT_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, config.getIdPrerequisite( ) );
+            daoUtil.setInt( 2, ( (PrerequisiteDurationConfig) config ).getDuration( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -65,11 +66,12 @@ public class PrerequisiteDurationConfigDAO implements IPrerequisiteConfigDAO
     @Override
     public void updateConfig( IPrerequisiteConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( UPDATE_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, ( (PrerequisiteDurationConfig) config ).getDuration( ) );
-        daoUtil.setInt( 2, config.getIdPrerequisite( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( UPDATE_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, ( (PrerequisiteDurationConfig) config ).getDuration( ) );
+            daoUtil.setInt( 2, config.getIdPrerequisite( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -78,10 +80,11 @@ public class PrerequisiteDurationConfigDAO implements IPrerequisiteConfigDAO
     @Override
     public void removeConfig( int nIdPrerequisite )
     {
-        DAOUtil daoUtil = new DAOUtil( DELETE_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdPrerequisite );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( DELETE_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdPrerequisite );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -90,21 +93,19 @@ public class PrerequisiteDurationConfigDAO implements IPrerequisiteConfigDAO
     @Override
     public IPrerequisiteConfig findByPrimaryKey( int nIdPrerequisite )
     {
-        DAOUtil daoUtil = new DAOUtil( SELECT_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdPrerequisite );
-
         PrerequisiteDurationConfig config = null;
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SELECT_DURATION_PREREQUISITE, PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME ) ) )
         {
-            config = new PrerequisiteDurationConfig( );
-            config.setIdPrerequisite( daoUtil.getInt( 1 ) );
-            config.setDuration( daoUtil.getInt( 2 ) );
+            daoUtil.setInt( 1, nIdPrerequisite );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                config = new PrerequisiteDurationConfig( );
+                config.setIdPrerequisite( daoUtil.getInt( 1 ) );
+                config.setDuration( daoUtil.getInt( 2 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 }

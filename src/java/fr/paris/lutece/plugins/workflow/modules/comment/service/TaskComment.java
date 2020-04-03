@@ -134,7 +134,7 @@ public class TaskComment extends Task
 
         if ( config != null )
         {
-            mapEntriesForm = new HashMap<String, String>( );
+            mapEntriesForm = new HashMap<>( );
             mapEntriesForm.put( PARAMETER_COMMENT_VALUE + "_" + this.getId( ), config.getTitle( ) );
         }
 

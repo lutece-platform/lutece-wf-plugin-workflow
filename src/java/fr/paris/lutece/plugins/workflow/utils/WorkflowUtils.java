@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.utils;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
+
 import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.IReferenceItem;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -40,16 +48,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
-
-import java.sql.Timestamp;
-
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -83,21 +81,19 @@ public final class WorkflowUtils
      */
     public static Timestamp getCurrentTimestamp( )
     {
-        return new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) );
+        return new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
     }
 
     /**
      * write the http header in the response
      *
-     * @param request
-     *            the httpServletRequest
      * @param response
      *            the http response
      * @param strFileName
      *            the name of the file who must insert in the response
      *
      */
-    public static void addHeaderResponse( HttpServletRequest request, HttpServletResponse response, String strFileName )
+    public static void addHeaderResponse( HttpServletResponse response, String strFileName )
     {
         response.setHeader( "Content-Disposition", "attachment ;filename=\"" + strFileName + "\"" );
         response.setHeader( "Pragma", "public" );
@@ -161,8 +157,8 @@ public final class WorkflowUtils
      */
     public static String buildRequestWithFilter( String strSelect, List<String> listStrFilter, String strOrder )
     {
-        StringBuffer strBuffer = new StringBuffer( );
-        strBuffer.append( strSelect );
+        StringBuilder strBuilder = new StringBuilder( );
+        strBuilder.append( strSelect );
 
         int nCount = 0;
 
@@ -170,23 +166,23 @@ public final class WorkflowUtils
         {
             if ( ++nCount == 1 )
             {
-                strBuffer.append( CONSTANT_WHERE );
+                strBuilder.append( CONSTANT_WHERE );
             }
 
-            strBuffer.append( strFilter );
+            strBuilder.append( strFilter );
 
             if ( nCount != listStrFilter.size( ) )
             {
-                strBuffer.append( CONSTANT_AND );
+                strBuilder.append( CONSTANT_AND );
             }
         }
 
         if ( strOrder != null )
         {
-            strBuffer.append( strOrder );
+            strBuilder.append( strOrder );
         }
 
-        return strBuffer.toString( );
+        return strBuilder.toString( );
     }
 
     /**
@@ -202,7 +198,7 @@ public final class WorkflowUtils
      */
     public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice, Locale locale )
     {
-        return getRefList( listReferenceItem, bWitdthEmptyChoice, I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale ), locale );
+        return getRefList( listReferenceItem, bWitdthEmptyChoice, I18nService.getLocalizedString( PROPERTY_SELECT_EMPTY_CHOICE, locale ) );
     }
 
     /**
@@ -214,11 +210,9 @@ public final class WorkflowUtils
      *            true if a empty item must be insert in the reference list
      * @param strLabelEmptyChoice
      *            the empty choice label
-     * @param locale
-     *            the locale
      * @return referencelist
      */
-    public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice, String strLabelEmptyChoice, Locale locale )
+    public static ReferenceList getRefList( Collection listReferenceItem, boolean bWitdthEmptyChoice, String strLabelEmptyChoice )
     {
         ReferenceList refList = new ReferenceList( );
 

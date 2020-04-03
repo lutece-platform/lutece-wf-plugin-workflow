@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.fileupload.FileItem;
+
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
@@ -52,17 +61,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.fileupload.FileItem;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * JspBean to manage workflow icons
@@ -133,12 +134,12 @@ public class IconJspBean extends PluginAdminPageJspBean
      */
     public String getManageIcon( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         List<Icon> listDirectoryXsl = _iconService.getListIcons( );
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
-        LocalizedPaginator<Icon> paginator = new LocalizedPaginator<Icon>( listDirectoryXsl, _nItemsPerPage, getJspManageIcon( request ), PARAMETER_PAGE_INDEX,
+        LocalizedPaginator<Icon> paginator = new LocalizedPaginator<>( listDirectoryXsl, _nItemsPerPage, getJspManageIcon( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
         model.put( MARK_PAGINATOR, paginator );
@@ -212,7 +213,7 @@ public class IconJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( "The icon is not found for ID " + nIdIcon );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_MODIFY_ICON, icon );
         setPageTitleProperty( PROPERTY_MODIFY_ICON );
@@ -282,7 +283,7 @@ public class IconJspBean extends PluginAdminPageJspBean
 
         List<Action> listAction = _actionService.getListActionByFilter( filter );
 
-        if ( listAction.size( ) != 0 )
+        if ( CollectionUtils.isNotEmpty( listAction ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
         }

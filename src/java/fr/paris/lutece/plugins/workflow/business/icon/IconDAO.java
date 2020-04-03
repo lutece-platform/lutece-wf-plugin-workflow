@@ -62,9 +62,7 @@ public class IconDAO implements IIconDAO
     @Override
     public synchronized void insert( Icon icon )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
             daoUtil.setString( ++nPos, icon.getName( ) );
@@ -79,10 +77,6 @@ public class IconDAO implements IIconDAO
                 icon.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.free( );
-        }
 
     }
 
@@ -92,20 +86,20 @@ public class IconDAO implements IIconDAO
     @Override
     public void store( Icon icon )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, icon.getId( ) );
+            daoUtil.setString( ++nPos, icon.getName( ) );
+            daoUtil.setString( ++nPos, icon.getMimeType( ) );
+            daoUtil.setBytes( ++nPos, icon.getValue( ) );
+            daoUtil.setInt( ++nPos, icon.getWidth( ) );
+            daoUtil.setInt( ++nPos, icon.getHeight( ) );
 
-        daoUtil.setInt( ++nPos, icon.getId( ) );
-        daoUtil.setString( ++nPos, icon.getName( ) );
-        daoUtil.setString( ++nPos, icon.getMimeType( ) );
-        daoUtil.setBytes( ++nPos, icon.getValue( ) );
-        daoUtil.setInt( ++nPos, icon.getWidth( ) );
-        daoUtil.setInt( ++nPos, icon.getHeight( ) );
-
-        daoUtil.setInt( ++nPos, icon.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, icon.getId( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -114,17 +108,17 @@ public class IconDAO implements IIconDAO
     @Override
     public void storeMetadata( Icon icon )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_METADATA, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_METADATA, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
-
-        daoUtil.setInt( ++nPos, icon.getId( ) );
-        daoUtil.setString( ++nPos, icon.getName( ) );
-        daoUtil.setInt( ++nPos, icon.getWidth( ) );
-        daoUtil.setInt( ++nPos, icon.getHeight( ) );
-        daoUtil.setInt( ++nPos, icon.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, icon.getId( ) );
+            daoUtil.setString( ++nPos, icon.getName( ) );
+            daoUtil.setInt( ++nPos, icon.getWidth( ) );
+            daoUtil.setInt( ++nPos, icon.getHeight( ) );
+            daoUtil.setInt( ++nPos, icon.getId( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -134,27 +128,23 @@ public class IconDAO implements IIconDAO
     public Icon load( int nIdIcon )
     {
         Icon icon = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdIcon );
-
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
+            daoUtil.setInt( 1, nIdIcon );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                icon = new Icon( );
+                icon.setId( daoUtil.getInt( ++nPos ) );
+                icon.setName( daoUtil.getString( ++nPos ) );
+                icon.setMimeType( daoUtil.getString( ++nPos ) );
+                icon.setValue( daoUtil.getBytes( ++nPos ) );
+                icon.setWidth( daoUtil.getInt( ++nPos ) );
+                icon.setHeight( daoUtil.getInt( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return icon;
     }
 
@@ -164,11 +154,11 @@ public class IconDAO implements IIconDAO
     @Override
     public void delete( int nIdIcon )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdIcon );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdIcon );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -178,28 +168,25 @@ public class IconDAO implements IIconDAO
     public List<Icon> selectAll( )
     {
         Icon icon = null;
-        List<Icon> listIcon = new ArrayList<Icon>( );
+        List<Icon> listIcon = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ICON, WorkflowUtils.getPlugin( ) );
-        daoUtil.executeQuery( );
-
-        int nPos;
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ICON, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
-            icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
+            daoUtil.executeQuery( );
 
-            listIcon.add( icon );
+            while ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                icon = new Icon( );
+                icon.setId( daoUtil.getInt( ++nPos ) );
+                icon.setName( daoUtil.getString( ++nPos ) );
+                icon.setMimeType( daoUtil.getString( ++nPos ) );
+                icon.setWidth( daoUtil.getInt( ++nPos ) );
+                icon.setHeight( daoUtil.getInt( ++nPos ) );
+
+                listIcon.add( icon );
+            }
         }
-
-        daoUtil.free( );
-
         return listIcon;
     }
 }
