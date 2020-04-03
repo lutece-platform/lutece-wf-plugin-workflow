@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -359,7 +359,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         if ( !strError.equals( EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strError, getLocale( ) )
+                    I18nService.getLocalizedString( strError, getLocale( ) )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -378,7 +378,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strError, getLocale( ) )
+                    I18nService.getLocalizedString( strError, getLocale( ) )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_NUMERIC_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -275,42 +275,46 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
         return SpringContextService.getBean( strDaoBeanName );
     }
-    
+
     /**
      * Copy the prerequisites from an action to another.
-     * @param nIdActionSource the id of the source action
-     * @param nIdActionTarget the id of the targetr action
+     * 
+     * @param nIdActionSource
+     *            the id of the source action
+     * @param nIdActionTarget
+     *            the id of the targetr action
      */
     public void copyPrerequisite( int nIdActionSource, int nIdActionTarget )
     {
-    	List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdActionSource );
-    	
-    	for ( Prerequisite prerequisite : listLinkedPrerequisite )
+        List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdActionSource );
+
+        for ( Prerequisite prerequisite : listLinkedPrerequisite )
         {
-        	IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+            IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
             IPrerequisiteConfig config = getPrerequisiteConfiguration( prerequisite.getIdPrerequisite( ), prerequisiteService );
-            
-        	prerequisite.setIdAction( nIdActionTarget );
-        	createPrerequisite( prerequisite );
-        	
+
+            prerequisite.setIdAction( nIdActionTarget );
+            createPrerequisite( prerequisite );
+
             if ( config != null )
             {
-            	config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
-            	createPrerequisiteConfiguration( config, prerequisiteService );
+                config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+                createPrerequisiteConfiguration( config, prerequisiteService );
             }
         }
     }
-    
+
     /**
      * Delete all the prerequisites of an action.
-     * @param nIdAction
+     * 
+     * @param nIdAction id of the action
      */
     public void deletePrerequisiteByAction( int nIdAction )
     {
-    	List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdAction );
-    	for ( Prerequisite prerequisite : listLinkedPrerequisite )
+        List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdAction );
+        for ( Prerequisite prerequisite : listLinkedPrerequisite )
         {
-        	deletePrerequisite( prerequisite.getIdPrerequisite( ) );
+            deletePrerequisite( prerequisite.getIdPrerequisite( ) );
         }
     }
 }

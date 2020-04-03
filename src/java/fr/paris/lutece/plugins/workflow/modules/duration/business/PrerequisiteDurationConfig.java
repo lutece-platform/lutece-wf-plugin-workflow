@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class PrerequisiteDurationConfig extends DefaultPrerequisiteConfig
     }
 
     /**
-     * @param strDuration
+     * @param nDuration
      *            the Duration in seconds to set
      */
     public void setDuration( int nDuration )

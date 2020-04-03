@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -151,7 +151,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         if ( strError != null )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strError, locale )
+                    I18nService.getLocalizedString( strError, locale )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -182,8 +182,8 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             {
                 if ( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_" + tabWorkgroups [i] ) ) != -1 )
                 {
-                    workgroupConfig.setIdMailingList( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_"
-                            + tabWorkgroups [i] ) ) );
+                    workgroupConfig.setIdMailingList(
+                            WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_MAILING_LIST + "_" + tabWorkgroups [i] ) ) );
                 }
                 else
                 {
@@ -237,7 +237,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         if ( StringUtils.isNotBlank( strError ) )
         {
             Object [ ] tabRequiredFields = {
-                strError
+                    strError
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );

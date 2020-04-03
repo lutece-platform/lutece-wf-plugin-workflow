@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -434,8 +434,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         _strCurrentPageIndexState = Paginator.getPageIndex( request, PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState );
         _nItemsPerPageState = Paginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_STATE, _nItemsPerPageState, _nDefaultItemsPerPage );
 
-        LocalizedPaginator<State> paginatorState = new LocalizedPaginator<State>( listState, _nItemsPerPageState, getJspModifyWorkflow( request, nIdWorkflow,
-                MARK_PANE_STATE ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState, PARAMETER_ITEMS_PER_PAGE_STATE, getLocale( ) );
+        LocalizedPaginator<State> paginatorState = new LocalizedPaginator<State>( listState, _nItemsPerPageState,
+                getJspModifyWorkflow( request, nIdWorkflow, MARK_PANE_STATE ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState,
+                PARAMETER_ITEMS_PER_PAGE_STATE, getLocale( ) );
 
         ActionFilter actionFilter = new ActionFilter( );
         actionFilter.setIdWorkflow( nIdWorkflow );
@@ -460,8 +461,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             strPane = PANE_ACTIONS;
         }
 
-        LocalizedPaginator<Action> paginatorAction = new LocalizedPaginator<Action>( listAction, _nItemsPerPageAction, getJspModifyWorkflow( request,
-                nIdWorkflow, MARK_PANE_ACTIONS ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction, PARAMETER_ITEMS_PER_PAGE_ACTION, getLocale( ) );
+        LocalizedPaginator<Action> paginatorAction = new LocalizedPaginator<Action>( listAction, _nItemsPerPageAction,
+                getJspModifyWorkflow( request, nIdWorkflow, MARK_PANE_ACTIONS ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction,
+                PARAMETER_ITEMS_PER_PAGE_ACTION, getLocale( ) );
 
         workflow.setAllActions( paginatorAction.getPageItems( ) );
         workflow.setAllStates( paginatorState.getPageItems( ) );
@@ -571,7 +573,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
             Object [ ] args = {
-                strCause
+                    strCause
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_WORKFLOW, args, AdminMessage.TYPE_STOP );
@@ -633,7 +635,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
             Object [ ] args = {
-                strCause
+                    strCause
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_DISABLE_WORKFLOW, args, AdminMessage.TYPE_STOP );
@@ -677,7 +679,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( !strFieldError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strFieldError, getLocale( ) )
+                    I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -774,7 +776,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( stateInitial != null )
                 {
                     Object [ ] tabInitialState = {
-                        stateInitial.getName( )
+                            stateInitial.getName( )
                     };
 
                     return AdminMessageService.getMessageUrl( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP );
@@ -875,7 +877,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( listState.size( ) != 0 )
                 {
                     Object [ ] tabInitialState = {
-                        listState.get( 0 ).getName( )
+                            listState.get( 0 ).getName( )
                     };
 
                     return AdminMessageService.getMessageUrl( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP );
@@ -997,7 +999,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( !strFieldError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strFieldError, getLocale( ) )
+                    I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -1188,7 +1190,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( StringUtils.isNotBlank( strFieldError ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strFieldError, getLocale( ) )
+                    I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -1275,8 +1277,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             for ( Prerequisite prerequisite : listPrerequisite )
             {
-                IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService.getPrerequisiteService( prerequisite
-                        .getPrerequisiteType( ) );
+                IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService
+                        .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
                 PrerequisiteDTO dto = new PrerequisiteDTO( prerequisite, prerequisiteService.getTitleI18nKey( ), prerequisiteService.hasConfiguration( ) );
                 listPrerequisiteDTO.add( dto );
             }
@@ -1409,7 +1411,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( action != null )
         {
-        	_prerequisiteManagementService.deletePrerequisiteByAction( nIdAction );
+            _prerequisiteManagementService.deletePrerequisiteByAction( nIdAction );
             _actionService.remove( nIdAction );
             _actionService.decrementOrderByOne( action.getOrder( ), action.getWorkflow( ).getId( ) );
 
@@ -1594,7 +1596,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             {
                 String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
                 Object [ ] arguments = {
-                    strCause
+                        strCause
                 };
 
                 return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_TASK, arguments, AdminMessage.TYPE_STOP );
@@ -1637,8 +1639,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @throws NoSuchMethodException
      *             the {@link NoSuchMethodException}
      */
-    public String doCopyTask( HttpServletRequest request ) throws AccessDeniedException, NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public String doCopyTask( HttpServletRequest request )
+            throws AccessDeniedException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         ITask taskToCopy;
@@ -1663,7 +1665,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param taskToCopy
      *            the task to copy
      * @param mapParamToChange
-     *            the map<String, String> of <Param, Value> to change
+     *            the map of (Param, Value) to change
      * @throws NoSuchMethodException
      *             NoSuchMethodException the {@link NoSuchMethodException}
      * @throws IllegalAccessException
@@ -1671,8 +1673,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @throws InvocationTargetException
      *             InvocationTargetException the {@link InvocationTargetException}
      */
-    public void doCopyTaskWithModifiedParam( ITask taskToCopy, Map<String, String> mapParamToChange ) throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void doCopyTaskWithModifiedParam( ITask taskToCopy, Map<String, String> mapParamToChange )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         // Save nIdTaskToCopy
         Integer nIdTaskToCopy = taskToCopy.getId( );
@@ -2048,8 +2050,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         else
         {
             // get all the actions with the order lower that the chosen action
-            List<ITask> listWithOrderBetweenChosen = _taskService.findTasksBetweenOrders( taskToChangeOrder.getOrder( ), nOrderToSet, taskToChangeOrder
-                    .getAction( ).getId( ), this.getLocale( ) );
+            List<ITask> listWithOrderBetweenChosen = _taskService.findTasksBetweenOrders( taskToChangeOrder.getOrder( ), nOrderToSet,
+                    taskToChangeOrder.getAction( ).getId( ), this.getLocale( ) );
 
             // for all those action, we decrement the order
             for ( ITask task : listWithOrderBetweenChosen )
@@ -2406,8 +2408,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @throws InvocationTargetException
      *             The an error occurs
      */
-    private Action copyActionMethod( HttpServletRequest request, Action actionToCopy ) throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    private Action copyActionMethod( HttpServletRequest request, Action actionToCopy )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         // get the action
         String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_ACTION, request.getLocale( ) ) + actionToCopy.getName( );
@@ -2420,10 +2422,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // get the linked tasks and duplicate them
         List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId( ), this.getLocale( ) );
         int idActionOld = actionToCopy.getId( );
-        
+
         _actionService.create( actionToCopy );
         int idActionNew = actionToCopy.getId( );
-        
+
         for ( ITask task : listLinkedTasks )
         {
             // for each we change the linked action
@@ -2432,7 +2434,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             // and then we create the new task duplicated
             this.doCopyTaskWithModifiedParam( task, null );
         }
-        
+
         _prerequisiteManagementService.copyPrerequisite( idActionOld, idActionNew );
         return actionToCopy;
     }

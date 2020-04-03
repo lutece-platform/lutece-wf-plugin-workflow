@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -132,7 +132,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
         if ( StringUtils.isNotBlank( strError ) )
         {
             Object [ ] tabRequiredFields = {
-                strError
+                    strError
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );

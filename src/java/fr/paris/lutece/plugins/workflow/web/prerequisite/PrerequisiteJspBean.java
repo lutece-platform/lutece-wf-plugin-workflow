@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -126,8 +126,8 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         model.put( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
         model.put( MARK_ID_ACTION, nIdAction );
 
-        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( ).getAttribute(
-                SESSION_ERRORS );
+        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( )
+                .getAttribute( SESSION_ERRORS );
         IPrerequisiteConfig config;
 
         if ( listErrors != null )
@@ -252,8 +252,8 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         model.put( MARK_ID_ACTION, nIdAction );
         model.put( MARK_ID_PREREQUISITE, nIdPrerequisite );
 
-        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( ).getAttribute(
-                SESSION_ERRORS );
+        Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( )
+                .getAttribute( SESSION_ERRORS );
 
         if ( listErrors != null )
         {

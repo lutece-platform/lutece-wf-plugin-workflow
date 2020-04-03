@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,10 +109,10 @@ public final class FileIconeService implements ImageResourceProvider
     }
 
     /**
-     * Management of the image associated to the {@link EntryUrl}
+     * Management of the image associated to the entry
      * 
      * @param nEntryUrl
-     *            The {@link EntryUrl} identifier
+     *            The identifier
      * @return The url of the resource
      */
     public static String getResourceImageEntryUrl( int nEntryUrl )

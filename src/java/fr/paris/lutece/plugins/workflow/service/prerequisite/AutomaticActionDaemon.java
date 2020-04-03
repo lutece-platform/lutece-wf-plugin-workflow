@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,8 @@ public class AutomaticActionDaemon extends Daemon
 
                 for ( ResourceWorkflow resource : listResource )
                 {
-                    WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ), resource.getExternalParentId( ),
-                            null, Locale.getDefault( ), true );
+                    WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ),
+                            resource.getExternalParentId( ), null, Locale.getDefault( ), true );
                     nNbResourcesFound++;
                 }
             }

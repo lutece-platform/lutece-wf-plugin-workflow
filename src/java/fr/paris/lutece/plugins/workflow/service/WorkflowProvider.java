@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -134,27 +134,27 @@ public class WorkflowProvider implements IWorkflowProvider
     @Inject
     private IPrerequisiteManagementService _prerequisiteManagementService;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public Collection<Action> getActions( Collection<Action> listActions, AdminUser user )
-   {
-       return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Deprecated
+    public Collection<Action> getActions( Collection<Action> listActions, AdminUser user )
+    {
+        return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
     }
+
     /**
      * {@inheritDoc}
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
     public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, AdminUser user )
     {
-    	listActions = listActions.stream( )
-    		.filter( a -> canActionBeProcessed( user, nIdResource, strResourceType, a.getId( ) ) )
-    		.collect( Collectors.toList( ) );
+        listActions = listActions.stream( ).filter( a -> canActionBeProcessed( user, nIdResource, strResourceType, a.getId( ) ) )
+                .collect( Collectors.toList( ) );
         return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -170,7 +170,7 @@ public class WorkflowProvider implements IWorkflowProvider
         }
 
         return mapActions;
-}
+    }
 
     /**
      * {@inheritDoc}
@@ -181,36 +181,34 @@ public class WorkflowProvider implements IWorkflowProvider
         for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
         {
             List<Action> listActions = entry.getValue( );
-            listActions = listActions.stream( )
-            		.filter( a -> canActionBeProcessed( user, entry.getKey( ), strResourceType, a.getId( ) ) )
-            		.collect( Collectors.toList( ) );
+            listActions = listActions.stream( ).filter( a -> canActionBeProcessed( user, entry.getKey( ), strResourceType, a.getId( ) ) )
+                    .collect( Collectors.toList( ) );
             listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
             mapActions.put( entry.getKey( ), listActions );
         }
 
         return mapActions;
     }
-    
+
     private boolean canActionBeProcessed( AdminUser adminUser, int nIdResource, String strResourceType, int nIdAction )
     {
         for ( Prerequisite prerequisite : _prerequisiteManagementService.getListPrerequisite( nIdAction ) )
         {
             IAutomaticActionPrerequisiteService prerequisiteService = _prerequisiteManagementService
                     .getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
-            
+
             IPrerequisiteConfig config = _prerequisiteManagementService.getPrerequisiteConfiguration( prerequisite.getIdPrerequisite( ), prerequisiteService );
             boolean canBePerformed = false;
             if ( prerequisiteService instanceof IManualActionPrerequisiteService )
             {
-            	canBePerformed = ( ( IManualActionPrerequisiteService ) prerequisiteService )
-            			.canManualActionBePerformed(adminUser, nIdResource, strResourceType, config, nIdAction );
+                canBePerformed = ( (IManualActionPrerequisiteService) prerequisiteService ).canManualActionBePerformed( adminUser, nIdResource, strResourceType,
+                        config, nIdAction );
             }
             else
             {
-            	canBePerformed = prerequisiteService
-            			.canActionBePerformed( nIdResource, strResourceType, config, nIdAction );
+                canBePerformed = prerequisiteService.canActionBePerformed( nIdResource, strResourceType, config, nIdAction );
             }
-            
+
             if ( !canBePerformed )
             {
                 return false;
@@ -218,7 +216,7 @@ public class WorkflowProvider implements IWorkflowProvider
         }
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -545,6 +543,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return null;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -564,7 +563,7 @@ public class WorkflowProvider implements IWorkflowProvider
         }
 
         return false;
-    } 
+    }
 
     // CHECK
 
@@ -581,8 +580,8 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( user != null )
             {
-                return canActionBeProcessed( user , nIdResource, strResourceType, nIdAction)
-                		&& RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
+                return canActionBeProcessed( user, nIdResource, strResourceType, nIdAction )
+                        && RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
             }
         }
 

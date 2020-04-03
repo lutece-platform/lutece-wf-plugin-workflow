@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,8 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
             + " FROM workflow_task_notification_cf WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_notification_cf  "
             + "(id_task,id_mailing_list,sender_name,subject,message)VALUES(?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notification_cf "
-            + "SET id_task=?,id_mailing_list=?,sender_name=?,subject=?,message=?" + " WHERE id_task=?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notification_cf " + "SET id_task=?,id_mailing_list=?,sender_name=?,subject=?,message=?"
+            + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notification_cf WHERE id_task=? ";
 
     /**
