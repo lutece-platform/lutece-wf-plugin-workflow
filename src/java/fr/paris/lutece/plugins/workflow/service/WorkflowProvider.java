@@ -33,12 +33,23 @@
  */
 package fr.paris.lutece.plugins.workflow.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.service.prerequisite.IManualActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
-import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryFactory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFilter;
@@ -64,25 +75,11 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -122,8 +119,6 @@ public class WorkflowProvider implements IWorkflowProvider
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
-    private IResourceHistoryFactory _resourceHistoryFactory;
-    @Inject
     private IStateService _stateService;
     @Inject
     private ITaskService _taskService;
@@ -137,39 +132,12 @@ public class WorkflowProvider implements IWorkflowProvider
     /**
      * {@inheritDoc}
      */
-    @Override
-    @Deprecated
-    public Collection<Action> getActions( Collection<Action> listActions, AdminUser user )
-    {
-        return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     // @Override don't declare as Override to be compatible with older Lutece Core version
     public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, AdminUser user )
     {
         listActions = listActions.stream( ).filter( a -> canActionBeProcessed( user, nIdResource, strResourceType, a.getId( ) ) )
                 .collect( Collectors.toList( ) );
         return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public Map<Integer, List<Action>> getActions( Map<Integer, List<Action>> mapActions, AdminUser user )
-    {
-        for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
-        {
-            List<Action> listActions = entry.getValue( );
-            listActions = (List<Action>) RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
-            mapActions.put( entry.getKey( ), listActions );
-        }
-
-        return mapActions;
     }
 
     /**
@@ -544,27 +512,6 @@ public class WorkflowProvider implements IWorkflowProvider
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public boolean canProcessAction( int nIdAction, HttpServletRequest request )
-    {
-        if ( request != null )
-        {
-            Action action = _actionService.findByPrimaryKey( nIdAction );
-            AdminUser user = AdminUserService.getAdminUser( request );
-
-            if ( user != null )
-            {
-                return RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
-            }
-        }
-
-        return false;
-    }
-
     // CHECK
 
     /**
@@ -666,17 +613,6 @@ public class WorkflowProvider implements IWorkflowProvider
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public void doSaveTasksForm( int nIdResource, String strResourceType, int nIdAction, Integer nExternalParentId, HttpServletRequest request, Locale locale,
-            String strUserAccessCode )
-    {
-        WorkflowService.getInstance( ).doProcessAction( nIdResource, strResourceType, nIdAction, nExternalParentId, request, locale, false );
     }
 
     // PRIVATE METHODS
