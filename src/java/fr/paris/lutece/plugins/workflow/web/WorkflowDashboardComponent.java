@@ -72,11 +72,9 @@ public class WorkflowDashboardComponent extends DashboardComponent
     private static final String PARAMETER_PLUGIN_NAME = "plugin_name";
 
     // TEMPLATES
-    // private static final String TEMPLATE_DASHBOARD_ZONE_1 = "/admin/plugins/workflow/workflow_dashboard_zone_1.html";
     private static final String TEMPLATE_DASHBOARD = "/admin/plugins/workflow/workflow_dashboard.html";
 
     // OTHER CONSTANTS
-    // private static final int ZONE_1 = 1;
     private static final int FILTER_NO_STATUS = -1;
 
     /**
@@ -105,7 +103,7 @@ public class WorkflowDashboardComponent extends DashboardComponent
         List<Workflow> listWorkflow = workflowService.getListWorkflowsByFilter( filter );
         listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_WORKFLOW_LIST, listWorkflow );
         model.put( MARK_URL, url.getUrl( ) );
         model.put( MARK_ICON, plugin.getIconUrl( ) );
@@ -114,18 +112,4 @@ public class WorkflowDashboardComponent extends DashboardComponent
 
         return t.getHtml( );
     }
-
-    // /**
-    // * Get the template
-    // * @return the template
-    // */
-    // private String getTemplateDashboard( )
-    // {
-    // if ( getZone( ) == ZONE_1 )
-    // {
-    // return TEMPLATE_DASHBOARD_ZONE_1;
-    // }
-    //
-    // return TEMPLATE_DASHBOARD_OTHER_ZONE;
-    // }
 }

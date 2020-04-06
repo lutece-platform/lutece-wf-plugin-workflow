@@ -33,6 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.assignment.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
@@ -51,18 +63,6 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -128,22 +128,22 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
         String [ ] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS );
 
-        if ( ( strTitle == null ) || strTitle.trim( ).equals( WorkflowUtils.EMPTY_STRING ) )
+        if ( StringUtils.isBlank( strTitle ) )
         {
             strError = FIELD_TITLE;
         }
 
-        if ( ( tabWorkgroups == null ) || ( tabWorkgroups.length == 0 ) )
+        if ( ArrayUtils.isEmpty( tabWorkgroups ) )
         {
             strError = FIELD_WORKGROUPS;
         }
 
-        if ( ( strIsNotification != null ) && ( ( strSubject == null ) || strSubject.equals( "" ) ) )
+        if ( strIsNotification != null && StringUtils.isEmpty( strSubject ) )
         {
             strError = FIELD_MAILINGLIST_SUBJECT;
         }
 
-        if ( ( strIsNotification != null ) && ( ( strMessage == null ) || strMessage.equals( "" ) ) )
+        if ( strIsNotification != null && StringUtils.isEmpty( strMessage ) )
         {
             strError = FIELD_MAILINGLIST_MESSAGE;
         }
@@ -158,7 +158,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         }
 
         TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        Boolean bCreate = false;
+        boolean bCreate = false;
 
         if ( config == null )
         {
@@ -166,15 +166,19 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             config.setIdTask( task.getId( ) );
             bCreate = true;
         }
+        config.setTitle( strTitle );
+        config.setNotify( strIsNotification != null );
+        config.setMultipleOwner( strIsMultipleOwner != null );
+        config.setMessage( strMessage );
+        config.setSubject( strSubject );
+        config.setUseUserName( strIsUseUserName != null );
 
         // add workgroups
-        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>( );
-        WorkgroupConfig workgroupConfig;
-
+        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<>( );
         // Ignore potential null pointer : tabWorkgroups can not be null here
         for ( int i = 0; i < tabWorkgroups.length; i++ )
         {
-            workgroupConfig = new WorkgroupConfig( );
+            WorkgroupConfig workgroupConfig = new WorkgroupConfig( );
             workgroupConfig.setIdTask( task.getId( ) );
             workgroupConfig.setWorkgroupKey( tabWorkgroups [i] );
 
@@ -193,14 +197,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
             listWorkgroupConfig.add( workgroupConfig );
         }
-
-        config.setTitle( strTitle );
-        config.setNotify( strIsNotification != null );
-        config.setMultipleOwner( strIsMultipleOwner != null );
         config.setWorkgroups( listWorkgroupConfig );
-        config.setMessage( strMessage );
-        config.setSubject( strSubject );
-        config.setUseUserName( strIsUseUserName != null );
 
         if ( bCreate )
         {
@@ -258,13 +255,13 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         ReferenceList refWorkgroups = AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale );
 
-        List<HashMap<String, Object>> listWorkgroups = new ArrayList<HashMap<String, Object>>( );
+        List<HashMap<String, Object>> listWorkgroups = new ArrayList<>( );
 
         for ( ReferenceItem referenceItem : refWorkgroups )
         {
             if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
             {
-                HashMap<String, Object> workgroupsItem = new HashMap<String, Object>( );
+                HashMap<String, Object> workgroupsItem = new HashMap<>( );
                 workgroupsItem.put( MARK_ITEM, referenceItem );
 
                 if ( ( config != null ) && ( config.getWorkgroups( ) != null ) )
@@ -288,7 +285,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         refMailingList.addItem( WorkflowUtils.CONSTANT_ID_NULL, strNothing );
         refMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_WORKGROUP_LIST, listWorkgroups );
         model.put( MARK_CONFIG, config );
         model.put( MARK_MAILING_LIST, refMailingList );
@@ -304,23 +301,20 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList refWorkgroups = new ReferenceList( );
 
         for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) && config != null && config.getWorkgroups( ) != null )
             {
-                if ( ( config != null ) && ( config.getWorkgroups( ) != null ) )
+                for ( WorkgroupConfig workgroupSelected : config.getWorkgroups( ) )
                 {
-                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups( ) )
+                    if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
                     {
-                        if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
-                        {
-                            refWorkgroups.add( referenceItem );
-                        }
+                        refWorkgroups.add( referenceItem );
                     }
                 }
             }
@@ -341,7 +335,7 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         TaskAssignmentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
@@ -349,16 +343,13 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) && listAssignmentHistory != null )
             {
-                if ( listAssignmentHistory != null )
+                for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
                 {
-                    for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
+                    if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
                     {
-                        if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
-                        {
-                            refWorkgroups.add( referenceItem );
-                        }
+                        refWorkgroups.add( referenceItem );
                     }
                 }
             }
@@ -387,16 +378,13 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
 
         for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
         {
-            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) )
+            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) && listAssignmentHistory != null )
             {
-                if ( listAssignmentHistory != null )
+                for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
                 {
-                    for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
+                    if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
                     {
-                        if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
-                        {
-                            XmlUtil.addElementHtml( strXml, TAG_WORKGROUP, referenceItem.getName( ) );
-                        }
+                        XmlUtil.addElementHtml( strXml, TAG_WORKGROUP, referenceItem.getName( ) );
                     }
                 }
             }

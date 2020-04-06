@@ -55,13 +55,13 @@ import java.util.List;
  */
 public class ActionDAO implements IActionDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_action,name,description,id_workflow,"
-            + "id_state_before,id_state_after,id_icon,is_automatic,is_mass_action,is_automatic_reflexive_action FROM workflow_action WHERE id_action=?";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action, i.name,i.mime_type,i.file_value,i.width,i.height "
+    private static final String SQL_QUERY_SELECT_ALL = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
+            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action ";
+    private static final String SQL_QUERY_SELECT_ICON = ",i.name,i.mime_type,i.file_value,i.width,i.height ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_QUERY_SELECT_ALL + " FROM workflow_action a WHERE a.id_action=? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
             + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE a.id_action=?";
-    private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action,i.name,i.mime_type,i.file_value,i.width,i.height "
+    private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
             + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action "
             + "(name,description,id_workflow,id_state_before,id_state_after,id_icon,is_automatic,is_mass_action,display_order,is_automatic_reflexive_action)"
@@ -74,22 +74,19 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_SELECT_LINKED_ACTION = " SELECT id_action FROM workflow_action_action WHERE id_linked_action = ?";
     private static final String SQL_QUERY_SELECT_LINKED_ACTION_2 = " SELECT id_linked_action FROM workflow_action_action WHERE id_action = ?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action  WHERE id_action=? ";
-    private static final String SQL_FILTER_ID_WORKFLOW = " id_workflow = ? ";
-    private static final String SQL_FILTER_ID_STATE_BEFORE = " id_state_before= ? ";
-    private static final String SQL_FILTER_ID_STATE_AFTER = " id_state_after = ? ";
+    private static final String SQL_FILTER_ID_WORKFLOW = " a.id_workflow = ? ";
+    private static final String SQL_FILTER_ID_STATE_BEFORE = " a.id_state_before= ? ";
+    private static final String SQL_FILTER_ID_STATE_AFTER = " a.id_state_after = ? ";
     private static final String SQL_FILTER_ID_ICON = " a.id_icon = ? ";
-    private static final String SQL_FILTER_IS_AUTOMATIC = " is_automatic = ? ";
-    private static final String SQL_FILTER_IS_MASS_ACTION = " is_mass_action = ? ";
-    private static final String SQL_FILTER_IS_AUTOMATIC_REFLEXIVE_ACTION = "is_automatic_reflexive_action = ?";
+    private static final String SQL_FILTER_IS_AUTOMATIC = " a.is_automatic = ? ";
+    private static final String SQL_FILTER_IS_MASS_ACTION = " a.is_mass_action = ? ";
+    private static final String SQL_FILTER_IS_AUTOMATIC_REFLEXIVE_ACTION = " a.is_automatic_reflexive_action = ? ";
     private static final String SQL_ORDER_BY_ORDER_DISPLAY = " ORDER BY display_order";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_action WHERE id_workflow=?";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_action SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
-    private static final String SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
-    private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action,i.name,i.mime_type,i.file_value,i.width,i.height FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
-    private static final String SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT = "SELECT a.id_action,a.name,a.description,a.id_workflow,a.id_state_before, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action,i.name,i.mime_type,i.file_value,i.width,i.height "
+    private static final String SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
+    private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
+    private static final String SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
             + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE id_workflow=? AND is_automatic_reflexive_action = 0 ORDER BY id_action ";
 
     /**
@@ -98,8 +95,7 @@ public class ActionDAO implements IActionDAO
     @Override
     public synchronized void insert( Action action )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
             daoUtil.setString( ++nPos, action.getName( ) );
@@ -119,10 +115,6 @@ public class ActionDAO implements IActionDAO
                 action.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.free( );
-        }
     }
 
     /**
@@ -131,25 +123,25 @@ public class ActionDAO implements IActionDAO
     @Override
     public void store( Action action )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, action.getId( ) );
+            daoUtil.setString( ++nPos, action.getName( ) );
+            daoUtil.setString( ++nPos, action.getDescription( ) );
+            daoUtil.setInt( ++nPos, action.getWorkflow( ).getId( ) );
+            daoUtil.setInt( ++nPos, action.getStateBefore( ).getId( ) );
+            daoUtil.setInt( ++nPos, action.getStateAfter( ).getId( ) );
+            daoUtil.setInt( ++nPos, action.getIcon( ).getId( ) );
+            daoUtil.setBoolean( ++nPos, action.isAutomaticState( ) );
+            daoUtil.setBoolean( ++nPos, action.isMassAction( ) );
+            daoUtil.setInt( ++nPos, action.getOrder( ) );
+            daoUtil.setBoolean( ++nPos, action.isAutomaticReflexiveAction( ) );
 
-        daoUtil.setInt( ++nPos, action.getId( ) );
-        daoUtil.setString( ++nPos, action.getName( ) );
-        daoUtil.setString( ++nPos, action.getDescription( ) );
-        daoUtil.setInt( ++nPos, action.getWorkflow( ).getId( ) );
-        daoUtil.setInt( ++nPos, action.getStateBefore( ).getId( ) );
-        daoUtil.setInt( ++nPos, action.getStateAfter( ).getId( ) );
-        daoUtil.setInt( ++nPos, action.getIcon( ).getId( ) );
-        daoUtil.setBoolean( ++nPos, action.isAutomaticState( ) );
-        daoUtil.setBoolean( ++nPos, action.isMassAction( ) );
-        daoUtil.setInt( ++nPos, action.getOrder( ) );
-        daoUtil.setBoolean( ++nPos, action.isAutomaticReflexiveAction( ) );
-
-        daoUtil.setInt( ++nPos, action.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, action.getId( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -159,42 +151,17 @@ public class ActionDAO implements IActionDAO
     public Action load( int nIdAction )
     {
         Action action = null;
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            int nPos = 0;
-            action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeQuery( );
 
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
+            if ( daoUtil.next( ) )
+            {
+                action = dataToObject( daoUtil, false );
+            }
 
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-            action.setIcon( icon );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
         }
-
-        daoUtil.free( );
-
         return action;
     }
 
@@ -206,49 +173,16 @@ public class ActionDAO implements IActionDAO
     {
         Action action = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON, WorkflowUtils.getPlugin( ) ) )
         {
-            action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeQuery( );
 
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
-
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
+            if ( daoUtil.next( ) )
+            {
+                action = dataToObject( daoUtil, true );
+            }
         }
-
-        daoUtil.free( );
-
         return action;
     }
 
@@ -258,11 +192,11 @@ public class ActionDAO implements IActionDAO
     @Override
     public void delete( int nIdAction )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -271,10 +205,8 @@ public class ActionDAO implements IActionDAO
     @Override
     public List<Action> selectActionsByFilter( ActionFilter filter )
     {
-        List<Action> listAction = new ArrayList<Action>( );
-        Action action = null;
-        int nPos = 0;
-        List<String> listStrFilter = new ArrayList<String>( );
+        List<Action> listAction = new ArrayList<>( );
+        List<String> listStrFilter = new ArrayList<>( );
 
         if ( filter.containsIdWorkflow( ) )
         {
@@ -310,82 +242,50 @@ public class ActionDAO implements IActionDAO
 
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_ACTION_BY_FILTER, listStrFilter, SQL_ORDER_BY_ORDER_DISPLAY );
 
-        DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) );
-
-        if ( filter.containsIdWorkflow( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) ) )
         {
-            daoUtil.setInt( ++nPos, filter.getIdWorkflow( ) );
+            int nPos = 0;
+            if ( filter.containsIdWorkflow( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIdWorkflow( ) );
+            }
+
+            if ( filter.containsIdStateBefore( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIdStateBefore( ) );
+            }
+
+            if ( filter.containsIdStateAfter( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIdStateAfter( ) );
+            }
+
+            if ( filter.containsIdIcon( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIdIcon( ) );
+            }
+
+            if ( filter.containsIsAutomaticState( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIsAutomaticState( ) );
+            }
+
+            if ( filter.containsIsMassAction( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.getIsMassAction( ) );
+            }
+
+            daoUtil.setBoolean( ++nPos, filter.isAutomaticReflexiveAction( ) );
+
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                Action action = dataToObject( daoUtil, true );
+                listAction.add( action );
+            }
+
         }
-
-        if ( filter.containsIdStateBefore( ) )
-        {
-            daoUtil.setInt( ++nPos, filter.getIdStateBefore( ) );
-        }
-
-        if ( filter.containsIdStateAfter( ) )
-        {
-            daoUtil.setInt( ++nPos, filter.getIdStateAfter( ) );
-        }
-
-        if ( filter.containsIdIcon( ) )
-        {
-            daoUtil.setInt( ++nPos, filter.getIdIcon( ) );
-        }
-
-        if ( filter.containsIsAutomaticState( ) )
-        {
-            daoUtil.setInt( ++nPos, filter.getIsAutomaticState( ) );
-        }
-
-        if ( filter.containsIsMassAction( ) )
-        {
-            daoUtil.setInt( ++nPos, filter.getIsMassAction( ) );
-        }
-
-        daoUtil.setBoolean( ++nPos, filter.isAutomaticReflexiveAction( ) );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
-        {
-            nPos = 0;
-            action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
-
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
-
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
-
-            listAction.add( action );
-        }
-
-        daoUtil.free( );
 
         return listAction;
     }
@@ -396,13 +296,14 @@ public class ActionDAO implements IActionDAO
     @Override
     public synchronized void insertLinkedActions( int nIdAction, int nIdLinkedAction )
     {
-        int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_LINKED_ACTION, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( ++nPos, nIdAction );
-        daoUtil.setInt( ++nPos, nIdLinkedAction );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_LINKED_ACTION, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdAction );
+            daoUtil.setInt( ++nPos, nIdLinkedAction );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -411,13 +312,14 @@ public class ActionDAO implements IActionDAO
     @Override
     public void removeLinkedActions( int nIdAction )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_REMOVE_LINKED_ACTION, WorkflowUtils.getPlugin( ) );
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdAction );
-        daoUtil.setInt( nIndex, nIdAction );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_REMOVE_LINKED_ACTION, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, nIdAction );
+            daoUtil.setInt( nIndex, nIdAction );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -426,29 +328,28 @@ public class ActionDAO implements IActionDAO
     @Override
     public Collection<Integer> selectListIdsLinkedAction( int nIdAction )
     {
-        Collection<Integer> listIdsLinkedAction = new LinkedHashSet<Integer>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        Collection<Integer> listIdsLinkedAction = new LinkedHashSet<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION, WorkflowUtils.getPlugin( ) ) )
         {
-            listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+            }
         }
 
-        daoUtil.free( );
-
-        daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION_2, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdAction );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION_2, WorkflowUtils.getPlugin( ) ) )
         {
-            listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                listIdsLinkedAction.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return listIdsLinkedAction;
     }
 
@@ -458,19 +359,17 @@ public class ActionDAO implements IActionDAO
     @Override
     public int findMaximumOrderByWorkflowId( int nWorkflowId )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin( ) );
         int nMaximumOrder = 0;
-
-        daoUtil.setInt( 1, nWorkflowId );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW, WorkflowUtils.getPlugin( ) ) )
         {
-            nMaximumOrder = daoUtil.getInt( 1 );
+            daoUtil.setInt( 1, nWorkflowId );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                nMaximumOrder = daoUtil.getInt( 1 );
+            }
         }
-
-        daoUtil.free( );
-
         return nMaximumOrder;
     }
 
@@ -480,11 +379,12 @@ public class ActionDAO implements IActionDAO
     @Override
     public void decrementOrderByOne( int nOrder, int nIdWorkflow )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nOrder );
-        daoUtil.setInt( 2, nIdWorkflow );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DECREMENT_ORDER, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nOrder );
+            daoUtil.setInt( 2, nIdWorkflow );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -493,53 +393,20 @@ public class ActionDAO implements IActionDAO
     @Override
     public List<Action> findStatesBetweenOrders( int nOrder1, int nOrder2, int nIdWorkflow )
     {
-        List<Action> listResult = new ArrayList<Action>( );
-        int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nOrder1 );
-        daoUtil.setInt( 2, nOrder2 );
-        daoUtil.setInt( 3, nIdWorkflow );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<Action> listResult = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
+            daoUtil.setInt( 1, nOrder1 );
+            daoUtil.setInt( 2, nOrder2 );
+            daoUtil.setInt( 3, nIdWorkflow );
+            daoUtil.executeQuery( );
 
-            Action action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
-
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
-
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
-            listResult.add( action );
+            while ( daoUtil.next( ) )
+            {
+                Action action = dataToObject( daoUtil, true );
+                listResult.add( action );
+            }
         }
-
-        daoUtil.free( );
 
         return listResult;
     }
@@ -550,53 +417,19 @@ public class ActionDAO implements IActionDAO
     @Override
     public List<Action> findStatesAfterOrder( int nOrder, int nIdWorkflow )
     {
-        List<Action> listResult = new ArrayList<Action>( );
-        int nPos = 0;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_AFTER_ORDER, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nOrder );
-        daoUtil.setInt( 2, nIdWorkflow );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<Action> listResult = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACTIONS_AFTER_ORDER, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
+            daoUtil.setInt( 1, nOrder );
+            daoUtil.setInt( 2, nIdWorkflow );
+            daoUtil.executeQuery( );
 
-            Action action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
-
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
-
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
-
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
-
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
-
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-            icon.setName( daoUtil.getString( ++nPos ) );
-            icon.setMimeType( daoUtil.getString( ++nPos ) );
-            icon.setValue( daoUtil.getBytes( ++nPos ) );
-            icon.setWidth( daoUtil.getInt( ++nPos ) );
-            icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
-            listResult.add( action );
+            while ( daoUtil.next( ) )
+            {
+                Action action = dataToObject( daoUtil, true );
+                listResult.add( action );
+            }
         }
-
-        daoUtil.free( );
-
         return listResult;
     }
 
@@ -606,55 +439,59 @@ public class ActionDAO implements IActionDAO
     @Override
     public List<Action> findActionsForOrderInit( int nIdWorkflow )
     {
-        List<Action> listAction = new ArrayList<Action>( );
-        Action action = null;
-        int nPos = 0;
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT, WorkflowUtils.getPlugin( ) );
-        daoUtil.setInt( 1, nIdWorkflow );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<Action> listAction = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT, WorkflowUtils.getPlugin( ) ) )
         {
-            nPos = 0;
-            action = new Action( );
-            action.setId( daoUtil.getInt( ++nPos ) );
-            action.setName( daoUtil.getString( ++nPos ) );
-            action.setDescription( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdWorkflow );
+            daoUtil.executeQuery( );
 
-            Workflow workflow = new Workflow( );
-            workflow.setId( daoUtil.getInt( ++nPos ) );
-            action.setWorkflow( workflow );
+            while ( daoUtil.next( ) )
+            {
+                Action action = dataToObject( daoUtil, true );
+                listAction.add( action );
+            }
+        }
 
-            State stateBefore = new State( );
-            stateBefore.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateBefore( stateBefore );
+        return listAction;
+    }
+    
+    private Action dataToObject( DAOUtil daoUtil, boolean populateIcon )
+    {
+        int nPos = 0;
+        Action action = new Action( );
+        action.setId( daoUtil.getInt( ++nPos ) );
+        action.setName( daoUtil.getString( ++nPos ) );
+        action.setDescription( daoUtil.getString( ++nPos ) );
 
-            State stateAfter = new State( );
-            stateAfter.setId( daoUtil.getInt( ++nPos ) );
-            action.setStateAfter( stateAfter );
+        Workflow workflow = new Workflow( );
+        workflow.setId( daoUtil.getInt( ++nPos ) );
+        action.setWorkflow( workflow );
 
-            Icon icon = new Icon( );
-            icon.setId( daoUtil.getInt( ++nPos ) );
+        State stateBefore = new State( );
+        stateBefore.setId( daoUtil.getInt( ++nPos ) );
+        action.setStateBefore( stateBefore );
 
-            action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
-            action.setMassAction( daoUtil.getBoolean( ++nPos ) );
-            action.setOrder( daoUtil.getInt( ++nPos ) );
-            action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
+        State stateAfter = new State( );
+        stateAfter.setId( daoUtil.getInt( ++nPos ) );
+        action.setStateAfter( stateAfter );
 
+        Icon icon = new Icon( );
+        icon.setId( daoUtil.getInt( ++nPos ) );
+        action.setIcon( icon );
+        
+        action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
+        action.setMassAction( daoUtil.getBoolean( ++nPos ) );
+        action.setOrder( daoUtil.getInt( ++nPos ) );
+        action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
+        
+        if ( populateIcon )
+        {
             icon.setName( daoUtil.getString( ++nPos ) );
             icon.setMimeType( daoUtil.getString( ++nPos ) );
             icon.setValue( daoUtil.getBytes( ++nPos ) );
             icon.setWidth( daoUtil.getInt( ++nPos ) );
             icon.setHeight( daoUtil.getInt( ++nPos ) );
-
-            action.setIcon( icon );
-
-            listAction.add( action );
         }
-
-        daoUtil.free( );
-
-        return listAction;
+        return action;
     }
 }

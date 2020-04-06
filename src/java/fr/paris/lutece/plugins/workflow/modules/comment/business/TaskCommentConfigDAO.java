@@ -57,17 +57,17 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public synchronized void insert( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.setString( ++nPos, config.getTitle( ) );
+            daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
+            daoUtil.setBoolean( ++nPos, config.isRichText( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.setString( ++nPos, config.getTitle( ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
-        daoUtil.setBoolean( ++nPos, config.isRichText( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -76,18 +76,18 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public void store( TaskCommentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.setString( ++nPos, config.getTitle( ) );
+            daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
+            daoUtil.setBoolean( ++nPos, config.isRichText( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.setString( ++nPos, config.getTitle( ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
-        daoUtil.setBoolean( ++nPos, config.isRichText( ) );
-
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -97,25 +97,21 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     public TaskCommentConfig load( int nIdState )
     {
         TaskCommentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdState );
-
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            config = new TaskCommentConfig( );
-            config.setIdTask( daoUtil.getInt( ++nPos ) );
-            config.setTitle( daoUtil.getString( ++nPos ) );
-            config.setMandatory( daoUtil.getBoolean( ++nPos ) );
-            config.setRichText( daoUtil.getBoolean( ++nPos ) );
+            daoUtil.setInt( 1, nIdState );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                config = new TaskCommentConfig( );
+                config.setIdTask( daoUtil.getInt( ++nPos ) );
+                config.setTitle( daoUtil.getString( ++nPos ) );
+                config.setMandatory( daoUtil.getBoolean( ++nPos ) );
+                config.setRichText( daoUtil.getBoolean( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -125,10 +121,10 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
     @Override
     public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdState );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdState );
+            daoUtil.executeUpdate( );
+        }
     }
 }

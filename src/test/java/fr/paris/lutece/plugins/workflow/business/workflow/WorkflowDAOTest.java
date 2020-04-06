@@ -26,7 +26,7 @@ public class WorkflowDAOTest extends LuteceTestCase
         _dao.store( wf1 );
         wf2 = _dao.load( wf1.getId( ) );
         assertEquals( wf1.getName( ), wf2.getName( ) );
-        
+
         _dao.delete( wf1.getId( ) );
         wf2 = _dao.load( wf1.getId( ) );
         assertNull( wf2 );

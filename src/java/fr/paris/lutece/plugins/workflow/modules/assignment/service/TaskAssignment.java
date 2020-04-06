@@ -115,7 +115,7 @@ public class TaskAssignment extends Task
     {
         String [ ] tabWorkgroups = request.getParameterValues( PARAMETER_WORKGROUPS + "_" + this.getId( ) );
         AdminUser admin = AdminUserService.getAdminUser( request );
-        List<String> listWorkgroup = new ArrayList<String>( );
+        List<String> listWorkgroup = new ArrayList<>( );
         TaskAssignmentConfig config = _taskAssignmentConfigService.findByPrimaryKey( this.getId( ) );
 
         for ( int i = 0; i < tabWorkgroups.length; i++ )
@@ -131,40 +131,7 @@ public class TaskAssignment extends Task
 
             if ( config.isNotify( ) )
             {
-                WorkgroupConfig workgroupConfig = _workgroupConfigService.findByPrimaryKey( this.getId( ), tabWorkgroups [i], WorkflowUtils.getPlugin( ) );
-
-                if ( ( workgroupConfig != null ) && ( workgroupConfig.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL ) )
-                {
-                    Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList( ) );
-
-                    String strSenderEmail = MailService.getNoReplyEmail( );
-
-                    Map<String, Object> model = new HashMap<String, Object>( );
-                    model.put( MARK_MESSAGE, config.getMessage( ) );
-
-                    HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
-
-                    if ( config.isUseUserName( ) )
-                    {
-                        String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
-
-                        // Send Mail
-                        for ( Recipient recipient : listRecipients )
-                        {
-                            // Build the mail message
-                            MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, config.getSubject( ), t.getHtml( ) );
-                        }
-                    }
-                    else
-                    {
-                        for ( Recipient recipient : listRecipients )
-                        {
-                            // Build the mail message
-                            MailService.sendMailHtml( recipient.getEmail( ), admin.getFirstName( ) + " " + admin.getLastName( ), admin.getEmail( ),
-                                    config.getSubject( ), t.getHtml( ) );
-                        }
-                    }
-                }
+                notifyUser( config, tabWorkgroups [i], admin, locale );
             }
         }
 
@@ -177,6 +144,39 @@ public class TaskAssignment extends Task
                 resourceHistory.getWorkflow( ).getId( ) );
         resourceWorkflow.setWorkgroups( listWorkgroup );
         resourceWorkflowService.update( resourceWorkflow );
+    }
+
+    private void notifyUser( TaskAssignmentConfig config, String workgroup, AdminUser admin, Locale locale )
+    {
+        WorkgroupConfig workgroupConfig = _workgroupConfigService.findByPrimaryKey( this.getId( ), workgroup, WorkflowUtils.getPlugin( ) );
+
+        if ( ( workgroupConfig != null ) && ( workgroupConfig.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL ) )
+        {
+            Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( workgroupConfig.getIdMailingList( ) );
+
+            String strSenderEmail = MailService.getNoReplyEmail( );
+
+            Map<String, Object> model = new HashMap<>( );
+            model.put( MARK_MESSAGE, config.getMessage( ) );
+
+            HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
+
+            // Send Mail
+            for ( Recipient recipient : listRecipients )
+            {
+                String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
+                if ( config.isUseUserName( ) )
+                {
+                    // Build the mail message
+                    MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, config.getSubject( ), t.getHtml( ) );
+                }
+                else
+                {
+                    MailService.sendMailHtml( recipient.getEmail( ), admin.getFirstName( ) + " " + admin.getLastName( ), admin.getEmail( ),
+                            config.getSubject( ), t.getHtml( ) );
+                }
+            }
+        }
     }
 
     /**
@@ -228,7 +228,7 @@ public class TaskAssignment extends Task
 
         if ( config != null )
         {
-            mapEntriesForm = new HashMap<String, String>( );
+            mapEntriesForm = new HashMap<>( );
             mapEntriesForm.put( PARAMETER_WORKGROUPS + "_" + this.getId( ), config.getTitle( ) );
         }
 

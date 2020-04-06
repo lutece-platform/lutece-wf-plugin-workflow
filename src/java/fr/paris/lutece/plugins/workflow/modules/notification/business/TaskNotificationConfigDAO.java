@@ -58,18 +58,18 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
     @Override
     public synchronized void insert( TaskNotificationConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.setInt( ++nPos, config.getIdMailingList( ) );
+            daoUtil.setString( ++nPos, config.getSenderName( ) );
+            daoUtil.setString( ++nPos, config.getSubject( ) );
+            daoUtil.setString( ++nPos, config.getMessage( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.setInt( ++nPos, config.getIdMailingList( ) );
-        daoUtil.setString( ++nPos, config.getSenderName( ) );
-        daoUtil.setString( ++nPos, config.getSubject( ) );
-        daoUtil.setString( ++nPos, config.getMessage( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -78,19 +78,19 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
     @Override
     public void store( TaskNotificationConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.setInt( ++nPos, config.getIdMailingList( ) );
+            daoUtil.setString( ++nPos, config.getSenderName( ) );
+            daoUtil.setString( ++nPos, config.getSubject( ) );
+            daoUtil.setString( ++nPos, config.getMessage( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.setInt( ++nPos, config.getIdMailingList( ) );
-        daoUtil.setString( ++nPos, config.getSenderName( ) );
-        daoUtil.setString( ++nPos, config.getSubject( ) );
-        daoUtil.setString( ++nPos, config.getMessage( ) );
-
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -100,26 +100,22 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
     public TaskNotificationConfig load( int nIdState )
     {
         TaskNotificationConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdState );
-
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            config = new TaskNotificationConfig( );
-            config.setIdTask( daoUtil.getInt( ++nPos ) );
-            config.setIdMailingList( daoUtil.getInt( ++nPos ) );
-            config.setSenderName( daoUtil.getString( ++nPos ) );
-            config.setSubject( daoUtil.getString( ++nPos ) );
-            config.setMessage( daoUtil.getString( ++nPos ) );
+            daoUtil.setInt( 1, nIdState );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                config = new TaskNotificationConfig( );
+                config.setIdTask( daoUtil.getInt( ++nPos ) );
+                config.setIdMailingList( daoUtil.getInt( ++nPos ) );
+                config.setSenderName( daoUtil.getString( ++nPos ) );
+                config.setSubject( daoUtil.getString( ++nPos ) );
+                config.setMessage( daoUtil.getString( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -129,10 +125,10 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
     @Override
     public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdState );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdState );
+            daoUtil.executeUpdate( );
+        }
     }
 }

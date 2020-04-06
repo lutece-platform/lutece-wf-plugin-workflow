@@ -40,6 +40,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Set;
@@ -64,7 +65,7 @@ public abstract class AbstractTaskComponent extends TaskComponent
         // Check mandatory fields
         Set<ConstraintViolation<ITaskConfig>> constraintViolations = BeanValidationUtil.validate( config );
 
-        if ( constraintViolations.size( ) > 0 )
+        if ( CollectionUtils.isNotEmpty( constraintViolations ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }

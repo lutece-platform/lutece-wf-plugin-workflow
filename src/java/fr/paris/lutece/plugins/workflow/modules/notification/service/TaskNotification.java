@@ -93,7 +93,7 @@ public class TaskNotification extends Task
         {
             String strSenderEmail = MailService.getNoReplyEmail( );
             Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList( ) );
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<>( );
             model.put( MARK_MESSAGE, config.getMessage( ) );
 
             HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );

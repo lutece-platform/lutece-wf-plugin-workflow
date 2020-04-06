@@ -58,16 +58,16 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
     @Override
     public synchronized void insert( AssignmentHistory history, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, history.getIdResourceHistory( ) );
+            daoUtil.setInt( ++nPos, history.getIdTask( ) );
+            daoUtil.setString( ++nPos, history.getWorkgroup( ) );
 
-        daoUtil.setInt( ++nPos, history.getIdResourceHistory( ) );
-        daoUtil.setInt( ++nPos, history.getIdTask( ) );
-        daoUtil.setString( ++nPos, history.getWorkgroup( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -78,28 +78,26 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
     {
         AssignmentHistory assignmentValue = null;
 
-        List<AssignmentHistory> listAssignmentValue = new ArrayList<AssignmentHistory>( );
+        List<AssignmentHistory> listAssignmentValue = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            nPos = 0;
-            assignmentValue = new AssignmentHistory( );
-            assignmentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
-            assignmentValue.setIdTask( daoUtil.getInt( ++nPos ) );
-            assignmentValue.setWorkgroup( daoUtil.getString( ++nPos ) );
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
 
-            listAssignmentValue.add( assignmentValue );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                nPos = 0;
+                assignmentValue = new AssignmentHistory( );
+                assignmentValue.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
+                assignmentValue.setIdTask( daoUtil.getInt( ++nPos ) );
+                assignmentValue.setWorkgroup( daoUtil.getString( ++nPos ) );
+
+                listAssignmentValue.add( assignmentValue );
+            }
         }
-
-        daoUtil.free( );
-
         return listAssignmentValue;
     }
 
@@ -109,13 +107,14 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
     @Override
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -124,11 +123,12 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
     @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdTask );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 }

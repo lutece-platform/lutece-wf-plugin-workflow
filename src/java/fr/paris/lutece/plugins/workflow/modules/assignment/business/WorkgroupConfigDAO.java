@@ -59,26 +59,21 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     public WorkgroupConfig load( int nIdTask, String strWorkgroupKey, Plugin plugin )
     {
         WorkgroupConfig workgroupConfig = null;
-        int nPos;
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.setString( 2, strWorkgroupKey );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            nPos = 0;
-            workgroupConfig = new WorkgroupConfig( );
-            workgroupConfig.setIdTask( nIdTask );
-            workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
-            workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.setString( 2, strWorkgroupKey );
+
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                workgroupConfig = new WorkgroupConfig( );
+                workgroupConfig.setIdTask( nIdTask );
+                workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
+                workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return workgroupConfig;
     }
 
@@ -89,28 +84,24 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     public List<WorkgroupConfig> selectByConfig( int nIdTask, Plugin plugin )
     {
         WorkgroupConfig workgroupConfig = null;
-        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<WorkgroupConfig>( );
-        int nPos;
+        List<WorkgroupConfig> listWorkgroupConfig = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CONFIG, plugin );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CONFIG, plugin ) )
         {
-            nPos = 0;
-            workgroupConfig = new WorkgroupConfig( );
-            workgroupConfig.setIdTask( nIdTask );
-            workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
-            workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeQuery( );
 
-            listWorkgroupConfig.add( workgroupConfig );
+            while ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                workgroupConfig = new WorkgroupConfig( );
+                workgroupConfig.setIdTask( nIdTask );
+                workgroupConfig.setWorkgroupKey( daoUtil.getString( ++nPos ) );
+                workgroupConfig.setIdMailingList( daoUtil.getInt( ++nPos ) );
+
+                listWorkgroupConfig.add( workgroupConfig );
+            }
         }
-
-        daoUtil.free( );
-
         return listWorkgroupConfig;
     }
 
@@ -120,10 +111,11 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_CONFIG, plugin );
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_CONFIG, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -132,22 +124,21 @@ public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
     @Override
     public void insert( WorkgroupConfig workgroupConf, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, workgroupConf.getIdTask( ) );
-        daoUtil.setString( ++nPos, workgroupConf.getWorkgroupKey( ) );
-
-        if ( workgroupConf.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
         {
-            daoUtil.setInt( ++nPos, workgroupConf.getIdMailingList( ) );
-        }
-        else
-        {
-            daoUtil.setIntNull( ++nPos );
-        }
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, workgroupConf.getIdTask( ) );
+            daoUtil.setString( ++nPos, workgroupConf.getWorkgroupKey( ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            if ( workgroupConf.getIdMailingList( ) != WorkflowUtils.CONSTANT_ID_NULL )
+            {
+                daoUtil.setInt( ++nPos, workgroupConf.getIdMailingList( ) );
+            }
+            else
+            {
+                daoUtil.setIntNull( ++nPos );
+            }
+            daoUtil.executeUpdate( );
+        }
     }
 }
