@@ -1,62 +1,37 @@
-<div class="row">
+<#assign title_param='' >
+<#assign width_value='' >
+<#if modify_icon.width?exists&&modify_icon.width!=-1>
+	<#assign width_value=modify_icon.width >
+	<#assign title_param=title_param + 'width="${modify_icon.width}"' >
+</#if>
+<#assign height_value='' >
+<#if modify_icon.height?exists&&modify_icon.height!=-1>
+	<#assign height_value=modify_icon.height >
+	<#assign title_param=title_param + 'height="${modify_icon.width}"' >
+</#if>
+<@row>
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<div class="box box-primary">
+		<@box style='primary'>
 			<div class="box-header">
-				<h3 class="box-title">#i18n{workflow.modify_icon.title} : <img  src="image?resource_type=workflow_icon_img&id=${modify_icon.id}"<#if modify_icon.width!=-1>width="${modify_icon.width}"</#if><#if modify_icon.height!=-1> height="${modify_icon.height}" </#if>> ${modify_icon.name}</h3>
+				<h3 class="box-title">#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' params=title_param /> ${modify_icon.name}
 			</div>
-			<div class="box-body">
-				<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow" method="post" name="" id="" enctype="multipart/form-data">
-					<fieldset>
-						<input name="id_icon" value="${modify_icon.id}" type="hidden">
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_icon.label_name} * : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<input type="text" name="name" id="" value="${modify_icon.name}" maxlength="255" class="form-control input-sm">
-								<span class="help-block">#i18n{workflow.create_icon.label_name_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_file" >#i18n{workflow.create_icon.label_file} * : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<input type="file" id="id_file" name="id_file" size="60">
-								<span class="help-block">#i18n{workflow.create_icon.label_file_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="width">#i18n{workflow.create_icon.label_width} : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<#if modify_icon.width?exists&&modify_icon.width!=-1>
-									<input type="text" name="width" id="" value="${modify_icon.width}"  maxlength="255" class="form-control input-sm">
-								<#else>
-									<input type="text" name="width" id="" value="" maxlength="255" class="form-control input-sm">
-								</#if> 
-								<span class="help-block">#i18n{workflow.create_icon.label_width_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="height">#i18n{workflow.create_icon.label_height} : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<#if modify_icon.height?exists&&modify_icon.height!=-1>
-									<input type="text" name="height" id="" value="${modify_icon.height}" maxlength="255" class="form-control input-sm">
-								<#else>
-									<input type="text" name="height" id="" value="" maxlength="255" class="form-control input-sm">
-								</#if>
-								<span class="help-block">#i18n{workflow.create_icon.label_height_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
-								<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save">
-									<i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{workflow.create_icon.button_save}
-								</button>
-								<button class="btn btn-default btn-sm btn-flat" type="submit" name="cancel">
-									<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{workflow.create_icon.button_cancel}
-								</button>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-		</div>
+			<@boxBody>
+				<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
+					<@fieldSet>
+						<@input type='hidden' name='id_icon' value=modify_icon.id />
+						<@fieldInputText i18nLabelKey='workflow.create_icon.label_name' inputName='name' value=modify_icon.name mandatory=true i18nHelpBlockKey='workflow.create_icon.label_name_comment' maxlength=255/>
+						<@fieldInputWrapper i18nLabelKey='workflow.create_icon.label_file' inputName='id_file' mandatory=true i18nHelpBlockKey='workflow.create_icon.label_file_comment'>
+							<@input type='file' name='id_file' inputSize=60 />
+						</@fieldInputWrapper>
+						<@fieldInputText i18nLabelKey='workflow.create_icon.label_width' inputName='width' value=width_value i18nHelpBlockKey='workflow.create_icon.label_width_comment' maxlength=255/>
+						<@fieldInputText i18nLabelKey='workflow.create_icon.label_height' inputName='height' value=height_value i18nHelpBlockKey='workflow.create_icon.label_height_comment' maxlength=255/>
+						<@formGroup>
+							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_icon.button_save}' />
+							<@button size='sm' type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_icon.button_cancel}' cancel=true />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
 	</div>
-</div>
+</@row>

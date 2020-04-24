@@ -1,86 +1,59 @@
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <div class="box box-primary">
-      	<div class="box-header">
-      		<h3 class="box-title"> #i18n{workflow.manage_workflow.title}</h3>
-        	<div class="box-tools">
-      			<#if permission_manage_advanced_parameters>
-        			<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp">
-						<i class="fa fa-cog" ></i><span class="hidden-xs">#i18n{workflow.manage_workflow.button_manage_advanced_parameters}</span>
-        			</a>
-      			</#if>
-      			<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/CreateWorkflow.jsp">
-      				<i class="fa fa-plus" > </i>
-      				<span class="hidden-xs" >#i18n{workflow.manage_workflow.button_create}</span>
-      			</a>
-      			<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/workflow/ImportWorkflow.jsp">
-      				<span class="hidden-xs" >#i18n{workflow.manage_workflow.button_import}</span>
-      			</a>
-            <form action="" method="" name="" id="" class="form-inline pull-left spaced">
-        			<label for="is_enabled">#i18n{workflow.manage_workflow.label_active} </label>
-               <@comboWithParams name="is_enabled" items=active_list default_value="active_selected" additionalParameters="class=\"form-control input-xs\""/>
-               <label for="workgroup">#i18n{workflow.manage_workflow.label_workgroup} </label>
-        			 <div class="input-group">
-                 <@comboWithParams name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected additionalParameters="class='form-control input-xs'" />
-          			 <span class="input-group-btn">
-                   <button class="btn btn-default btn-xs btn-flat" type="submit">
-          				  <i class="fa fa-filter"></i>
-          				  #i18n{workflow.manage_workflow.button_search}
-          				</button>
-          				</span>
-        				</div>
-        		</form>
-      		</div>
-        </div>
-    	  <div class="box-body">
-      		<@paginationAdmin paginator=paginator combo=1/>
-          <table class="table table-hover table-condensed">
-            <thead>
-              <tr>
-                <th>#i18n{workflow.manage_workflow.row_name}</th>
-				        <th>#i18n{workflow.manage_workflow.row_actions}</th>
-              </tr>
-            </thead>
-            <tbody>
-            <#list workflow_list as workflow>
-              <tr>
-                <td>
-                  <#if workflow.enabled>
-                    <span class="label label-success" title="#i18n{portal.util.labelEnabled}"><i class="fa fa-check-circle"></i></span>
-                  <#else>
-                    <span class="label label-important" title="#i18n{portal.util.labelDisabled}"><i class="fa fa-times-circle"></i></span> 
-                  </#if>
-					        <strong>${workflow.name}</strong>&nbsp;
-                </td>
-                <td>
-                  <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_modify}">
-                    <i class="fa fa-pencil"></i>
-                  </a>
-                  <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_copy}" >
-                    <i class="fa fa-plus-circle"></i>
-                  </a>
-                  <a class="btn btn-primary btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_export}" >
-                    <i class="fa fa-upload"></i>
-                  </a>
-                  <a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_delete}" >
-					<i class="fa fa-trash"></i>
-                  </a>
-                  <#if workflow.enabled>
-					<a class="btn btn-danger btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_disable}" >
-            		<i class="fa fa-stop"></i>
-            		</a>
-                  <#else>
-          			<a class="btn btn-success btn-sm btn-flat" href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}"  title="#i18n{workflow.manage_workflow.title_enable}" >
-          			<i class="fa fa-play"></i>
-          			</a>
-                  </#if>
-                </td>
-              </tr>
-            </#list>
-          </tbody>
-        </table>
-        <@paginationAdmin paginator=paginator combo=1/>
-      </div>
-    </div>
-  </div>
-</div>
+<#include "macro_workflows.html" />
+<@row>
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<@box style='primary'>
+			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title'>
+				<#if permission_manage_advanced_parameters>
+					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' size='xs' buttonIcon='cog' showTitleXs=false title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' />
+				</#if>
+				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' size='xs' buttonIcon='plus' showTitleXs=false title='#i18n{workflow.manage_workflow.button_create}' />
+				<@aButton href='jsp/admin/plugins/workflow/ImportWorkflow.jsp' size='xs' buttonIcon='upload' showTitleXs=false title='#i18n{workflow.manage_workflow.button_import}' />
+				<@tform type='inline' align='left' class='spaced'>
+					<label for="is_enabled">#i18n{workflow.manage_workflow.label_active} </label>
+					<@comboWithParams name="is_enabled" items=active_list default_value="active_selected" additionalParameters="class=\"form-control input-xs\""/>
+					<label for="workgroup">#i18n{workflow.manage_workflow.label_workgroup} </label>
+					<@inputGroup>
+						<@comboWithParams name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected additionalParameters="class='form-control input-xs'" />
+						<@inputGroupItem>
+							<@button size='sm' type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' color='default' />
+						</@inputGroupItem>
+					</@inputGroup>
+				</@tform>
+			</@boxHeader>
+			<@boxBody>
+				<@paginationAdmin paginator=paginator combo=1/>
+				<@table responsive=false>
+					<@tr>
+						<@th>#i18n{workflow.manage_workflow.row_name}</@th>
+						<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
+					</@tr>
+					<@tableHeadBodySeparator />
+					<#list workflow_list as workflow>
+						<@tr>
+							<@td>
+								<#if workflow.enabled>
+									<span class="label label-success" title="#i18n{portal.util.labelEnabled}"><@icon style='check-circle' /></span>
+								<#else>
+									<span class="label label-important" title="#i18n{portal.util.labelDisabled}"><@icon style='times-circle' /></span>
+								</#if>
+								<strong>${workflow.name}</strong>&nbsp;
+							</@td>
+							<@td>
+								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' showTitle=false />
+								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' showTitle=false />
+								<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='upload' title='#i18n{workflow.manage_workflow.title_export}' showTitle=false />
+								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' showTitle=false />
+								<#if workflow.enabled>
+									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' showTitle=false />
+								<#else>
+									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' showTitle=false />
+								</#if>
+							</@td>
+						</@tr>
+					</#list>
+				</@table>
+				<@paginationAdmin paginator=paginator combo=1/>
+			</@boxBody>
+		</@box>
+	</div>
+</@row>
