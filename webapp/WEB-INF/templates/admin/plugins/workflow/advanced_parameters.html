@@ -1,29 +1,18 @@
-<table class="table table-striped table-condensed">
-    <!-- TODO Workflow testing will be removed
-    <tr>
-        <td>
-                <a href="jsp/admin/plugins/workflow/ManageTestWorkflow.jsp?plugin_name=workflow" >
-                    #i18n{workflow.manage_plugin_workflow.label_manage_test_workflow}
-                </a>
-            </td>
-            <td>
-                #i18n{workflow.manage_plugin_workflow.label_manage_test_workflow_comment}
-            </td>
-        </tr>
-        -->
-        <tr>
-            <th></th>
-            <th></th>
-            <th>#i18n{portal.util.labelActions}</th>
-        </tr>
-		<tr>
-            <td>
-                <a href="jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow" >
-                    #i18n{workflow.manage_plugin_workflow.label_manage_icon}
-                </a>
-            </td>
-            <td>
-                #i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}
-            </td>
-        </tr>
-</table>
+<@table striped=true>
+	<@tr>
+		<@th></@th>
+		<@th></@th>
+		<@th>#i18n{portal.util.labelActions}</@th>
+	</@tr>
+	<@tableHeadBodySeparator />
+	<@tr>
+		<@td>
+			<@link href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow'>
+				#i18n{workflow.manage_plugin_workflow.label_manage_icon}
+			</@link>
+		</@td>
+		<@td>
+			#i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}
+		</@td>
+	</@tr>
+</@table>

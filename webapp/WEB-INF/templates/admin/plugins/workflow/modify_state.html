@@ -1,87 +1,34 @@
 <#include "macro_workflows.html" />
-<div class="row">
+<@row>
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<form class="form-horizontal" action="jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow" method="post" name="" id=""  >
-			<fieldset>
-				<div class="nav-tabs-custom">
-					<ul class="nav nav-tabs">
-						<li class="active">
-							<a href="jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}">#i18n{workflow.modify_state.title}</a>
-						</li>
-						<li>
-							<a href="jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}">#i18n{workflow.modify_reflexive_action.title}</a>
-						</li>
-					</ul>
-					<div class="tab-content">
-						<input name="id_state" value="${state.id}" type="hidden">
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="name">#i18n{workflow.create_state.label_name} * : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<input type="text" name="name" id="" size="80" value="${state.name}" maxlength="255" class="form-control input-sm">
-								<span class="help-block">#i18n{workflow.create_state.label_name_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="description"> #i18n{workflow.create_state.label_description} * : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<textarea name="description" cols="80" rows="2" class="form-control input-sm">${state.description}</textarea>
-								<span class="help-block">#i18n{workflow.create_state.label_description_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="is_initial_state">#i18n{workflow.create_state.label_initial_state} :</label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<div class="checkbox">
-									<label>
-										<#if state.isInitialState()>
-										<input name="is_initial_state" value="1" type="checkbox" checked="checked">
-										<#else>
-											<input name="is_initial_state" value="1" type="checkbox">
-										</#if>
-									</label>
-								</div>
-								<span class="help-block">#i18n{workflow.create_state.label_initial_state_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="is_required_user_assigned">#i18n{workflow.create_state.label_required_workgroup_assigned} :</label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<div class="checkbox">
-									<label>
-										<#if state.isRequiredWorkgroupAssigned()>
-										<input name="is_required_workgroup_assigned" value="1" type="checkbox" checked="checked"/>
-										<#else>
-										<input name="is_required_workgroup_assigned" value="1" type="checkbox"/>
-										</#if>
-									</label>
-								</div>
-								<span class="help-block">#i18n{workflow.create_state.label_required_workgroup_assigned_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="id_icon"> #i18n{workflow.create_state.label_icon} : </label>
-							<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-								<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
-								<label class="radio-inline">
-								<input type="radio" name="id_icon" value="-1" <#if state.icon.id = 0> checked="checked" </#if>>
-								#i18n{workflow.create_state.label_no_icon}	
-								</label>
-								<span class="help-block">#i18n{workflow.create_state.label_icon_comment}</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
-								<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save" >
-									<i class="glyphicon glyphicon-ok"></i> #i18n{workflow.create_state.button_save}
-								</button>
-								<button class="btn btn-sm btn-flat" type="submit" name="cancel" >
-									<i class="glyphicon glyphicon-remove-circle"></i> #i18n{workflow.create_state.button_cancel}
-								</button>
-							</div>
-						</div>&#160;
-					</div>
-				</fieldset>
-			</form>
-		</div>
+		<@fieldSet>
+			<@tabs>
+				<@tabList>
+					<@tabLink active=true href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}'/>
+					<@tabLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'/>
+				</@tabList>
+				<@tabContent>
+					<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
+						<@input type='hidden' name='id_state' value=state.id/>
+						<@fieldInputText i18nLabelKey='workflow.create_state.label_name' inputName='name' value=state.name mandatory=true i18nHelpBlockKey='workflow.create_state.label_name_comment' maxlength=255/>
+						<@fieldTextArea i18nLabelKey='workflow.create_action.label_description' inputName='description' value=state.description mandatory=true i18nHelpBlockKey='workflow.create_action.label_description_comment'/>
+						<@fieldInputWrapper i18nLabelKey='workflow.create_state.label_initial_state' inputName='is_initial_state' i18nHelpBlockKey='workflow.create_state.label_initial_state_comment'>
+							<@checkBox name='is_initial_state' value='1' checked=state.isInitialState( ) />
+						</@fieldInputWrapper>
+						<@fieldInputWrapper i18nLabelKey='workflow.create_state.label_required_workgroup_assigned' inputName='is_required_workgroup_assigned' i18nHelpBlockKey='workflow.create_state.label_required_workgroup_assigned_comment'>
+							<@checkBox name='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
+						</@fieldInputWrapper>
+						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
+							<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
+							<@radioButton orientation='horizontal' name='id_icon' value='-1' checked=state.icon.id==0 labelKey='#i18n{workflow.create_state.label_no_icon}' />
+						</@formGroup>
+						<@formGroup>
+							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
+							<@button size='sm' type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
+						</@formGroup>
+					</@tform>
+				</@tabContent>
+			</@tabs>
+		</@fieldSet>
 	</div>
-</div>		
+</@row>

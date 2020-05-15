@@ -1,40 +1,32 @@
-<div class="row">
+<@row>
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">Gestion des prérequis</h3>
-			</div>
-			<div class="box-body">
-				<form action="jsp/admin/plugins/workflow/prerequisite/<#if id_prerequisite??>DoModifyPrerequisite.jsp<#else>DoCreatePrerequisite.jsp</#if>" method="post">
-					<input type="hidden" name="id_action" value="${id_action}">
-					<input type="hidden" name="prerequisite_type" value="${prerequisite_type}">
+		<@box style='primary'>
+			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title' />
+			<@boxBody>
+				<#if id_prerequisite??>
+					<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'>
+				<#else>
+					<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'>
+				</#if>
+				<@tform action=form_action >
+					<@input type='hidden' name='id_action' value=id_action />
+					<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
 					<#if id_prerequisite??>	
-						<input type="hidden" name="id_prerequisite" value="${id_prerequisite}">
+						<@input type='hidden' name='id_prerequisite' value=id_prerequisite />
 					</#if>
 					
 					<#if errors??>
 						<#list errors as error>
-							<div class="alert alert-error">
-								<a href="#" data-dismiss="alert" class="close">x</a>
-								<i class="glyphicon glyphicon-remove-circle">&nbsp;</i>&nbsp;#i18n{${error.message}}
-							</div>
+							<@alert class='alert-error' dismissible=true title=error.message />
 						</#list>
 					</#if>
-	
 					${content}
-	
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
-							<button class="btn btn-primary btn-sm btn-flat" type="submit" name="save" >
-								<i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{workflow.create_state.button_save}
-							</button>
-							<button class="btn btn-default btn-sm btn-flat" type="submit" name="cancel" value="cancel" >
-								<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{workflow.create_state.button_cancel}
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
+					<@formGroup>
+						<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
+						<@button size='sm' type='submit' name='cancel' value='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
 	</div>
-</div>
+</@row>

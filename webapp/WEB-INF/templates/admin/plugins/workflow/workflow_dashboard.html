@@ -1,65 +1,42 @@
-<div class="box box-solid box-success">
-	<div class="box-header">
-		<h3 class="box-title">#i18n{workflow.dashboard.workflowList}</h3>
-		<div class="box-tools">
-			<button class="btn btn-box-tool" data-widget="collapse">
-				<i class="fa fa-minus"></i>
-			</button>
-			<button class="btn btn-box-tool" data-widget="remove">
-				<i class="fa fa-times"></i>
-			</button>
-		</div>
-	</div>
-	<div class="box-body table-responsive no-padding">
-		<table class="table table-striped table-condensed">
-			<tr>
-				<th>#i18n{workflow.dashboard.row_name}</th>
-				<th>#i18n{workflow.dashboard.row_actions}</th>
-			</tr>
+<@box style='solid' color='success'>
+	<@boxHeader titleLevel='h3' i18nTitleKey='workflow.dashboard.workflowList'>
+		<@button buttonIcon='minus' color='success' params='data-widget="collapse"' />
+		<@button buttonIcon='times' color='success' params='data-widget="remove"' />
+	</@boxHeader>
+	<@boxBody class='table-responsive no-padding' >
+		<@table striped=true condensed=true responsive=false hover=false >
+			<@tr>
+				<@th>#i18n{workflow.dashboard.row_name}</@th>
+				<@th>#i18n{workflow.dashboard.row_actions}</@th>
+			</@tr>
 			<#list workflow_list as workflow>
-			<tr>
-				<td><#if workflow.enabled> <span class="label label-success"
-					title="#i18n{portal.util.labelEnabled}"><i
-						class="fa fa-check"></i> </span> <#else> <span
-					class="label label-important"
-					title="#i18n{portal.util.labelDisabled}"><i
-						class="fa fa-remove"></i> </span> </#if> <strong>${workflow.name}</strong>
-				</td>
-				<td><a class="btn btn-primary btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_modify}"> <i
-						class="fa fa-pencil"></i>
-				</a> <a class="btn btn-primary  btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_copy}"> <i
-						class="fa fa-plus-circle"></i>
-				</a> <a class="btn btn-primary btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_export}"> <i
-						class="fa fa-upload"></i>
-				</a> <a class="btn btn-danger  btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_delete}"> <i
-						class="fa fa-trash"></i>
-				</a> <#if workflow.enabled> <a class="btn btn-danger  btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_disable}"> <i
-						class="fa fa-stop"></i>
-				</a> <#else> <a class="btn btn-success  btn-xs btn-flat"
-					href="jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}"
-					title="#i18n{workflow.manage_workflow.title_enable}"> <i
-						class="fa fa-play"></i>
-				</a> </#if></td>
-			</tr>
+				<@tr>
+					<@td>
+						<#if workflow.enabled>
+							<span class="label label-success" title="#i18n{portal.util.labelEnabled}"><@icon style='check-circle' /></span>
+						<#else>
+							<span class="label label-important" title="#i18n{portal.util.labelDisabled}"><@icon style='times-circle' /></span>
+						</#if>
+						<strong>${workflow.name}</strong>&nbsp;
+					</@td>
+					<@td>
+						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' showTitle=false />
+						<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' showTitle=false />
+						<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='upload' title='#i18n{workflow.manage_workflow.title_export}' showTitle=false />
+						<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' showTitle=false />
+						<#if workflow.enabled>
+							<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' showTitle=false />
+						<#else>
+							<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' showTitle=false />
+						</#if>
+					</@td>
+				</@tr>
 			</#list>
-		</table>
-	</div>
-	<!-- /.box-body -->
-	<div class="box-footer text-center">
-		<a href="${url}" title="#i18n{form.dashboard.formList}">
-			#i18n{workflow.dashboard.workflowList} <i
-			class="fa fa-arrow-circle-right"></i>
-		</a>
-	</div>
-	<!-- /.box-footer-->
-</div>
+		</@table>
+	</@boxBody>
+	<@boxFooter class='text-center'>
+		<@link href='${url}'>
+			#i18n{workflow.dashboard.workflowList}<@icon style='arrow-circle-right' />
+		</@link>
+	</@boxFooter>
+</@box>
