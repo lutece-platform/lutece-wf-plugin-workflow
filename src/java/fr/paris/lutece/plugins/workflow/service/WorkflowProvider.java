@@ -71,12 +71,13 @@ import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
-import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.rbac.User;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
@@ -93,7 +94,7 @@ public class WorkflowProvider implements IWorkflowProvider
     // MARKS
     private static final String MARK_RESOURCE_HISTORY = "resource_history";
     private static final String MARK_TASK_INFORMATION_LIST = "task_information_list";
-    private static final String MARK_ADMIN_USER_HISTORY = "admin_user_history";
+    private static final String MARK_USER_HISTORY = "user_history";
     private static final String MARK_HISTORY_INFORMATION_LIST = "history_information_list";
     private static final String MARK_TASK_FORM_ENTRY_LIST = "task_form_entry_list";
     private static final String MARK_ADMIN_AVATAR = "adminAvatar";
@@ -135,7 +136,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
-    public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, AdminUser user )
+    public Collection<Action> getActions( int nIdResource, String strResourceType, Collection<Action> listActions, User user )
     {
         listActions = listActions.stream( ).filter( a -> canActionBeProcessed( user, nIdResource, strResourceType, a.getId( ) ) )
                 .collect( Collectors.toList( ) );
@@ -146,7 +147,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
-    public Map<Integer, List<Action>> getActions( String strResourceType, Map<Integer, List<Action>> mapActions, AdminUser user )
+    public Map<Integer, List<Action>> getActions( String strResourceType, Map<Integer, List<Action>> mapActions, User user )
     {
         for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
         {
@@ -157,10 +158,10 @@ public class WorkflowProvider implements IWorkflowProvider
             mapActions.put( entry.getKey( ), listActions );
         }
 
-        return mapActions;
+        return mapActions;	
     }
 
-    private boolean canActionBeProcessed( AdminUser adminUser, int nIdResource, String strResourceType, int nIdAction )
+    private boolean canActionBeProcessed( User User, int nIdResource, String strResourceType, int nIdAction )
     {
         for ( Prerequisite prerequisite : _prerequisiteManagementService.getListPrerequisite( nIdAction ) )
         {
@@ -171,7 +172,7 @@ public class WorkflowProvider implements IWorkflowProvider
             boolean canBePerformed = false;
             if ( prerequisiteService instanceof IManualActionPrerequisiteService )
             {
-                canBePerformed = ( (IManualActionPrerequisiteService) prerequisiteService ).canManualActionBePerformed( adminUser, nIdResource, strResourceType,
+                canBePerformed = ( (IManualActionPrerequisiteService) prerequisiteService ).canManualActionBePerformed( User, nIdResource, strResourceType,
                         config, nIdAction );
             }
             else
@@ -191,7 +192,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public Collection<State> getAllStateByWorkflow( Collection<State> listStates, AdminUser user )
+    public Collection<State> getAllStateByWorkflow( Collection<State> listStates, User user )
     {
         return RBACService.getAuthorizedCollection( listStates, StateResourceIdService.PERMISSION_VIEW, user );
     }
@@ -200,7 +201,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, int nIdWorkflowState, Integer nExternalParentId, AdminUser user )
+    public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, int nIdWorkflowState, Integer nExternalParentId, User user )
     {
         if ( nIdWorkflowState < 1 )
         {
@@ -219,7 +220,8 @@ public class WorkflowProvider implements IWorkflowProvider
             {
                 if ( Boolean.TRUE.equals( state.isRequiredWorkgroupAssigned( ) ) )
                 {
-                    ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale( ) );
+                	
+                    ReferenceList refWorkgroupKey = getUserWorkgroups(user);
 
                     if ( refWorkgroupKey != null )
                     {
@@ -252,7 +254,7 @@ public class WorkflowProvider implements IWorkflowProvider
      */
     @Override
     public List<Integer> getAuthorizedResourceList( String strResourceType, int nIdWorkflow, List<Integer> lListIdWorkflowState, Integer nExternalParentId,
-            AdminUser user )
+            User user )
     {
         List<Integer> lListAutorizedIdSate = new ArrayList<>( );
 
@@ -311,8 +313,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( user != null )
         {
-            ReferenceList refWorkgroupKey = AdminWorkgroupService.getUserWorkgroups( user, user.getLocale( ) );
-
+        	ReferenceList refWorkgroupKey = getUserWorkgroups(user);
             if ( refWorkgroupKey != null )
             {
                 resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
@@ -326,9 +327,9 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale )
+    public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale, User user )
     {
-        return getDisplayDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, null, TEMPLATE_RESOURCE_HISTORY );
+        return getDisplayDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, null, TEMPLATE_RESOURCE_HISTORY, user );
     }
 
     /**
@@ -353,9 +354,9 @@ public class WorkflowProvider implements IWorkflowProvider
 
     // @Override don't declare as Override to be compatible with older Lutece Core version
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
-            Map<String, Object> model, String strTemplate )
+            Map<String, Object> model, String strTemplate,User user )
     {
-        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale );
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, user );
 
         if ( model != null )
         {
@@ -371,7 +372,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale )
+    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale,User user )
     {
         List<ITask> listTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
         List<String> listFormEntry = new ArrayList<>( );
@@ -400,20 +401,20 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale )
+    public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale, User user )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;
         String strTaskinformation;
         StringBuffer strXml = new StringBuffer( );
-        AdminUser user;
-
+       
+        User userHistory;
         XmlUtil.beginElement( strXml, TAG_HISTORY );
         XmlUtil.beginElement( strXml, TAG_LIST_RESOURCE_HISTORY );
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            user = ( resourceHistory.getUserAccessCode( ) != null ) ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) : null;
+            userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode(resourceHistory.getUserAccessCode()) : null;
             listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 
             XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
@@ -422,8 +423,8 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( user != null )
             {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, user.getFirstName( ) );
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, user.getLastName( ) );
+                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, getUserFirstName(userHistory));
+                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, getUserLastName(userHistory) );
             }
             else
             {
@@ -463,7 +464,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public ReferenceList getWorkflowsEnabled( AdminUser user, Locale locale )
+    public ReferenceList getWorkflowsEnabled( User user, Locale locale )
     {
         return WorkflowUtils.getRefList( getWorkflowsEnabled( user ), true, locale );
     }
@@ -472,36 +473,40 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getUserAccessCode( HttpServletRequest request )
+    public String getUserAccessCode( HttpServletRequest request, User user )
     {
-        AdminUser user = AdminUserService.getAdminUser( request );
-
-        if ( user != null )
-        {
-            return user.getAccessCode( );
-        }
-
-        return null;
-    }
-
+    	  String strAccessCode=null;
+    	  if ( user == null )
+          { ///get user in the httpservletRequest	 
+            user=getUserInRequest(request);    
+          }
+    	  
+    	  if(user!=null)
+    	  {
+    		  strAccessCode= getUserAccessCode(user);
+    	  }
+    	  return strAccessCode;
+   }
+       
     // CHECK
+
 
     /**
      * {@inheritDoc}
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
-    public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request )
+    public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, User user )
     {
-        if ( request != null )
+        if ( user == null )
+        { //get user in the httpservletRequest	 
+          user=getUserInRequest(request);    
+        }
+        
+        if(user!=null)
         {
-            Action action = _actionService.findByPrimaryKey( nIdAction );
-            AdminUser user = AdminUserService.getAdminUser( request );
-
-            if ( user != null )
-            {
-                return canActionBeProcessed( user, nIdResource, strResourceType, nIdAction )
-                        && RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
-            }
+        	Action action = _actionService.findByPrimaryKey( nIdAction );
+        	return canActionBeProcessed( user, nIdResource, strResourceType, nIdAction )
+                    && RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
         }
 
         return false;
@@ -511,7 +516,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public boolean isAuthorized( int nIdResource, String strResourceType, int nIdWorkflow, AdminUser user )
+    public boolean isAuthorized( int nIdResource, String strResourceType, int nIdWorkflow, User user )
     {
         boolean bReturn = false;
         State resourceState = null;
@@ -543,9 +548,10 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( Boolean.TRUE.equals( resourceState.isRequiredWorkgroupAssigned( ) ) && ( resourceWorkflow != null ) )
         {
+        
             for ( String strWorkgroup : resourceWorkflow.getWorkgroups( ) )
             {
-                if ( AdminWorkgroupHome.isUserInWorkgroup( user, strWorkgroup )
+                if ( isUserInWorkgroup(user, strWorkgroup)
                         || RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW_ALL_WORKGROUP, user ) )
                 {
                     bReturn = true;
@@ -568,7 +574,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale )
+    public String doValidateTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale, User user )
     {
         List<ITask> listTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
         String strError = null;
@@ -592,18 +598,18 @@ public class WorkflowProvider implements IWorkflowProvider
      * Return a collection witch contains a list enabled workflow
      * 
      * @param user
-     *            the AdminUser
+     *            the User
      * @return a collection witch contains a list enabled workflow
      */
-    private Collection<Workflow> getWorkflowsEnabled( AdminUser user )
+    private Collection<Workflow> getWorkflowsEnabled( User user )
     {
         WorkflowFilter filter = new WorkflowFilter( );
         filter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
-
-        return AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
-    }
+         
+        return getAuthorizedCollection( listWorkflow, user );
+     }
 
     /**
      * returns the default model to build history performed on a resource.
@@ -621,7 +627,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * @return the default model
      */
     private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request,
-            Locale locale )
+            Locale locale, User user )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;
@@ -638,7 +644,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( resourceHistory.getUserAccessCode( ) != null )
             {
-                resourceHistoryTaskInformation.put( MARK_ADMIN_USER_HISTORY, AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) );
+                resourceHistoryTaskInformation.put( MARK_USER_HISTORY, getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) );
             }
 
             listTaskInformation = new ArrayList<>( );
@@ -664,4 +670,141 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return model;
     }
+    
+    /**
+     * Method used when the user is not provided.
+     * @param request the httpServletRequest
+     * @return the user in the request
+     */
+    private User getUserInRequest(HttpServletRequest request)
+    {
+    	return request!=null?AdminUserService.getAdminUser( request ):null;
+    }
+    
+    /**
+     * Return a ReferenceList witch contains the user workgoups
+     * @param user the user
+     * @return  a ReferenceList witch contains the user workgoups
+     */
+    //TODO Add this Method in the User Interface do not return referenceList only a list of workgroup key 
+    private ReferenceList getUserWorkgroups(User user)
+    {
+    	if( user instanceof AdminUser )
+    	{
+    		return AdminWorkgroupService.getUserWorkgroups((AdminUser)user , ((AdminUser)user).getLocale() );
+    	}
+    	return null;
+    	
+   }
+    
+    //TODO Modify AdminWorkgroupService for treating User 
+    /**
+     * Filter a collection of resources for a given user
+     *
+     * @return A filtered collection of resources
+     * @param <E>
+     *            The workgroup resource
+     * @param collection
+     *            The collection to filter
+     * @param user
+     *            The user
+     */
+    private  <E extends AdminWorkgroupResource> Collection<E> getAuthorizedCollection( Collection<E> collection, User user )
+    {
+        if( user instanceof AdminUser )
+    	{
+    
+    	  return AdminWorkgroupService.getAuthorizedCollection(collection, (AdminUser)user);	
+    	}
+      
+        return collection;
+    }
+    
+    //TODO Use Methode of AdminWorkgroupService after refactoring
+    /**
+     * Return true if the user is in the workgoup  
+     * @param user the user
+     * @param strWorkgroup the workgroup
+     * @return true if the user is in the workgroup
+     */
+    private boolean isUserInWorkgroup(User user, String strWorkgroup)
+    {
+    	
+    	ReferenceList refListUserWorkgroup=getUserWorkgroups(user);
+    	if(refListUserWorkgroup!=null)
+    	{
+    		return refListUserWorkgroup.stream().anyMatch(x->x.getCode().equals(strWorkgroup));
+    	}
+    	return false;
+    }
+    
+    
+    
+    //TODO provide UserInfo depending the User type  who made the action   
+    /**
+     * get a User by Access Code
+     * @param strAccessCode the strAccessCode
+     * @return a user by access code
+     */
+    private User getUserByAccessCode(String strAccessCode)
+    {
+    	return AdminUserHome.findUserByLogin( strAccessCode );
+    }
+    
+    
+    //TODO Add this Method in the User Interface  
+    /**
+     * return the User Access Code
+     * @param user the 
+     * @return the User AccesCode
+     */
+    private String getUserAccessCode( User user )
+    {
+    	if(user instanceof AdminUser)
+    	{
+    		return ((AdminUser)user).getAccessCode();
+    	
+    	}
+    	return null;
+    }
+    
+    
+    /**
+     * return the firstname of the user
+     * @param user the User
+     * @return return  user firstname
+     */
+    //TODO Add this Method in the User Interface  
+    private String getUserFirstName(User user)
+    {
+    	if( user instanceof AdminUser )
+    	{
+    		return  ((AdminUser)user).getFirstName();
+    	}
+    	return null;
+
+    }
+    /**
+     * return the lastname of the user
+     * @param strAccessCode
+     * @return the user lastname
+     */
+    //TODO Add this Method in the User Interface  
+    private String getUserLastName(User user)
+    {
+    	if( user instanceof AdminUser )
+    	{
+    		return  ((AdminUser)user).getLastName();
+    	}
+    	return null;
+
+    }
+    
+    
+    
+    
+    
+    
+   
+
 }

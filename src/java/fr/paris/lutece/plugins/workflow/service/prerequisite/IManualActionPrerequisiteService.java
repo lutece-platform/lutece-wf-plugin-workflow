@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.workflow.service.prerequisite;
 
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
-import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.rbac.User;
 
 /**
  * Interface for prerequisite services of manual actions.<br>
@@ -61,7 +61,7 @@ public interface IManualActionPrerequisiteService extends IAutomaticActionPrereq
      *            The id of the action that will be performed if the resource matches every prerequisites
      * @return True if the resource matches this prerequisite, false otherwise
      */
-    default boolean canManualActionBePerformed( AdminUser user, int nIdResource, String strResourceType, IPrerequisiteConfig config, int nIdAction )
+    default boolean canManualActionBePerformed( User user, int nIdResource, String strResourceType, IPrerequisiteConfig config, int nIdAction )
     {
         return canActionBePerformed( nIdResource, strResourceType, config, nIdAction );
     }
