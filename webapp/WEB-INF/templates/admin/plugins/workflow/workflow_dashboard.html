@@ -13,9 +13,9 @@
 				<@tr>
 					<@td>
 						<#if workflow.enabled>
-							<span class="label label-success" title="#i18n{portal.util.labelEnabled}"><@icon style='check-circle' /></span>
+							<@tag color='success' title='#i18n{portal.util.labelEnabled}' tagIcon='check-circle' />
 						<#else>
-							<span class="label label-important" title="#i18n{portal.util.labelDisabled}"><@icon style='times-circle' /></span>
+							<@tag color='important' title='#i18n{portal.util.labelDisabled}' tagIcon='times-circle' />
 						</#if>
 						<strong>${workflow.name}</strong>&nbsp;
 					</@td>

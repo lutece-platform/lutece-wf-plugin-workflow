@@ -14,16 +14,6 @@
     </#list>
 </#macro>
 
-<#macro fieldRadioIconList inputName default_value icons i18nLabelKey i18nHelpBlockKey='' mandatory=false >
-	<div class="form-group">
-		<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="${inputName}">#i18n{${i18nLabelKey}}&nbsp;<#if mandatory>*&nbsp;</#if>:</label>
-		<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-			<@radioIconList name=inputName default_value=default_value icons=icons />
-			<#if i18nHelpBlockKey != ''><p class="help-block">#i18n{${i18nHelpBlockKey}}</p></#if>
-		</div>
-	</div>
-</#macro>
-
 <#macro comboOrders name default_value max >
 	<select id="${name}" name="${name}" class="form-control input-sm" >
 		<#list 1..max as i>

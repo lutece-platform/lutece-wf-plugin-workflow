@@ -10,14 +10,18 @@
 				<@tabContent>
 					<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
 						<@input type='hidden' name='id_state' value=state.id/>
-						<@fieldInputText i18nLabelKey='workflow.create_state.label_name' inputName='name' value=state.name mandatory=true i18nHelpBlockKey='workflow.create_state.label_name_comment' maxlength=255/>
-						<@fieldTextArea i18nLabelKey='workflow.create_action.label_description' inputName='description' value=state.description mandatory=true i18nHelpBlockKey='workflow.create_action.label_description_comment'/>
-						<@fieldInputWrapper i18nLabelKey='workflow.create_state.label_initial_state' inputName='is_initial_state' i18nHelpBlockKey='workflow.create_state.label_initial_state_comment'>
+						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
+							<@input type='text' name='name' maxlength=255 value=state.name />
+						</@formGroup>
+						<@formGroup labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
+							<@input type='textarea' name='description' >${state.description}</@input>
+						</@formGroup>
+						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}'>
 							<@checkBox name='is_initial_state' value='1' checked=state.isInitialState( ) />
-						</@fieldInputWrapper>
-						<@fieldInputWrapper i18nLabelKey='workflow.create_state.label_required_workgroup_assigned' inputName='is_required_workgroup_assigned' i18nHelpBlockKey='workflow.create_state.label_required_workgroup_assigned_comment'>
+						</@formGroup>
+						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}'>
 							<@checkBox name='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
-						</@fieldInputWrapper>
+						</@formGroup>
 						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
 							<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
 							<@radioButton orientation='horizontal' name='id_icon' value='-1' checked=state.icon.id==0 labelKey='#i18n{workflow.create_state.label_no_icon}' />

@@ -19,12 +19,18 @@
 				<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
 					<@fieldSet>
 						<@input type='hidden' name='id_icon' value=modify_icon.id />
-						<@fieldInputText i18nLabelKey='workflow.create_icon.label_name' inputName='name' value=modify_icon.name mandatory=true i18nHelpBlockKey='workflow.create_icon.label_name_comment' maxlength=255/>
-						<@fieldInputWrapper i18nLabelKey='workflow.create_icon.label_file' inputName='id_file' mandatory=true i18nHelpBlockKey='workflow.create_icon.label_file_comment'>
+						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
+							<@input type='text' name='name' maxlength=255 value=modify_icon.name />
+						</@formGroup>
+						<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
 							<@input type='file' name='id_file' inputSize=60 />
-						</@fieldInputWrapper>
-						<@fieldInputText i18nLabelKey='workflow.create_icon.label_width' inputName='width' value=width_value i18nHelpBlockKey='workflow.create_icon.label_width_comment' maxlength=255/>
-						<@fieldInputText i18nLabelKey='workflow.create_icon.label_height' inputName='height' value=height_value i18nHelpBlockKey='workflow.create_icon.label_height_comment' maxlength=255/>
+						</@formGroup>
+						<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
+							<@input type='text' name='width' maxlength=255 value=width_value />
+						</@formGroup>
+						<@formGroup labelFor='height' labelKey='#i18n{workflow.create_icon.label_height}' helpKey='#i18n{workflow.create_icon.label_height_comment}'>
+							<@input type='text' name='height' maxlength=255 value=height_value />
+						</@formGroup>
 						<@formGroup>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_icon.button_save}' />
 							<@button size='sm' type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_icon.button_cancel}' cancel=true />
