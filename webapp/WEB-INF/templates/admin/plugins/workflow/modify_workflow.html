@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+	<@columns sm=12 md=3 lg=3>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_workflow.title' />
 			<@boxBody>
@@ -22,8 +22,8 @@
 				</@tform>
 			</@boxBody>
 		</@box>
-	</div>
-	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+	</@columns>
+	<@columns sm=12 md=9 lg=9>
 		<@tabs>
 			<@tabList>
 				<@tabLink href='#pane-states' active=pane="pane-states" params='data-toggle="tab"' title='#i18n{workflow.modify_workflow.manage_state.title}'/>
@@ -120,5 +120,5 @@
 				</@tabPanel>
 			</@tabContent>
 		</@tabs>
-	</div>
+	</@columns>
 </@row>

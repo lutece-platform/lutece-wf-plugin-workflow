@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<@columns sm=12 md=12 lg=12>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title'>
 				<#if permission_manage_advanced_parameters>
@@ -32,9 +32,9 @@
 						<@tr>
 							<@td>
 								<#if workflow.enabled>
-									<span class="label label-success" title="#i18n{portal.util.labelEnabled}"><@icon style='check-circle' /></span>
+									<@tag color='success' title='#i18n{portal.util.labelEnabled}' tagIcon='check-circle' />
 								<#else>
-									<span class="label label-important" title="#i18n{portal.util.labelDisabled}"><@icon style='times-circle' /></span>
+									<@tag color='important' title='#i18n{portal.util.labelDisabled}' tagIcon='times-circle' />
 								</#if>
 								<strong>${workflow.name}</strong>&nbsp;
 							</@td>
@@ -55,5 +55,5 @@
 				<@paginationAdmin paginator=paginator combo=1/>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>

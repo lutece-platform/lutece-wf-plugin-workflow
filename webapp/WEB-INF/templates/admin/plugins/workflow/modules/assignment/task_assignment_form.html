@@ -1,13 +1,5 @@
 <#if config?exists && config.multipleOwner>
 	<label for="workgroups_${config.idTask}"> ${config.title} *</label>
-	<!--  
-			<#list workgroup_list as workgroup>
-					<p>
-							<label for="document_type">&nbsp;</label>
-							<input name="workgroups_${config.idTask}" class="checkbox" value="${workgroup.code}" type="checkbox" />${workgroup.code}
-					</p>
-			</#list>
-	-->
 	<@checkboxList name="workgroups_${config.idTask}"  items=workgroup_list default_values="" />
 	<p class="help-block">#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}</p>	
 <#elseif config?exists>	

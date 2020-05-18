@@ -10,7 +10,7 @@
 	<#assign title_param=title_param + 'height="${modify_icon.width}"' >
 </#if>
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<@columns sm=12 md=12 lg=12>
 		<@box style='primary'>
 			<div class="box-header">
 				<h3 class="box-title">#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' params=title_param /> ${modify_icon.name}
@@ -33,5 +33,5 @@
 				</@tform>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>

@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<@columns sm=12 md=4 lg=4>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.title' />
 			<@boxBody>
@@ -70,8 +70,8 @@
 				</@tform>
 			</@boxBody>
 		</@box>
-	</div>
-	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+	</@columns>
+	<@columns sm=12 md=8 lg=8>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_task.title' />
 			<@boxBody>
@@ -136,8 +136,8 @@
 				</@fieldSet>
 			</@boxBody>
 		</@box>
-	</div>
-	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+	</@columns>
+	<@columns sm=12 md=8 lg=8>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title'>
 				<@tform action='jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp' type='inline'>
@@ -178,5 +178,5 @@
 				</@fieldSet>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>
