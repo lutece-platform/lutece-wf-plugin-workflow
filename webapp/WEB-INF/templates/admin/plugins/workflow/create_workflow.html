@@ -13,7 +13,7 @@
 							<@input type='textarea' name='description' />
 						</@formGroup>
 						<@formGroup labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' mandatory=true>
-							<@comboWithParams name='workgroup' items=user_workgroup_list default_value=workgroup_key_default_value additionalParameters='' />
+							<@select name='workgroup' items=user_workgroup_list default_value=workgroup_key_default_value />
 						</@formGroup>
 						<@formGroup>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' />

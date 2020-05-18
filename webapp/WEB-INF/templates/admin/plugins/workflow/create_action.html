@@ -14,10 +14,10 @@
 							<@input type='textarea' name='description' />
 						</@formGroup>
 						<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
-							<@comboWithParams name='id_state_before' items=state_list default_value="-1" additionalParameters='' />
+							<@select name='id_state_before' items=state_list default_value="-1"/>
 						</@formGroup>
 						<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
-							<@comboWithParams name='id_state_after' items=state_list default_value="-1" additionalParameters='' />
+							<@select name='id_state_after' items=state_list default_value="-1" />
 						</@formGroup>
 						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}'>
 							<@radioIconList name='id_icon' default_value=-1 icons=icon_list />
@@ -34,7 +34,7 @@
 							<em>#i18n{workflow.create_action.label_link_actions_example}</em>
 						</@formGroup>
 						<@formGroup labelFor='selected_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
-							<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' class='form-control input-sm'" items=available_linked_actions max_length=175 />
+							<@select name="select_linked_actions" default_value="" multiple=10 size='sm' items=available_linked_actions />
 						</@formGroup>
 						<@formGroup rows=2>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />

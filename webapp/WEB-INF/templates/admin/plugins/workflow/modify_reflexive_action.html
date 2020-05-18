@@ -13,7 +13,7 @@
 						<@formHelp>#i18n{workflow.modify_reflexive_action.help}</@formHelp>
 						<@formGroup rows=2 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}'>
 							<@inputGroup>
-								<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"form-control input-sm\"" items=task_type_list?sort_by("name") />
+								<@select name="task_type_key" default_value="-1" size='sm' items=task_type_list sort=true />
 								<@inputGroupItem>
 									<@button size='sm' type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
 									<#if action??>
