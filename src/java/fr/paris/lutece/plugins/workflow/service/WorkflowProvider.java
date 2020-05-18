@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -75,10 +76,12 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.rbac.User;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -693,6 +696,16 @@ public class WorkflowProvider implements IWorkflowProvider
     	{
     		return AdminWorkgroupService.getUserWorkgroups((AdminUser)user , ((AdminUser)user).getLocale() );
     	}
+    	else if(user instanceof LuteceUser)
+    	{
+    		String[] tabGroups=((LuteceUser)user).getGroups();
+    		ReferenceList refListWorkgroup=new ReferenceList();
+    		 if(tabGroups!=null)
+    		 {
+    			 Arrays.stream(tabGroups).forEach(x->refListWorkgroup.addItem(x, x));
+    		 }
+    		return refListWorkgroup;
+    	}
     	return null;
     	
    }
@@ -713,14 +726,18 @@ public class WorkflowProvider implements IWorkflowProvider
     {
         if( user instanceof AdminUser )
     	{
-    
-    	  return AdminWorkgroupService.getAuthorizedCollection(collection, (AdminUser)user);	
+        	return AdminWorkgroupService.getAuthorizedCollection(collection, (AdminUser)user);	
     	}
+        else if(user instanceof LuteceUser)
+        {
+        	//TODO
+        	
+        }
       
         return collection;
     }
     
-    //TODO Use Methode of AdminWorkgroupService after refactoring
+    //TODO Use Method of AdminWorkgroupService after refactoring
     /**
      * Return true if the user is in the workgoup  
      * @param user the user
@@ -760,12 +777,17 @@ public class WorkflowProvider implements IWorkflowProvider
      */
     private String getUserAccessCode( User user )
     {
+    	String strAccessCode=null;
     	if(user instanceof AdminUser)
     	{
-    		return ((AdminUser)user).getAccessCode();
+    		strAccessCode= ((AdminUser)user).getAccessCode();
     	
     	}
-    	return null;
+    	else if(user instanceof LuteceUser)
+    	{
+    		strAccessCode= ((LuteceUser)user).getName();
+    	}
+    	return strAccessCode;
     }
     
     
@@ -777,11 +799,16 @@ public class WorkflowProvider implements IWorkflowProvider
     //TODO Add this Method in the User Interface  
     private String getUserFirstName(User user)
     {
+    	String strFirstName=null;
     	if( user instanceof AdminUser )
     	{
-    		return  ((AdminUser)user).getFirstName();
+    		strFirstName= ((AdminUser)user).getFirstName();
     	}
-    	return null;
+    	else if(user instanceof LuteceUser)
+    	{
+    		strFirstName=  ((LuteceUser)user).getUserInfo(LuteceUser.NAME_GIVEN);
+    	}
+    	return strFirstName;
 
     }
     /**
@@ -792,19 +819,17 @@ public class WorkflowProvider implements IWorkflowProvider
     //TODO Add this Method in the User Interface  
     private String getUserLastName(User user)
     {
+    	String strFirstName=null;
     	if( user instanceof AdminUser )
     	{
-    		return  ((AdminUser)user).getLastName();
+    		strFirstName= ((AdminUser)user).getLastName();
     	}
-    	return null;
+    	else if(user instanceof LuteceUser)
+    	{
+    		strFirstName=  ((LuteceUser)user).getUserInfo(LuteceUser.NAME_FAMILY);
+    	}
+    	return strFirstName;
 
     }
     
-    
-    
-    
-    
-    
-   
-
 }
