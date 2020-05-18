@@ -16,9 +16,9 @@
 			<span id="div_${workgroup.item.code}">
 				#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
 				<#if workgroup.config?exists>
-					<@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
+					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
 				<#else>
-					<@combo name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
+					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
 				</#if>
 			</span>
 		</#list>

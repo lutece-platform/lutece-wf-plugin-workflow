@@ -15,7 +15,7 @@
 </#macro>
 
 <#macro comboOrders name default_value max >
-	<select id="${name}" name="${name}" class="form-control input-sm" >
+	<@select name=name size='sm'>
 		<#list 1..max as i>
 			<#if "${default_value}" == "${i}">
   				<option selected="selected" value="${i}" >${i}</option>
@@ -23,5 +23,5 @@
   				<option value="${i}" >${i}</option>
   			</#if>
 		</#list>
-	</select>
+	</@>select>
 </#macro>
