@@ -84,8 +84,10 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_ORDER_BY_ORDER_DISPLAY = " ORDER BY display_order";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_action WHERE id_workflow=?";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_action SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
-    private static final String SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
-    private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
+    private static final String SQL_QUERY_ACTIONS_WITH_ORDER_BETWEEN = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
+            + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE (display_order BETWEEN ? AND ?) AND id_workflow=?";
+    private static final String SQL_QUERY_ACTIONS_AFTER_ORDER = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
+            + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE display_order >=? AND id_workflow=?";
     private static final String SQL_QUERY_SELECT_ACTION_FOR_ORDER_INIT = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
             + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) WHERE id_workflow=? AND is_automatic_reflexive_action = 0 ORDER BY id_action ";
 
@@ -454,7 +456,7 @@ public class ActionDAO implements IActionDAO
 
         return listAction;
     }
-    
+
     private Action dataToObject( DAOUtil daoUtil, boolean populateIcon )
     {
         int nPos = 0;
@@ -478,12 +480,12 @@ public class ActionDAO implements IActionDAO
         Icon icon = new Icon( );
         icon.setId( daoUtil.getInt( ++nPos ) );
         action.setIcon( icon );
-        
+
         action.setAutomaticState( daoUtil.getBoolean( ++nPos ) );
         action.setMassAction( daoUtil.getBoolean( ++nPos ) );
         action.setOrder( daoUtil.getInt( ++nPos ) );
         action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
-        
+
         if ( populateIcon )
         {
             icon.setName( daoUtil.getString( ++nPos ) );

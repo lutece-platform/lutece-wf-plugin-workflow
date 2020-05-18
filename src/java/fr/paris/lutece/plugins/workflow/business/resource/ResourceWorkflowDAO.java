@@ -58,10 +58,11 @@ import org.apache.commons.collections.CollectionUtils;
 public class ResourceWorkflowDAO implements IResourceWorkflowDAO
 {
     private static final String SQL_SELECT_ALL = "SELECT id_resource,resource_type,id_state,id_workflow,id_external_parent,is_associated_workgroups ";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_SELECT_ALL + " FROM workflow_resource_workflow  WHERE id_resource=? AND resource_type=? AND id_workflow=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_SELECT_ALL
+            + " FROM workflow_resource_workflow  WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_STATE = "SELECT id_resource,id_state FROM workflow_resource_workflow "
             + " WHERE id_workflow =? AND resource_type = ? AND id_external_parent = ? AND id_resource IN (?";
-    private static final String SQL_QUERY_SELECT_BY_WORKFLOW = SQL_SELECT_ALL+ " FROM workflow_resource_workflow  WHERE id_workflow=?";
+    private static final String SQL_QUERY_SELECT_BY_WORKFLOW = SQL_SELECT_ALL + " FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_RESOURCE_BY_WORKFLOW = "SELECT id_resource  " + "FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_BY_STATE = SQL_SELECT_ALL + "FROM workflow_resource_workflow  WHERE id_state=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_workflow "
@@ -712,8 +713,8 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
 
         return strSQL;
     }
-    
-    private ResourceWorkflow dataToObject( DAOUtil daoUtil)
+
+    private ResourceWorkflow dataToObject( DAOUtil daoUtil )
     {
         int nPos = 0;
         ResourceWorkflow documentWorkflow = new ResourceWorkflow( );

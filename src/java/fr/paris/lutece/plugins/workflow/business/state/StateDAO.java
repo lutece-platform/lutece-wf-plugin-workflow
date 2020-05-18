@@ -54,7 +54,8 @@ public class StateDAO implements IStateDAO
 {
     private static final String SQL_SELECT_ALL = "SELECT s.id_state,s.name,s.description,s.id_workflow,s.is_initial_state,s.is_required_workgroup_assigned,s.display_order,s.id_icon ";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_SELECT_ALL + " FROM workflow_state s WHERE s.id_state=?";
-    private static final String SQL_QUERY_FIND_BY_RESSOURCE = SQL_SELECT_ALL + " FROM workflow_state s INNER JOIN workflow_resource_workflow r ON (r.id_state = s.id_state) WHERE r.id_resource=? AND r.id_workflow=? AND r.resource_type=?";
+    private static final String SQL_QUERY_FIND_BY_RESSOURCE = SQL_SELECT_ALL
+            + " FROM workflow_state s INNER JOIN workflow_resource_workflow r ON (r.id_state = s.id_state) WHERE r.id_resource=? AND r.id_workflow=? AND r.resource_type=?";
     private static final String SQL_QUERY_SELECT_STATE_BY_FILTER = SQL_SELECT_ALL + " FROM workflow_state s ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_state "
             + "(name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon)VALUES(?,?,?,?,?,?,?)";
@@ -65,7 +66,8 @@ public class StateDAO implements IStateDAO
     private static final String SQL_ORDER_BY_STATE_ORDER = " ORDER BY display_order ";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_WORKFLOW = "SELECT MAX(display_order) FROM workflow_state WHERE id_workflow=?";
     private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_state SET display_order = display_order - 1 WHERE display_order > ? AND id_workflow=? ";
-    private static final String SQL_QUERY_STATES_WITH_ORDER_BETWEEN = SQL_SELECT_ALL + " FROM workflow_state s WHERE (s.display_order BETWEEN ? AND ?) AND s.id_workflow=?";
+    private static final String SQL_QUERY_STATES_WITH_ORDER_BETWEEN = SQL_SELECT_ALL
+            + " FROM workflow_state s WHERE (s.display_order BETWEEN ? AND ?) AND s.id_workflow=?";
     private static final String SQL_QUERY_STATES_AFTER_ORDER = SQL_SELECT_ALL + " FROM workflow_state s WHERE s.display_order >=? AND s.id_workflow=?";
     private static final String SQL_QUERY_SELECT_STATE_FOR_ORDER_INIT = SQL_SELECT_ALL + " FROM workflow_state s WHERE s.id_workflow=? ORDER BY s.id_state";
 
@@ -338,7 +340,7 @@ public class StateDAO implements IStateDAO
         }
         return listResult;
     }
-    
+
     private State dataToObject( DAOUtil daoUtil )
     {
         int nPos = 0;
@@ -357,7 +359,7 @@ public class StateDAO implements IStateDAO
         Icon icon = new Icon( );
         icon.setId( daoUtil.getInt( ++nPos ) );
         state.setIcon( icon );
-        
+
         return state;
     }
 }
