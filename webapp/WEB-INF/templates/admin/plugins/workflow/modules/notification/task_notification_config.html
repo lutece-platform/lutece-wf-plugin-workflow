@@ -1,53 +1,30 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <fieldset>
-        <legend> #i18n{module.workflow.notification.task_notification_config.title}</legend>
-		<div class="form-group">
-            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="idMailingList">#i18n{module.workflow.notification.task_notification_config.label_mailing_list} *</label>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <#if config?exists>
-                    <@comboWithParams name="idMailingList"  items=mailing_list default_value='${config.idMailingList!}' additionalParameters="class=\"form-control input-sm\"" />
-                <#else>
-                    <@comboWithParams name="idMailingList"  items=mailing_list default_value="-1"  additionalParameters="class=\"form-control input-sm\"" />
-                </#if>
-                <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_mailing_list_comment}</span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="senderName">#i18n{module.workflow.notification.task_notification_config.label_sender_name} * </label>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <#if config?exists>
-                <input type="text" name="senderName" id="" class="form-control input-sm" value="${config.senderName}"  maxlength="255">
-            <#else>
-                <input type="text" name="senderName" id="" class="form-control input-sm" value="${default_sender_name}"  maxlength="255">
-            </#if>		
-            <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_sender_name_comment}</span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="suject">#i18n{module.workflow.notification.task_notification_config.label_subject} *</label>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <#if config?exists>
-                    <input type="text" name="subject" id="" class="form-control input-sm" value="${config.subject}" maxlength="255">
-                <#else>
-                    <input type="text" name="subject" id="" class="form-control input-sm" value="" maxlength="255">
-                </#if>		
-                <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_subject_comment}</span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="message">#i18n{module.workflow.notification.task_notification_config.label_message} * </label>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <#if config?exists>
-                    <textarea name="message" id="" rows="5" class="form-control input-sm">${config.message}</textarea>
-                <#else>
-                    <textarea name="message" id="" rows="5" class="form-control input-sm"></textarea>
-                </#if>		
-                <span class="help-block">#i18n{module.workflow.notification.task_notification_config.label_message_comment}</span>
-            </div>
-        </div>
-		</fieldset>
-	</div>
-</div>
-
-
+<@row>
+	<@columns sm=12 md=12 lg=12>
+		<@fieldSet legend='#i18n{module.workflow.notification.task_notification_config.title}'>
+			<@formGroup labelFor='idMailingList' labelKey='#i18n{module.workflow.notification.task_notification_config.label_mailing_list}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_mailing_list_comment}' mandatory=true>
+				<#assign default='-1'>
+				<#if config?exists>
+					<#assign default=config.idMailingList!>
+				</#if>
+				<@select name="idMailingList" items=mailing_list default_value=default size='sm' />
+			</@formGroup>
+			<@formGroup labelFor='senderName' labelKey='#i18n{module.workflow.notification.task_notification_config.label_sender_name}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_sender_name_comment}' mandatory=true>
+				<#assign sender=default_sender_name>
+				<#if config?exists>
+					<#assign sender=config.senderName>
+				</#if>
+				<@input type='text' size='sm' name='senderName' value=sender maxlength=255/>
+			</@formGroup>
+			<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.notification.task_notification_config.label_subject}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_subject_comment' mandatory=true>
+				<#assign subject=''>
+				<#if config?exists>
+					<#assign subject=config.subject>
+				</#if>
+				<@input type='text' size='sm' name='subject' value=subject maxlength=255/>
+			</@formGroup>
+			<@formGroup labelFor='message' labelKey='#i18n{module.workflow.notification.task_notification_config.label_message}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_message_comment}' mandatory=true>
+				<@input type='textarea' name='message'>${subject}</@input>
+			</@formGroup>
+		</@fieldSet>
+	</@columns>
+</@row>

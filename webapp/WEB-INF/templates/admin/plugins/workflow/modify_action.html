@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<@columns sm=12 md=4 lg=4>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.title' />
 			<@boxBody>
@@ -14,10 +14,10 @@
 							<@input type='textarea' name='description' size='sm' rows=2 cols=80>${action.description}</@input>
 						</@formGroup>
 						<@formGroup rows=2 labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
-							<@comboWithParams name="id_state_before"  items=state_list default_value=action.stateBefore.id?string additionalParameters="class='form-control input-sm'" />
+							<@select name="id_state_before" items=state_list default_value=action.stateBefore.id?string size='sm'/>
 						</@formGroup>
 						<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>
-							<@comboWithParams name="id_state_after"  items=state_list default_value=action.stateAfter.id?string additionalParameters="class='form-control input-sm'" />
+							<@select name="id_state_after" items=state_list default_value=action.stateAfter.id?string size='sm' />
 						</@formGroup>
 						<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' mandatory=true helpKey='#i18n{workflow.create_action.label_icon_comment}'>
 							<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
@@ -42,7 +42,7 @@
 									<@tableHeadBodySeparator />
 									<@tr>
 										<@td>
-											<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_linked_actions max_length=175 />
+											<@select name="select_linked_actions" default_value="" multiple=10 items=available_linked_actions />
 										</@td>
 										<@td>
 											<div align="center">
@@ -50,7 +50,7 @@
 											</div>
 										</@td>
 										<@td>
-											<@comboWithParamsAndLength name="unselect_linked_actions" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=selected_linked_actions max_length=175 />
+											<@select name="unselect_linked_actions" default_value="" multiple=10 items=selected_linked_actions/>
 										</@td>
 									</@tr>
 								</@table>
@@ -70,8 +70,8 @@
 				</@tform>
 			</@boxBody>
 		</@box>
-	</div>
-	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+	</@columns>
+	<@columns sm=12 md=8 lg=8>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_task.title' />
 			<@boxBody>
@@ -80,7 +80,7 @@
 						<@input type='hidden' name='id_action' value=action.id/>
 						<@formGroup rows=2 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}'>
 							<@inputGroup>
-								<@comboWithParams name="task_type_key" default_value="-1" additionalParameters="class=\"form-control input-sm\"" items=task_type_list?sort_by("name") />
+								<@select name="task_type_key" default_value="-1" size='sm' items=task_type_list sort=true />
 								<@inputGroupItem>
 									<@button size='sm' type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
 								</@inputGroupItem>
@@ -136,13 +136,13 @@
 				</@fieldSet>
 			</@boxBody>
 		</@box>
-	</div>
-	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+	</@columns>
+	<@columns sm=12 md=8 lg=8>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title'>
 				<@tform action='jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp' type='inline'>
 					<@inputGroup>
-						<@comboWithParams name="prerequisite_type" items=list_prerequisite_type default_value="" additionalParameters="class=\"form-control input-sm\"" />
+						<@select name="prerequisite_type" items=list_prerequisite_type default_value="" size='sm' />
 						<@input type='hidden' name='id_action' value=action.id/>
 						<@inputGroupItem>
 							<@button size='sm' type='submit' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' />
@@ -178,5 +178,5 @@
 				</@fieldSet>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>

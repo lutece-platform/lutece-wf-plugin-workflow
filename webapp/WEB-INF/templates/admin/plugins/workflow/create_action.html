@@ -1,26 +1,40 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<@columns sm=12 md=12 lg=12>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.create_action.title' />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow'>
 					<@fieldSet>
 						<@input type='hidden' name='id_workflow' value=workflow.id/>
-						<@fieldInputText i18nLabelKey='workflow.create_action.label_name' inputName='name' mandatory=true i18nHelpBlockKey='workflow.create_action.label_name_comment' maxlength=255/>
-						<@fieldTextArea i18nLabelKey='workflow.create_action.label_description' inputName='description' mandatory=true i18nHelpBlockKey='workflow.create_action.label_description_comment'/>
-						<@fieldInputCombo i18nLabelKey='workflow.create_action.label_state_before' inputName='id_state_before' mandatory=true i18nHelpBlockKey='workflow.create_action.label_state_before_comment' items=state_list value="-1" />
-						<@fieldInputCombo i18nLabelKey='workflow.create_action.label_state_after' inputName='id_state_after' mandatory=true i18nHelpBlockKey='workflow.create_action.label_state_after_comment' items=state_list value="-1" />
-						<@fieldRadioIconList i18nLabelKey='workflow.create_action.label_icon' inputName='id_icon' default_value=-1 icons=icon_list i18nHelpBlockKey='workflow.create_action.label_icon_comment' />
-						<@fieldInputCheckBox inputName='is_mass_action' value="1" i18nLabelKey='workflow.create_action.label_automatic' i18nHelpBlockKey='workflow.create_action.label_automatic_comment' />
-						<@fieldInputCheckBox inputName='automatic' value="1" i18nLabelKey='workflow.create_action.label_mass_action' i18nHelpBlockKey='workflow.create_action.label_mass_action_comment' />
+						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
+							<@input type='text' name='name' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
+							<@input type='textarea' name='description' />
+						</@formGroup>
+						<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
+							<@select name='id_state_before' items=state_list default_value="-1"/>
+						</@formGroup>
+						<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
+							<@select name='id_state_after' items=state_list default_value="-1" />
+						</@formGroup>
+						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}'>
+							<@radioIconList name='id_icon' default_value=-1 icons=icon_list />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
+							<@checkBox name='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
+							<@checkBox name='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
+						</@formGroup>
 						<@formGroup>
 							<h4>#i18n{workflow.create_action.label_link_actions}</h4>
 							<p class="help-block">#i18n{workflow.create_action.label_link_actions_comment}</p>
 							<em>#i18n{workflow.create_action.label_link_actions_example}</em>
 						</@formGroup>
 						<@formGroup labelFor='selected_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
-							<@comboWithParamsAndLength name="select_linked_actions" default_value="" additionalParameters="multiple='multiple' class='form-control input-sm'" items=available_linked_actions max_length=175 />
+							<@select name="select_linked_actions" default_value="" multiple=10 size='sm' items=available_linked_actions />
 						</@formGroup>
 						<@formGroup rows=2>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
@@ -31,5 +45,5 @@
 				</@tform>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>

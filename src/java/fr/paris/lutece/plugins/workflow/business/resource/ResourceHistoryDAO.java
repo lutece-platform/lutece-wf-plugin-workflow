@@ -243,7 +243,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         }
         return lListResult;
     }
-    
+
     private ResourceHistory dataToObject( DAOUtil daoUtil )
     {
         int nPos = 0;
@@ -262,7 +262,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
         resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
         resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
-        
+
         return resourceHistory;
     }
 }

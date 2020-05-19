@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<@columns sm=12 md=12 lg=12>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title'>
 				<#if permission_manage_advanced_parameters>
@@ -10,10 +10,10 @@
 				<@aButton href='jsp/admin/plugins/workflow/ImportWorkflow.jsp' size='xs' buttonIcon='upload' showTitleXs=false title='#i18n{workflow.manage_workflow.button_import}' />
 				<@tform type='inline' align='left' class='spaced'>
 					<label for="is_enabled">#i18n{workflow.manage_workflow.label_active} </label>
-					<@comboWithParams name="is_enabled" items=active_list default_value="active_selected" additionalParameters="class=\"form-control input-xs\""/>
+					<@select name="is_enabled" items=active_list default_value="active_selected" size='xs' />
 					<label for="workgroup">#i18n{workflow.manage_workflow.label_workgroup} </label>
 					<@inputGroup>
-						<@comboWithParams name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected additionalParameters="class='form-control input-xs'" />
+						<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='xs' />
 						<@inputGroupItem>
 							<@button size='sm' type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' color='default' />
 						</@inputGroupItem>
@@ -32,9 +32,9 @@
 						<@tr>
 							<@td>
 								<#if workflow.enabled>
-									<span class="label label-success" title="#i18n{portal.util.labelEnabled}"><@icon style='check-circle' /></span>
+									<@tag color='success' title='#i18n{portal.util.labelEnabled}' tagIcon='check-circle' />
 								<#else>
-									<span class="label label-important" title="#i18n{portal.util.labelDisabled}"><@icon style='times-circle' /></span>
+									<@tag color='important' title='#i18n{portal.util.labelDisabled}' tagIcon='times-circle' />
 								</#if>
 								<strong>${workflow.name}</strong>&nbsp;
 							</@td>
@@ -55,5 +55,5 @@
 				<@paginationAdmin paginator=paginator combo=1/>
 			</@boxBody>
 		</@box>
-	</div>
+	</@columns>
 </@row>

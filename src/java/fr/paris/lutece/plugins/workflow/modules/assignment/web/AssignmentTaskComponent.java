@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -132,12 +133,10 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         {
             strError = FIELD_TITLE;
         }
-
         if ( ArrayUtils.isEmpty( tabWorkgroups ) )
         {
             strError = FIELD_WORKGROUPS;
         }
-
         if ( strIsNotification != null && StringUtils.isEmpty( strSubject ) )
         {
             strError = FIELD_MAILINGLIST_SUBJECT;
@@ -263,20 +262,17 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             {
                 HashMap<String, Object> workgroupsItem = new HashMap<>( );
                 workgroupsItem.put( MARK_ITEM, referenceItem );
-
-                if ( ( config != null ) && ( config.getWorkgroups( ) != null ) )
+                
+                List<WorkgroupConfig> workgroupConfigList = Optional.ofNullable( config ).map( TaskAssignmentConfig::getWorkgroups ).orElse( new ArrayList<>( ) );
+                for ( WorkgroupConfig workgroupSelected : workgroupConfigList )
                 {
-                    for ( WorkgroupConfig workgroupSelected : config.getWorkgroups( ) )
+                    if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
                     {
-                        if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )
-                        {
-                            workgroupsItem.put( MARK_CONFIG, workgroupSelected );
+                        workgroupsItem.put( MARK_CONFIG, workgroupSelected );
 
-                            break;
-                        }
+                        break;
                     }
                 }
-
                 listWorkgroups.add( workgroupsItem );
             }
         }

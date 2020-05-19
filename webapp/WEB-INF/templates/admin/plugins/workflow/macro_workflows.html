@@ -1,6 +1,6 @@
 <#macro radioIconList name default_value icons >
 	<#list icons as icon>
-		<#if default_value=icon.id> 	
+		<#if default_value=icon.id>
 			<label class="radio-inline">
 			<input checked="checked" type="radio" name="${name}" value="${icon.id}">
             <img src="image?resource_type=workflow_icon_img&id=${icon.id}"	<#if icon.width!=-1> width="${icon.width}"</#if> <#if icon.height!=-1>height="${icon.height}"</#if>>
@@ -14,18 +14,8 @@
     </#list>
 </#macro>
 
-<#macro fieldRadioIconList inputName default_value icons i18nLabelKey i18nHelpBlockKey='' mandatory=false >
-	<div class="form-group">
-		<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="${inputName}">#i18n{${i18nLabelKey}}&nbsp;<#if mandatory>*&nbsp;</#if>:</label>
-		<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-			<@radioIconList name=inputName default_value=default_value icons=icons />
-			<#if i18nHelpBlockKey != ''><p class="help-block">#i18n{${i18nHelpBlockKey}}</p></#if>
-		</div>
-	</div>
-</#macro>
-
 <#macro comboOrders name default_value max >
-	<select id="${name}" name="${name}" class="form-control input-sm" >
+	<@select name=name size='sm'>
 		<#list 1..max as i>
 			<#if "${default_value}" == "${i}">
   				<option selected="selected" value="${i}" >${i}</option>
@@ -33,5 +23,5 @@
   				<option value="${i}" >${i}</option>
   			</#if>
 		</#list>
-	</select>
+	</@>select>
 </#macro>
