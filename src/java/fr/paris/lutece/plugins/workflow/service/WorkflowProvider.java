@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.IManualActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -70,18 +70,13 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
-import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.rbac.User;
-import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
-import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
-import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -164,7 +159,7 @@ public class WorkflowProvider implements IWorkflowProvider
         return mapActions;	
     }
 
-    private boolean canActionBeProcessed( User User, int nIdResource, String strResourceType, int nIdAction )
+    private boolean canActionBeProcessed( User user, int nIdResource, String strResourceType, int nIdAction )
     {
         for ( Prerequisite prerequisite : _prerequisiteManagementService.getListPrerequisite( nIdAction ) )
         {
@@ -175,7 +170,7 @@ public class WorkflowProvider implements IWorkflowProvider
             boolean canBePerformed = false;
             if ( prerequisiteService instanceof IManualActionPrerequisiteService )
             {
-                canBePerformed = ( (IManualActionPrerequisiteService) prerequisiteService ).canManualActionBePerformed( User, nIdResource, strResourceType,
+                canBePerformed = ( (IManualActionPrerequisiteService) prerequisiteService ).canManualActionBePerformed( user, nIdResource, strResourceType,
                         config, nIdAction );
             }
             else
@@ -417,23 +412,33 @@ public class WorkflowProvider implements IWorkflowProvider
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode(resourceHistory.getUserAccessCode()) : null;
             listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 
             XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
             XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
             XmlUtil.beginElement( strXml, TAG_USER );
 
-            if ( user != null )
+            if ( resourceHistory.getResourceUserHistory() != null )
             {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, getUserFirstName(userHistory));
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, getUserLastName(userHistory) );
+                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory() .getFirstName());
+                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory() .getLastName());
             }
             else
             {
-                XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
-                XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
-
+            	//get User by access code for older version of workflow
+            	userHistory = ( resourceHistory.getUserAccessCode()!= null ) ? getUserByAccessCode(resourceHistory.getUserAccessCode()) : null;
+                if(userHistory!=null)
+                {
+                	  XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory .getFirstName());
+                      XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName());
+                }
+                else
+                {
+                   	XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
+                	XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
+     
+                }
+            }
                 XmlUtil.endElement( strXml, TAG_USER );
 
                 XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
@@ -455,7 +460,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
                 XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
             }
-        }
+        
 
         XmlUtil.endElement( strXml, TAG_LIST_RESOURCE_HISTORY );
         XmlUtil.endElement( strXml, TAG_HISTORY );
@@ -486,7 +491,7 @@ public class WorkflowProvider implements IWorkflowProvider
     	  
     	  if(user!=null)
     	  {
-    		  strAccessCode= getUserAccessCode(user);
+    		  strAccessCode= user.getAccessCode();
     	  }
     	  return strAccessCode;
    }
@@ -554,7 +559,7 @@ public class WorkflowProvider implements IWorkflowProvider
         
             for ( String strWorkgroup : resourceWorkflow.getWorkgroups( ) )
             {
-                if ( isUserInWorkgroup(user, strWorkgroup)
+            	if ( isUserInWorkgroup(user, strWorkgroup)
                         || RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW_ALL_WORKGROUP, user ) )
                 {
                     bReturn = true;
@@ -611,7 +616,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
          
-        return getAuthorizedCollection( listWorkflow, user );
+        return AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
      }
 
     /**
@@ -647,7 +652,14 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( resourceHistory.getUserAccessCode( ) != null )
             {
-                resourceHistoryTaskInformation.put( MARK_USER_HISTORY, getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) );
+            	if(resourceHistory.getResourceUserHistory()!=null)
+            	{
+            		resourceHistoryTaskInformation.put( MARK_USER_HISTORY,resourceHistory.getResourceUserHistory( ));
+            	}
+            	else
+            	{
+            		resourceHistoryTaskInformation.put( MARK_USER_HISTORY, getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) );
+            	}
             }
 
             listTaskInformation = new ArrayList<>( );
@@ -689,55 +701,23 @@ public class WorkflowProvider implements IWorkflowProvider
      * @param user the user
      * @return  a ReferenceList witch contains the user workgoups
      */
-    //TODO Add this Method in the User Interface do not return referenceList only a list of workgroup key 
+     
     private ReferenceList getUserWorkgroups(User user)
     {
-    	if( user instanceof AdminUser )
+    	
+    	ReferenceList refListWorkgroup=new ReferenceList();
+    	if(user.getUserWorkgroups()!=null)
     	{
-    		return AdminWorkgroupService.getUserWorkgroups((AdminUser)user , ((AdminUser)user).getLocale() );
+    	     user.getUserWorkgroups().forEach(x->refListWorkgroup.addItem(x, x));
     	}
-    	else if(user instanceof LuteceUser)
-    	{
-    		String[] tabGroups=((LuteceUser)user).getGroups();
-    		ReferenceList refListWorkgroup=new ReferenceList();
-    		 if(tabGroups!=null)
-    		 {
-    			 Arrays.stream(tabGroups).forEach(x->refListWorkgroup.addItem(x, x));
-    		 }
-    		return refListWorkgroup;
-    	}
-    	return null;
+        return refListWorkgroup;
+    	
     	
    }
     
-    //TODO Modify AdminWorkgroupService for treating User 
-    /**
-     * Filter a collection of resources for a given user
-     *
-     * @return A filtered collection of resources
-     * @param <E>
-     *            The workgroup resource
-     * @param collection
-     *            The collection to filter
-     * @param user
-     *            The user
-     */
-    private  <E extends AdminWorkgroupResource> Collection<E> getAuthorizedCollection( Collection<E> collection, User user )
-    {
-        if( user instanceof AdminUser )
-    	{
-        	return AdminWorkgroupService.getAuthorizedCollection(collection, (AdminUser)user);	
-    	}
-        else if(user instanceof LuteceUser)
-        {
-        	//TODO
-        	
-        }
-      
-        return collection;
-    }
+ 
     
-    //TODO Use Method of AdminWorkgroupService after refactoring
+ 
     /**
      * Return true if the user is in the workgoup  
      * @param user the user
@@ -746,11 +726,9 @@ public class WorkflowProvider implements IWorkflowProvider
      */
     private boolean isUserInWorkgroup(User user, String strWorkgroup)
     {
-    	
-    	ReferenceList refListUserWorkgroup=getUserWorkgroups(user);
-    	if(refListUserWorkgroup!=null)
+    	if(user.getUserWorkgroups()!=null)
     	{
-    		return refListUserWorkgroup.stream().anyMatch(x->x.getCode().equals(strWorkgroup));
+    		return user.getUserWorkgroups().stream().anyMatch(x->x.equals(strWorkgroup));
     	}
     	return false;
     }
@@ -768,68 +746,5 @@ public class WorkflowProvider implements IWorkflowProvider
     	return AdminUserHome.findUserByLogin( strAccessCode );
     }
     
-    
-    //TODO Add this Method in the User Interface  
-    /**
-     * return the User Access Code
-     * @param user the 
-     * @return the User AccesCode
-     */
-    private String getUserAccessCode( User user )
-    {
-    	String strAccessCode=null;
-    	if(user instanceof AdminUser)
-    	{
-    		strAccessCode= ((AdminUser)user).getAccessCode();
-    	
-    	}
-    	else if(user instanceof LuteceUser)
-    	{
-    		strAccessCode= ((LuteceUser)user).getName();
-    	}
-    	return strAccessCode;
-    }
-    
-    
-    /**
-     * return the firstname of the user
-     * @param user the User
-     * @return return  user firstname
-     */
-    //TODO Add this Method in the User Interface  
-    private String getUserFirstName(User user)
-    {
-    	String strFirstName=null;
-    	if( user instanceof AdminUser )
-    	{
-    		strFirstName= ((AdminUser)user).getFirstName();
-    	}
-    	else if(user instanceof LuteceUser)
-    	{
-    		strFirstName=  ((LuteceUser)user).getUserInfo(LuteceUser.NAME_GIVEN);
-    	}
-    	return strFirstName;
-
-    }
-    /**
-     * return the lastname of the user
-     * @param strAccessCode
-     * @return the user lastname
-     */
-    //TODO Add this Method in the User Interface  
-    private String getUserLastName(User user)
-    {
-    	String strFirstName=null;
-    	if( user instanceof AdminUser )
-    	{
-    		strFirstName= ((AdminUser)user).getLastName();
-    	}
-    	else if(user instanceof LuteceUser)
-    	{
-    		strFirstName=  ((LuteceUser)user).getUserInfo(LuteceUser.NAME_FAMILY);
-    	}
-    	return strFirstName;
-
-    }
-    
+      
 }

@@ -3,6 +3,7 @@
 -- ---------------
 DROP TABLE IF EXISTS workflow_assignment_history;
 DROP TABLE IF EXISTS workflow_task_comment_value;
+DROP TABLE IF EXISTS workflow_resource_user_history;
 DROP TABLE IF EXISTS workflow_resource_history;
 DROP TABLE IF EXISTS workflow_task;
 DROP TABLE IF EXISTS workflow_action;
@@ -109,6 +110,21 @@ CREATE TABLE workflow_resource_history
 
 CREATE INDEX history_id_workflow_fk ON workflow_resource_history(id_workflow);
 CREATE INDEX history_id_action_fk ON workflow_resource_history(id_action);
+
+--
+-- Table Structure for table workflow_resource_user_history
+--
+
+
+CREATE TABLE workflow_resource_user_history (
+	id_history int default '0',
+	user_access_code varchar(255) default NULL,
+	email varchar(255) default '',
+	first_name varchar(255) default '',
+	last_name varchar(255) default '',
+	realm varchar(255) default ''
+);
+CREATE INDEX user_id_history_fk ON workflow_resource_user_history(id_history);
 
 -- -------------------------------------------
 -- Table structure for table workflow_icon --
@@ -277,6 +293,8 @@ ALTER TABLE workflow_resource_workflow ADD CONSTRAINT fk_document_id_state FOREI
 	REFERENCES workflow_state(id_state) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_resource_history ADD CONSTRAINT fk_history_id_workflow FOREIGN KEY (id_workflow)
 	REFERENCES workflow_workflow(id_workflow) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE workflow_resource_user_history ADD CONSTRAINT fk_user_id_history FOREIGN KEY (id_history)
+	REFERENCES workflow_resource_history(id_history) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_resource_history ADD CONSTRAINT fk_history_id_action FOREIGN KEY (id_action)
 	REFERENCES workflow_action(id_action) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_task ADD CONSTRAINT fk_task_id_action FOREIGN KEY (id_action)

@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.service.prerequisite;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
-import fr.paris.lutece.portal.service.rbac.User;
 
 /**
  * Interface for prerequisite services of manual actions.<br>
