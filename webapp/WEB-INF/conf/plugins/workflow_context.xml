@@ -30,6 +30,8 @@
         class="fr.paris.lutece.plugins.workflow.business.resource.ResourceWorkflowDAO" />
     <bean id="workflow.resourceHistoryDAO"
         class="fr.paris.lutece.plugins.workflow.business.resource.ResourceHistoryDAO" />
+            <bean id="workflow.resourceUserHistoryDAO"
+        class="fr.paris.lutece.plugins.workflow.business.resource.ResourceUserHistoryDAO" />
     <bean id="workflow.taskDAO"
         class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
     <bean id="workflow.prerequisiteDAO"
