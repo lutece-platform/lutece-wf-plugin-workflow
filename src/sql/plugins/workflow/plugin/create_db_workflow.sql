@@ -114,17 +114,15 @@ CREATE INDEX history_id_action_fk ON workflow_resource_history(id_action);
 --
 -- Table Structure for table workflow_resource_user_history
 --
-
-
 CREATE TABLE workflow_resource_user_history (
-	id_history int default '0',
+	id_history INT NOT NULL ,
 	user_access_code varchar(255) default NULL,
 	email varchar(255) default '',
 	first_name varchar(255) default '',
 	last_name varchar(255) default '',
-	realm varchar(255) default ''
+	realm varchar(255) default '',
+	PRIMARY KEY (id_history)
 );
-CREATE INDEX user_id_history_fk ON workflow_resource_user_history(id_history);
 
 -- -------------------------------------------
 -- Table structure for table workflow_icon --
