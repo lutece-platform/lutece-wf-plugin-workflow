@@ -39,7 +39,7 @@
 										<@th>&nbsp;</@th>
 										<@th>#i18n{workflow.create_action.label_selected_linked_actions}</@th>
 									</@tr>
-									<@tableHeadBodySeparator />
+									
 									<@tr>
 										<@td>
 											<@select name="select_linked_actions" default_value="" multiple=10 items=available_linked_actions />
@@ -97,7 +97,7 @@
 									<@th> #i18n{workflow.modify_action.manage_task.title}</@th>
 									<@th> #i18n{workflow.modify_action.manage_task.row_actions} </@th>
 								</@tr>
-								<@tableHeadBodySeparator />
+								
 								
 								<#list task_list as task>
 									<@tr>
@@ -158,7 +158,7 @@
 									<@th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</@th>
 									<@th>#i18n{workflow.modify_action.manage_task.row_actions}</@th>
 								</@tr>
-								<@tableHeadBodySeparator />
+								
 								<#list listPrerequisite as prerequisite>
 									<@tr>
 										<@td>#i18n{${prerequisite.title}}</@td>
