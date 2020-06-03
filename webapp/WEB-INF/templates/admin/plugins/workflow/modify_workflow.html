@@ -55,16 +55,16 @@
 											<@input type='hidden' name='id_state' value=state.id/>
 											<@comboOrders name="order_id" default_value=state.order max=number_state />
 											<@inputGroupItem>
-												<@button size='sm' type='submit' buttonIcon='check' color='default' showTitle=false title='#i18n{workflow.modify_workflow.move}' />
+												<@button size='sm' type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' />
 											</@inputGroupItem>
 										</@inputGroup>
 									</@tform>
 								</@td>
 								<@td>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' size='xs' buttonIcon='edit' showTitle=false title='#i18n{workflow.modify_workflow.manage_state.title_modify}' />
-									<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' size='xs' buttonIcon='tasks' showTitle=false title='#i18n{workflow.modify_reflexive_action.title}' />
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}' size='xs' buttonIcon='plus' showTitle=false title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' size='xs' buttonIcon='trash' color='danger' showTitle=false title='#i18n{workflow.modify_workflow.manage_state.title_delete}' />
+									<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' size='xs' buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' />
+									<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' size='xs' buttonIcon='tasks' title='#i18n{workflow.modify_reflexive_action.title}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}' size='xs' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' />
+									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' size='xs' buttonIcon='trash' color='danger'  title='#i18n{workflow.modify_workflow.manage_state.title_delete}' />
 								</@td>
 							</@tr>
 						</#list>
@@ -103,15 +103,15 @@
 											<@input type='hidden' name='id_action' value=action.id/>
 											<@comboOrders name="order_action_id" default_value=action.order max=number_action />
 											<@inputGroupItem>
-												<@button size='sm' type='submit' buttonIcon='check' color='default' showTitle=false title='#i18n{workflow.modify_workflow.move}' />
+												<@button size='sm' type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' />
 											</@inputGroupItem>
 										</@inputGroup>
 									</@tform>
 								</@td>
 								<@td>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' size='xs' buttonIcon='edit' showTitle=false title='#i18n{workflow.modify_workflow.manage_action.title_modify}' />
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}' size='xs' buttonIcon='plus' showTitle=false title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' size='xs' buttonIcon='trash' color='danger' showTitle=false title='#i18n{workflow.modify_workflow.manage_action.title_delete}' />
+									<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' size='xs' buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}' size='xs' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' />
+									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' />
 								</@td>
 							</@tr>
 						</#list>

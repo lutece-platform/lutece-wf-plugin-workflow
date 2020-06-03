@@ -110,7 +110,7 @@
 														<@input type='hidden' name='id_workflow' value=action.workflow.id />
 														<@input type='hidden' name='id_task' value=task.id/>
 														<@inputGroupItem>
-															<@button size='sm' type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' showTitle=false />
+															<@button size='sm' type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' />
 														</@inputGroupItem>
 													</@inputGroup>
 												<#else>
@@ -124,10 +124,10 @@
 										</@td>
 										<@td>
 											<#if task.taskType.configRequired>
-												<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' size='xs' buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' showTitle=false />
+												<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' size='xs' buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' />
 											</#if>
-											<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' size='xs' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_task.title_copy}' showTitle=false />
-											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' size='xs' color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' showTitle=false />
+											<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' size='xs' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_task.title_copy}' />
+											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' size='xs' color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' />
 										</@td>
 									</@tr>
 								</#list>
@@ -164,9 +164,9 @@
 										<@td>#i18n{${prerequisite.title}}</@td>
 										<@td>
 											<#if prerequisite.hasConfiguration>
-												<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' size='xs' buttonIcon='edit' showTitle=false title='#i18n{workflow.manage_workflow.title_modify}' />
+												<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' size='xs' buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' />
 											</#if>
-											<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='danger' size='xs' buttonIcon='trash' showTitle=false title='#i18n{workflow.modify_action.manage_task.title_delete}' />
+											<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='danger' size='xs' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' />
 										</@td>
 									</@tr>
 								</#list>
