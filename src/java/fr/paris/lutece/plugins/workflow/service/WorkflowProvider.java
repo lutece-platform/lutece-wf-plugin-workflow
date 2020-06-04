@@ -145,6 +145,16 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     // @Override don't declare as Override to be compatible with older Lutece Core version
+    public Collection<Action> getAuthorizedActions( Collection<Action> listActions, User user )
+    {
+        return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    // @Override don't declare as Override to be compatible with older Lutece Core version
     public Map<Integer, List<Action>> getActions( String strResourceType, Map<Integer, List<Action>> mapActions, User user )
     {
         for ( Entry<Integer, List<Action>> entry : mapActions.entrySet( ) )
