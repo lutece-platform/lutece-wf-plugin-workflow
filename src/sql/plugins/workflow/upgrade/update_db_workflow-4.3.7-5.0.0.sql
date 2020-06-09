@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS workflow_task_archive_resource;
+CREATE TABLE workflow_task_archive_resource
+(
+	id_resource INT DEFAULT 0 NOT NULL,
+	id_task INT DEFAULT 0 NOT NULL,
+	archival_date TIMESTAMP NULL,
+	is_archived SMALLINT DEFAULT 0,
+	PRIMARY KEY (id_resource,id_task)
+);
 /*
   Add workflow_resource_user_history
 */
