@@ -23,3 +23,13 @@ CREATE TABLE workflow_resource_user_history (
 );
 ALTER TABLE workflow_resource_user_history ADD CONSTRAINT fk_user_id_history FOREIGN KEY (id_history)
 	REFERENCES workflow_resource_history(id_history) ON DELETE RESTRICT ON UPDATE RESTRICT;
+	
+DROP TABLE IF EXISTS workflow_task_archive_cf;
+CREATE TABLE workflow_task_archive_cf
+(
+	id_task INT DEFAULT 0 NOT NULL,
+	next_state int(11) NOT NULL,
+	type_archival VARCHAR(255) DEFAULT NULL, 
+	delay_archival INT DEFAULT NULL,
+	PRIMARY KEY (id_task)
+);

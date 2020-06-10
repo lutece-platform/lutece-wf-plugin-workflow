@@ -20,6 +20,7 @@ DROP TABLE IF EXISTS workflow_action_action;
 DROP TABLE IF EXISTS workflow_prerequisite;
 DROP TABLE IF EXISTS workflow_prerequisite_duration_cf;
 DROP TABLE IF EXISTS workflow_task_archive_resource;
+DROP TABLE IF EXISTS workflow_task_archive_cf;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
@@ -280,6 +281,15 @@ CREATE TABLE workflow_task_archive_resource
 	archival_date TIMESTAMP NULL,
 	is_archived SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_resource,id_task)
+);
+
+CREATE TABLE workflow_task_archive_cf
+(
+	id_task INT DEFAULT 0 NOT NULL,
+	next_state int(11) NOT NULL,
+	type_archival VARCHAR(255) DEFAULT NULL, 
+	delay_archival INT DEFAULT NULL,
+	PRIMARY KEY (id_task)
 );
 
 -- ---------------
