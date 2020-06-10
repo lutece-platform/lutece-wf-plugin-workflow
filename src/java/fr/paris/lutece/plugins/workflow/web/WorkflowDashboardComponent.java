@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
@@ -101,7 +102,7 @@ public class WorkflowDashboardComponent extends DashboardComponent
         filter.setWorkGroup( AdminWorkgroupService.ALL_GROUPS );
 
         List<Workflow> listWorkflow = workflowService.getListWorkflowsByFilter( filter );
-        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) user );
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_WORKFLOW_LIST, listWorkflow );

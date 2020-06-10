@@ -220,11 +220,7 @@ public class WorkflowProvider implements IWorkflowProvider
                 {
 
                     ReferenceList refWorkgroupKey = getUserWorkgroups( user );
-
-                    if ( refWorkgroupKey != null )
-                    {
-                        resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
-                    }
+                    resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
                 }
 
                 resourceWorkflowFilter.setIdState( state.getId( ) );
@@ -312,10 +308,7 @@ public class WorkflowProvider implements IWorkflowProvider
         if ( user != null )
         {
             ReferenceList refWorkgroupKey = getUserWorkgroups( user );
-            if ( refWorkgroupKey != null )
-            {
-                resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
-            }
+            resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
         }
 
         return _resourceWorkflowService.getListResourceIdWorkflowByFilter( resourceWorkflowFilter, lListAutorizedIdSate );
@@ -349,12 +342,11 @@ public class WorkflowProvider implements IWorkflowProvider
      *            The template
      * @return The HTML code to display
      */
-
-    // @Override don't declare as Override to be compatible with older Lutece Core version
+    @Override
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
             Map<String, Object> model, String strTemplate, User user )
     {
-        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, user );
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale );
 
         if ( model != null )
         {
@@ -402,17 +394,14 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale, User user )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
-        List<ITask> listActionTasks;
-        String strTaskinformation;
         StringBuffer strXml = new StringBuffer( );
 
-        User userHistory;
         XmlUtil.beginElement( strXml, TAG_HISTORY );
         XmlUtil.beginElement( strXml, TAG_LIST_RESOURCE_HISTORY );
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
+            List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 
             XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
             XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
@@ -426,7 +415,7 @@ public class WorkflowProvider implements IWorkflowProvider
             else
             {
                 // get User by access code for older version of workflow
-                userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
+                User userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
                 if ( userHistory != null )
                 {
                     XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory.getFirstName( ) );
@@ -446,7 +435,7 @@ public class WorkflowProvider implements IWorkflowProvider
             for ( ITask task : listActionTasks )
             {
                 XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-                strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
+                String strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
 
                 if ( strTaskinformation != null )
                 {
@@ -633,7 +622,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * @return the default model
      */
     private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request,
-            Locale locale, User user )
+            Locale locale )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;

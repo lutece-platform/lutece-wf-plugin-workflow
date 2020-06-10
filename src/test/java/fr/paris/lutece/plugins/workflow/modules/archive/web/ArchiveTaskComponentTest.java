@@ -47,11 +47,18 @@ import fr.paris.lutece.test.LuteceTestCase;
 
 public class ArchiveTaskComponentTest extends LuteceTestCase
 {
-    private ArchiveTaskComponent _taskComponent = SpringContextService.getBean( "workflow.archiveTaskComponent" );
+    private ArchiveTaskComponent _taskComponent;
 
     private ITaskConfigDAO<ArchiveConfig> _taskConfigDAO = new ArchiveConfigDao( );
     private Locale _locale = Locale.getDefault( );
 
+    @Override
+    protected void setUp( ) throws Exception
+    {
+        super.setUp( );
+        _taskComponent = SpringContextService.getBean( "workflow.archiveTaskComponent" );
+    }
+    
     public void testDoSaveConfig( )
     {
         ITask task = new MockTask( );

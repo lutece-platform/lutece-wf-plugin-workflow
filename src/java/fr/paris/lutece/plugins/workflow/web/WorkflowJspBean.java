@@ -54,6 +54,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
@@ -320,13 +321,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setWorkGroup( _strWorkGroup );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
-        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, getUser( ) );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) );
 
         LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<>( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
                 PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale( ) );
 
         boolean bPermissionAdvancedParameter = RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser( ) );
+                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, (User) getUser( ) );
 
         Map<String, Object> model = new HashMap<>( );
 
@@ -1155,41 +1156,35 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             strFieldError = FIELD_ACTION_NAME;
         }
-        else
-            if ( StringUtils.isBlank( strDescription ) )
-            {
-                strFieldError = FIELD_ACTION_DESCRIPTION;
-            }
-            else
-                if ( nIdStateBefore == WorkflowUtils.CONSTANT_ID_NULL )
-                {
-                    strFieldError = FIELD_STATE_BEFORE;
-                }
-                else
-                    if ( nIdStateAfter == WorkflowUtils.CONSTANT_ID_NULL )
-                    {
-                        strFieldError = FIELD_STATE_AFTER;
-                    }
-                    else
-                        if ( nIdIcon == WorkflowUtils.CONSTANT_ID_NULL )
-                        {
-                            strFieldError = FIELD_ICON;
-                        }
-                        else
-                            if ( bIsAutomatic && ( nIdStateBefore == nIdStateAfter ) )
-                            {
-                                Object [ ] tabRequiredFields = {
-                                        I18nService.getLocalizedString( FIELD_STATE_BEFORE, getLocale( ) ),
-                                        I18nService.getLocalizedString( FIELD_STATE_AFTER, getLocale( ) ),
-                                };
+        if ( StringUtils.isBlank( strDescription ) )
+        {
+            strFieldError = FIELD_ACTION_DESCRIPTION;
+        }
+        if ( nIdStateBefore == WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            strFieldError = FIELD_STATE_BEFORE;
+        }
+        if ( nIdStateAfter == WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            strFieldError = FIELD_STATE_AFTER;
+        }
+        if ( nIdIcon == WorkflowUtils.CONSTANT_ID_NULL )
+        {
+            strFieldError = FIELD_ICON;
+        }
+        if ( bIsAutomatic && ( nIdStateBefore == nIdStateAfter ) )
+        {
+            Object [ ] tabRequiredFields = {
+                    I18nService.getLocalizedString( FIELD_STATE_BEFORE, getLocale( ) ), I18nService.getLocalizedString( FIELD_STATE_AFTER, getLocale( ) ),
+            };
 
-                                return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
-                            }
-                            else
-                                if ( bIsAutomatic && bIsMassAction )
-                                {
-                                    return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC, AdminMessage.TYPE_STOP );
-                                }
+            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+        }
+
+        if ( bIsAutomatic && bIsMassAction )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC, AdminMessage.TYPE_STOP );
+        }
 
         if ( StringUtils.isNotBlank( strFieldError ) )
         {
@@ -1730,7 +1725,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String getManageAdvancedParameters( HttpServletRequest request )
     {
         if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS,
-                getUser( ) ) )
+                (User) getUser( ) ) )
         {
             return getManageWorkflow( request );
         }

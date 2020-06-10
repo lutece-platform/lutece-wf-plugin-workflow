@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.comment.web;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService;
@@ -200,7 +201,7 @@ public class CommentJspBean extends MVCAdminJspBean
 
         CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
 
-        boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected );
+        boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, (User) userConnected );
         boolean bIsOwner = _commentValueService.isOwner( nIdHistory, userConnected );
 
         return bHasPermissionDeletion || bIsOwner;

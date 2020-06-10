@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS workflow_task_archive_cf;
 CREATE TABLE workflow_task_archive_cf
 (
 	id_task INT DEFAULT 0 NOT NULL,
-	next_state int(11) NOT NULL,
+	next_state INT NOT NULL,
 	type_archival VARCHAR(255) DEFAULT NULL, 
 	delay_archival INT DEFAULT NULL,
 	PRIMARY KEY (id_task)

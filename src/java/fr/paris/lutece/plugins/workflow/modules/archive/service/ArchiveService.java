@@ -239,7 +239,7 @@ public class ArchiveService implements IArchiveService
 
             // Execute the relative tasks of the state in the workflow
             // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
-            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale );
+            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
         }
     }
 }
