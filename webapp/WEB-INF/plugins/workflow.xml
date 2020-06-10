@@ -87,6 +87,12 @@
             <daemon-class>fr.paris.lutece.plugins.workflow.service.prerequisite.AutomaticActionDaemon
             </daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>archiveDaemon</daemon-id>
+            <daemon-name>module.workflow.archive.archiveDaemon.name</daemon-name>
+            <daemon-description>module.workflow.archive.archiveDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.archive.daemon.ArchiveDaemon</daemon-class>
+        </daemon>
     </daemons>
 
 </plug-in>

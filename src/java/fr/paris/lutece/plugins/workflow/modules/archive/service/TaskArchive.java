@@ -33,65 +33,49 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.service;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
-import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.service.daemon.AppDaemonService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
-/**
- * Service for Archive Task
- */
-public interface IArchiveService
+public class TaskArchive extends SimpleTask
 {
+    private static final String MESSAGE_TASK_TITLE = "module.workflow.archive.task.task_title";
 
-    /**
-     * Load config of task.
-     * 
-     * @param task
-     * @return
-     */
-    ArchiveConfig loadConfig( ITask task );
+    @Inject
+    private IArchiveService _archiveService;
 
-    /**
-     * Load the {@link ArchiveResource}
-     * 
-     * @param nIdHistory
-     * @param nIdTask
-     * @return ArchiveResource
-     */
-    ArchiveResource getArchiveResource( int nIdHistory, int nIdTask );
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        ResourceWorkflow resourceWorkflow = _archiveService.getResourceWorkflowByHistory( nIdResourceHistory );
+        ArchiveConfig config = _archiveService.loadConfig( this );
 
-    /**
-     * Calculates and saves the Archival date of the Resource.
-     * 
-     * @param resourceWorkflow
-     * @param config
-     */
-    void calculateSaveArchivalDate( ResourceWorkflow resourceWorkflow, ArchiveConfig config );
+        _archiveService.calculateSaveArchivalDate( resourceWorkflow, config );
 
-    /**
-     * Determines if a resource is up for archival. <br>
-     * 
-     * @param resourceWorkflow
-     * @param config
-     * @return true if the resource should be archived
-     */
-    boolean isResourceUpForArchival( ResourceWorkflow resourceWorkflow, ArchiveConfig config );
+        if ( _archiveService.isResourceUpForArchival( resourceWorkflow, config ) )
+        {
+            AppDaemonService.signalDaemon( "archiveDaemon" );
+        }
+    }
 
-    /**
-     * Get resource owning the history
-     * 
-     * @param nIdHistory
-     * @return
-     */
-    ResourceWorkflow getResourceWorkflowByHistory( int nIdHistory );
+    public void doArchiveResource( ResourceWorkflow resourceWorkflow, ArchiveConfig config )
+    {
+        if ( _archiveService.isResourceUpForArchival( resourceWorkflow, config ) )
+        {
+            _archiveService.archiveResource( resourceWorkflow, this, config );
+        }
+    }
 
-    /**
-     * Archives the resource according to the specified config
-     * 
-     * @param resourceWorkflow
-     * @param task
-     * @param config
-     */
-    void archiveResource( ResourceWorkflow resourceWorkflow, ITask task, ArchiveConfig config );
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_TASK_TITLE, locale );
+    }
 }

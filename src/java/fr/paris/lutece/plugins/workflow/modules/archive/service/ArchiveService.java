@@ -33,18 +33,36 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.IArchiveResourceDao;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
  * Implements {@link IArchiveService}
@@ -65,6 +83,20 @@ public class ArchiveService implements IArchiveService
 
     @Inject
     private IArchiveResourceDao _archiveResourceDao;
+    
+    @Inject
+    private IActionService _actionService;
+
+    @Inject
+    private IStateService _stateService;
+    
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    
+    @Inject
+    private IResourceWorkflowService _resourceWorkflowService;
+    
+    private static final String USER_AUTO = "auto";
 
     @Override
     public ArchiveConfig loadConfig( ITask task )
@@ -94,5 +126,119 @@ public class ArchiveService implements IArchiveService
             return null;
         }
         return _archiveResourceDao.load( resource.getIdResource( ), nIdTask );
+    }
+
+    @Override
+    public void calculateSaveArchivalDate( ResourceWorkflow resourceWorkflow, ArchiveConfig config )
+    {
+        ArchiveResource archiveResource = _archiveResourceDao.load( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
+        Timestamp archivalDate = calculateArchivalDate( config.getDelayArchival( ) );
+        if ( archiveResource == null )
+        {
+            archiveResource = new ArchiveResource( );
+            archiveResource.setIdResource( resourceWorkflow.getIdResource( ) );
+            archiveResource.setIdTask( config.getIdTask( ) );
+            archiveResource.setIsArchived( false );
+            archiveResource.setArchivalDate( archivalDate );
+            _archiveResourceDao.insert( archiveResource );
+        }
+        else
+        {
+            archiveResource.setIsArchived( false );
+            archiveResource.setArchivalDate( archivalDate );
+            _archiveResourceDao.store( archiveResource );
+        }
+    }
+
+    @Override
+    public boolean isResourceUpForArchival( ResourceWorkflow resourceWorkflow, ArchiveConfig config )
+    {
+        if ( config.getDelayArchival( ) <= 0 )
+        {
+            return true;
+        }
+        ArchiveResource archiveResource = _archiveResourceDao.load( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
+
+        if ( archiveResource == null || archiveResource.isArchived( ) )
+        {
+            return false;
+        }
+        return LocalDateTime.now( ).isAfter( archiveResource.getArchivalDate( ).toLocalDateTime( ) );
+    }
+
+    @Override
+    public ResourceWorkflow getResourceWorkflowByHistory( int nIdHistory )
+    {
+        ResourceHistory history = _resourceHistoryDAO.load( nIdHistory );
+        if ( history == null )
+        {
+            return null;
+        }
+
+        return _resourceWorkflowDAO.load( history.getIdResource( ), history.getResourceType( ), history.getWorkflow( ).getId( ) );
+    }
+
+    private Timestamp calculateArchivalDate( int daysBeforeArchival )
+    {
+        if ( daysBeforeArchival > 0 )
+        {
+            return Timestamp.valueOf( LocalDate.now( ).atStartOfDay( ).plusDays( daysBeforeArchival ) );
+        }
+        return Timestamp.valueOf( LocalDate.now( ).atStartOfDay( ) );
+    }
+
+    @Override
+    public void archiveResource( ResourceWorkflow resourceWorkflow, ITask task, ArchiveConfig config )
+    {
+        if ( config.getNextState( ) != resourceWorkflow.getState( ).getId( ) )
+        {
+            doChangeState( task, resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ),  resourceWorkflow.getWorkflow( ).getId( ), config.getNextState( ) );
+        }
+        List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class ).stream( )
+                .filter( ra -> ra.getType( ).equals( config.getTypeArchival( ) ) ).collect( Collectors.toList( ) );
+
+        for ( IResourceArchiver archiver : archiverList )
+        {
+            archiver.archiveResource( resourceWorkflow );
+        }
+
+        ArchiveResource archiveResource = _archiveResourceDao.load( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
+        // If the archival process is not a full deletion and keeps the archiveResource,
+        // it must be updated
+        if ( archiveResource != null )
+        {
+            archiveResource.setIsArchived( true );
+            _archiveResourceDao.store( archiveResource );
+        }
+    }
+    
+    private void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
+    {
+        Locale locale = I18nService.getDefaultLocale( );
+        State state = _stateService.findByPrimaryKey( newState );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+
+        if ( state != null && action != null )
+        {
+
+            // Create Resource History
+            ResourceHistory resourceHistory = new ResourceHistory( );
+            resourceHistory.setIdResource( nIdResource );
+            resourceHistory.setResourceType( strResourceType );
+            resourceHistory.setAction( action );
+            resourceHistory.setWorkFlow( action.getWorkflow( ) );
+            resourceHistory.setCreationDate( WorkflowUtils.getCurrentTimestamp( ) );
+            resourceHistory.setUserAccessCode( USER_AUTO );
+            _resourceHistoryService.create( resourceHistory );
+
+            // Update Resource
+            ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
+            resourceWorkflow.setState( state );
+            _resourceWorkflowService.update( resourceWorkflow );
+
+            // Execute the relative tasks of the state in the workflow
+            // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
+            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale );
+        }
     }
 }
