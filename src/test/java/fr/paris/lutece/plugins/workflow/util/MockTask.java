@@ -70,21 +70,21 @@ public class MockTask extends Task
     public void init( )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void doRemoveConfig( )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

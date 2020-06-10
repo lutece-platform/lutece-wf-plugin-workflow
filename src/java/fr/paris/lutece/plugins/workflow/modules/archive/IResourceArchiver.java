@@ -47,7 +47,7 @@ public interface IResourceArchiver
      * @return
      */
     String getType( );
-    
+
     /**
      * Archives the resource.
      * 

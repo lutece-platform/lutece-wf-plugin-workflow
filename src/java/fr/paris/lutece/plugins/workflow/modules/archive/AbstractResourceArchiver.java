@@ -53,13 +53,14 @@ public abstract class AbstractResourceArchiver implements IResourceArchiver
     }
 
     /**
-     * @param strType the strType to set
+     * @param strType
+     *            the strType to set
      */
     public void setType( String strType )
     {
         _strType = strType;
     }
-    
+
     @Override
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
@@ -68,16 +69,18 @@ public abstract class AbstractResourceArchiver implements IResourceArchiver
             doArchiveResource( resourceWorkflow );
         }
     }
-    
+
     /**
      * Indicates if the Archiver should archive the resource.
+     * 
      * @param resourceWorkflow
      * @return false if the archiver shoul ignore the resource
      */
     protected abstract boolean doHandleResource( ResourceWorkflow resourceWorkflow );
-    
+
     /**
      * Archives the resources.
+     * 
      * @param resourceWorkflow
      */
     protected abstract void doArchiveResource( ResourceWorkflow resourceWorkflow );

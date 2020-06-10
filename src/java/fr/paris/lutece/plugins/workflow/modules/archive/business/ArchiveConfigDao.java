@@ -42,8 +42,10 @@ public class ArchiveConfigDao implements ITaskConfigDAO<ArchiveConfig>
     public static final String BEAN_NAME = "workflow.taskArchiveConfigDao";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,next_state,type_archival,delay_archival "
             + " FROM workflow_task_archive_cf WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_archive_cf  " + "(id_task,next_state,type_archival,delay_archival) VALUES (?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_archive_cf " + "SET id_task=?,next_state=?,type_archival=?,delay_archival=? " + " WHERE id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_archive_cf  "
+            + "(id_task,next_state,type_archival,delay_archival) VALUES (?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_archive_cf " + "SET id_task=?,next_state=?,type_archival=?,delay_archival=? "
+            + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_archive_cf WHERE id_task=? ";
 
     /**

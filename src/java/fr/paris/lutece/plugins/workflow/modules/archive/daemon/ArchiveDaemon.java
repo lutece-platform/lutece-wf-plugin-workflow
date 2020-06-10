@@ -119,7 +119,7 @@ public class ArchiveDaemon extends Daemon
             }
         }
     }
-    
+
     private List<ITask> getListTaskByIdActionAndTaskType( int nIdAction, String taskType, Locale locale )
     {
         List<ITask> result = new ArrayList<>( );

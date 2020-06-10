@@ -47,7 +47,7 @@ public class ArchiveConfig extends TaskConfig
     @NotNull
     @Min( 1 )
     private int _nNextState;
-    
+
     private String _typeArchival;
     // Number of days before archival
     private int _delayArchival;
@@ -81,13 +81,14 @@ public class ArchiveConfig extends TaskConfig
     }
 
     /**
-     * @param nNextState the nextState to set
+     * @param nNextState
+     *            the nextState to set
      */
     public void setNextState( int nNextState )
     {
         _nNextState = nNextState;
     }
-    
+
     /**
      * @return nNextState as a string
      */

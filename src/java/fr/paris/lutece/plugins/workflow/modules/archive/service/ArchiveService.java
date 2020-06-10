@@ -83,19 +83,19 @@ public class ArchiveService implements IArchiveService
 
     @Inject
     private IArchiveResourceDao _archiveResourceDao;
-    
+
     @Inject
     private IActionService _actionService;
 
     @Inject
     private IStateService _stateService;
-    
+
     @Inject
     private IResourceHistoryService _resourceHistoryService;
-    
+
     @Inject
     private IResourceWorkflowService _resourceWorkflowService;
-    
+
     private static final String USER_AUTO = "auto";
 
     @Override
@@ -192,7 +192,8 @@ public class ArchiveService implements IArchiveService
     {
         if ( config.getNextState( ) != resourceWorkflow.getState( ).getId( ) )
         {
-            doChangeState( task, resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ),  resourceWorkflow.getWorkflow( ).getId( ), config.getNextState( ) );
+            doChangeState( task, resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ),
+                    config.getNextState( ) );
         }
         List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class ).stream( )
                 .filter( ra -> ra.getType( ).equals( config.getTypeArchival( ) ) ).collect( Collectors.toList( ) );
@@ -211,7 +212,7 @@ public class ArchiveService implements IArchiveService
             _archiveResourceDao.store( archiveResource );
         }
     }
-    
+
     private void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
     {
         Locale locale = I18nService.getDefaultLocale( );
