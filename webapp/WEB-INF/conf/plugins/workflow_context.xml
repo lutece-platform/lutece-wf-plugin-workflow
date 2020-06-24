@@ -214,4 +214,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.assignment.service.archiver.AssignmentDeleteResourceArchiver" />
     <bean id="workflow.archiveDeleteResourceArchiver"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.archiver.ArchiveDeleteResourceArchiver" />
+    <bean id="workflow.historyDeleteResourceArchiver"
+        class="fr.paris.lutece.plugins.workflow.service.archiver.HistoryDeleteResourceArchiver" />
+    <bean id="workflow.deleteResourceArchiver"
+        class="fr.paris.lutece.plugins.workflow.service.archiver.DeleteResourceArchiver" />
 </beans>
