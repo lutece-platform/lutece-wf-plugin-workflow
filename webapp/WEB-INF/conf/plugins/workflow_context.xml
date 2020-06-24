@@ -36,7 +36,8 @@
         class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
     <bean id="workflow.prerequisiteDAO"
         class="fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO" />
-
+    <bean id="workflow.archiveResourceDao"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResourceDao" />
 
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"
@@ -125,6 +126,7 @@
         p:beanName="workflow.taskAssignment"
         p:configBeanName="workflow.taskAssignmentConfig"
         p:configRequired="true" p:formTaskRequired="true" />
+        
     <!-- Tasks -->
     <bean id="workflow.taskAssignment"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignment"
@@ -135,6 +137,7 @@
     <bean id="workflow.taskNotification"
         class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotification"
         scope="prototype" />
+        
     <!-- Task components -->
     <bean id="workflow.commentTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.comment.web.CommentTaskComponent"
@@ -148,6 +151,7 @@
         class="fr.paris.lutece.plugins.workflow.modules.notification.web.NotificationTaskComponent"
         p:taskType-ref="workflow.taskTypeNotification"
         p:taskConfigService-ref="workflow.taskNotificationConfigService" />
+        
     <!-- Task configs -->
     <bean id="workflow.taskAssignmentConfig"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig"
