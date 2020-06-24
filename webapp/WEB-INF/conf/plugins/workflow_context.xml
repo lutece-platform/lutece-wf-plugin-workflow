@@ -210,4 +210,6 @@
     <!-- Archivers -->
     <bean id="workflow.commentDeleteResourceArchiver"
         class="fr.paris.lutece.plugins.workflow.modules.comment.service.archiver.CommentDeleteResourceArchiver" />
+    <bean id="workflow.assignmentDeleteResourceArchiver"
+        class="fr.paris.lutece.plugins.workflow.modules.assignment.service.archiver.AssignmentDeleteResourceArchiver" />
 </beans>
