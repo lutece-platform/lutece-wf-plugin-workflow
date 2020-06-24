@@ -7,7 +7,6 @@
 					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' size='xs' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' />
 				</#if>
 				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' size='xs' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' />
-				<@aButton href='jsp/admin/plugins/workflow/ImportWorkflow.jsp' size='xs' buttonIcon='upload' title='#i18n{workflow.manage_workflow.button_import}' />
 				<@tform type='inline' align='left' class='spaced'>
 					<label for="is_enabled">#i18n{workflow.manage_workflow.label_active} </label>
 					<@select name="is_enabled" items=active_list default_value="active_selected" size='xs' />
@@ -41,7 +40,6 @@
 							<@td>
 								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
 								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' />
-								<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='upload' title='#i18n{workflow.manage_workflow.title_export}' />
 								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
 								<#if workflow.enabled>
 									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />

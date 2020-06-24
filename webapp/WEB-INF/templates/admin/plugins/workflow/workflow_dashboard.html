@@ -22,7 +22,6 @@
 					<@td>
 						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
 						<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' />
-						<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='upload' title='#i18n{workflow.manage_workflow.title_export}' />
 						<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
 						<#if workflow.enabled>
 							<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
