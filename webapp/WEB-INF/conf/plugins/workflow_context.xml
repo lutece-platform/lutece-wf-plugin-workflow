@@ -145,6 +145,9 @@
     <bean id="workflow.taskNotification"
         class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotification"
         scope="prototype" />
+    <bean id="workflow.taskArchive"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.TaskArchive"
+        scope="prototype" />
 
     <!-- Task components -->
     <bean id="workflow.commentTaskComponent"
