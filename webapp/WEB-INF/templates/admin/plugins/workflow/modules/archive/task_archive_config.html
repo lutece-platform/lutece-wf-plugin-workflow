@@ -1,0 +1,9 @@
+<@formGroup labelFor='next_state' labelKey='#i18n{module.workflow.archive.task.config.state.label}' rows=2 mandatory=true>
+	<@select name='next_state' default_value=config.strNextState items=state_list />
+</@formGroup>
+<@formGroup labelFor='archival_type' labelKey='#i18n{module.workflow.archive.task.config.type.label}' rows=2 mandatory=true>
+	<@select name='archival_type' default_value=config.typeArchival items=type_list />
+</@formGroup>
+<@formGroup labelFor='archival_delay'  labelKey='#i18n{module.workflow.archive.task.config.delay.label}' mandatory=true>
+	<@input type='number' name='archival_delay' value='${(config.delayArchival)}'/>
+</@formGroup>
