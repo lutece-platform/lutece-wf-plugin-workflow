@@ -55,7 +55,7 @@ public abstract class AbstractDeleteResourceArchiver implements IResourceArchive
 {
     @Inject
     protected IResourceHistoryService _resourceHistoryService;
-    
+
     @Inject
     protected ITaskService _taskService;
 
@@ -86,7 +86,7 @@ public abstract class AbstractDeleteResourceArchiver implements IResourceArchive
      * @return
      */
     protected abstract String getTaskType( );
-    
+
     @Override
     public ArchivalType getType( )
     {

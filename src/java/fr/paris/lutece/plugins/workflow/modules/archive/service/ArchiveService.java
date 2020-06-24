@@ -171,7 +171,7 @@ public class ArchiveService implements IArchiveService
         return _resourceWorkflowDAO.load( history.getIdResource( ), history.getResourceType( ), history.getWorkflow( ).getId( ) );
     }
 
-    private LocalDateTime calculateArchivalDate(  ArchiveResource archiveResource, int daysBeforeArchival )
+    private LocalDateTime calculateArchivalDate( ArchiveResource archiveResource, int daysBeforeArchival )
     {
         if ( daysBeforeArchival > 0 )
         {

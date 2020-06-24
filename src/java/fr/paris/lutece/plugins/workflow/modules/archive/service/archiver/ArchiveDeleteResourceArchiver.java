@@ -51,7 +51,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 public class ArchiveDeleteResourceArchiver extends AbstractDeleteResourceArchiver
 {
     private static final String TASK_TYPE = "taskTypeArchive";
-    
+
     @Inject
     private IArchiveService _archiveService;
 

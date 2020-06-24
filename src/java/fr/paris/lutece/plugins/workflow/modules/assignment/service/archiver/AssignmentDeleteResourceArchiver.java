@@ -52,7 +52,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 public class AssignmentDeleteResourceArchiver extends AbstractDeleteResourceArchiver
 {
     private static final String TASK_TYPE = "taskTypeAssignment";
-    
+
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;
 

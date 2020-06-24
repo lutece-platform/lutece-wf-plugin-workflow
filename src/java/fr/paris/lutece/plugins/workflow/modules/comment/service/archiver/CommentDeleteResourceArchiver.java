@@ -52,7 +52,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 public class CommentDeleteResourceArchiver extends AbstractDeleteResourceArchiver
 {
     private static final String TASK_TYPE = "taskTypeComment";
-    
+
     @Inject
     private ICommentValueService _commentValueService;
 
