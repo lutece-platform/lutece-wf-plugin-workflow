@@ -94,4 +94,12 @@ public interface IArchiveService
      * @param config
      */
     void archiveResource( ResourceWorkflow resourceWorkflow, ITask task, ArchiveConfig config );
+
+    /**
+     * Delete the {@link ArchiveResource} by idResource
+     * 
+     * @param idResource
+     * @param idTask
+     */
+    void removeArchiveResource( int idResource, int idTask );
 }

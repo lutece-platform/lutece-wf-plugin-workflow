@@ -132,8 +132,8 @@
         p:titleI18nKey="module.workflow.archive.task_title"
         p:beanName="workflow.taskArchive"
         p:configBeanName="workflow.taskArchiveConfig"
-        p:taskForAutomaticAction="true"
-        p:configRequired="true" p:formTaskRequired="false" />
+        p:taskForAutomaticAction="true" p:configRequired="true"
+        p:formTaskRequired="false" />
 
     <!-- Tasks -->
     <bean id="workflow.taskAssignment"
@@ -206,10 +206,12 @@
         p:taskConfigDAO-ref="workflow.taskArchiveConfigDao" />
     <bean id="workflow.archiveService"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.ArchiveService" />
-        
+
     <!-- Archivers -->
     <bean id="workflow.commentDeleteResourceArchiver"
         class="fr.paris.lutece.plugins.workflow.modules.comment.service.archiver.CommentDeleteResourceArchiver" />
     <bean id="workflow.assignmentDeleteResourceArchiver"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.service.archiver.AssignmentDeleteResourceArchiver" />
+    <bean id="workflow.archiveDeleteResourceArchiver"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.archiver.ArchiveDeleteResourceArchiver" />
 </beans>
