@@ -4,7 +4,7 @@
     <name>workflow</name>
     <class>fr.paris.lutece.plugins.workflow.service.WorkflowPlugin
     </class>
-    <version>5.0.0</version>
+    <version>5.0.1-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
