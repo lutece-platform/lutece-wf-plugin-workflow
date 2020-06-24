@@ -30,13 +30,14 @@
         class="fr.paris.lutece.plugins.workflow.business.resource.ResourceWorkflowDAO" />
     <bean id="workflow.resourceHistoryDAO"
         class="fr.paris.lutece.plugins.workflow.business.resource.ResourceHistoryDAO" />
-            <bean id="workflow.resourceUserHistoryDAO"
+    <bean id="workflow.resourceUserHistoryDAO"
         class="fr.paris.lutece.plugins.workflow.business.resource.ResourceUserHistoryDAO" />
     <bean id="workflow.taskDAO"
         class="fr.paris.lutece.plugins.workflow.business.task.TaskDAO" />
     <bean id="workflow.prerequisiteDAO"
         class="fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO" />
-
+    <bean id="workflow.archiveResourceDao"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResourceDao" />
 
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"
@@ -79,8 +80,6 @@
     <!-- User Attributes -->
     <bean id="workflow.userAttributesManager"
         class="fr.paris.lutece.plugins.workflow.service.security.WorkflowUserAttributesManager">
-        <!--<property name="userAttributesService" ref="userws.userAttributesWebService" 
-            /> -->
     </bean>
 
     <!-- ************************** -->
@@ -102,6 +101,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfigDAO" />
     <bean id="workflow.PrerequisiteDurationConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.duration.business.PrerequisiteDurationConfigDAO" />
+    <bean id="workflow.taskArchiveConfigDao"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfigDao" />
 
     <!-- Task types -->
     <bean id="workflow.taskTypeComment"
@@ -125,6 +126,15 @@
         p:beanName="workflow.taskAssignment"
         p:configBeanName="workflow.taskAssignmentConfig"
         p:configRequired="true" p:formTaskRequired="true" />
+    <bean id="workflow.taskTypeArchive"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTypeArchive"
+        p:titleI18nKey="module.workflow.archive.task_title"
+        p:beanName="workflow.taskArchive"
+        p:configBeanName="workflow.taskArchiveConfig"
+        p:taskForAutomaticAction="true"
+        p:configRequired="true" p:formTaskRequired="false" />
+
     <!-- Tasks -->
     <bean id="workflow.taskAssignment"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignment"
@@ -135,6 +145,10 @@
     <bean id="workflow.taskNotification"
         class="fr.paris.lutece.plugins.workflow.modules.notification.service.TaskNotification"
         scope="prototype" />
+    <bean id="workflow.taskArchive"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.TaskArchive"
+        scope="prototype" />
+
     <!-- Task components -->
     <bean id="workflow.commentTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.comment.web.CommentTaskComponent"
@@ -148,6 +162,11 @@
         class="fr.paris.lutece.plugins.workflow.modules.notification.web.NotificationTaskComponent"
         p:taskType-ref="workflow.taskTypeNotification"
         p:taskConfigService-ref="workflow.taskNotificationConfigService" />
+    <bean id="workflow.archiveTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.web.ArchiveTaskComponent"
+        p:taskType-ref="workflow.taskTypeArchive"
+        p:taskConfigService-ref="workflow.taskArchiveConfigService" />
+
     <!-- Task configs -->
     <bean id="workflow.taskAssignmentConfig"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig"
@@ -157,6 +176,9 @@
         scope="prototype" />
     <bean id="workflow.taskNotificationConfig"
         class="fr.paris.lutece.plugins.workflow.modules.notification.business.TaskNotificationConfig"
+        scope="prototype" />
+    <bean id="workflow.taskArchiveConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig"
         scope="prototype" />
 
     <!-- Prerequisites -->
@@ -179,4 +201,9 @@
     <bean id="workflow.taskNotificationConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow.taskNotificationConfigDAO" />
+    <bean id="workflow.taskArchiveConfigService"
+        class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+        p:taskConfigDAO-ref="workflow.taskArchiveConfigDao" />
+    <bean id="workflow.archiveService"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.ArchiveService" />
 </beans>

@@ -46,6 +46,10 @@ import java.util.List;
  */
 public class PrerequisiteDAO implements IPrerequisiteDAO
 {
+    /**
+     * The name of the bean of this service
+     */
+    public static final String BEAN_NAME = "workflow.prerequisiteDAO";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_prerequisite = ?";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_prerequisite SET id_action = ?, prerequisite_type = ? WHERE id_prerequisite = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_action,prerequisite_type) VALUES(?,?)";

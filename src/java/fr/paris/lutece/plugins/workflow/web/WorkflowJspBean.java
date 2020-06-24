@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,18 +44,16 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowTraderService;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -103,14 +99,12 @@ import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.portal.web.constants.Messages;
-import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
-import net.sf.json.JSONObject;
 
 /**
  * class ManageDirectoryJspBean
@@ -139,7 +133,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String TEMPLATE_MANAGE_WORKFLOW = "admin/plugins/workflow/manage_workflow.html";
     private static final String TEMPLATE_CREATE_WORKFLOW = "admin/plugins/workflow/create_workflow.html";
     private static final String TEMPLATE_MODIFY_WORKFLOW = "admin/plugins/workflow/modify_workflow.html";
-    private static final String TEMPLATE_IMPORT_WORKFLOW = "admin/plugins/workflow/import_workflow.html";
     private static final String TEMPLATE_CREATE_STATE = "admin/plugins/workflow/create_state.html";
     private static final String TEMPLATE_MODIFY_STATE = "admin/plugins/workflow/modify_state.html";
     private static final String TEMPLATE_CREATE_ACTION = "admin/plugins/workflow/create_action.html";
@@ -182,7 +175,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     // properties
     private static final String PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE = "workflow.manage_workflow.page_title";
     private static final String PROPERTY_CREATE_WORKFLOW_PAGE_TITLE = "workflow.create_workflow.page_title";
-    private static final String PROPERTY_IMPORT_WORKFLOW_PAGE_TITLE = "workflow.import_workflow.page_title";
     private static final String PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE = "workflow.modify_workflow.page_title";
     private static final String PROPERTY_CREATE_STATE_PAGE_TITLE = "workflow.create_state.page_title";
     private static final String PROPERTY_MODIFY_STATE_PAGE_TITLE = "workflow.modify_state.page_title";
@@ -320,13 +312,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setWorkGroup( _strWorkGroup );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
-        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, getUser( ) );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) );
 
         LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<>( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
                 PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale( ) );
 
         boolean bPermissionAdvancedParameter = RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser( ) );
+                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, (User) getUser( ) );
 
         Map<String, Object> model = new HashMap<>( );
 
@@ -1730,7 +1722,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String getManageAdvancedParameters( HttpServletRequest request )
     {
         if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS,
-                getUser( ) ) )
+                (User) getUser( ) ) )
         {
             return getManageWorkflow( request );
         }
@@ -2733,61 +2725,5 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setIdStateBefore( nIdState );
 
         return _actionService.getListActionByFilter( filter );
-    }
-
-    public String doExportWorkflow( HttpServletRequest request, HttpServletResponse response ) throws IOException
-    {
-
-        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
-        JSONObject jsonObject = new JSONObject( );
-        String strWorkflowName = StringUtils.EMPTY;
-        if ( StringUtils.isNotEmpty( strIdWorkflow ) )
-        {
-            int nIdWorkflow = Integer.parseInt( strIdWorkflow );
-            Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
-            if ( workflow != null )
-            {
-                strWorkflowName = workflow.getName( );
-                jsonObject = WorkflowTraderService.exportWorkflowToJson( nIdWorkflow, getLocale( ) );
-            }
-        }
-        String fileType = "text/json";
-        response.setContentType( fileType );
-        response.setHeader( "Content-disposition", "attachment; filename=" + strWorkflowName + ".json" );
-        OutputStream out = response.getOutputStream( );
-        out.write( jsonObject.toString( ).getBytes( ) );
-        out.flush( );
-        return null;
-    }
-
-    public String getImportWorkflow( HttpServletRequest request )
-    {
-        Locale locale = getLocale( );
-
-        Map<String, Object> model = new HashMap<>( );
-
-        setPageTitleProperty( PROPERTY_IMPORT_WORKFLOW_PAGE_TITLE );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_IMPORT_WORKFLOW, locale, model );
-
-        return getAdminPage( template.getHtml( ) );
-    }
-
-    public String doImportWorkflow( HttpServletRequest request )
-    {
-        String contentType = request.getContentType( );
-        if ( contentType.indexOf( "multipart/form-data" ) >= 0 )
-        {
-            MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest) request;
-            FileItem item = mRequest.getFile( "import_file" );
-            if ( ( item != null ) && ( item.getName( ) != null ) && StringUtils.isNotBlank( item.getName( ) ) )
-            {
-                byte [ ] bytes = item.get( );
-                String json = new String( bytes );
-                JSONObject jsonObject = JSONObject.fromObject( json );
-                WorkflowTraderService.importWorkflowFromJson( jsonObject );
-            }
-        }
-        return getJspManageWorkflow( request );
     }
 }

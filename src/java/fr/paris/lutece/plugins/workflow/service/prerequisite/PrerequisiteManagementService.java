@@ -33,7 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.service.prerequisite;
 
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.business.prerequisite.IPrerequisiteDAO;
+import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO;
 import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfigDAO;
@@ -45,11 +51,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Implementation of the prerequisite management service
@@ -236,7 +237,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     {
         if ( _dao == null )
         {
-            _dao = SpringContextService.getBean( IPrerequisiteDAO.BEAN_NAME );
+            _dao = SpringContextService.getBean( PrerequisiteDAO.BEAN_NAME );
         }
 
         return _dao;
