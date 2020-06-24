@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.workflow.business.resource;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -48,54 +47,54 @@ public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
     private static final String SQL_QUERY_SELECT = "SELECT  id_history, user_access_code, email, first_name, last_name, realm FROM workflow_resource_user_history WHERE id_history = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_resource_user_history ( id_history, user_access_code, email, first_name, last_name, realm ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_user_history WHERE id_history = ? ";
-   
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void insert( ResourceUserHistory resourceUserHistory)
+    public void insert( ResourceUserHistory resourceUserHistory )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT,WorkflowUtils.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {
             int nIndex = 1;
-            daoUtil.setInt( nIndex++ , resourceUserHistory.getIdHistory( ) );
-            daoUtil.setString( nIndex++ , resourceUserHistory.getUserAccessCode( ) );
-            daoUtil.setString( nIndex++ , resourceUserHistory.getEmail( ) );
-            daoUtil.setString( nIndex++ , resourceUserHistory.getFirstName( ) );
-            daoUtil.setString( nIndex++ , resourceUserHistory.getLastName( ) );
-            daoUtil.setString( nIndex++ , resourceUserHistory.getRealm( ) );
-            
+            daoUtil.setInt( nIndex++, resourceUserHistory.getIdHistory( ) );
+            daoUtil.setString( nIndex++, resourceUserHistory.getUserAccessCode( ) );
+            daoUtil.setString( nIndex++, resourceUserHistory.getEmail( ) );
+            daoUtil.setString( nIndex++, resourceUserHistory.getFirstName( ) );
+            daoUtil.setString( nIndex++, resourceUserHistory.getLastName( ) );
+            daoUtil.setString( nIndex++, resourceUserHistory.getRealm( ) );
+
             daoUtil.executeUpdate( );
-          }
-        
+        }
+
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public ResourceUserHistory load( int nKey)
+    public ResourceUserHistory load( int nKey )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, WorkflowUtils.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, WorkflowUtils.getPlugin( ) ) )
         {
-	        daoUtil.setInt( 1 , nKey );
-	        daoUtil.executeQuery( );
-	        ResourceUserHistory resourceUserHistory = null;
-	
-	        if ( daoUtil.next( ) )
-	        {
-	            resourceUserHistory = new ResourceUserHistory();
-	            int nIndex = 1;
-	           resourceUserHistory.setIdHistory( daoUtil.getInt( nIndex++ ) );            
-	            resourceUserHistory.setUserAccessCode( daoUtil.getString( nIndex++ ) );            
-	            resourceUserHistory.setEmail( daoUtil.getString( nIndex++ ) );            
-	            resourceUserHistory.setFirstName( daoUtil.getString( nIndex++ ) );            
-	            resourceUserHistory.setLastName( daoUtil.getString( nIndex++ ) );            
-	            resourceUserHistory.setRealm( daoUtil.getString( nIndex ) );            
-	        }
-	
-	        daoUtil.free( );
-	        return resourceUserHistory;
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+            ResourceUserHistory resourceUserHistory = null;
+
+            if ( daoUtil.next( ) )
+            {
+                resourceUserHistory = new ResourceUserHistory( );
+                int nIndex = 1;
+                resourceUserHistory.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                resourceUserHistory.setUserAccessCode( daoUtil.getString( nIndex++ ) );
+                resourceUserHistory.setEmail( daoUtil.getString( nIndex++ ) );
+                resourceUserHistory.setFirstName( daoUtil.getString( nIndex++ ) );
+                resourceUserHistory.setLastName( daoUtil.getString( nIndex++ ) );
+                resourceUserHistory.setRealm( daoUtil.getString( nIndex ) );
+            }
+
+            daoUtil.free( );
+            return resourceUserHistory;
         }
     }
 
@@ -105,12 +104,12 @@ public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
     @Override
     public void delete( int nKey )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ))
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
         {
-	        daoUtil.setInt( 1 , nKey );
-	        daoUtil.executeUpdate( );
-	        daoUtil.free( );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+            daoUtil.free( );
         }
     }
 
-   }
+}

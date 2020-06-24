@@ -262,8 +262,9 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
             {
                 HashMap<String, Object> workgroupsItem = new HashMap<>( );
                 workgroupsItem.put( MARK_ITEM, referenceItem );
-                
-                List<WorkgroupConfig> workgroupConfigList = Optional.ofNullable( config ).map( TaskAssignmentConfig::getWorkgroups ).orElse( new ArrayList<>( ) );
+
+                List<WorkgroupConfig> workgroupConfigList = Optional.ofNullable( config ).map( TaskAssignmentConfig::getWorkgroups )
+                        .orElse( new ArrayList<>( ) );
                 for ( WorkgroupConfig workgroupSelected : workgroupConfigList )
                 {
                     if ( referenceItem.getCode( ).equals( workgroupSelected.getWorkgroupKey( ) ) )

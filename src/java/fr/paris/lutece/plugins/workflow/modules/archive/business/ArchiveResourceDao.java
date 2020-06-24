@@ -56,7 +56,7 @@ public class ArchiveResourceDao implements IArchiveResourceDao
             int nPos = 0;
             daoUtil.setInt( ++nPos, archiveResource.getIdResource( ) );
             daoUtil.setInt( ++nPos, archiveResource.getIdTask( ) );
-            
+
             if ( archiveResource.getInitialDate( ) != null )
             {
                 daoUtil.setTimestamp( ++nPos, archiveResource.getInitialDate( ) );
@@ -116,7 +116,7 @@ public class ArchiveResourceDao implements IArchiveResourceDao
             {
                 daoUtil.setNull( ++nPos, Types.TIMESTAMP );
             }
-            
+
             if ( archiveResource.getArchivalDate( ) != null )
             {
                 daoUtil.setTimestamp( ++nPos, archiveResource.getArchivalDate( ) );
@@ -152,7 +152,7 @@ public class ArchiveResourceDao implements IArchiveResourceDao
         ArchiveResource archiveResource = new ArchiveResource( );
         archiveResource.setIdResource( daoUtil.getInt( ++nPos ) );
         archiveResource.setIdTask( daoUtil.getInt( ++nPos ) );
-        
+
         if ( daoUtil.getObject( ++nPos ) != null )
         {
             archiveResource.setInitialDate( daoUtil.getTimestamp( nPos ) );
@@ -162,7 +162,7 @@ public class ArchiveResourceDao implements IArchiveResourceDao
         {
             archiveResource.setArchivalDate( daoUtil.getTimestamp( nPos ) );
         }
-        
+
         archiveResource.setIsArchived( daoUtil.getBoolean( ++nPos ) );
         return archiveResource;
     }

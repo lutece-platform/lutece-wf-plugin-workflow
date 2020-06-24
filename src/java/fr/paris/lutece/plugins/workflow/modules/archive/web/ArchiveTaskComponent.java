@@ -93,7 +93,7 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
 
     @Inject
     private IArchiveService _archiveService;
-    
+
     @Inject
     private IActionService _actionService;
 
@@ -131,7 +131,7 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
         {
             strError = FIELD_DELAY;
         }
-        
+
         if ( StringUtils.isBlank( strState ) )
         {
             strError = FIELD_STATE;
@@ -166,12 +166,11 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
     {
         ReferenceList refList = new ReferenceList( );
         List<IResourceArchiver> list = SpringContextService.getBeansOfType( IResourceArchiver.class );
-        list.stream( ).map( IResourceArchiver::getType ).distinct( )
-                .map( ArchivalType::name )
+        list.stream( ).map( IResourceArchiver::getType ).distinct( ).map( ArchivalType::name )
                 .forEach( s -> refList.addItem( s, I18nService.getLocalizedString( PREFIX_TYPE + s, locale ) ) );
         return refList;
     }
-    
+
     private ReferenceList getListStates( int nIdAction )
     {
         ReferenceList referenceListStates = new ReferenceList( );

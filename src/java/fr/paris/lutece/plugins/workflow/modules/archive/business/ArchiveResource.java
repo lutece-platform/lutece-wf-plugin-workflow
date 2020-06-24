@@ -90,7 +90,8 @@ public class ArchiveResource
     }
 
     /**
-     * @param tInitialDate the tInitialDate to set
+     * @param tInitialDate
+     *            the tInitialDate to set
      */
     public void setInitialDate( Timestamp tInitialDate )
     {

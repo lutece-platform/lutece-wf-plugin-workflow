@@ -150,7 +150,6 @@ public class WorkflowProvider implements IWorkflowProvider
         return RBACService.getAuthorizedCollection( listActions, ActionResourceIdService.PERMISSION_VIEW, user );
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -166,7 +165,7 @@ public class WorkflowProvider implements IWorkflowProvider
             mapActions.put( entry.getKey( ), listActions );
         }
 
-        return mapActions;	
+        return mapActions;
     }
 
     private boolean canActionBeProcessed( User user, int nIdResource, String strResourceType, int nIdAction )
@@ -228,8 +227,8 @@ public class WorkflowProvider implements IWorkflowProvider
             {
                 if ( Boolean.TRUE.equals( state.isRequiredWorkgroupAssigned( ) ) )
                 {
-                	
-                    ReferenceList refWorkgroupKey = getUserWorkgroups(user);
+
+                    ReferenceList refWorkgroupKey = getUserWorkgroups( user );
 
                     if ( refWorkgroupKey != null )
                     {
@@ -321,7 +320,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( user != null )
         {
-        	ReferenceList refWorkgroupKey = getUserWorkgroups(user);
+            ReferenceList refWorkgroupKey = getUserWorkgroups( user );
             if ( refWorkgroupKey != null )
             {
                 resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
@@ -362,7 +361,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
     // @Override don't declare as Override to be compatible with older Lutece Core version
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
-            Map<String, Object> model, String strTemplate,User user )
+            Map<String, Object> model, String strTemplate, User user )
     {
         Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, user );
 
@@ -380,7 +379,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale,User user )
+    public String getDisplayTasksForm( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, Locale locale, User user )
     {
         List<ITask> listTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
         List<String> listFormEntry = new ArrayList<>( );
@@ -415,7 +414,7 @@ public class WorkflowProvider implements IWorkflowProvider
         List<ITask> listActionTasks;
         String strTaskinformation;
         StringBuffer strXml = new StringBuffer( );
-       
+
         User userHistory;
         XmlUtil.beginElement( strXml, TAG_HISTORY );
         XmlUtil.beginElement( strXml, TAG_LIST_RESOURCE_HISTORY );
@@ -428,49 +427,48 @@ public class WorkflowProvider implements IWorkflowProvider
             XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
             XmlUtil.beginElement( strXml, TAG_USER );
 
-            if ( resourceHistory.getResourceUserHistory() != null )
+            if ( resourceHistory.getResourceUserHistory( ) != null )
             {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory() .getFirstName());
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory() .getLastName());
+                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory( ).getFirstName( ) );
+                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory( ).getLastName( ) );
             }
             else
             {
-            	//get User by access code for older version of workflow
-            	userHistory = ( resourceHistory.getUserAccessCode()!= null ) ? getUserByAccessCode(resourceHistory.getUserAccessCode()) : null;
-                if(userHistory!=null)
+                // get User by access code for older version of workflow
+                userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
+                if ( userHistory != null )
                 {
-                	  XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory .getFirstName());
-                      XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName());
+                    XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory.getFirstName( ) );
+                    XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName( ) );
                 }
                 else
                 {
-                   	XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
-                	XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
-     
+                    XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
+                    XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
+
                 }
             }
-                XmlUtil.endElement( strXml, TAG_USER );
+            XmlUtil.endElement( strXml, TAG_USER );
 
-                XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
+            XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
 
-                for ( ITask task : listActionTasks )
+            for ( ITask task : listActionTasks )
+            {
+                XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
+                strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
+
+                if ( strTaskinformation != null )
                 {
-                    XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-                    strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
-
-                    if ( strTaskinformation != null )
-                    {
-                        strXml.append( strTaskinformation );
-                    }
-
-                    XmlUtil.endElement( strXml, TAG_TASK_INFORMATION );
+                    strXml.append( strTaskinformation );
                 }
 
-                XmlUtil.endElement( strXml, TAG_LIST_TASK_INFORMATION );
-
-                XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
+                XmlUtil.endElement( strXml, TAG_TASK_INFORMATION );
             }
-        
+
+            XmlUtil.endElement( strXml, TAG_LIST_TASK_INFORMATION );
+
+            XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
+        }
 
         XmlUtil.endElement( strXml, TAG_LIST_RESOURCE_HISTORY );
         XmlUtil.endElement( strXml, TAG_HISTORY );
@@ -493,21 +491,20 @@ public class WorkflowProvider implements IWorkflowProvider
     @Override
     public String getUserAccessCode( HttpServletRequest request, User user )
     {
-    	  String strAccessCode=null;
-    	  if ( user == null )
-          { ///get user in the httpservletRequest	 
-            user=getUserInRequest(request);    
-          }
-    	  
-    	  if(user!=null)
-    	  {
-    		  strAccessCode= user.getAccessCode();
-    	  }
-    	  return strAccessCode;
-   }
-       
-    // CHECK
+        String strAccessCode = null;
+        if ( user == null )
+        { /// get user in the httpservletRequest
+            user = getUserInRequest( request );
+        }
 
+        if ( user != null )
+        {
+            strAccessCode = user.getAccessCode( );
+        }
+        return strAccessCode;
+    }
+
+    // CHECK
 
     /**
      * {@inheritDoc}
@@ -516,14 +513,14 @@ public class WorkflowProvider implements IWorkflowProvider
     public boolean canProcessAction( int nIdResource, String strResourceType, int nIdAction, HttpServletRequest request, User user )
     {
         if ( user == null )
-        { //get user in the httpservletRequest	 
-          user=getUserInRequest(request);    
+        { // get user in the httpservletRequest
+            user = getUserInRequest( request );
         }
-        
-        if(user!=null)
+
+        if ( user != null )
         {
-        	Action action = _actionService.findByPrimaryKey( nIdAction );
-        	return canActionBeProcessed( user, nIdResource, strResourceType, nIdAction )
+            Action action = _actionService.findByPrimaryKey( nIdAction );
+            return canActionBeProcessed( user, nIdResource, strResourceType, nIdAction )
                     && RBACService.isAuthorized( action, ActionResourceIdService.PERMISSION_VIEW, user );
         }
 
@@ -566,10 +563,10 @@ public class WorkflowProvider implements IWorkflowProvider
 
         if ( Boolean.TRUE.equals( resourceState.isRequiredWorkgroupAssigned( ) ) && ( resourceWorkflow != null ) )
         {
-        
+
             for ( String strWorkgroup : resourceWorkflow.getWorkgroups( ) )
             {
-            	if ( isUserInWorkgroup(user, strWorkgroup)
+                if ( isUserInWorkgroup( user, strWorkgroup )
                         || RBACService.isAuthorized( resourceState, StateResourceIdService.PERMISSION_VIEW_ALL_WORKGROUP, user ) )
                 {
                     bReturn = true;
@@ -625,9 +622,9 @@ public class WorkflowProvider implements IWorkflowProvider
         filter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
-         
+
         return AdminWorkgroupService.getAuthorizedCollection( listWorkflow, user );
-     }
+    }
 
     /**
      * returns the default model to build history performed on a resource.
@@ -662,14 +659,14 @@ public class WorkflowProvider implements IWorkflowProvider
 
             if ( resourceHistory.getUserAccessCode( ) != null )
             {
-            	if(resourceHistory.getResourceUserHistory()!=null)
-            	{
-            		resourceHistoryTaskInformation.put( MARK_USER_HISTORY,resourceHistory.getResourceUserHistory( ));
-            	}
-            	else
-            	{
-            		resourceHistoryTaskInformation.put( MARK_USER_HISTORY, getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) );
-            	}
+                if ( resourceHistory.getResourceUserHistory( ) != null )
+                {
+                    resourceHistoryTaskInformation.put( MARK_USER_HISTORY, resourceHistory.getResourceUserHistory( ) );
+                }
+                else
+                {
+                    resourceHistoryTaskInformation.put( MARK_USER_HISTORY, getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) );
+                }
             }
 
             listTaskInformation = new ArrayList<>( );
@@ -695,66 +692,68 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return model;
     }
-    
+
     /**
      * Method used when the user is not provided.
-     * @param request the httpServletRequest
+     * 
+     * @param request
+     *            the httpServletRequest
      * @return the user in the request
      */
-    private User getUserInRequest(HttpServletRequest request)
+    private User getUserInRequest( HttpServletRequest request )
     {
-    	return request!=null?AdminUserService.getAdminUser( request ):null;
+        return request != null ? AdminUserService.getAdminUser( request ) : null;
     }
-    
+
     /**
      * Return a ReferenceList witch contains the user workgoups
-     * @param user the user
-     * @return  a ReferenceList witch contains the user workgoups
+     * 
+     * @param user
+     *            the user
+     * @return a ReferenceList witch contains the user workgoups
      */
-     
-    private ReferenceList getUserWorkgroups(User user)
+
+    private ReferenceList getUserWorkgroups( User user )
     {
-    	
-    	ReferenceList refListWorkgroup=new ReferenceList();
-    	if(user.getUserWorkgroups()!=null)
-    	{
-    	     user.getUserWorkgroups().forEach(x->refListWorkgroup.addItem(x, x));
-    	}
+
+        ReferenceList refListWorkgroup = new ReferenceList( );
+        if ( user.getUserWorkgroups( ) != null )
+        {
+            user.getUserWorkgroups( ).forEach( x -> refListWorkgroup.addItem( x, x ) );
+        }
         return refListWorkgroup;
-    	
-    	
-   }
-    
- 
-    
- 
+
+    }
+
     /**
-     * Return true if the user is in the workgoup  
-     * @param user the user
-     * @param strWorkgroup the workgroup
+     * Return true if the user is in the workgoup
+     * 
+     * @param user
+     *            the user
+     * @param strWorkgroup
+     *            the workgroup
      * @return true if the user is in the workgroup
      */
-    private boolean isUserInWorkgroup(User user, String strWorkgroup)
+    private boolean isUserInWorkgroup( User user, String strWorkgroup )
     {
-    	if(user.getUserWorkgroups()!=null)
-    	{
-    		return user.getUserWorkgroups().stream().anyMatch(x->x.equals(strWorkgroup));
-    	}
-    	return false;
+        if ( user.getUserWorkgroups( ) != null )
+        {
+            return user.getUserWorkgroups( ).stream( ).anyMatch( x -> x.equals( strWorkgroup ) );
+        }
+        return false;
     }
-    
-    
-    
-    //TODO provide UserInfo depending the User type  who made the action   
+
+    // TODO provide UserInfo depending the User type who made the action
     /**
      * get a User by Access Code
-     * @param strAccessCode the strAccessCode
+     * 
+     * @param strAccessCode
+     *            the strAccessCode
      * @return a user by access code
      */
-    private User getUserByAccessCode(String strAccessCode)
+    private User getUserByAccessCode( String strAccessCode )
     {
-    	return AdminUserHome.findUserByLogin( strAccessCode );
+        return AdminUserHome.findUserByLogin( strAccessCode );
     }
-    
-      
+
 }
