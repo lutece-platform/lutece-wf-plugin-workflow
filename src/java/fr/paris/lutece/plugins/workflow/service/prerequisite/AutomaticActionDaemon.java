@@ -84,7 +84,7 @@ public class AutomaticActionDaemon extends Daemon
                 for ( ResourceWorkflow resource : listResource )
                 {
                     WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ),
-                            resource.getExternalParentId( ), null, Locale.getDefault( ), true );
+                            resource.getExternalParentId( ), null, Locale.getDefault( ), true, null );
                     nNbResourcesFound++;
                 }
             }

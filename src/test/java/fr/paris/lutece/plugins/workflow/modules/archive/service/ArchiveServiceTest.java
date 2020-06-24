@@ -52,11 +52,10 @@ public class ArchiveServiceTest extends LuteceTestCase
 
     public void testIsResourceUpForArchival_Yes( )
     {
-        Timestamp yesterday = Timestamp.valueOf( LocalDateTime.now( ).minusDays( 1 ) );
         ArchiveResource archiveResource = new ArchiveResource( );
         archiveResource.setIdResource( 1 );
         archiveResource.setIdTask( 2 );
-        archiveResource.setArchivalDate( yesterday );
+        archiveResource.setInitialDate( Timestamp.valueOf( LocalDateTime.now( ).minusDays( 20 ) ) );
         archiveResource.setIsArchived( false );
         _archiveResourceDao.insert( archiveResource );
 
@@ -83,7 +82,7 @@ public class ArchiveServiceTest extends LuteceTestCase
 
         ArchiveConfig config = new ArchiveConfig( );
         config.setIdTask( 2 );
-        config.setDelayArchival( 1 );
+        config.setDelayArchival( 2 );
 
         ResourceWorkflow resourceWorkflow = new ResourceWorkflow( );
         resourceWorkflow.setIdResource( 1 );
@@ -99,7 +98,7 @@ public class ArchiveServiceTest extends LuteceTestCase
         ArchiveResource archiveResource = new ArchiveResource( );
         archiveResource.setIdResource( 1 );
         archiveResource.setIdTask( 2 );
-        archiveResource.setArchivalDate( yesterday );
+        archiveResource.setInitialDate( yesterday );
         archiveResource.setIsArchived( true );
         _archiveResourceDao.insert( archiveResource );
 
@@ -120,7 +119,7 @@ public class ArchiveServiceTest extends LuteceTestCase
         ArchiveResource archiveResource = new ArchiveResource( );
         archiveResource.setIdResource( 1 );
         archiveResource.setIdTask( 2 );
-        archiveResource.setArchivalDate( Timestamp.valueOf( LocalDateTime.now( ) ) );
+        archiveResource.setInitialDate( Timestamp.valueOf( LocalDateTime.now( ) ) );
         archiveResource.setIsArchived( false );
         _archiveResourceDao.insert( archiveResource );
 

@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
@@ -207,7 +208,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
-        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, (User) userConnected ) );
         model.put( MARK_IS_OWNER, _commentValueService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );

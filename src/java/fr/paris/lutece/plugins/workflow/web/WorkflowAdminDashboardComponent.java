@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.business.rbac.RBAC;
@@ -62,7 +63,7 @@ public class WorkflowAdminDashboardComponent extends AdminDashboardComponent
     @Override
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
-        if ( RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, user ) )
+        if ( RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, (User) user ) )
         {
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale( ) );
 

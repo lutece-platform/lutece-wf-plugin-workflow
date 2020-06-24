@@ -50,6 +50,7 @@ import org.apache.commons.collections.iterators.EntrySetMapIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
@@ -311,13 +312,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setWorkGroup( _strWorkGroup );
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
-        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, getUser( ) );
+        listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) );
 
         LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<>( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
                 PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale( ) );
 
         boolean bPermissionAdvancedParameter = RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, getUser( ) );
+                ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS, (User) getUser( ) );
 
         Map<String, Object> model = new HashMap<>( );
 
@@ -1721,7 +1722,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String getManageAdvancedParameters( HttpServletRequest request )
     {
         if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS,
-                getUser( ) ) )
+                (User) getUser( ) ) )
         {
             return getManageWorkflow( request );
         }

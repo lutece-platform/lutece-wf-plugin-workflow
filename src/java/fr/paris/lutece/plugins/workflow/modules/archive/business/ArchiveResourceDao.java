@@ -33,9 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.business;
 
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.time.LocalDateTime;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.util.sql.DAOUtil;

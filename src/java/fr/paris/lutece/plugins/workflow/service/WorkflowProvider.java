@@ -229,11 +229,7 @@ public class WorkflowProvider implements IWorkflowProvider
                 {
 
                     ReferenceList refWorkgroupKey = getUserWorkgroups( user );
-
-                    if ( refWorkgroupKey != null )
-                    {
-                        resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
-                    }
+                    resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
                 }
 
                 resourceWorkflowFilter.setIdState( state.getId( ) );
@@ -321,10 +317,7 @@ public class WorkflowProvider implements IWorkflowProvider
         if ( user != null )
         {
             ReferenceList refWorkgroupKey = getUserWorkgroups( user );
-            if ( refWorkgroupKey != null )
-            {
-                resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
-            }
+            resourceWorkflowFilter.setWorkgroupKeyList( refWorkgroupKey.toMap( ) );
         }
 
         return _resourceWorkflowService.getListResourceIdWorkflowByFilter( resourceWorkflowFilter, lListAutorizedIdSate );
@@ -363,7 +356,7 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDisplayDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale,
             Map<String, Object> model, String strTemplate, User user )
     {
-        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale, user );
+        Map<String, Object> defaultModel = getDefaultModelDocumentHistory( nIdResource, strResourceType, nIdWorkflow, request, locale );
 
         if ( model != null )
         {
@@ -642,7 +635,7 @@ public class WorkflowProvider implements IWorkflowProvider
      * @return the default model
      */
     private Map<String, Object> getDefaultModelDocumentHistory( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request,
-            Locale locale, User user )
+            Locale locale )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
         List<ITask> listActionTasks;

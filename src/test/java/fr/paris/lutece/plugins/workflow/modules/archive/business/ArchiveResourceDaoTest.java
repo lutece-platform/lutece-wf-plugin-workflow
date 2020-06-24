@@ -41,14 +41,23 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class ArchiveResourceDaoTest extends LuteceTestCase
 {
     private ArchiveResourceDao _dao = new ArchiveResourceDao( );
+    private static final int ID_RESOURCE = 1;
+    private static final int ID_TASK = 2;
+    
+    @Override
+    protected void tearDown( ) throws Exception
+    {
+        _dao.delete( ID_RESOURCE, ID_TASK );
+        super.tearDown( );
+    }
 
     public void testCRUD( )
     {
         Timestamp now = Timestamp.valueOf( LocalDateTime.now( ) );
 
         ArchiveResource archiveResource = new ArchiveResource( );
-        archiveResource.setIdResource( 1 );
-        archiveResource.setIdTask( 2 );
+        archiveResource.setIdResource( ID_RESOURCE );
+        archiveResource.setIdTask( ID_TASK );
         archiveResource.setIsArchived( true );
 
         _dao.insert( archiveResource );
@@ -56,12 +65,15 @@ public class ArchiveResourceDaoTest extends LuteceTestCase
         assertEquals( archiveResource.getIdResource( ), load.getIdResource( ) );
         assertEquals( archiveResource.getIdTask( ), load.getIdTask( ) );
         assertNull( load.getArchivalDate( ) );
+        assertNull( load.getInitialDate( ) );
         assertEquals( archiveResource.isArchived( ), load.isArchived( ) );
 
         archiveResource.setArchivalDate( now );
+        archiveResource.setInitialDate( now );
         _dao.store( archiveResource );
         load = _dao.load( archiveResource.getIdResource( ), archiveResource.getIdTask( ) );
-        assertEquals( now, load.getArchivalDate( ) );
+        assertNotNull( archiveResource.getArchivalDate( ) );
+        assertNotNull( archiveResource.getInitialDate( ) );
 
         _dao.delete( archiveResource.getIdResource( ), archiveResource.getIdTask( ) );
         load = _dao.load( archiveResource.getIdResource( ), archiveResource.getIdTask( ) );
