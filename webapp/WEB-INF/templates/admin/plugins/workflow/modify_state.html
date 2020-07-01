@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<@columns sm=12 md=12 lg=12>
+	<@columns>
 		<@fieldSet>
 			<@tabs>
 				<@tabList>
@@ -17,10 +17,10 @@
 							<@input type='textarea' name='description' >${state.description}</@input>
 						</@formGroup>
 						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}'>
-							<@checkBox name='is_initial_state' value='1' checked=state.isInitialState( ) />
+							<@checkBox name='is_initial_state' id='is_initial_state' value='1' checked=state.isInitialState( ) />
 						</@formGroup>
 						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}'>
-							<@checkBox name='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
+							<@checkBox name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
 						</@formGroup>
 						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
 							<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />

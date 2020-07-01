@@ -23,10 +23,10 @@
 							<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
 						</@formGroup>
 						<@formGroup rows=2 labelFor='automatic' helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
-							<@checkBox name='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' checked=action.automaticState />
+							<@checkBox name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' checked=action.automaticState />
 						</@formGroup>
 						<@formGroup rows=2 labelFor='is_mass_action' helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
-							<@checkBox name='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' checked=action.massAction/>
+							<@checkBox name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' checked=action.massAction/>
 						</@formGroup>
 						<@formGroup rows=2 >
 							<@formHelp>#i18n{workflow.create_action.label_link_actions}</@formHelp>

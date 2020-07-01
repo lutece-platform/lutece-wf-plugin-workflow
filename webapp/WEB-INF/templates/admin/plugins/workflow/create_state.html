@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<@columns sm=12 md=12 lg=12>
+	<@columns>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.create_state.title' />
 			<@boxBody>
@@ -14,14 +14,14 @@
 							<@input type='textarea' name='description' />
 						</@formGroup>
 						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}'>
-							<@checkBox name='is_initial_state' value='1' />
+							<@checkBox name='is_initial_state' id='is_initial_state' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}'>
-							<@checkBox name='is_required_workgroup_assigned' value='1' />
+							<@checkBox name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
-							<@radioIconList name="id_icon" default_value=-1 icons=icon_list />
-							<@radioButton orientation='horizontal' name='id_icon' value='-1' checked=true labelKey='#i18n{workflow.create_state.label_no_icon}' />
+							<@radioIconList name='id_icon' default_value=-1 icons=icon_list />
+							<@radioButton orientation='horizontal' name='id_icon' id='id_icon' value='-1' checked=true labelKey='#i18n{workflow.create_state.label_no_icon}' />
 						</@formGroup>
 						<@formGroup>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />

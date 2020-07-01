@@ -1,5 +1,5 @@
 <@row>
-	<@columns sm=12 md=12 lg=12>
+	<@columns>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title' />
 			<@boxBody>
@@ -17,7 +17,7 @@
 					
 					<#if errors??>
 						<#list errors as error>
-							<@alert class='alert-error' dismissible=true title=error.message />
+							<@alert class='danger' dismissible=true title=error.message />
 						</#list>
 					</#if>
 					${content}
