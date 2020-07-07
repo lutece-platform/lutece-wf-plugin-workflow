@@ -7,13 +7,13 @@
 				<@tform action='jsp/admin/plugins/workflow/DoModifyWorkflow.jsp'>
 					<@input type='hidden' name='id_workflow' value=workflow.id/>
 					<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
-						<@input type='text' name='name' value=workflow.name maxlength=255 inputSize=80 size='sm' />
+						<@input type='text' name='name' value=workflow.name maxlength=255 inputSize=80 />
 					</@formGroup>
 					<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_description_comment}' >
-						<@input type='textarea' name='description' size='sm' rows=2 cols=80>${workflow.description}</@input>
+						<@input type='textarea' name='description' rows=2 cols=80>${workflow.description}</@input>
 					</@formGroup>
 					<@formGroup rows=2 labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' >
-						<@select name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup size='sm'/>
+						<@select name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup />
 					</@formGroup>
 					<@formGroup rows=2>
 						<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' />

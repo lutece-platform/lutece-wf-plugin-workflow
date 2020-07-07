@@ -4,15 +4,15 @@
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title'>
 				<#if permission_manage_advanced_parameters>
-					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' size='xs' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' />
+					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' size='sm' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' />
 				</#if>
-				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' size='xs' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' />
+				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' size='sm' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' />
 				<@tform type='inline' align='left' class='spaced'>
 					<label for="is_enabled">#i18n{workflow.manage_workflow.label_active} </label>
-					<@select name="is_enabled" items=active_list default_value="active_selected" size='xs' />
+					<@select name="is_enabled" items=active_list default_value="active_selected" size='sm' />
 					<label for="workgroup">#i18n{workflow.manage_workflow.label_workgroup} </label>
 					<@inputGroup>
-						<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='xs' />
+						<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
 						<@inputGroupItem>
 							<@button size='sm' type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' color='default' />
 						</@inputGroupItem>
@@ -38,13 +38,13 @@
 								<strong>${workflow.name}</strong>&nbsp;
 							</@td>
 							<@td>
-								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
-								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' />
-								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
+								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' size='sm' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
+								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' size='sm' buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' />
+								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' size='sm' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
 								<#if workflow.enabled>
-									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' size='sm' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
 								<#else>
-									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' size='xs' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' size='sm' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
 								</#if>
 							</@td>
 						</@tr>
