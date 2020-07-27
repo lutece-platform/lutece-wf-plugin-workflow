@@ -13,7 +13,7 @@
 				<@td>
 					<#if history_information.admin_user_history?exists>
 						<#if adminAvatar>
-								<@img class='direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.admin_user_history.userId!''}' alt='Avatar' title='Avatar' />
+								<@img class='direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.admin_user_history.userId!""}' alt='Avatar' title='Avatar' />
 						</#if>
 						<em>&nbsp; ${history_information.resource_history.userAccessCode!''} ${history_information.admin_user_history.firstName} ${history_information.admin_user_history.lastName}</em>
 					</#if>
