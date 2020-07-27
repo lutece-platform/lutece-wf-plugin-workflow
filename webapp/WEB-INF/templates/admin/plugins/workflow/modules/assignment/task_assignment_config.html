@@ -8,7 +8,7 @@
 	</@formGroup>
 	<@formGroup helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner_comment}'>
 		<#assign multipleOwner=config?exists&&config.multipleOwner>
-		<@checkBox name='is_multiple_owner' value='1' checked=multipleOwner labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner}' />
+		<@checkBox name='is_multiple_owner' id='is_multiple_owner' value='1' checked=multipleOwner labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner}' />
 	</@formGroup>
 	<@formGroup labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' >
 		<#list workgroup_list as workgroup>
@@ -25,12 +25,12 @@
 	</@formGroup>
 	<@formGroup>
 		<#assign notify=config?exists&&config.notify>
-		<@checkBox name='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' params='onclick="javascript:notification();"'/>
+		<@checkBox name='is_notify' id='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' params='onclick="javascript:notification();"'/>
 	</@formGroup>
 	<div id="notification">
 		<@formGroup helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}'>
 			<#assign multipleOwner=config?exists&&config.multipleOwner>
-			<@checkBox name='is_use_user_name' value='1' checked=config?exists&&config.useUserName labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name}' />
+			<@checkBox name='is_use_user_name' id='is_use_user_name' value='1' checked=config?exists&&config.useUserName labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name}' />
 		</@formGroup>
 		<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_subject}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_subject_comment}' mandatory=true>
 			<#assign subjectValue=''>

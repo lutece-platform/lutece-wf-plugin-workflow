@@ -1,6 +1,6 @@
 <#include "macro_workflows.html" />
 <@row>
-	<@columns sm=12 md=12 lg=12>
+	<@columns>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.create_action.title' />
 			<@boxBody>
@@ -23,10 +23,10 @@
 							<@radioIconList name='id_icon' default_value=-1 icons=icon_list />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
-							<@checkBox name='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
+							<@checkBox name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
-							<@checkBox name='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
+							<@checkBox name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
 						</@formGroup>
 						<@formGroup>
 							<h4>#i18n{workflow.create_action.label_link_actions}</h4>
@@ -34,7 +34,7 @@
 							<em>#i18n{workflow.create_action.label_link_actions_example}</em>
 						</@formGroup>
 						<@formGroup labelFor='selected_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
-							<@select name="select_linked_actions" default_value="" multiple=10 size='sm' items=available_linked_actions />
+							<@select name='select_linked_actions' default_value='' multiple=10 size='sm' items=available_linked_actions />
 						</@formGroup>
 						<@formGroup rows=2>
 							<@button size='sm' type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
