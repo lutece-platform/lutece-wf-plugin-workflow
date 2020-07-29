@@ -38,7 +38,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -182,12 +181,11 @@ public class ArchiveService implements IArchiveService
             doChangeState( task, resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ),
                     config.getNextState( ) );
         }
-        List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class ).stream( )
-                .filter( ra -> ra.getType( ).equals( config.getTypeArchival( ) ) ).collect( Collectors.toList( ) );
+        List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class );
 
         for ( IResourceArchiver archiver : archiverList )
         {
-            archiver.archiveResource( resourceWorkflow );
+            archiver.archiveResource( config.getTypeArchival( ), resourceWorkflow );
         }
 
         ArchiveResource archiveResource = _archiveResourceDao.load( resourceWorkflow.getIdResource( ), config.getIdTask( ) );

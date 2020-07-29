@@ -182,9 +182,10 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
     private ReferenceList getTypeArchivalList( Locale locale )
     {
         ReferenceList refList = new ReferenceList( );
-        List<IResourceArchiver> list = SpringContextService.getBeansOfType( IResourceArchiver.class );
-        list.stream( ).map( IResourceArchiver::getType ).distinct( ).map( ArchivalType::name )
-                .forEach( s -> refList.addItem( s, I18nService.getLocalizedString( PREFIX_TYPE + s, locale ) ) );
+        for ( ArchivalType archivalType : ArchivalType.values( ) )
+        {
+            refList.addItem( archivalType.name( ), I18nService.getLocalizedString( PREFIX_TYPE + archivalType.name( ), locale ) );
+        }
         return refList;
     }
 
