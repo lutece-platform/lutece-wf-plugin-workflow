@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.daemon.AppDaemonService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 public class TaskArchive extends SimpleTask
 {
@@ -56,6 +57,11 @@ public class TaskArchive extends SimpleTask
     {
         ResourceWorkflow resourceWorkflow = _archiveService.getResourceWorkflowByHistory( nIdResourceHistory );
         ArchiveConfig config = _archiveService.loadConfig( this );
+        if ( config == null )
+        {
+            AppLogService.error( "No config for archive task: " + getId( ) );
+            return;
+        }
 
         _archiveService.createArchiveResource( resourceWorkflow, config );
 

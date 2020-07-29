@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 public class ArchiveDaemon extends Daemon
 {
@@ -97,7 +98,7 @@ public class ArchiveDaemon extends Daemon
 
     private void processAction( Action action, Workflow wf )
     {
-        List<ITask> listTasks = getListTaskByIdActionAndTaskType( action.getId( ), "workflow.taskArchive", Locale.getDefault( ) );
+        List<ITask> listTasks = getListTaskByIdActionAndTaskType( action.getId( ), "taskTypeArchive", Locale.getDefault( ) );
 
         if ( CollectionUtils.isNotEmpty( listTasks ) )
         {
@@ -111,6 +112,11 @@ public class ArchiveDaemon extends Daemon
                 for ( ITask task : listTasks )
                 {
                     ArchiveConfig config = _archiveService.loadConfig( task );
+                    if ( config == null )
+                    {
+                        AppLogService.error( "No config for archive task: " + task.getId( ) );
+                        continue;
+                    }
                     for ( ResourceWorkflow resourceWorkflow : listResource )
                     {
                         _taskArchive.doArchiveResource( resourceWorkflow, config );
