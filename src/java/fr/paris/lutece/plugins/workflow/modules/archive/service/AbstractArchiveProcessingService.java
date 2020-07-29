@@ -78,10 +78,10 @@ public abstract class AbstractArchiveProcessingService implements IArchiveProces
         }
         return result;
     }
-    
+
     protected List<ResourceHistory> getListHistoryByResource( ResourceWorkflow resourceWorkflow )
     {
-        return  _resourceHistoryService.getAllHistoryByResource( resourceWorkflow.getIdResource( ),
-                resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ) );
+        return _resourceHistoryService.getAllHistoryByResource( resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ),
+                resourceWorkflow.getWorkflow( ).getId( ) );
     }
 }

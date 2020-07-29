@@ -43,7 +43,7 @@ public class ArchiveResourceDaoTest extends LuteceTestCase
     private ArchiveResourceDao _dao = new ArchiveResourceDao( );
     private static final int ID_RESOURCE = 1;
     private static final int ID_TASK = 2;
-    
+
     @Override
     protected void tearDown( ) throws Exception
     {
