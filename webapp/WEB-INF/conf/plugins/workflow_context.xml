@@ -206,4 +206,10 @@
         p:taskConfigDAO-ref="workflow.taskArchiveConfigDao" />
     <bean id="workflow.archiveService"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.ArchiveService" />
+        
+    <!-- Archivers -->
+    <bean id="workflow.workflowResourceArchiver"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver" />
+    <bean id="workflow.workflowDeleteArchiveProcessingService"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowDeleteArchiveProcessingService" />
 </beans>

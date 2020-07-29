@@ -228,4 +228,10 @@ public class ArchiveService implements IArchiveService
             WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
         }
     }
+    
+    @Override
+    public void removeArchiveResource( int idResource, int idTask )
+    {
+        _archiveResourceDao.delete( idResource, idTask );
+    }
 }
