@@ -165,7 +165,7 @@ public class ArchiveService implements IArchiveService
         return _resourceWorkflowDAO.load( history.getIdResource( ), history.getResourceType( ), history.getWorkflow( ).getId( ) );
     }
 
-    private LocalDateTime calculateArchivalDate(  ArchiveResource archiveResource, int daysBeforeArchival )
+    private LocalDateTime calculateArchivalDate( ArchiveResource archiveResource, int daysBeforeArchival )
     {
         if ( daysBeforeArchival > 0 )
         {
@@ -184,7 +184,7 @@ public class ArchiveService implements IArchiveService
         }
         List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class );
         IResourceArchiver lastArchiver = null;
-        
+
         for ( IResourceArchiver archiver : archiverList )
         {
             if ( WorkflowResourceArchiver.BEAN_NAME.equals( archiver.getBeanName( ) ) )
@@ -241,7 +241,7 @@ public class ArchiveService implements IArchiveService
             WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
         }
     }
-    
+
     @Override
     public void removeArchiveResource( int idResource, int idTask )
     {

@@ -46,11 +46,11 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 public class WorkflowResourceArchiver implements IResourceArchiver
 {
     public static final String BEAN_NAME = "workflow.workflowResourceArchiver";
-    
+
     @Inject
     @Named( WorkflowDeleteArchiveProcessingService.BEAN_NAME )
     private IArchiveProcessingService _deleteArchiveProcessingService;
-    
+
     @Override
     public void archiveResource( ArchivalType archivalType, ResourceWorkflow resourceWorkflow )
     {
@@ -63,7 +63,7 @@ public class WorkflowResourceArchiver implements IResourceArchiver
                 break;
         }
     }
-    
+
     @Override
     public String getBeanName( )
     {
