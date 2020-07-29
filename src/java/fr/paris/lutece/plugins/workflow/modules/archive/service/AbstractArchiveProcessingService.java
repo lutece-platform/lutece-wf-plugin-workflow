@@ -33,73 +33,55 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.service;
 
-import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
-import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 
 /**
- * Service for Archive Task
+ * Abstract implementation of {@link IArchiveProcessingService}
  */
-public interface IArchiveService
+public abstract class AbstractArchiveProcessingService implements IArchiveProcessingService
 {
+    @Inject
+    protected IResourceHistoryService _resourceHistoryService;
+
+    @Inject
+    protected ITaskService _taskService;
 
     /**
-     * Load config of task.
+     * Search for all Tasks of the given history (with the currect task type).
      * 
-     * @param task
+     * @param history
      * @return
      */
-    ArchiveConfig loadConfig( ITask task );
-
-    /**
-     * Load the {@link ArchiveResource}
-     * 
-     * @param nIdHistory
-     * @param nIdTask
-     * @return ArchiveResource
-     */
-    ArchiveResource getArchiveResource( int nIdHistory, int nIdTask );
-
-    /**
-     * Creates the Archive Resource.
-     * 
-     * @param resourceWorkflow
-     * @param config
-     */
-    void createArchiveResource( ResourceWorkflow resourceWorkflow, ArchiveConfig config );
-
-    /**
-     * Determines if a resource is up for archival. <br>
-     * 
-     * @param resourceWorkflow
-     * @param config
-     * @return true if the resource should be archived
-     */
-    boolean isResourceUpForArchival( ResourceWorkflow resourceWorkflow, ArchiveConfig config );
-
-    /**
-     * Get resource owning the history
-     * 
-     * @param nIdHistory
-     * @return
-     */
-    ResourceWorkflow getResourceWorkflowByHistory( int nIdHistory );
-
-    /**
-     * Archives the resource according to the specified config
-     * 
-     * @param resourceWorkflow
-     * @param task
-     * @param config
-     */
-    void archiveResource( ResourceWorkflow resourceWorkflow, ITask task, ArchiveConfig config );
+    protected List<ITask> findTasksByHistory( ResourceHistory history, String taskType )
+    {
+        List<ITask> result = new ArrayList<>( );
+        List<ITask> allTasks = _taskService.getListTaskByIdAction( history.getAction( ).getId( ), Locale.getDefault( ) );
+        for ( ITask task : allTasks )
+        {
+            String currentType = Optional.ofNullable( task ).map( ITask::getTaskType ).map( ITaskType::getKey ).orElse( null );
+            if ( taskType.equals( currentType ) )
+            {
+                result.add( task );
+            }
+        }
+        return result;
+    }
     
-    /**
-     * Delete the {@link ArchiveResource} by idResource
-     * 
-     * @param idResource
-     * @param idTask
-     */
-    void removeArchiveResource( int idResource, int idTask );
+    protected List<ResourceHistory> getListHistoryByResource( ResourceWorkflow resourceWorkflow )
+    {
+        return  _resourceHistoryService.getAllHistoryByResource( resourceWorkflow.getIdResource( ),
+                resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ) );
+    }
 }
