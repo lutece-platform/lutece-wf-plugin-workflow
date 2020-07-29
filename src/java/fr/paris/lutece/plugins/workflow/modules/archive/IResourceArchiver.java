@@ -42,16 +42,10 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 public interface IResourceArchiver
 {
     /**
-     * Type of archival.
-     * 
-     * @return
-     */
-    ArchivalType getType( );
-
-    /**
      * Archives the resource.
      * 
      * @param resourceWorkflow
+     * @param archivalType
      */
-    void archiveResource( ResourceWorkflow resourceWorkflow );
+    void archiveResource( ArchivalType archivalType, ResourceWorkflow resourceWorkflow );
 }
