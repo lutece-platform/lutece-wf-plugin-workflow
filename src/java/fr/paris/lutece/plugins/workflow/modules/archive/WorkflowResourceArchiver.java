@@ -63,4 +63,10 @@ public class WorkflowResourceArchiver implements IResourceArchiver
                 break;
         }
     }
+    
+    @Override
+    public String getBeanName( )
+    {
+        return BEAN_NAME;
+    }
 }

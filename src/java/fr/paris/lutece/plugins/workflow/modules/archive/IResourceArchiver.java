@@ -47,5 +47,11 @@ public interface IResourceArchiver
      * @param resourceWorkflow
      * @param archivalType
      */
-    void archiveResource( ArchivalType archivalType, ResourceWorkflow resourceWorkflow );
+    void archiveResource( ArchivalType archivalType, ResourceWorkflow resourceWorkflow );   
+    
+    /**
+     * Get the name of the implementation
+     * @return
+     */
+    String getBeanName( );
 }
