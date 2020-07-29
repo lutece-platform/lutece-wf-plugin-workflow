@@ -44,6 +44,7 @@ import javax.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
+import fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.IArchiveResourceDao;
@@ -182,10 +183,22 @@ public class ArchiveService implements IArchiveService
                     config.getNextState( ) );
         }
         List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class );
-
+        IResourceArchiver lastArchiver = null;
+        
         for ( IResourceArchiver archiver : archiverList )
         {
-            archiver.archiveResource( config.getTypeArchival( ), resourceWorkflow );
+            if ( WorkflowResourceArchiver.BEAN_NAME.equals( archiver.getBeanName( ) ) )
+            {
+                lastArchiver = archiver;
+            }
+            else
+            {
+                archiver.archiveResource( config.getTypeArchival( ), resourceWorkflow );
+            }
+        }
+        if ( lastArchiver != null )
+        {
+            lastArchiver.archiveResource( config.getTypeArchival( ), resourceWorkflow );
         }
 
         ArchiveResource archiveResource = _archiveResourceDao.load( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
