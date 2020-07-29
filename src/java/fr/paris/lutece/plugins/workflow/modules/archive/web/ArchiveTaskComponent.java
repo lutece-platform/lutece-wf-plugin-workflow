@@ -104,6 +104,10 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
         ArchiveConfig config = _archiveService.loadConfig( task );
+        if ( config == null )
+        {
+            config = new ArchiveConfig( );
+        }
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_CONFIG, config );
@@ -154,10 +158,23 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
         }
 
         ArchiveConfig config = _archiveService.loadConfig( task );
+        boolean create = config == null;
+        if ( create )
+        {
+            config = new ArchiveConfig( );
+            config.setIdTask( task.getId( ) );
+        }
         config.setTypeArchival( ArchivalType.valueOf( strType ) );
         config.setNextState( Integer.valueOf( strState ) );
         config.setDelayArchival( Integer.valueOf( strDelay ) );
-        getTaskConfigService( ).update( config );
+        if ( create )
+        {
+            getTaskConfigService( ).create( config );
+        }
+        else
+        {
+            getTaskConfigService( ).update( config );
+        }
 
         return null;
     }

@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
@@ -101,14 +102,7 @@ public class ArchiveService implements IArchiveService
     @Override
     public ArchiveConfig loadConfig( ITask task )
     {
-        ArchiveConfig config = _taskArchiveConfigService.findByPrimaryKey( task.getId( ) );
-        if ( config == null )
-        {
-            config = new ArchiveConfig( );
-            config.setIdTask( task.getId( ) );
-            _taskArchiveConfigService.create( config );
-        }
-        return config;
+        return _taskArchiveConfigService.findByPrimaryKey( task.getId( ) );
     }
 
     @Override
