@@ -6,7 +6,7 @@
     <#if config.title?exists >
     <label for="comment_value_${config.idTask}">  ${config.title} <#if config.mandatory>*</#if> :</label>
     </#if>
-	<textarea name="comment_value_${config.idTask}" rows="4" cols="80"  <#if config.richText>class="richtext"</#if>" >${comment_value!}</textarea>
+	<@input type='textarea' name='comment_value_${config.idTask}' rows=4 cols=80 richtext=config.richText>${comment_value!}</@input>
 </#if>
 
 <#if config.richText>

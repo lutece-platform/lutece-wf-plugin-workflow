@@ -8,11 +8,11 @@
 				</#if>
 				<@input type='text' size='sm' name='title' value=titleValue maxlength=255 />
 			</@formGroup>
-			<@formGroup labelFor='mandatory' labelKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}' >
+			<@formGroup labelFor='mandatory' labelKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}'>
 				<@radioButton name='mandatory' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.mandatory />
 				<@radioButton name='mandatory' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.mandatory />
 			</@formGroup>
-			<@formGroup labelFor='richText' labelKey='#i18n{module.workflow.comment.task_comment_config.label_richtext}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_richtext_comment}' >
+			<@formGroup labelFor='richText' labelKey='#i18n{module.workflow.comment.task_comment_config.label_richtext}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_richtext_comment}'>
 				<@radioButton name='richText' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.richText />
 				<@radioButton name='richText' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.richText />
 			</@formGroup>

@@ -12,9 +12,10 @@
 <@row>
 	<@columns>
 		<@box style='primary'>
-			<div class="box-header">
-				<h3 class="box-title">#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' params=title_param /> ${modify_icon.name}
-			</div>
+			<#assign boxHeaderTitle>
+				#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' params=title_param /> ${modify_icon.name}
+			</#assign>
+			<@boxHeader title=boxHeaderTitle />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
 					<@fieldSet>

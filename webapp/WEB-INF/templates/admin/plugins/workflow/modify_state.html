@@ -23,7 +23,7 @@
 							<@checkBox name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
 						</@formGroup>
 						<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
-							<@radioIconList name="id_icon" default_value=state.icon.id icons=icon_list />
+							<@radioIconList name='id_icon' default_value=state.icon.id icons=icon_list />
 							<@radioButton orientation='horizontal' name='id_icon' value='-1' checked=state.icon.id==0 labelKey='#i18n{workflow.create_state.label_no_icon}' />
 						</@formGroup>
 						<@formGroup>

@@ -13,14 +13,14 @@
 				<#if config?exists>
 					<#assign sender=config.senderName>
 				</#if>
-				<@input type='text' size='sm' name='senderName' value=sender maxlength=255/>
+				<@input type='text' size='sm' name='senderName' value=sender maxlength=255 />
 			</@formGroup>
 			<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.notification.task_notification_config.label_subject}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_subject_comment' mandatory=true>
 				<#assign subject=''>
 				<#if config?exists>
 					<#assign subject=config.subject>
 				</#if>
-				<@input type='text' size='sm' name='subject' value=subject maxlength=255/>
+				<@input type='text' size='sm' name='subject' value=subject maxlength=255 />
 			</@formGroup>
 			<@formGroup labelFor='message' labelKey='#i18n{module.workflow.notification.task_notification_config.label_message}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_message_comment}' mandatory=true>
 				<@input type='textarea' name='message'>${subject}</@input>
