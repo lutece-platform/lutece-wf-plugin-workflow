@@ -9,25 +9,24 @@
 				</@tabList>
 				<@tabContent>
 					<@row>
-						<@columns sm=11>
-							<@tform type='inline' action='jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow'>
+						<@columns sm=10>
+							<@tform action='jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow'>
 								<@input type='hidden' name='id_state' value=state.id/>
-								<@formGroup rows=1 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}'>
+								<@formGroup rows=1 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}' helpKey='#i18n{workflow.modify_reflexive_action.help}'>
 									<@inputGroup>
-										<@select name='task_type_key' default_value='-1' items=task_type_list sort=true />
+										<@select name='task_type_key' default_value='-1' items=task_type_list sort=true size='sm' />
 										<@inputGroupItem>
-											<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
+											<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' size='sm' />
 											<#if action??>
-												<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-v' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' color='default'/>
+												<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-v' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' color='default' size='sm' />
 											</#if>
 										</@inputGroupItem>
 									</@inputGroup>
-									<@formHelp>#i18n{workflow.modify_reflexive_action.help}</@formHelp>
 								</@formGroup>
 							</@tform>
 						</@columns>							
-						<@columns sm=1>							
-							<@aButton color='default' href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' buttonIcon='times' title='#i18n{portal.util.labelBack}' />
+						<@columns sm=2>							
+							<@aButton color='default' href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' buttonIcon='times' title='#i18n{portal.util.labelBack}' align='right' />
 						</@columns>							
 					</@row>
 					<@table striped=true condensed=true responsive=false hover=false>
@@ -47,7 +46,7 @@
 												<@input type='hidden' name='id_workflow' value=action.workflow.id />
 												<@input type='hidden' name='id_task' value=task.id/>
 												<@inputGroupItem>
-													<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' />
+													<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' size='sm' />
 												</@inputGroupItem>
 											</@inputGroup>
 										<#else>
@@ -61,10 +60,10 @@
 								</@td>
 								<@td>
 									<#if task.taskType.configRequired>
-										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' />
+										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 									</#if>
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='plus' title='#i18n{workflow.modify_action.manage_task.title_copy}' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='plus' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
+									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
 								</@td>
 							</@tr>
 						</#list>
