@@ -32,13 +32,13 @@
 								<h4>${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if></h4>
 							</@td>
 							<@td>
-								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
-								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' />
-								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
+								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
+								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='plus-circle' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
+								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
 								<#if workflow.enabled>
-									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
 								<#else>
-									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
 								</#if>
 							</@td>
 						</@tr>

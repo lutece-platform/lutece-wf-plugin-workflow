@@ -4,7 +4,7 @@
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_icon.title'>
 				<@tform action='jsp/admin/plugins/workflow/CreateIcon.jsp' class='pull-right'>
-					<@button size='sm' type='submit' name='save' buttonIcon='plus' title='#i18n{workflow.manage_icon.button_create}' class='pull-right' />
+					<@button type='submit' name='save' buttonIcon='plus' title='#i18n{workflow.manage_icon.button_create}' hideTitle=['all'] />
 				</@tform>
 			</@boxHeader>
 			<@boxBody>
@@ -30,8 +30,8 @@
 								</@td>
 								<@td>${icon.name}</@td>
 								<@td>
-									<@aButton size='xs' href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' buttonIcon='edit' title='#i18n{workflow.manage_icon.title_modify}'/>
-									<@aButton size='xs' style='btn-danger' href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}'/>
+									<@aButton size='xs' href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' buttonIcon='edit' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] />
+									<@aButton size='xs' style='btn-danger' href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] />
 								</@td>
 							</@tr>
 						</#list>
