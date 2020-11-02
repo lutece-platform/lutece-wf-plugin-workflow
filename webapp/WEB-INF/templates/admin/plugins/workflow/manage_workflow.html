@@ -7,21 +7,24 @@
 					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' />
 				</#if>
 				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' />
-				<@tform type='inline' align='left' class='spaced'>
-					<label for="is_enabled">#i18n{workflow.manage_workflow.label_active}</label>
-					<@select name="is_enabled" items=active_list default_value="active_selected" />
-					<label for="workgroup">#i18n{workflow.manage_workflow.label_workgroup}</label>
-					<@inputGroup>
-						<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected />
-						<@inputGroupItem>
-							<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' color='default' />
-						</@inputGroupItem>
-					</@inputGroup>
-				</@tform>
 			</@boxHeader>
 			<@boxBody>
-				<@paginationAdmin paginator=paginator combo=1/>
-				<@table responsive=false>
+				<@paginationAdmin paginator=paginator combo=1 />
+				<@tform type='inline' align='right'>
+					<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}'>
+						<@select name='is_enabled' items=active_list default_value='active_selected' size='sm' />
+					</@formGroup>
+					<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}'>
+						<@inputGroup>
+							<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
+							<@inputGroupItem>
+								<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['all'] color='default' size='sm' />
+							</@inputGroupItem>
+						</@inputGroup>
+					</@formGroup>
+				</@tform>
+				
+				<@table responsive=false params='style="margin:50px 0;"'>
 					<@tr>
 						<@th>#i18n{workflow.manage_workflow.row_name}</@th>
 						<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
@@ -29,7 +32,7 @@
 					<#list workflow_list as workflow>
 						<@tr>
 							<@td>
-								<h4>${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if></h4>
+								${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if>
 							</@td>
 							<@td>
 								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
