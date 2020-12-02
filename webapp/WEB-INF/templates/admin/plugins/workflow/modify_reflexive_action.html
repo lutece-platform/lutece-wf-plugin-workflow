@@ -25,8 +25,8 @@
 								</@formGroup>
 							</@tform>
 						</@columns>							
-						<@columns sm=2>							
-							<@aButton color='default' href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' buttonIcon='times' title='#i18n{portal.util.labelBack}' align='right' />
+						<@columns sm=2 align='right'>							
+							<@aButton color='default' href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' buttonIcon='times' title='#i18n{portal.util.labelBack}' />
 						</@columns>							
 					</@row>
 					<@table striped=true condensed=true responsive=false hover=false>
@@ -62,7 +62,7 @@
 									<#if task.taskType.configRequired>
 										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 									</#if>
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='plus' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
+									<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
 									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
 								</@td>
 							</@tr>
