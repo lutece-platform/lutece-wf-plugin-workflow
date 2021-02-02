@@ -246,6 +246,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_TASK = "workflow.message.confirm_remove_task";
     private static final String MESSAGE_INITIAL_STATE_ALREADY_EXIST = "workflow.message.initial_state_already_exist";
     private static final String MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE = "workflow.message.can_not_remove_state_actions_are_associate";
+    private static final String MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE = "workflow.message.can_not_remove_state_tasks_are_associate";
     private static final String MESSAGE_CAN_NOT_REMOVE_WORKFLOW = "workflow.message.can_not_remove_workflow";
     private static final String MESSAGE_CAN_NOT_REMOVE_TASK = "workflow.message.can_not_remove_task";
     private static final String MESSAGE_CAN_NOT_DISABLE_WORKFLOW = "workflow.message.can_not_disable_workflow";
@@ -952,6 +953,21 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( state != null )
         {
+            List<Action> listActions = getAutomaticReflexiveActionsFromState( nIdState );
+    
+            if ( CollectionUtils.isNotEmpty( listActions ) )
+            {
+                for ( Action action : listActions )
+                {
+                    List<ITask> listTasksFound = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );
+    
+                    if ( CollectionUtils.isNotEmpty( listTasksFound ) )
+                    {
+                        return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+                    }
+                }
+            }
+
             _stateService.remove( nIdState );
             _stateService.decrementOrderByOne( state.getOrder( ), state.getWorkflow( ).getId( ) );
 
