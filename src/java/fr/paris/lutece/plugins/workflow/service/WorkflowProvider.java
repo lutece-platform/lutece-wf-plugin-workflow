@@ -212,7 +212,7 @@ public class WorkflowProvider implements IWorkflowProvider
     {
         if ( nIdWorkflowState < 1 )
         {
-            return this.getAuthorizedResourceList( strResourceType, nIdWorkflowState, null, nExternalParentId, user );
+            return this.getAuthorizedResourceList( strResourceType, nIdWorkflow, null, nExternalParentId, user );
         }
 
         List<Integer> resourceIdList = new ArrayList<>( );
