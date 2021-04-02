@@ -97,50 +97,50 @@
 								</@inputGroupItem>
 							</@inputGroup>
 						</@formGroup>
-						<@tag color='info' tagIcon='exclamation-triangle'> #i18n{workflow.modify_action.manage_task.warning_assignment}</@tag>
-						<@div align='right'>
-							<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-v' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' size='sm' />
-						</@div>
-						<@table striped=true condensed=true responsive=false hover=false>
-							<@tr>
-								<@th> #i18n{workflow.modify_workflow.order} </@th>
-								<@th> #i18n{workflow.modify_action.manage_task.title}</@th>
-								<@th> #i18n{workflow.modify_action.manage_task.row_actions} </@th>
-							</@tr>
-							<#list task_list as task>
-							<@tr>
-								<@td>
-									<!-- SELECT LIST FOR ORDER CHANGE -->
-									<@tform action='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp'>
-										<#if (task_list?size > 1)>
-										<@inputGroup>
-											<@comboOrders name="order_task_id" default_value=task.order max=number_task />
-											<@input type='hidden' name='id_workflow' value=action.workflow.id />
-											<@input type='hidden' name='id_task' value=task.id/>
-											<@inputGroupItem>
-												<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' size='sm' />
-											</@inputGroupItem>
-										</@inputGroup>
-										<#else>
-										${task.order}
-										</#if>
-									</@tform>
-								</@td>
-								<@td>
-									<#if task.taskType.title!="">${task.taskType.title}</#if>
-									<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
-								</@td>
-								<@td>
-									<#if task.taskType.configRequired>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
-									</#if>
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
-								</@td>
-							</@tr>
-							</#list>
-						</@table>
 					</@tform>
+					<@tag color='info' tagIcon='exclamation-triangle'> #i18n{workflow.modify_action.manage_task.warning_assignment}</@tag>
+					<@div align='right'>
+						<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-v' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' size='sm' />
+					</@div>
+					<@table striped=true condensed=true responsive=false hover=false>
+						<@tr>
+							<@th> #i18n{workflow.modify_workflow.order} </@th>
+							<@th> #i18n{workflow.modify_action.manage_task.title}</@th>
+							<@th> #i18n{workflow.modify_action.manage_task.row_actions} </@th>
+						</@tr>
+						<#list task_list as task>
+						<@tr>
+							<@td>
+								<!-- SELECT LIST FOR ORDER CHANGE -->
+								<@tform action='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp'>
+									<#if (task_list?size > 1)>
+									<@inputGroup>
+										<@comboOrders name="order_task_id" default_value=task.order max=number_task />
+										<@input type='hidden' name='id_workflow' value=action.workflow.id />
+										<@input type='hidden' name='id_task' value=task.id/>
+										<@inputGroupItem>
+											<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' size='sm' />
+										</@inputGroupItem>
+									</@inputGroup>
+									<#else>
+									${task.order}
+									</#if>
+								</@tform>
+							</@td>
+							<@td>
+								<#if task.taskType.title!="">${task.taskType.title}</#if>
+								<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
+							</@td>
+							<@td>
+								<#if task.taskType.configRequired>
+								<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
+								</#if>
+								<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
+								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
+							</@td>
+						</@tr>
+						</#list>
+					</@table>
 				</@fieldSet>
 			</@boxBody>
 		</@box>
