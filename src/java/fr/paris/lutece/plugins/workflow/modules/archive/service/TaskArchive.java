@@ -84,4 +84,10 @@ public class TaskArchive extends SimpleTask
     {
         return I18nService.getLocalizedString( MESSAGE_TASK_TITLE, locale );
     }
+    
+    @Override
+    public void doRemoveConfig( )
+    {
+        _archiveService.removeConfig( this );
+    }
 }

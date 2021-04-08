@@ -102,4 +102,10 @@ public interface IArchiveService
      * @param idTask
      */
     void removeArchiveResource( int idResource, int idTask );
+    
+    /**
+     * Deletes the config for the task.
+     * @param task
+     */
+    void removeConfig( ITask task );
 }

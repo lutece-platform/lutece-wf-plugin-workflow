@@ -42,7 +42,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
@@ -246,5 +245,11 @@ public class ArchiveService implements IArchiveService
     public void removeArchiveResource( int idResource, int idTask )
     {
         _archiveResourceDao.delete( idResource, idTask );
+    }
+    
+    @Override
+    public void removeConfig( ITask task )
+    {
+        _taskArchiveConfigService.remove( task.getId( ) );
     }
 }
