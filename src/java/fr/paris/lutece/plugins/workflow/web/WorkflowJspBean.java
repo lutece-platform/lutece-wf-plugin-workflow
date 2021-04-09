@@ -37,6 +37,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -314,6 +316,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
         listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) );
+        Collections.sort( listWorkflow, Comparator.comparing( Workflow::getName ) );
 
         LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<>( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
                 PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale( ) );
