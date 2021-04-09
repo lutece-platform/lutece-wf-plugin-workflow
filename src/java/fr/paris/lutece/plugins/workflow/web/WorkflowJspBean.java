@@ -100,7 +100,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
-import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
@@ -1107,8 +1106,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
             }
 
-            Action action;
-            action = new Action( );
+            Action action = new Action( );
             action.setWorkflow( workflow );
 
             String strError = getActionData( request, action );
@@ -1209,11 +1207,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
-        }
-
-        if ( action == null )
-        {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
         if ( bIsAutomatic )

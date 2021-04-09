@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
-import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.IArchiveService;
@@ -58,7 +57,6 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;

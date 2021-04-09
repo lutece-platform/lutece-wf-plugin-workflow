@@ -265,45 +265,23 @@ public class WorkflowProvider implements IWorkflowProvider
         stateFilter.setIdWorkflow( nIdWorkflow );
 
         Collection<State> listState = _stateService.getListStateByFilter( stateFilter );
-
-        if ( lListIdWorkflowState == null )
+        
+        for ( State state : listState )
         {
-            for ( State state : listState )
+            Integer nIdState = state.getId( );
+            if ( lListIdWorkflowState == null || lListIdWorkflowState.contains( nIdState ) )
             {
                 if ( user != null )
                 {
                     if ( RBACService.isAuthorized( state, StateResourceIdService.PERMISSION_VIEW, user ) )
                     {
-                        lListAutorizedIdSate.add( state.getId( ) );
+                        lListAutorizedIdSate.add( nIdState );
                     }
                 }
                 else
                 // WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
                 {
-                    lListAutorizedIdSate.add( state.getId( ) );
-                }
-            }
-        }
-        else
-        {
-            for ( State state : listState )
-            {
-                Integer nIdState = state.getId( );
-
-                if ( lListIdWorkflowState.contains( nIdState ) )
-                {
-                    if ( user != null )
-                    {
-                        if ( RBACService.isAuthorized( state, StateResourceIdService.PERMISSION_VIEW, user ) )
-                        {
-                            lListAutorizedIdSate.add( nIdState );
-                        }
-                    }
-                    else
-                    // WARNING : if content "user!=null" because for the batch the user is null, for the other case the user is not null
-                    {
-                        lListAutorizedIdSate.add( nIdState );
-                    }
+                    lListAutorizedIdSate.add( nIdState );
                 }
             }
         }
@@ -404,69 +382,71 @@ public class WorkflowProvider implements IWorkflowProvider
     public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale, User user )
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
-        List<ITask> listActionTasks;
-        String strTaskinformation;
         StringBuffer strXml = new StringBuffer( );
 
-        User userHistory;
         XmlUtil.beginElement( strXml, TAG_HISTORY );
         XmlUtil.beginElement( strXml, TAG_LIST_RESOURCE_HISTORY );
 
         for ( ResourceHistory resourceHistory : listResourceHistory )
         {
-            listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
-
-            XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
-            XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
-            XmlUtil.beginElement( strXml, TAG_USER );
-
-            if ( resourceHistory.getResourceUserHistory( ) != null )
-            {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory( ).getFirstName( ) );
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory( ).getLastName( ) );
-            }
-            else
-            {
-                // get User by access code for older version of workflow
-                userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
-                if ( userHistory != null )
-                {
-                    XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory.getFirstName( ) );
-                    XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName( ) );
-                }
-                else
-                {
-                    XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
-                    XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
-
-                }
-            }
-            XmlUtil.endElement( strXml, TAG_USER );
-
-            XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
-
-            for ( ITask task : listActionTasks )
-            {
-                XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-                strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
-
-                if ( strTaskinformation != null )
-                {
-                    strXml.append( strTaskinformation );
-                }
-
-                XmlUtil.endElement( strXml, TAG_TASK_INFORMATION );
-            }
-
-            XmlUtil.endElement( strXml, TAG_LIST_TASK_INFORMATION );
-
-            XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
+            appendResourceHistoryXml( resourceHistory, strXml, request, locale );
         }
 
         XmlUtil.endElement( strXml, TAG_LIST_RESOURCE_HISTORY );
         XmlUtil.endElement( strXml, TAG_HISTORY );
 
         return strXml.toString( );
+    }
+    
+    private void appendResourceHistoryXml( ResourceHistory resourceHistory, StringBuffer strXml, HttpServletRequest request,  Locale locale )
+    {
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
+
+        XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
+        XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
+        XmlUtil.beginElement( strXml, TAG_USER );
+
+        if ( resourceHistory.getResourceUserHistory( ) != null )
+        {
+            XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory( ).getFirstName( ) );
+            XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory( ).getLastName( ) );
+        }
+        else
+        {
+            // get User by access code for older version of workflow
+            User userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
+            if ( userHistory != null )
+            {
+                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory.getFirstName( ) );
+                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName( ) );
+            }
+            else
+            {
+                XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
+                XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
+
+            }
+        }
+        XmlUtil.endElement( strXml, TAG_USER );
+
+        XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
+
+        for ( ITask task : listActionTasks )
+        {
+            XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
+            String strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
+
+            if ( strTaskinformation != null )
+            {
+                strXml.append( strTaskinformation );
+            }
+
+            XmlUtil.endElement( strXml, TAG_TASK_INFORMATION );
+        }
+
+        XmlUtil.endElement( strXml, TAG_LIST_TASK_INFORMATION );
+
+        XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
     }
 
     /**
