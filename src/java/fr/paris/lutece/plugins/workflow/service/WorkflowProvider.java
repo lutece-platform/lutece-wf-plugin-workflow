@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -265,7 +265,7 @@ public class WorkflowProvider implements IWorkflowProvider
         stateFilter.setIdWorkflow( nIdWorkflow );
 
         Collection<State> listState = _stateService.getListStateByFilter( stateFilter );
-        
+
         for ( State state : listState )
         {
             Integer nIdState = state.getId( );
@@ -397,8 +397,8 @@ public class WorkflowProvider implements IWorkflowProvider
 
         return strXml.toString( );
     }
-    
-    private void appendResourceHistoryXml( ResourceHistory resourceHistory, StringBuffer strXml, HttpServletRequest request,  Locale locale )
+
+    private void appendResourceHistoryXml( ResourceHistory resourceHistory, StringBuffer strXml, HttpServletRequest request, Locale locale )
     {
         List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -956,13 +956,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( state != null )
         {
             List<Action> listActions = getAutomaticReflexiveActionsFromState( nIdState );
-    
+
             if ( CollectionUtils.isNotEmpty( listActions ) )
             {
                 for ( Action action : listActions )
                 {
                     List<ITask> listTasksFound = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );
-    
+
                     if ( CollectionUtils.isNotEmpty( listTasksFound ) )
                     {
                         return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
