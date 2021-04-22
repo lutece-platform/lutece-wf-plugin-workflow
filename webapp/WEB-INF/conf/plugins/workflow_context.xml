@@ -38,7 +38,11 @@
         class="fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO" />
     <bean id="workflow.archiveResourceDao"
         class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResourceDao" />
-
+    <bean id="workflow.chooseStateTaskConfigDao" 
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfigDao" />
+    <bean id="workflow.chooseStateTaskInformationDao" 
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformationDAO" />
+    
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"
         class="fr.paris.lutece.portal.service.util.RemovalListenerService" />

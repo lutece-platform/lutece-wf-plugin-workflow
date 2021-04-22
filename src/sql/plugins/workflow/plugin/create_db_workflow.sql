@@ -21,6 +21,8 @@ DROP TABLE IF EXISTS workflow_prerequisite;
 DROP TABLE IF EXISTS workflow_prerequisite_duration_cf;
 DROP TABLE IF EXISTS workflow_task_archive_resource;
 DROP TABLE IF EXISTS workflow_task_archive_cf;
+DROP TABLE IF EXISTS workflow_task_choose_state_config;
+DROP TABLE IF EXISTS workflow_task_choose_state_information;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
@@ -291,6 +293,20 @@ CREATE TABLE workflow_task_archive_cf
 	type_archival VARCHAR(255) DEFAULT NULL, 
 	delay_archival INT DEFAULT NULL,
 	PRIMARY KEY (id_task)
+);
+
+CREATE TABLE workflow_task_choose_state_config (
+	 id_task INT DEFAULT 0 NOT NULL ,
+	 controller_name varchar(100) default NULL,
+	 id_state_ok INT NOT NULL,
+	 id_state_ko INT NOT NULL,
+	 PRIMARY KEY (id_task)
+);
+
+CREATE TABLE workflow_task_choose_state_information (
+  id_history INT NOT NULL,
+  id_task INT NOT NULL,
+  new_state VARCHAR(255) NOT NULL
 );
 
 -- ---------------
