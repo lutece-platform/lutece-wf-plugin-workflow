@@ -220,4 +220,22 @@
         class="fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver" />
     <bean id="workflow.workflowDeleteArchiveProcessingService"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowDeleteArchiveProcessingService" />
+        
+    <!-- Choose Task -->
+    <bean id="workflow.chooseStateTask"
+        class="fr.paris.lutece.plugins.workflow.modules.state.service.ChooseStateTask" scope="prototype" />
+    <bean id="workflow.chooseStateTaskConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig" scope="prototype" />
+        
+    <bean id="workflow.chooseStateTaskType" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+            p:key="chooseStateTask"
+            p:titleI18nKey="module.workflow.state.task.choose.state.title"
+            p:beanName="workflow.chooseStateTask"
+            p:configBeanName="workflow.chooseStateTaskConfig"
+            p:configRequired="true"
+            p:taskForAutomaticAction="true" />
+    
+    <bean id="workflow.chooseStateTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.state.web.ChooseStateTaskComponent"
+        p:taskType-ref="workflow.chooseStateTaskType"
+        p:taskConfigService-ref="workflow.chooseStateTaskConfigService" />
 </beans>

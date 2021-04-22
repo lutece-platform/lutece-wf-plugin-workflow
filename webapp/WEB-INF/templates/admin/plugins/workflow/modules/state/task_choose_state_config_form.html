@@ -1,0 +1,33 @@
+<#assign idStateOK = -1>
+<#assign idStateKO = -1>
+<#if config?exists>
+	<#assign idStateOK = config.idStateOK>
+	<#assign idStateKO = config.idStateKO>
+</#if>
+<@row>
+	<@columns sm=12 md=12 lg=12 >
+		<@fieldSet legend='#i18n{module.workflow.state.task.choose.state.config.title}'>
+			<@formGroup labelFor="controllerName" labelKey="#i18n{module.workflow.state.task.choose.state.config.controller.choice}">
+				<#if controller_list?has_content>
+					<#list controller_list as controller>
+						<#if selected_controller?? && selected_controller == controller.getName()>
+							<#assign checked=true>
+						<#else>
+							<#assign checked=false>
+						</#if>
+						<@radioButton name="controllerName" value='${controller.getName()}' mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
+						<@formHelp>#i18n{controller.getHelpKey()}</@formHelp>
+					</#list>
+				</#if>
+			</@formGroup>
+			<div class="controls">
+				<@comboWithParams name="idStateOK" default_value=idStateOK?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
+				<@formHelp>#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}</@formHelp>
+			</div>
+			<div class="controls">
+				<@comboWithParams name="idStateKO" default_value=idStateKO?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
+				<@formHelp>#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}</@formHelp>
+			</div>
+		</@fieldSet>
+	</@columns>
+</@row>
