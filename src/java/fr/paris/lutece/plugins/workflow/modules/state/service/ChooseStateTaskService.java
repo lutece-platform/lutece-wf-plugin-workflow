@@ -84,9 +84,9 @@ public class ChooseStateTaskService implements IChooseStateTaskService
         return config;
     }
 
-    private IResourceController getController( ChooseStateTaskConfig config )
+    private IChooseStateController getController( ChooseStateTaskConfig config )
     {
-        for ( IResourceController controller : getControllerList( ) )
+        for ( IChooseStateController controller : getControllerList( ) )
         {
             if ( controller.getName( ).equals( config.getControllerName( ) ) )
             {
@@ -99,7 +99,7 @@ public class ChooseStateTaskService implements IChooseStateTaskService
     @Override
     public void chooseNewState( int nIdResource, String strResourceType, ITask task, ChooseStateTaskConfig config, int nIdWorkflow, int oldState )
     {
-        IResourceController controller = getController( config );
+        IChooseStateController controller = getController( config );
         if ( controller == null )
         {
             return;

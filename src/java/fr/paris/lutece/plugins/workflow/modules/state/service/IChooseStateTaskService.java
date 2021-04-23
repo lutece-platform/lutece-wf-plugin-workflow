@@ -24,13 +24,13 @@ public interface IChooseStateTaskService
     ReferenceList getListStates( int nIdAction );
 
     /**
-     * Get the list of implemented {@link IResourceController}
+     * Get the list of implemented {@link IChooseStateController}
      * 
      * @return
      */
-    default List<IResourceController> getControllerList( )
+    default List<IChooseStateController> getControllerList( )
     {
-        return SpringContextService.getBeansOfType( IResourceController.class );
+        return SpringContextService.getBeansOfType( IChooseStateController.class );
     }
 
     /**

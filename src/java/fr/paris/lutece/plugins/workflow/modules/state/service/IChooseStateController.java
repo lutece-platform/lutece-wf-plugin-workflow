@@ -1,6 +1,6 @@
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
-public interface IResourceController
+public interface IChooseStateController
 {
 
     /**
