@@ -42,4 +42,14 @@ public final class ChooseStateTaskInformationHome
     {
         return _dao.load( nIdHistory, nIdTask );
     }
+    
+    /**
+     * Deletes the task information for the specified couple {history id, task id}
+     * @param nIdHistory
+     * @param nIdTask
+     */
+    public static void remove( int nIdHistory, int nIdTask )
+    {
+        _dao.delete( nIdHistory, nIdTask );
+    }
 }

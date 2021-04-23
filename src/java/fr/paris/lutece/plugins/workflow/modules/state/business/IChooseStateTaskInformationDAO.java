@@ -21,4 +21,14 @@ public interface IChooseStateTaskInformationDAO
      * @return The task information
      */
     ChooseStateTaskInformation load( int nIdHistory, int nIdTask );
+    
+    /**
+     * Deletes the data from the table
+     * 
+     * @param nIdHistory
+     *            The history id
+     * @param nIdTask
+     *            The task id
+     */
+    void delete( int nIdHistory, int nIdTask );
 }

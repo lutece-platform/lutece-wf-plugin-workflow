@@ -7,6 +7,7 @@ public class ChooseStateTaskInformationDAO implements IChooseStateTaskInformatio
 
     private static final String SQL_QUERY_SELECT = "SELECT id_history, id_task, new_state FROM workflow_task_choose_state_information WHERE id_history = ? AND id_task = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_choose_state_information ( id_history, id_task, new_state ) VALUES (?,?,?) ";
+    private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_choose_state_information WHERE id_history = ? AND id_task = ?";
 
     @Override
     public void insert( ChooseStateTaskInformation taskInformation )
@@ -47,4 +48,16 @@ public class ChooseStateTaskInformationDAO implements IChooseStateTaskInformatio
         return res;
     }
 
+    @Override
+    public void delete( int nIdHistory, int nIdTask )
+    {
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE ) )
+        {
+            int index = 1;
+            daoUtil.setInt( index++, nIdHistory );
+            daoUtil.setInt( index++, nIdTask );
+
+            daoUtil.executeUpdate( );
+        }
+    }
 }

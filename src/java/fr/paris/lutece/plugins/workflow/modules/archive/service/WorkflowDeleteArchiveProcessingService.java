@@ -56,6 +56,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
     private static final String TASK_TYPE_COMMENT = "taskTypeComment";
     private static final String TASK_TYPE_ASSIGNMENT = "taskTypeAssignment";
     private static final String TASK_TYPE_ARCHIVE = "taskTypeArchive";
+    private static final String TASK_TYPE_CHOOSE_TASK = "chooseStateTask";
 
     @Inject
     private IArchiveService _archiveService;
@@ -68,7 +69,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
 
     @Inject
     private IResourceWorkflowService _resourceWorkflowService;
-
+    
     @Override
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
@@ -77,6 +78,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
         archiveTaskComment( historyList );
         archiveTaskAssignment( historyList );
         archiveTaskArchive( historyList );
+        archiveTaskChooseTask( historyList );
 
         archiveResourceAndHistory( resourceWorkflow );
     }
@@ -90,7 +92,6 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
             {
                 _commentValueService.removeByHistory( history.getId( ), task.getId( ), WorkflowUtils.getPlugin( ) );
             }
-
         }
     }
 
@@ -114,6 +115,18 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
             for ( ITask task : taskList )
             {
                 _archiveService.removeArchiveResource( history.getIdResource( ), task.getId( ) );
+            }
+        }
+    }
+    
+    private void archiveTaskChooseTask( List<ResourceHistory> historyList )
+    {
+        for ( ResourceHistory history : historyList )
+        {
+            List<ITask> taskList = findTasksByHistory( history, TASK_TYPE_CHOOSE_TASK );
+            for ( ITask task : taskList )
+            {
+                task.doRemoveTaskInformation( history.getId( ) );
             }
         }
     }
