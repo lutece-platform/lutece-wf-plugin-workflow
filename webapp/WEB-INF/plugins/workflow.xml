@@ -92,6 +92,12 @@
             <daemon-description>module.workflow.archive.archiveDaemon.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.archive.daemon.ArchiveDaemon</daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>chooseStateActionDaemon</daemon-id>
+            <daemon-name>module.workflow.state.chooseStateActionDaemon.name</daemon-name>
+            <daemon-description>module.workflow.state.chooseStateActionDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.state.daemon.ChooseStateDaemon</daemon-class>
+        </daemon>
     </daemons>
 
 </plug-in>
