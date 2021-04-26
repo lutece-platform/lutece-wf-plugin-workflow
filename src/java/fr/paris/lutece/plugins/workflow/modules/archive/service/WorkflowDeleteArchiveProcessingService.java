@@ -69,7 +69,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
 
     @Inject
     private IResourceWorkflowService _resourceWorkflowService;
-    
+
     @Override
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
@@ -118,7 +118,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
             }
         }
     }
-    
+
     private void archiveTaskChooseTask( List<ResourceHistory> historyList )
     {
         for ( ResourceHistory history : historyList )

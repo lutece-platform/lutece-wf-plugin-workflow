@@ -71,13 +71,12 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     private static final String SQL_QUERY_SELECT_BY_LIST_HISTORY = SQL_QUERY_SELECT_BY_FILTER + " WHERE wh.id_history IN (?";
     private static final String SQL_CLOSE_PARENTHESIS = " ) ";
     private static final String SQL_ADITIONAL_PARAMETER = ",?";
-    private static final String SQL_ORDER_BY_CREATION_DATE_DESC = " ORDER BY creation_date DESC";   
+    private static final String SQL_ORDER_BY_CREATION_DATE_DESC = " ORDER BY creation_date DESC";
     private static final String SQL_FILTER_ID_WORKFLOW = " wh.id_workflow = ? ";
     private static final String SQL_FILTER_ID_ACTION = " wh.id_action = ? ";
     private static final String SQL_FILTER_RESOURCE_TYPE = " wh.resource_type = ? ";
     private static final String SQL_FILTER_USER_ACCESS_CODE = " wh.user_access_code = ? ";
     private static final String SQL_FILTER_LIST_RESOURCES = " wh.id_resource IN ( ";
-    
 
     /**
      * {@inheritDoc}
@@ -257,53 +256,54 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         }
         return lListResult;
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<Integer> selectListHistoryIdByFilter( ResourceHistoryFilter filter )
     {
-    	List<Integer> lListResult = new ArrayList<>( );
+        List<Integer> lListResult = new ArrayList<>( );
 
         String strSQL = buildFilterQuerydHeader( filter, SQL_QUERY_SELECT_ID_HISTORY_BY_FILTER );
-        try ( DAOUtil daoUtil = new DAOUtil( strSQL , WorkflowUtils.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) ) )
         {
-        	int nPos=0;
-        	buildFilterQuerydFooter( filter, daoUtil, nPos );
+            int nPos = 0;
+            buildFilterQuerydFooter( filter, daoUtil, nPos );
             daoUtil.executeQuery( );
 
             while ( daoUtil.next( ) )
             {
-            	 lListResult.add( daoUtil.getInt( 1 ) );
+                lListResult.add( daoUtil.getInt( 1 ) );
             }
         }
-    
-    	return lListResult;
+
+        return lListResult;
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<ResourceHistory> selectByFilter( ResourceHistoryFilter filter )
     {
-    	List<ResourceHistory> lListResult = new ArrayList<>( );
+        List<ResourceHistory> lListResult = new ArrayList<>( );
 
         String strSQL = buildFilterQuerydHeader( filter, SQL_QUERY_SELECT_BY_FILTER );
-        try ( DAOUtil daoUtil = new DAOUtil( strSQL , WorkflowUtils.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strSQL, WorkflowUtils.getPlugin( ) ) )
         {
-        	int nPos=0;
-        	buildFilterQuerydFooter( filter, daoUtil, nPos );
+            int nPos = 0;
+            buildFilterQuerydFooter( filter, daoUtil, nPos );
             daoUtil.executeQuery( );
 
             while ( daoUtil.next( ) )
             {
-            	 lListResult.add( dataToResourceHistoryObject( daoUtil ) );
+                lListResult.add( dataToResourceHistoryObject( daoUtil ) );
             }
         }
-    
-    	return lListResult;
+
+        return lListResult;
     }
-        
 
     /**
      * {@inheritDoc}
@@ -311,7 +311,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public List<ResourceHistory> selectByPrimaryKeyList( List<Integer> listIdHistory )
     {
-    	List<ResourceHistory> lListResult = new ArrayList<>( );
+        List<ResourceHistory> lListResult = new ArrayList<>( );
         int nlistIdResourceSize = listIdHistory.size( );
 
         if ( nlistIdResourceSize > 0 )
@@ -337,13 +337,13 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
                 while ( daoUtil.next( ) )
                 {
-                	 lListResult.add( dataToResourceHistoryObject( daoUtil ) );
+                    lListResult.add( dataToResourceHistoryObject( daoUtil ) );
                 }
             }
         }
         return lListResult;
     }
-    
+
     private ResourceHistory dataToObject( DAOUtil daoUtil )
     {
         int nPos = 0;
@@ -365,6 +365,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
         return resourceHistory;
     }
+
     private ResourceHistory dataToResourceHistoryObject( DAOUtil daoUtil )
     {
         int nPos = 0;
@@ -381,18 +382,20 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         action.setId( daoUtil.getInt( ++nPos ) );
 
         resourceHistory.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
-        resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );       
+        resourceHistory.setUserAccessCode( daoUtil.getString( ++nPos ) );
         resourceHistory.setAction( dataToActionObject( daoUtil, action, nPos ) );
 
-        if( StringUtils.isNotEmpty( resourceHistory.getUserAccessCode( ) )) {
-        	
-	        ResourceUserHistory resourceUserHistory = new ResourceUserHistory( );
-	        resourceUserHistory.setUserAccessCode( resourceHistory.getUserAccessCode( ) );
-	        resourceUserHistory.setIdHistory((resourceHistory.getId( )));
-	        resourceHistory.setResourceUserHistory( dataToUserObject( daoUtil, resourceUserHistory, nPos ) ) ;
+        if ( StringUtils.isNotEmpty( resourceHistory.getUserAccessCode( ) ) )
+        {
+
+            ResourceUserHistory resourceUserHistory = new ResourceUserHistory( );
+            resourceUserHistory.setUserAccessCode( resourceHistory.getUserAccessCode( ) );
+            resourceUserHistory.setIdHistory( ( resourceHistory.getId( ) ) );
+            resourceHistory.setResourceUserHistory( dataToUserObject( daoUtil, resourceUserHistory, nPos ) );
         }
         return resourceHistory;
     }
+
     private Action dataToActionObject( DAOUtil daoUtil, Action action, int nPos )
     {
         action.setName( daoUtil.getString( ++nPos ) );
@@ -403,17 +406,18 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
 
         return action;
-    } 
+    }
+
     private ResourceUserHistory dataToUserObject( DAOUtil daoUtil, ResourceUserHistory resourceUserHistory, int nPos )
     {
-         resourceUserHistory.setEmail( daoUtil.getString(  ++nPos ) );
-         resourceUserHistory.setFirstName( daoUtil.getString(  ++nPos ) );
-         resourceUserHistory.setLastName( daoUtil.getString(  ++nPos ) );
-         resourceUserHistory.setRealm( daoUtil.getString(  ++nPos ) );
-         
-         return resourceUserHistory;
-    } 
-    
+        resourceUserHistory.setEmail( daoUtil.getString( ++nPos ) );
+        resourceUserHistory.setFirstName( daoUtil.getString( ++nPos ) );
+        resourceUserHistory.setLastName( daoUtil.getString( ++nPos ) );
+        resourceUserHistory.setRealm( daoUtil.getString( ++nPos ) );
+
+        return resourceUserHistory;
+    }
+
     /**
      * Build filter SQL query header
      * 
@@ -425,7 +429,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
      *            the SQL query for order by
      * @return the SQL query
      */
-    private String buildFilterQuerydHeader( ResourceHistoryFilter filter,  String strSelectSQL )
+    private String buildFilterQuerydHeader( ResourceHistoryFilter filter, String strSelectSQL )
     {
         List<String> listStrFilter = new ArrayList<>( );
 
@@ -439,12 +443,12 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             listStrFilter.add( SQL_FILTER_ID_ACTION );
         }
 
-        if ( !StringUtils.isEmpty(filter.getResourceType( )) )
+        if ( !StringUtils.isEmpty( filter.getResourceType( ) ) )
         {
             listStrFilter.add( SQL_FILTER_RESOURCE_TYPE );
         }
 
-        if ( !StringUtils.isEmpty( filter.getUserAccessCode( )) )
+        if ( !StringUtils.isEmpty( filter.getUserAccessCode( ) ) )
         {
             listStrFilter.add( SQL_FILTER_USER_ACCESS_CODE );
         }
@@ -457,8 +461,9 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             sb.append( SQL_CLOSE_PARENTHESIS );
             listStrFilter.add( sb.toString( ) );
         }
-        return WorkflowUtils.buildRequestWithFilter( strSelectSQL , listStrFilter, null );
+        return WorkflowUtils.buildRequestWithFilter( strSelectSQL, listStrFilter, null );
     }
+
     /**
      * Build filter SQL query footer
      * 
@@ -472,36 +477,36 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
      *            the parameter position
      * @return the doaUtil
      */
-    private int buildFilterQuerydFooter(ResourceHistoryFilter filter, DAOUtil daoUtil, Integer nPos ) {
+    private int buildFilterQuerydFooter( ResourceHistoryFilter filter, DAOUtil daoUtil, Integer nPos )
+    {
 
+        if ( filter.getIdWorkflow( ) > 0 )
+        {
+            daoUtil.setInt( ++nPos, filter.getIdWorkflow( ) );
+        }
+        if ( filter.getIdAction( ) > 0 )
+        {
+            daoUtil.setInt( ++nPos, filter.getIdAction( ) );
+        }
 
-    	 if ( filter.getIdWorkflow( ) > 0 )
-         {
-    		 daoUtil.setInt(++nPos, filter.getIdWorkflow( ));
-         }
-         if ( filter.getIdAction( ) > 0 )
-         {
-    		 daoUtil.setInt(++nPos, filter.getIdAction( ));
-         }
+        if ( !StringUtils.isEmpty( filter.getResourceType( ) ) )
+        {
+            daoUtil.setString( ++nPos, filter.getResourceType( ) );
+        }
 
-         if ( !StringUtils.isEmpty(filter.getResourceType( )) )
-         {
-    		 daoUtil.setString(++nPos, filter.getResourceType( ));
-         }
+        if ( !StringUtils.isEmpty( filter.getUserAccessCode( ) ) )
+        {
+            daoUtil.setString( ++nPos, filter.getUserAccessCode( ) );
+        }
 
-         if ( !StringUtils.isEmpty( filter.getUserAccessCode( )) )
-         {
-    		 daoUtil.setString(++nPos, filter.getUserAccessCode( ));
-         }
-
-         if ( CollectionUtils.isNotEmpty( filter.getListIdResources( ) ) )
-         {
-        	 List<Integer > listIdResource= filter.getListIdResources( );
-        	 for ( int i = 0; i < listIdResource.size( ); i++ )
-             {
-                 daoUtil.setInt( ++nPos, listIdResource.get( i ) );
-             }
-         }
+        if ( CollectionUtils.isNotEmpty( filter.getListIdResources( ) ) )
+        {
+            List<Integer> listIdResource = filter.getListIdResources( );
+            for ( int i = 0; i < listIdResource.size( ); i++ )
+            {
+                daoUtil.setInt( ++nPos, listIdResource.get( i ) );
+            }
+        }
         return nPos;
     }
 }
