@@ -1,4 +1,7 @@
 <#include "macro_workflows.html" />
+<style>
+.workflow-icon{filter: drop-shadow(5px 5px 10px #222);}
+</style>
 <@row>
 	<@columns>
 		<@box style='primary'>
@@ -18,7 +21,7 @@
 						</@tr>
 						<#list icon_list as icon>
 							<@tr>
-								<@td>
+								<@td class='workflow-icon'>
 									<#assign params = ''>
 									<#if icon.width!=-1>
 										<#assign params= params + 'width="${icon.width}" '>
