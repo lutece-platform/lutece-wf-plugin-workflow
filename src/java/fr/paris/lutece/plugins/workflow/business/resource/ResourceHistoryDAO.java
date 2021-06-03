@@ -65,7 +65,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             + "(id_resource,resource_type,id_workflow,id_action,creation_date,user_access_code )VALUES(?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_history  WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE = "DELETE FROM workflow_resource_history WHERE id_workflow = ? AND resource_type = ? AND id_resource IN (?";
-    private static final String SQL_QUERY_SELECT_LIST_ID_HISTORY_BY_LIST_ID_RESOURCE_AND_TYPE = "SELECT id_history FROM workflow_resource_history WHERE resource_type = ? AND id_resource IN (?";
+    private static final String SQL_QUERY_SELECT_LIST_ID_HISTORY_BY_LIST_ID_RESOURCE_AND_TYPE = "SELECT id_history FROM workflow_resource_history WHERE id_workflow = ? AND resource_type = ? AND id_resource IN (?";
     private static final String SQL_QUERY_SELECT_BY_FILTER = "SELECT wh.id_history, wh.id_resource,wh. resource_type, wh.id_workflow, wh.id_action, wh.creation_date, wh.user_access_code, a.name, a.description, a.is_automatic, a.is_mass_action, a.display_order, a.is_automatic_reflexive_action, user.email, user.first_name, user.last_name, user.realm  FROM workflow_resource_history wh left join workflow_action a on ( wh.id_action=a.id_action) left join workflow_resource_user_history user on (wh.id_history=user.id_history) ";
     private static final String SQL_QUERY_SELECT_ID_HISTORY_BY_FILTER = "SELECT wh.id_history FROM workflow_resource_history wh";
     private static final String SQL_QUERY_SELECT_BY_LIST_HISTORY = SQL_QUERY_SELECT_BY_FILTER + " WHERE wh.id_history IN (?";
