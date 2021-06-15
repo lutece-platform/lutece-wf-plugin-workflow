@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.web;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,16 +48,19 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
+import fr.paris.lutece.plugins.workflow.service.json.WorkflowJsonService;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -95,13 +100,16 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.method.MethodUtil;
@@ -2737,5 +2745,33 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         filter.setIdStateBefore( nIdState );
 
         return _actionService.getListActionByFilter( filter );
+    }
+    
+    /**
+     * Export Workflow as Json
+     * @param request
+     */
+    public void doExportWorkflow( HttpServletRequest request, HttpServletResponse response )
+    {
+        int nId = NumberUtils.toInt( request.getParameter( PARAMETER_ID_WORKFLOW ), -1 );
+
+        if ( nId == -1 )
+        {
+            return;
+        }
+        
+        String content;
+        try ( OutputStream os = response.getOutputStream( ) )
+        {
+            content = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
+            Workflow workflow = _workflowService.findByPrimaryKey( nId );
+            
+            MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( workflow.getName( ) ) + ".json", "application/json" );
+            os.write( content.getBytes( ) );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
     }
 }
