@@ -2,8 +2,15 @@ package fr.paris.lutece.plugins.workflow.service.json;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
@@ -18,34 +26,43 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
-import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 
 public class WorkflowJsonService
 {
-
+    private static final String PROPERTY_COPY_WF_TITLE = "workflow.manage_workflow.copy_of_workflow";
+    
     public static final WorkflowJsonService INSTANCE = new WorkflowJsonService( );
 
     private ObjectMapper _objectMapper;
     
     private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+    private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
     private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     private WorkflowJsonService( )
     {
         SimpleModule timestampModule = new SimpleModule( "TimestampModule" );
         timestampModule.addSerializer( Timestamp.class, new TimestampSerializer( ) );
         timestampModule.addDeserializer( Timestamp.class, new TimestampDeserializer( ) );
-
-        _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule );
+        
+        SimpleModule taskModule = new SimpleModule( "TaskModule" );
+        taskModule.addSerializer( ITask.class, new TaskSerialiser( ) );
+        taskModule.addDeserializer( ITask.class, new TaskDeserializer( ) );
+        
+        _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule )
+                .registerModule( taskModule );
     }
 
     public static WorkflowJsonService getInstance( )
@@ -93,5 +110,128 @@ public class WorkflowJsonService
         jsonData.setTaskList( taskList );
         jsonData.setPrerequisiteList( prerequisiteList );
         return _objectMapper.writeValueAsString( jsonData );
+    }
+    
+    @Transactional
+    public void jsonImportWorkflow( String json, Locale locale ) throws JsonProcessingException
+    {
+        WorkflowJsonData jsonData = _objectMapper.readValue( json, WorkflowJsonData.class );
+        
+        int newIdWf = importWorkflow( jsonData.getWorkflow( ), locale );
+        
+        List<State> stateList = jsonData.getStateList( );
+        List<Action> actionList = jsonData.getActionList( );
+        List<ITask> taskList = jsonData.getTaskList( );
+        List<Prerequisite> prerequisiteList = jsonData.getPrerequisiteList( );
+        
+        importStates( newIdWf, stateList, actionList );
+        importActions( actionList, taskList, prerequisiteList );
+        importTasks( taskList );
+        importPrerequisites( prerequisiteList );
+    }
+    
+    public int importWorkflow( Workflow workflow, Locale locale )
+    {
+        String strNameCopyWf = I18nService.getLocalizedString( PROPERTY_COPY_WF_TITLE, locale );
+        if ( strNameCopyWf != null )
+        {
+            workflow.setName( strNameCopyWf + workflow.getName( ));
+        }
+        workflow.setEnabled( false );
+        workflow.setCreationDate( WorkflowUtils.getCurrentTimestamp( ) );
+        
+        _workflowService.create( workflow );
+        
+        return workflow.getId( );
+    }
+    
+    private void importStates( int newIdWf, List<State> stateList, List<Action> actionList )
+    {
+        Map<Integer, Integer> mapIdStates = new HashMap<>( );
+        
+        for ( State state : stateList )
+        {
+            int oldId = state.getId( );
+            state.getWorkflow( ).setId( newIdWf );
+            _stateService.create( state );
+            
+            int newId = state.getId( );
+            mapIdStates.put( oldId, newId );
+        }
+        
+        updateActionWithStateAndWf( newIdWf, actionList, mapIdStates );
+    }
+    
+    private void updateActionWithStateAndWf( int newIdWf, List<Action> actionList, Map<Integer, Integer> mapIdStates )
+    {
+        for ( Action action : actionList )
+        {
+            action.getWorkflow( ).setId( newIdWf );
+            action.getStateAfter( ).setId( mapIdStates.get( action.getStateAfter( ).getId( ) ) );
+            action.getStateBefore( ).setId( mapIdStates.get( action.getStateBefore( ).getId( ) ) );
+        }
+    }
+    
+    private void importActions( List<Action> actionList, List<ITask> taskList, List<Prerequisite> prerequisiteList )
+    {
+        Map<Integer, Integer> mapIdActions = new HashMap<>( );
+        
+        for ( Action action : actionList )
+        {
+            int oldId = action.getId( );
+            _actionService.create( action );
+            
+            int newId = action.getId( );
+            mapIdActions.put( oldId, newId );
+        }
+        
+        // Update Linked Actions
+        for ( Action action : actionList )
+        {
+            Collection<Integer> listOldId = action.getListIdsLinkedAction( );
+            
+            if ( CollectionUtils.isNotEmpty( listOldId ) )
+            {
+                Collection<Integer> listNewId = listOldId.stream( ).map( i -> mapIdActions.get( i ) ).collect( Collectors.toList( ) );
+                action.setListIdsLinkedAction( listNewId );
+                _actionService.update( action );
+            }
+        }
+        
+        updateTaskWithActions( taskList, mapIdActions );
+        updatePrerequisiteWithActions( prerequisiteList, mapIdActions );
+    }
+    
+    private void updateTaskWithActions( List<ITask> taskList, Map<Integer, Integer> mapIdActions )
+    {
+        for ( ITask task : taskList )
+        {
+            task.getAction( ).setId( mapIdActions.get( task.getAction( ).getId( ) ) );
+        }
+    }
+    
+    private void updatePrerequisiteWithActions( List<Prerequisite> prerequisiteList, Map<Integer, Integer> mapIdActions )
+    {
+        for ( Prerequisite prerequisite : prerequisiteList )
+        {
+            prerequisite.setIdAction( mapIdActions.get( prerequisite.getIdAction( ) ) );
+        }
+    }
+    
+    private void importTasks( List<ITask> taskList )
+    {
+        for ( ITask task : taskList )
+        {
+            _taskService.create( task );
+        }
+    }
+    
+    private void importPrerequisites( List<Prerequisite> prerequisiteList )
+    {
+        for ( Prerequisite prerequisite : prerequisiteList )
+        {
+            _prerequisiteManagementService.createPrerequisite( prerequisite );
+            
+        }
     }
 }

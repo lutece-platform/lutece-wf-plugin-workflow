@@ -54,7 +54,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
@@ -193,7 +194,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_ITEM_PER_PAGE = "workflow.itemsPerPage";
     private static final String PROPERTY_COPY_OF_STATE = "workflow.manage_workflow.copy_of_state";
     private static final String PROPERTY_COPY_OF_ACTION = "workflow.manage_workflow.copy_of_action";
-    private static final String PROPERTY_COPY_OF_WORKFLOW = "workflow.manage_workflow.copy_of_workflow";
     private static final String PROPERTY_ALL = "workflow.manage_workflow.select.all";
     private static final String PROPERTY_YES = "workflow.manage_workflow.select.yes";
     private static final String PROPERTY_NO = "workflow.manage_workflow.select.no";
@@ -2295,112 +2295,21 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCopyWorkflow( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
-        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
-        int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
-        Map<Integer, Integer> mapIdStates = new HashMap<>( );
-        Map<Integer, Integer> mapIdActions = new HashMap<>( );
+        int nId = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_WORKFLOW ) );
 
-        Workflow workflowToCopy = _workflowService.findByPrimaryKey( nIdWorkflow );
-
-        if ( workflowToCopy != null )
+        if ( nId == -1 )
         {
-            String newNameForCopy = I18nService.getLocalizedString( PROPERTY_COPY_OF_WORKFLOW, request.getLocale( ) ) + workflowToCopy.getName( );
-            workflowToCopy.setName( newNameForCopy );
-
-            _workflowService.create( workflowToCopy );
-
-            // get all the states of the workflow to copy
-            List<State> listStatesOfWorkflow = (List<State>) _workflowService.getAllStateByWorkflow( nIdWorkflow );
-
-            for ( State state : listStatesOfWorkflow )
-            {
-                state.setWorkflow( workflowToCopy );
-
-                // get the maximum order number in this workflow and set max+1
-                int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( state.getWorkflow( ).getId( ) );
-                state.setOrder( nMaximumOrder + 1 );
-
-                // Save state to copy id
-                Integer nOldIdState = state.getId( );
-
-                // Create new state (this action will change state id with the
-                // new idState)
-                _stateService.create( state );
-
-                mapIdStates.put( nOldIdState, state.getId( ) );
-            }
-
-            // get all the actions of the workflow to copy
-            ActionFilter automaticReflexiveActionFilter = new ActionFilter( );
-            automaticReflexiveActionFilter.setIdWorkflow( nIdWorkflow );
-            automaticReflexiveActionFilter.setAutomaticReflexiveAction( true );
-
-            List<Action> listAutomaticReflexiveActionsOfWorkflow = _actionService.getListActionByFilter( automaticReflexiveActionFilter );
-
-            // get all the actions of the workflow to copy
-            ActionFilter actionFilter = new ActionFilter( );
-            actionFilter.setIdWorkflow( nIdWorkflow );
-
-            List<Action> listActionsOfWorkflow = _actionService.getListActionByFilter( actionFilter );
-            listActionsOfWorkflow.addAll( listAutomaticReflexiveActionsOfWorkflow );
-
-            for ( Action action : listActionsOfWorkflow )
-            {
-                action.setWorkflow( workflowToCopy );
-
-                // get the maximum order number in this workflow and set max+1
-                int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( action.getWorkflow( ).getId( ) );
-                action.setOrder( nMaximumOrder + 1 );
-
-                // Change idState to set the new state
-                action.getStateBefore( ).setId( mapIdStates.get( action.getStateBefore( ).getId( ) ) );
-                action.getStateAfter( ).setId( mapIdStates.get( action.getStateAfter( ).getId( ) ) );
-
-                int nOldIdAction = action.getId( );
-
-                // get the linked tasks and duplicate them
-                List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId( ), this.getLocale( ) );
-
-                _actionService.create( action );
-
-                mapIdActions.put( nOldIdAction, action.getId( ) );
-
-                for ( ITask task : listLinkedTasks )
-                {
-                    // for each we change the linked action
-                    task.setAction( action );
-
-                    // and then we create the new task duplicated
-                    this.doCopyTaskWithModifiedParam( task, null );
-                }
-            }
-
-            // get all the linked actions
-            automaticReflexiveActionFilter = new ActionFilter( );
-            automaticReflexiveActionFilter.setIdWorkflow( workflowToCopy.getId( ) );
-            automaticReflexiveActionFilter.setAutomaticReflexiveAction( true );
-
-            List<Action> listAutomaticReflexiveActionsOfNewWorkflow = _actionService.getListActionByFilter( automaticReflexiveActionFilter );
-
-            // get all the linked actions
-            actionFilter = new ActionFilter( );
-            actionFilter.setIdWorkflow( workflowToCopy.getId( ) );
-
-            List<Action> listActionsOfNewWorkflow = _actionService.getListActionByFilter( actionFilter );
-            listActionsOfNewWorkflow.addAll( listAutomaticReflexiveActionsOfNewWorkflow );
-
-            for ( Action action : listActionsOfNewWorkflow )
-            {
-                List<Integer> newListIdsLinkedAction = new ArrayList<>( );
-
-                for ( Integer nIdActionLinked : action.getListIdsLinkedAction( ) )
-                {
-                    newListIdsLinkedAction.add( mapIdActions.get( nIdActionLinked ) );
-                }
-
-                action.setListIdsLinkedAction( newListIdsLinkedAction );
-                _actionService.update( action );
-            }
+            return getJspManageWorkflow( request );
+        }
+        
+        try
+        {
+            String json = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
+            WorkflowJsonService.getInstance( ).jsonImportWorkflow( json, getLocale( ) );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.debug( e.getMessage( ) );
         }
 
         return getJspManageWorkflow( request );
@@ -2753,7 +2662,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public void doExportWorkflow( HttpServletRequest request, HttpServletResponse response )
     {
-        int nId = NumberUtils.toInt( request.getParameter( PARAMETER_ID_WORKFLOW ), -1 );
+        int nId = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_WORKFLOW ) );
 
         if ( nId == -1 )
         {
