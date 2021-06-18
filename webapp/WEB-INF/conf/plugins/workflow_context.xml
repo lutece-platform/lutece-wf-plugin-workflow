@@ -86,6 +86,8 @@
         p:taskConfigDAO-ref="workflow.chooseStateTaskConfigDao" />
     <bean id="workflow.changeStateTaskConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
         p:taskConfigDAO-ref="workflow.changeStateTaskConfigDao" />
+    <bean id="workflow.changeStateTaskService" 
+        class="fr.paris.lutece.plugins.workflow.modules.state.service.ChangeStateTaskService" />
         
     <!-- Provider -->
     <bean id="workflow.workflowProvider"
@@ -244,4 +246,14 @@
     <bean id="workflow.chooseStateTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.state.web.ChooseStateTaskComponent"
         p:taskType-ref="workflow.chooseStateTaskType"
         p:taskConfigService-ref="workflow.chooseStateTaskConfigService" />
+        
+   <!-- Change Task -->
+    <bean id="workflow.changeStateTaskConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfig"
+        scope="prototype" />
+
+    <bean id="workflow.changeStateTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.state.web.ChangeStateTaskComponent"
+        p:taskType-ref="workflow.changeStateTaskType"
+        p:taskConfigService-ref="workflow.changeStateTaskConfigService" />
 </beans>

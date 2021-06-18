@@ -1,0 +1,13 @@
+<#assign idNextState = -1>
+<#if config?exists>
+	<#assign idNextState = config.idNextState>
+</#if>
+<@row>
+	<@columns sm=12 md=12 lg=12 >
+		<@fieldSet legend='#i18n{module.workflow.state.task.change.state.config.title}'>
+			<div class="controls">
+				<@comboWithParams name="idNextState" default_value=idNextState?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
+			</div>
+		</@fieldSet>
+	</@columns>
+</@row>

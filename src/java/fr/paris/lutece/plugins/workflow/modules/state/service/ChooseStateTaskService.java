@@ -33,13 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformation;
@@ -49,21 +46,17 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
-import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
-import fr.paris.lutece.util.ReferenceList;
 
 /**
  * Implements IChooseStateTaskService
  */
-public class ChooseStateTaskService implements IChooseStateTaskService
+public class ChooseStateTaskService extends AbstractStateTaskService implements IChooseStateTaskService
 {
 
     private static final String USER_AUTO = "auto";
@@ -75,34 +68,8 @@ public class ChooseStateTaskService implements IChooseStateTaskService
     private IResourceWorkflowService _resourceWorkflowService;
 
     @Inject
-    private IActionService _actionService;
-
-    @Inject
-    private IStateService _stateService;
-
-    @Inject
     @Named( "workflow.chooseStateTaskConfigService" )
     private ITaskConfigService _taskConfigService;
-
-    @Override
-    public ReferenceList getListStates( int nIdAction )
-    {
-        ReferenceList referenceListStates = new ReferenceList( );
-        Action action = _actionService.findByPrimaryKey( nIdAction );
-
-        if ( ( action != null ) && ( action.getWorkflow( ) != null ) )
-        {
-            StateFilter stateFilter = new StateFilter( );
-            stateFilter.setIdWorkflow( action.getWorkflow( ).getId( ) );
-
-            List<State> listStates = _stateService.getListStateByFilter( stateFilter );
-
-            referenceListStates.addItem( -1, StringUtils.EMPTY );
-            referenceListStates.addAll( ReferenceList.convert( listStates, "id", "name", true ) );
-        }
-
-        return referenceListStates;
-    }
 
     @Override
     public ChooseStateTaskConfig loadConfig( ITask task )
