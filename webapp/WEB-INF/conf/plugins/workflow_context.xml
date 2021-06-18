@@ -42,6 +42,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfigDao" />
     <bean id="workflow.chooseStateTaskInformationDao" 
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformationDAO" />
+    <bean id="workflow.changeStateTaskConfigDao" 
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfigDao" />
     
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"
@@ -77,9 +79,11 @@
     <bean id="workflow.prerequisiteManagementService"
         class="fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService" />
     <bean id="workflow.chooseStateTaskService" 
-    class="fr.paris.lutece.plugins.workflow.modules.state.service.ChooseStateTaskService" />
+        class="fr.paris.lutece.plugins.workflow.modules.state.service.ChooseStateTaskService" />
     <bean id="workflow.chooseStateTaskConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
         p:taskConfigDAO-ref="workflow.chooseStateTaskConfigDao" />
+    <bean id="workflow.changeStateTaskConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
+        p:taskConfigDAO-ref="workflow.changeStateTaskConfigDao" />
         
     <!-- Provider -->
     <bean id="workflow.workflowProvider"
