@@ -44,6 +44,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformationDAO" />
     <bean id="workflow.changeStateTaskConfigDao" 
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfigDao" />
+    <bean id="workflow.changeStateTaskInformationDao" 
+        class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskInformationDAO" />
     
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"

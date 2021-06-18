@@ -4,3 +4,10 @@ CREATE TABLE workflow_task_change_state_config (
 	 id_next_state INT NOT NULL,
 	 id_state_ko INT NOT NULL,
 );
+
+DROP TABLE IF EXISTS workflow_task_change_state_information;
+CREATE TABLE workflow_task_change_state_information (
+  id_history INT NOT NULL,
+  id_task INT NOT NULL,
+  new_state VARCHAR(255) NOT NULL
+);
