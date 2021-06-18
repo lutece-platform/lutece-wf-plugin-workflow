@@ -248,9 +248,19 @@
         p:taskConfigService-ref="workflow.chooseStateTaskConfigService" />
         
    <!-- Change Task -->
+    <bean id="workflow.changeStateTask"
+        class="fr.paris.lutece.plugins.workflow.modules.state.service.ChangeStateTask" scope="prototype" />
     <bean id="workflow.changeStateTaskConfig"
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfig"
         scope="prototype" />
+        
+    <bean id="workflow.changeStateTaskType" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+            p:key="changeStateTask"
+            p:titleI18nKey="module.workflow.state.task.change.state.title"
+            p:beanName="workflow.changeStateTask"
+            p:configBeanName="workflow.changeStateTaskConfig"
+            p:configRequired="true"
+            p:taskForAutomaticAction="true" />
 
     <bean id="workflow.changeStateTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.state.web.ChangeStateTaskComponent"

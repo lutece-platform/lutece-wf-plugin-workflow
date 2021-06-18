@@ -33,39 +33,21 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
-import java.util.Locale;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformationHome;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
  * Implements IChooseStateTaskService
  */
 public class ChooseStateTaskService extends AbstractStateTaskService implements IChooseStateTaskService
 {
-
-    private static final String USER_AUTO = "auto";
-
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
-
-    @Inject
-    private IResourceWorkflowService _resourceWorkflowService;
 
     @Inject
     @Named( "workflow.chooseStateTaskConfigService" )
@@ -121,37 +103,8 @@ public class ChooseStateTaskService extends AbstractStateTaskService implements 
         }
     }
 
-    private void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
-    {
-        Locale locale = I18nService.getDefaultLocale( );
-        State state = _stateService.findByPrimaryKey( newState );
-        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
-
-        if ( state != null && action != null )
-        {
-
-            // Create Resource History
-            ResourceHistory resourceHistory = new ResourceHistory( );
-            resourceHistory.setIdResource( nIdResource );
-            resourceHistory.setResourceType( strResourceType );
-            resourceHistory.setAction( action );
-            resourceHistory.setWorkFlow( action.getWorkflow( ) );
-            resourceHistory.setCreationDate( WorkflowUtils.getCurrentTimestamp( ) );
-            resourceHistory.setUserAccessCode( USER_AUTO );
-            _resourceHistoryService.create( resourceHistory );
-
-            // Update Resource
-            ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
-            resourceWorkflow.setState( state );
-            _resourceWorkflowService.update( resourceWorkflow );
-            saveTaskInformation( resourceHistory.getId( ), task, state );
-            // Execute the relative tasks of the state in the workflow
-            // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
-            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
-        }
-    }
-
-    private void saveTaskInformation( int nIdResourceHistory, ITask task, State state )
+    @Override
+    protected void saveTaskInformation( int nIdResourceHistory, ITask task, State state )
     {
         ChooseStateTaskInformation taskInformation = new ChooseStateTaskInformation( );
         taskInformation.setIdHistory( nIdResourceHistory );
@@ -159,17 +112,5 @@ public class ChooseStateTaskService extends AbstractStateTaskService implements 
         taskInformation.setNewState( state.getName( ) );
 
         ChooseStateTaskInformationHome.create( taskInformation );
-    }
-
-    @Override
-    public ResourceWorkflow getResourceByHistory( int nIdHistory, int nIdWorkflow )
-    {
-        ResourceWorkflow resourceWorkflow = null;
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        if ( resourceHistory != null )
-        {
-            resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( resourceHistory.getIdResource( ), resourceHistory.getResourceType( ), nIdWorkflow );
-        }
-        return resourceWorkflow;
     }
 }
