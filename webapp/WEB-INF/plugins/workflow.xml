@@ -98,6 +98,12 @@
             <daemon-description>module.workflow.state.chooseStateActionDaemon.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.state.daemon.ChooseStateDaemon</daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>changeStateDaemon</daemon-id>
+            <daemon-name>module.workflow.state.changeStateDaemon.name</daemon-name>
+            <daemon-description>module.workflow.state.changeStateDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.state.daemon.ChangeStateDaemon</daemon-class>
+        </daemon>
     </daemons>
 
 </plug-in>
