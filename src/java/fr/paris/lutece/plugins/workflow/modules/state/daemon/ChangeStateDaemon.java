@@ -106,7 +106,8 @@ public class ChangeStateDaemon extends Daemon
                 {
                     try
                     {
-                        _changeStateTaskService.doChangeState( task, resource.getIdResource( ), resource.getResourceType( ), workflow.getId( ), config.getIdNextState( ) );
+                        _changeStateTaskService.doChangeState( task, resource.getIdResource( ), resource.getResourceType( ), workflow.getId( ),
+                                config.getIdNextState( ) );
                     }
                     catch( Exception e )
                     {
