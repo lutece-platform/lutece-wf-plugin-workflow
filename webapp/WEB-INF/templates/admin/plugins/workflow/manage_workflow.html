@@ -7,6 +7,7 @@
 					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' />
 				</#if>
 				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' size='sm' />
+				<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
 			</@boxHeader>
 			<@boxBody>
 				<@paginationAdmin paginator=paginator combo=1 />
@@ -53,3 +54,17 @@
 		</@box>
 	</@columns>
 </@row>
+<@modal id='importJsonModal'>
+	<@modalHeader modalTitle='#i18n{workflow.manage_workflow.buttonImport}' />
+	<@modalBody>
+		<@tform class='form' method='post' name='upload_workflow' action='jsp/admin/plugins/workflow/DoImportWorkflow.jsp' params='enctype="multipart/form-data"'>
+			<@formGroup labelKey='#i18n{workflow.manage_workflow.labelImportFile}' helpKey='#i18n{workflow.manage_workflow.labelImportFile.help}' rows=2>
+				<@input type='file' name='json_file'/>
+			</@formGroup>
+			<@formGroup>
+				<@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+				<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
+			</@formGroup>
+		</@tform>
+	</@modalBody>
+</@modal>

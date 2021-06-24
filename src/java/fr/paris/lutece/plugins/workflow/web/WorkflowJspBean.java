@@ -52,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -108,6 +109,7 @@ import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.file.FileUtil;
@@ -181,6 +183,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_SELECT_LINKED_ACTIONS = "select_linked_actions";
     private static final String PARAMETER_UNSELECT_LINKED_ACTIONS = "unselect_linked_actions";
     private static final String PARAMETER_PANE = "pane";
+    private static final String PARAMETER_JSON_FILE = "json_file";
 
     // properties
     private static final String PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE = "workflow.manage_workflow.page_title";
@@ -2682,5 +2685,20 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             AppLogService.error( e.getMessage( ), e );
         }
+    }
+    
+    public String doImportWorkflow( HttpServletRequest request )
+    {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        try
+        {
+            WorkflowJsonService.getInstance( ).jsonImportWorkflow( new String( fileItem.get( ) ), getLocale( ) );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.error( e.getMessage( ) );
+        }
+        return getJspManageWorkflow( request );
     }
 }
