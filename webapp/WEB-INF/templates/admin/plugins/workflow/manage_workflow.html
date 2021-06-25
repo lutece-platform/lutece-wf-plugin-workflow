@@ -38,7 +38,7 @@
 							<@td>
 								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 								<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='download' title='#i18n{workflow.manage_workflow.title_export}' size='sm' />
-								<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
+								<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
 								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
 								<#if workflow.enabled>
 									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
@@ -57,7 +57,7 @@
 <@modal id='importJsonModal'>
 	<@modalHeader modalTitle='#i18n{workflow.manage_workflow.buttonImport}' />
 	<@modalBody>
-		<@tform class='form' method='post' name='upload_workflow' action='jsp/admin/plugins/workflow/DoImportWorkflow.jsp' params='enctype="multipart/form-data"'>
+		<@tform class='form' method='post' name='upload_workflow' action='jsp/admin/plugins/workflow/ConfirmImportWorkflow.jsp' params='enctype="multipart/form-data"'>
 			<@formGroup labelKey='#i18n{workflow.manage_workflow.labelImportFile}' helpKey='#i18n{workflow.manage_workflow.labelImportFile.help}' rows=2>
 				<@input type='file' name='json_file'/>
 			</@formGroup>

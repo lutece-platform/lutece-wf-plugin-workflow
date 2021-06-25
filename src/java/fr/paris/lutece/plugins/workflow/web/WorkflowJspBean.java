@@ -137,6 +137,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String JSP_DO_REMOVE_WORKFLOW = "jsp/admin/plugins/workflow/DoRemoveWorkflow.jsp";
     private static final String JSP_DO_REMOVE_STATE = "jsp/admin/plugins/workflow/DoRemoveState.jsp";
     private static final String JSP_DO_REMOVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveAction.jsp";
+    private static final String JSP_DO_COPY_WORKFLOW = "jsp/admin/plugins/workflow/DoCopyWorkflow.jsp";
+    private static final String JSP_DO_IMPORT_WORKFLOW = "jsp/admin/plugins/workflow/DoImportWorkflow.jsp";
     private static final String JSP_DO_REMOVE_TASK = "jsp/admin/plugins/workflow/DoRemoveTask.jsp";
     private static final String JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveTaskFromReflexiveAction.jsp";
     private static final String JSP_MANAGE_WORKFLOW = "jsp/admin/plugins/workflow/ManageWorkflow.jsp";
@@ -256,6 +258,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_STATE = "workflow.message.confirm_remove_state";
     private static final String MESSAGE_CONFIRM_REMOVE_ACTION = "workflow.message.confirm_remove_action";
     private static final String MESSAGE_CONFIRM_REMOVE_TASK = "workflow.message.confirm_remove_task";
+    private static final String MESSAGE_CONFIRM_COPY_WORKFLOW = "workflow.message.confirm_copy_workflow";
     private static final String MESSAGE_INITIAL_STATE_ALREADY_EXIST = "workflow.message.initial_state_already_exist";
     private static final String MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE = "workflow.message.can_not_remove_state_actions_are_associate";
     private static final String MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE = "workflow.message.can_not_remove_state_tasks_are_associate";
@@ -271,6 +274,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
     private static final String LOG_WORKFLOW_NOT_FOUND = "Workflow not found for ID ";
+    
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndexWorkflow;
@@ -289,7 +293,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
     private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
     private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
-
+    private FileItem _importWorkflowFile;
+    
+    
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
     /**
@@ -2317,7 +2323,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         return getJspManageWorkflow( request );
     }
-
+    
+    public String getConfirmCopyWorkflow( HttpServletRequest request )
+    {
+        UrlItem url = new UrlItem( JSP_DO_COPY_WORKFLOW );
+        url.addParameter( PARAMETER_ID_WORKFLOW, request.getParameter( PARAMETER_ID_WORKFLOW ) );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+    
     /**
      * Copy an action
      * 
@@ -2687,17 +2700,30 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
     }
     
-    public String doImportWorkflow( HttpServletRequest request )
+    public String getConfirmImportWorkflow( HttpServletRequest request )
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        _importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
+        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+    
+    public String doImportWorkflow( HttpServletRequest request )
+    {
         try
         {
-            WorkflowJsonService.getInstance( ).jsonImportWorkflow( new String( fileItem.get( ) ), getLocale( ) );
+            if ( _importWorkflowFile != null )
+            {
+                WorkflowJsonService.getInstance( ).jsonImportWorkflow( new String( _importWorkflowFile.get( ) ), getLocale( ) );
+            }
         }
         catch( JsonProcessingException e )
         {
             AppLogService.error( e.getMessage( ) );
+        }
+        finally
+        {
+            _importWorkflowFile = null;
         }
         return getJspManageWorkflow( request );
     }
