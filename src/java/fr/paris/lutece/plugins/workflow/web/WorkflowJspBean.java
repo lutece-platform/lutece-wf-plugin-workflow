@@ -274,7 +274,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
     private static final String LOG_WORKFLOW_NOT_FOUND = "Workflow not found for ID ";
-    
+
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndexWorkflow;
@@ -294,8 +294,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
     private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
     private FileItem _importWorkflowFile;
-    
-    
+
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
     /**
@@ -2310,7 +2309,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             return getJspManageWorkflow( request );
         }
-        
+
         try
         {
             String json = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
@@ -2323,14 +2322,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         return getJspManageWorkflow( request );
     }
-    
+
     public String getConfirmCopyWorkflow( HttpServletRequest request )
     {
         UrlItem url = new UrlItem( JSP_DO_COPY_WORKFLOW );
         url.addParameter( PARAMETER_ID_WORKFLOW, request.getParameter( PARAMETER_ID_WORKFLOW ) );
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
-    
+
     /**
      * Copy an action
      * 
@@ -2671,9 +2670,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         return _actionService.getListActionByFilter( filter );
     }
-    
+
     /**
      * Export Workflow as Json
+     * 
      * @param request
      */
     public void doExportWorkflow( HttpServletRequest request, HttpServletResponse response )
@@ -2684,13 +2684,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             return;
         }
-        
+
         String content;
         try ( OutputStream os = response.getOutputStream( ) )
         {
             content = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
             Workflow workflow = _workflowService.findByPrimaryKey( nId );
-            
+
             MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( workflow.getName( ) ) + ".json", "application/json" );
             os.write( content.getBytes( ) );
         }
@@ -2699,15 +2699,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             AppLogService.error( e.getMessage( ), e );
         }
     }
-    
+
     public String getConfirmImportWorkflow( HttpServletRequest request )
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         _importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
         UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
-        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ),
+                AdminMessage.TYPE_CONFIRMATION );
     }
-    
+
     public String doImportWorkflow( HttpServletRequest request )
     {
         try

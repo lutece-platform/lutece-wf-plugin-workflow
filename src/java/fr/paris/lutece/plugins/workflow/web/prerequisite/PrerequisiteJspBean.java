@@ -265,7 +265,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         {
             config = _prerequisiteManagementService.getPrerequisiteConfiguration( nIdPrerequisite, service );
         }
-        
+
         if ( config == null )
         {
             config = service.getEmptyConfiguration( );
@@ -300,7 +300,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
 
             IPrerequisiteConfig config = _prerequisiteManagementService.getPrerequisiteConfiguration( nIdPrerequisite, service );
-            
+
             if ( config == null )
             {
                 config = service.getEmptyConfiguration( );
@@ -308,7 +308,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
                 config.setPrerequisiteType( prerequisite.getPrerequisiteType( ) );
                 _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
             }
-            
+
             BeanUtil.populate( config, request );
 
             Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = validate( config );
