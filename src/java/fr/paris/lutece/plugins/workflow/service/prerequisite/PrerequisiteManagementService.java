@@ -99,26 +99,13 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         return getPrerequisiteDao( ).findByIdAction( nIdAction, getPlugin( ) );
     }
 
-    /**
-     * Get a prerequisite by its primary key
-     * 
-     * @param nIdPrerequisite
-     *            the id of the prerequisite
-     * @return The prerequisite, or null if no prerequisite was found
-     */
+    @Override
     public Prerequisite findPrerequisite( int nIdPrerequisite )
     {
         return getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
     }
 
-    /**
-     * Create a prerequisite configuration
-     * 
-     * @param config
-     *            The configuration to insert
-     * @param prerequisiteService
-     *            the prerequisite service
-     */
+    @Override
     public void createPrerequisiteConfiguration( IPrerequisiteConfig config, IAutomaticActionPrerequisiteService prerequisiteService )
     {
         IPrerequisiteConfigDAO configDAO = getConfigurationDAO( prerequisiteService );
@@ -182,34 +169,19 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         return refList;
     }
 
-    /**
-     * Create a new prerequisite
-     * 
-     * @param prerequisite
-     *            the prerequisite to create
-     */
+   @Override
     public void createPrerequisite( Prerequisite prerequisite )
     {
         getPrerequisiteDao( ).create( prerequisite, getPlugin( ) );
     }
 
-    /**
-     * Modify a prerequisite
-     * 
-     * @param prerequisite
-     *            the prerequisite to update
-     */
+    @Override
     public void modifyPrerequisite( Prerequisite prerequisite )
     {
         getPrerequisiteDao( ).update( prerequisite, getPlugin( ) );
     }
 
-    /**
-     * Delete a prerequisite and the underlying prerequisite configuration
-     * 
-     * @param nIdPrerequisite
-     *            The id of the prerequisite to remove
-     */
+    @Override
     public void deletePrerequisite( int nIdPrerequisite )
     {
         Prerequisite prerequisite = getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
@@ -277,14 +249,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         return SpringContextService.getBean( strDaoBeanName );
     }
 
-    /**
-     * Copy the prerequisites from an action to another.
-     * 
-     * @param nIdActionSource
-     *            the id of the source action
-     * @param nIdActionTarget
-     *            the id of the targetr action
-     */
+   @Override
     public void copyPrerequisite( int nIdActionSource, int nIdActionTarget )
     {
         List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdActionSource );
@@ -305,12 +270,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         }
     }
 
-    /**
-     * Delete all the prerequisites of an action.
-     * 
-     * @param nIdAction
-     *            id of the action
-     */
+    @Override
     public void deletePrerequisiteByAction( int nIdAction )
     {
         List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdAction );

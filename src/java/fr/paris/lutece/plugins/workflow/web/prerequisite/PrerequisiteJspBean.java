@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagem
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -80,7 +81,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String JSP_URL_DO_REMOVE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/DoRemovePrerequisite.jsp";
     private static final String SESSION_ERRORS = "workflow.prerequisite.session.errors";
     private static final String SESSION_CONFIG = "workflow.prerequisite.session.config";
-    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     /**
      * Creates a new prerequisite. If the prerequisite needs to display a configuration form, then the form is returned. Otherwise, redirects the user to the

@@ -59,6 +59,7 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -81,7 +82,7 @@ public class WorkflowJsonService
     private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
     private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     private WorkflowJsonService( )
     {

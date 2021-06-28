@@ -83,6 +83,7 @@ import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -292,7 +293,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
     private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
     private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
-    private PrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
     private FileItem _importWorkflowFile;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
@@ -1337,7 +1338,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_PLUGIN, getPlugin( ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_LIST_PREREQUISITE, listPrerequisiteDTO );
-        model.put( MARK_LIST_PREREQUISITE_TYPE, _prerequisiteManagementService.getPrerequisiteServiceRefList( getLocale( ) ) );
+        model.put( MARK_LIST_PREREQUISITE_TYPE, getPrerequisiteServiceRefList( getLocale( ) ) );
 
         boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale( ) );
         model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
@@ -1352,6 +1353,25 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
+    }
+    
+    /**
+     * Get the list of prerequisites services
+     * 
+     * @param locale
+     *            The locale
+     * @return The list of prerequisite services
+     */
+    private ReferenceList getPrerequisiteServiceRefList( Locale locale )
+    {
+        ReferenceList refList = new ReferenceList( );
+
+        for ( IAutomaticActionPrerequisiteService service : _prerequisiteManagementService.getPrerequisiteServiceList( ) )
+        {
+            refList.addItem( service.getPrerequisiteType( ), I18nService.getLocalizedString( service.getTitleI18nKey( ), locale ) );
+        }
+
+        return refList;
     }
 
     /**
