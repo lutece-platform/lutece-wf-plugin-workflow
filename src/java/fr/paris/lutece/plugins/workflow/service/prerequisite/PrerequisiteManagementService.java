@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.service.prerequisite;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -46,11 +45,9 @@ import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteC
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.util.ReferenceList;
 
 /**
  * Implementation of the prerequisite management service
@@ -116,14 +113,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         }
     }
 
-    /**
-     * Update a prerequisite configuration
-     * 
-     * @param config
-     *            The configuration to insert
-     * @param prerequisiteService
-     *            the prerequisite service
-     */
+    @Override
     public void updatePrerequisiteConfiguration( IPrerequisiteConfig config, IAutomaticActionPrerequisiteService prerequisiteService )
     {
         IPrerequisiteConfigDAO configDAO = getConfigurationDAO( prerequisiteService );
@@ -148,25 +138,6 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         }
 
         return configDAO.findByPrimaryKey( nIdPrerequisite );
-    }
-
-    /**
-     * Get the list of prerequisites services
-     * 
-     * @param locale
-     *            The locale
-     * @return The list of prerequisite services
-     */
-    public ReferenceList getPrerequisiteServiceRefList( Locale locale )
-    {
-        ReferenceList refList = new ReferenceList( );
-
-        for ( IAutomaticActionPrerequisiteService service : getPrerequisiteServiceList( ) )
-        {
-            refList.addItem( service.getPrerequisiteType( ), I18nService.getLocalizedString( service.getTitleI18nKey( ), locale ) );
-        }
-
-        return refList;
     }
 
    @Override
