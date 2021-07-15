@@ -1354,7 +1354,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         return getAdminPage( template.getHtml( ) );
     }
-    
+
     /**
      * Get the list of prerequisites services
      * 

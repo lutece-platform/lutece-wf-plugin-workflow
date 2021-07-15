@@ -140,7 +140,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         return configDAO.findByPrimaryKey( nIdPrerequisite );
     }
 
-   @Override
+    @Override
     public void createPrerequisite( Prerequisite prerequisite )
     {
         getPrerequisiteDao( ).create( prerequisite, getPlugin( ) );
@@ -220,7 +220,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
         return SpringContextService.getBean( strDaoBeanName );
     }
 
-   @Override
+    @Override
     public void copyPrerequisite( int nIdActionSource, int nIdActionTarget )
     {
         List<Prerequisite> listLinkedPrerequisite = getListPrerequisite( nIdActionSource );
