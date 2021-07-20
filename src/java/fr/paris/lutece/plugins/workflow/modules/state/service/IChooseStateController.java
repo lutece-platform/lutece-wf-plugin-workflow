@@ -33,6 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+
 public interface IChooseStateController
 {
 
@@ -62,5 +69,48 @@ public interface IChooseStateController
      * 
      * @return
      */
-    boolean control( int nIdResource, String strResourceType );
+    boolean control( ITask task, int nIdResource, String strResourceType );
+    
+    /**
+     * Indicates if this controller need a config.
+     * @return
+     */
+    default boolean hasConfig( )
+    {
+        return false;
+    }
+    
+    /**
+     * Returns the informations which must be displayed in the configuration
+     * 
+     * @param request
+     *            request
+     * @param locale
+     *            locale
+     * @param config
+     *            the taskconfig
+     * @return the information which must be displayed in the task configuration
+     */
+    default String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITaskConfig config )
+    {
+        return null;
+    }
+    
+    /**
+     * Process the action during the configuration of the task.
+     * @param request
+     * @param locale
+     * @param config
+     */
+    default void doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+    }
+    
+    /**
+     * Delete controller custom config.
+     * @param task
+     */
+    default void doRemoveConfig( ITask task )
+    {
+    }
 }

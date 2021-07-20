@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformationHome;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
@@ -51,6 +52,9 @@ public class ChooseStateTask extends SimpleTask
     @Inject
     @Named( "workflow.chooseStateTaskConfigService" )
     private ITaskConfigService _chooseStateTaskConfigService;
+    
+    @Inject
+    private IChooseStateTaskService _chooseStateTaskService;
 
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -73,6 +77,12 @@ public class ChooseStateTask extends SimpleTask
     @Override
     public void doRemoveConfig( )
     {
+        ChooseStateTaskConfig config = _chooseStateTaskService.loadConfig( this );
+        IChooseStateController controller = _chooseStateTaskService.getController( config );
+        if ( controller != null && controller.hasConfig( ) )
+        {
+            controller.doRemoveConfig( this );
+        }
         _chooseStateTaskConfigService.remove( getId( ) );
     }
 }

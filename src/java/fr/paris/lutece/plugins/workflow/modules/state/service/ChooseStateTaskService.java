@@ -66,7 +66,8 @@ public class ChooseStateTaskService extends AbstractStateTaskService implements 
         return config;
     }
 
-    private IChooseStateController getController( ChooseStateTaskConfig config )
+    @Override
+    public IChooseStateController getController( ChooseStateTaskConfig config )
     {
         for ( IChooseStateController controller : getControllerList( ) )
         {
@@ -88,7 +89,7 @@ public class ChooseStateTaskService extends AbstractStateTaskService implements 
         }
 
         int newState = -1;
-        if ( controller.control( nIdResource, strResourceType ) )
+        if ( controller.control( task, nIdResource, strResourceType ) )
         {
             newState = config.getIdStateOK( );
         }
