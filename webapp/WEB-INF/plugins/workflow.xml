@@ -2,9 +2,8 @@
 
     <!-- Plugin Informations -->
     <name>workflow</name>
-    <class>fr.paris.lutece.plugins.workflow.service.WorkflowPlugin
-    </class>
-    <version>5.2.1</version>
+    <class>fr.paris.lutece.plugins.workflow.service.WorkflowPlugin</class>
+    <version>5.2.2-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
