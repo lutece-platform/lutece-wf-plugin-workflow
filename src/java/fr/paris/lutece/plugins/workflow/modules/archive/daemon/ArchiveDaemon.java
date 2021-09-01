@@ -66,7 +66,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 
 public class ArchiveDaemon extends Daemon
 {
-    private TaskArchive _taskArchive = SpringContextService.getBean( "workflow.taskArchive" );
     private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
     private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
@@ -119,7 +118,7 @@ public class ArchiveDaemon extends Daemon
                     }
                     for ( ResourceWorkflow resourceWorkflow : listResource )
                     {
-                        _taskArchive.doArchiveResource( resourceWorkflow, config );
+                        ( (TaskArchive) task ).doArchiveResource( resourceWorkflow, config );
                     }
                 }
             }
