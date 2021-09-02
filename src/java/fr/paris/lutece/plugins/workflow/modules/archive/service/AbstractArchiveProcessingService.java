@@ -33,16 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
-import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
@@ -58,25 +55,9 @@ public abstract class AbstractArchiveProcessingService implements IArchiveProces
     @Inject
     protected ITaskService _taskService;
 
-    /**
-     * Search for all Tasks of the given history (with the currect task type).
-     * 
-     * @param history
-     * @return
-     */
-    protected List<ITask> findTasksByHistory( ResourceHistory history, String taskType )
+    protected List<ITask> getAllTaskByHistory( ResourceHistory history )
     {
-        List<ITask> result = new ArrayList<>( );
-        List<ITask> allTasks = _taskService.getListTaskByIdAction( history.getAction( ).getId( ), Locale.getDefault( ) );
-        for ( ITask task : allTasks )
-        {
-            String currentType = Optional.ofNullable( task ).map( ITask::getTaskType ).map( ITaskType::getKey ).orElse( null );
-            if ( taskType.equals( currentType ) )
-            {
-                result.add( task );
-            }
-        }
-        return result;
+        return _taskService.getListTaskByIdAction( history.getAction( ).getId( ), Locale.getDefault( ) );
     }
 
     protected List<ResourceHistory> getListHistoryByResource( ResourceWorkflow resourceWorkflow )

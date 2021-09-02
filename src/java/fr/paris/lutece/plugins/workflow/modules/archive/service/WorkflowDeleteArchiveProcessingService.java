@@ -38,9 +38,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import fr.paris.lutece.plugins.workflow.modules.assignment.service.IAssignmentHistoryService;
-import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
@@ -53,20 +50,6 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
 {
     public static final String BEAN_NAME = "workflow.workflowDeleteArchiveProcessingService";
 
-    private static final String TASK_TYPE_COMMENT = "taskTypeComment";
-    private static final String TASK_TYPE_ASSIGNMENT = "taskTypeAssignment";
-    private static final String TASK_TYPE_ARCHIVE = "taskTypeArchive";
-    private static final String TASK_TYPE_CHOOSE_TASK = "chooseStateTask";
-
-    @Inject
-    private IArchiveService _archiveService;
-
-    @Inject
-    private IAssignmentHistoryService _assignmentHistoryService;
-
-    @Inject
-    private ICommentValueService _commentValueService;
-
     @Inject
     private IResourceWorkflowService _resourceWorkflowService;
 
@@ -74,61 +57,16 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
         List<ResourceHistory> historyList = getListHistoryByResource( resourceWorkflow );
-
-        archiveTaskComment( historyList );
-        archiveTaskAssignment( historyList );
-        archiveTaskArchive( historyList );
-        archiveTaskChooseTask( historyList );
-
-        archiveResourceAndHistory( resourceWorkflow );
-    }
-
-    private void archiveTaskComment( List<ResourceHistory> historyList )
-    {
+        
         for ( ResourceHistory history : historyList )
         {
-            List<ITask> taskList = findTasksByHistory( history, TASK_TYPE_COMMENT );
-            for ( ITask task : taskList )
-            {
-                _commentValueService.removeByHistory( history.getId( ), task.getId( ), WorkflowUtils.getPlugin( ) );
-            }
-        }
-    }
-
-    private void archiveTaskAssignment( List<ResourceHistory> historyList )
-    {
-        for ( ResourceHistory history : historyList )
-        {
-            List<ITask> taskList = findTasksByHistory( history, TASK_TYPE_ASSIGNMENT );
-            for ( ITask task : taskList )
-            {
-                _assignmentHistoryService.removeByHistory( history.getId( ), task.getId( ), WorkflowUtils.getPlugin( ) );
-            }
-        }
-    }
-
-    private void archiveTaskArchive( List<ResourceHistory> historyList )
-    {
-        for ( ResourceHistory history : historyList )
-        {
-            List<ITask> taskList = findTasksByHistory( history, TASK_TYPE_ARCHIVE );
-            for ( ITask task : taskList )
-            {
-                _archiveService.removeArchiveResource( history.getIdResource( ), task.getId( ) );
-            }
-        }
-    }
-
-    private void archiveTaskChooseTask( List<ResourceHistory> historyList )
-    {
-        for ( ResourceHistory history : historyList )
-        {
-            List<ITask> taskList = findTasksByHistory( history, TASK_TYPE_CHOOSE_TASK );
-            for ( ITask task : taskList )
+            for ( ITask task : getAllTaskByHistory( history ) )
             {
                 task.doRemoveTaskInformation( history.getId( ) );
             }
         }
+
+        archiveResourceAndHistory( resourceWorkflow );
     }
 
     private void archiveResourceAndHistory( ResourceWorkflow resourceWorkflow )

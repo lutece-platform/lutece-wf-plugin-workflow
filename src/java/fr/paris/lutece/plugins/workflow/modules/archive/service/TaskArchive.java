@@ -39,7 +39,9 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.daemon.AppDaemonService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -51,6 +53,9 @@ public class TaskArchive extends SimpleTask
 
     @Inject
     private IArchiveService _archiveService;
+    
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
 
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -89,5 +94,12 @@ public class TaskArchive extends SimpleTask
     public void doRemoveConfig( )
     {
         _archiveService.removeConfig( this );
+    }
+    
+    @Override
+    public void doRemoveTaskInformation( int nIdHistory )
+    {
+        ResourceHistory history = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+        _archiveService.removeArchiveResource( history.getIdResource( ), getId( ) );
     }
 }
