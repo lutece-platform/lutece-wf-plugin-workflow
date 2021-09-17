@@ -53,7 +53,7 @@ public class TaskArchive extends SimpleTask
 
     @Inject
     private IArchiveService _archiveService;
-    
+
     @Inject
     private IResourceHistoryService _resourceHistoryService;
 
@@ -95,7 +95,7 @@ public class TaskArchive extends SimpleTask
     {
         _archiveService.removeConfig( this );
     }
-    
+
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {

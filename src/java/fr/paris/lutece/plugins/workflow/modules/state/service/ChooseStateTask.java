@@ -52,7 +52,7 @@ public class ChooseStateTask extends SimpleTask
     @Inject
     @Named( "workflow.chooseStateTaskConfigService" )
     private ITaskConfigService _chooseStateTaskConfigService;
-    
+
     @Inject
     private IChooseStateTaskService _chooseStateTaskService;
 

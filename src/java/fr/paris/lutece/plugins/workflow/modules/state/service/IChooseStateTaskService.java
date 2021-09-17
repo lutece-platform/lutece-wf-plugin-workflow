@@ -94,9 +94,10 @@ public interface IChooseStateTaskService
      * @return
      */
     ResourceWorkflow getResourceByHistory( int nIdHistory, int nIdWorkflow );
-    
+
     /**
      * Get the Controller of the config
+     * 
      * @param config
      * @return
      */

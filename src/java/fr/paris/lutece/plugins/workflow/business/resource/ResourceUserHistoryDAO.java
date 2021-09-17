@@ -119,15 +119,15 @@ public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
-            
+
             daoUtil.setString( ++nPos, resourceUserHistory.getUserAccessCode( ) );
             daoUtil.setString( ++nPos, resourceUserHistory.getEmail( ) );
             daoUtil.setString( ++nPos, resourceUserHistory.getFirstName( ) );
             daoUtil.setString( ++nPos, resourceUserHistory.getLastName( ) );
             daoUtil.setString( ++nPos, resourceUserHistory.getRealm( ) );
-            
+
             daoUtil.setInt( ++nPos, resourceUserHistory.getIdHistory( ) );
-            
+
             daoUtil.executeUpdate( );
         }
     }

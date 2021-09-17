@@ -51,7 +51,7 @@ public class WorkflowResourceArchiver implements IResourceArchiver
     @Inject
     @Named( WorkflowDeleteArchiveProcessingService.BEAN_NAME )
     private IArchiveProcessingService _deleteArchiveProcessingService;
-    
+
     @Inject
     @Named( WorkflowAnonymizeArchiveProcessingService.BEAN_NAME )
     private IArchiveProcessingService _anonymizeArchiveProcessingService;

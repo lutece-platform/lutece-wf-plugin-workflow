@@ -57,7 +57,7 @@ public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProce
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
         List<ResourceHistory> historyList = getListHistoryByResource( resourceWorkflow );
-        
+
         for ( ResourceHistory history : historyList )
         {
             for ( ITask task : getAllTaskByHistory( history ) )

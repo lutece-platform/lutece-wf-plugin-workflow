@@ -62,13 +62,13 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
     private static final String MARK_NEW_STATE = "new_state";
     private static final String MARK_CONFIG = "config";
     private static final String MARK_CONTROLLER_CONFIG = "controller_config_html";
-    
+
     // Services
     @Inject
     private IChooseStateTaskService _chooseStateTaskService;
 
     private ChooseStateTaskConfig _config;
-    
+
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
@@ -79,7 +79,7 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
         model.put( MARK_LIST_STATES, _chooseStateTaskService.getListStates( task.getAction( ).getId( ) ) );
         model.put( MARK_LIST_CONTROLLERS, _chooseStateTaskService.getControllerList( ) );
         model.put( MARK_SELECTED_CONTROLLER, _config.getControllerName( ) );
-        
+
         IChooseStateController controller = _chooseStateTaskService.getController( _config );
         if ( controller != null && controller.hasConfig( ) )
         {
@@ -90,7 +90,7 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
 
         return template.getHtml( );
     }
-    
+
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
@@ -103,7 +103,7 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
         }
         return null;
     }
-    
+
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {

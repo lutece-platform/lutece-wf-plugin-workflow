@@ -70,16 +70,17 @@ public interface IChooseStateController
      * @return
      */
     boolean control( ITask task, int nIdResource, String strResourceType );
-    
+
     /**
      * Indicates if this controller need a config.
+     * 
      * @return
      */
     default boolean hasConfig( )
     {
         return false;
     }
-    
+
     /**
      * Returns the informations which must be displayed in the configuration
      * 
@@ -95,9 +96,10 @@ public interface IChooseStateController
     {
         return null;
     }
-    
+
     /**
      * Process the action during the configuration of the task.
+     * 
      * @param request
      * @param locale
      * @param config
@@ -105,9 +107,10 @@ public interface IChooseStateController
     default void doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
     }
-    
+
     /**
      * Delete controller custom config.
+     * 
      * @param task
      */
     default void doRemoveConfig( ITask task )

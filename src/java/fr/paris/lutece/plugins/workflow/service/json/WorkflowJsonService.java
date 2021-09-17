@@ -225,7 +225,7 @@ public class WorkflowJsonService
 
             if ( CollectionUtils.isNotEmpty( listOldId ) )
             {
-                Collection<Integer> listNewId = listOldId.stream( ).map( i -> mapIdActions.get( i ) ).collect( Collectors.toList( ) );
+                Collection<Integer> listNewId = listOldId.stream( ).map( mapIdActions::get ).collect( Collectors.toList( ) );
                 action.setListIdsLinkedAction( listNewId );
                 _actionService.update( action );
             }

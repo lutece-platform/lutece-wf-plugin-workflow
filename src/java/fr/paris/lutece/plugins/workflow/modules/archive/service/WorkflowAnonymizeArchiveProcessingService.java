@@ -46,12 +46,12 @@ public class WorkflowAnonymizeArchiveProcessingService extends AbstractArchivePr
 {
     public static final String BEAN_NAME = "workflow.workflowAnonymizeArchiveProcessingService";
     private static final String ANONYMOUS = "Anonymous";
-    
+
     @Override
     public void archiveResource( ResourceWorkflow resourceWorkflow )
     {
         List<ResourceHistory> historyList = getListHistoryByResource( resourceWorkflow );
-        
+
         for ( ResourceHistory history : historyList )
         {
             for ( ITask task : getAllTaskByHistory( history ) )
