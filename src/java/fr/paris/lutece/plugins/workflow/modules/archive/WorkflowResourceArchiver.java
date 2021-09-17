@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.service.IArchiveProcessingService;
+import fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowAnonymizeArchiveProcessingService;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowDeleteArchiveProcessingService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 
@@ -50,6 +51,10 @@ public class WorkflowResourceArchiver implements IResourceArchiver
     @Inject
     @Named( WorkflowDeleteArchiveProcessingService.BEAN_NAME )
     private IArchiveProcessingService _deleteArchiveProcessingService;
+    
+    @Inject
+    @Named( WorkflowAnonymizeArchiveProcessingService.BEAN_NAME )
+    private IArchiveProcessingService _anonymizeArchiveProcessingService;
 
     @Override
     public void archiveResource( ArchivalType archivalType, ResourceWorkflow resourceWorkflow )
@@ -58,6 +63,9 @@ public class WorkflowResourceArchiver implements IResourceArchiver
         {
             case DELETE:
                 _deleteArchiveProcessingService.archiveResource( resourceWorkflow );
+                break;
+            case ANONYMIZE:
+                _anonymizeArchiveProcessingService.archiveResource( resourceWorkflow );
                 break;
             default:
                 break;

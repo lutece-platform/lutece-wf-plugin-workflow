@@ -228,7 +228,9 @@
         class="fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver" />
     <bean id="workflow.workflowDeleteArchiveProcessingService"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowDeleteArchiveProcessingService" />
-        
+    <bean id="workflow.workflowAnonymizeArchiveProcessingService"
+        class="fr.paris.lutece.plugins.workflow.modules.archive.service.WorkflowAnonymizeArchiveProcessingService" />
+
     <!-- Choose Task -->
     <bean id="workflow.chooseStateTask"
         class="fr.paris.lutece.plugins.workflow.modules.state.service.ChooseStateTask" scope="prototype" />

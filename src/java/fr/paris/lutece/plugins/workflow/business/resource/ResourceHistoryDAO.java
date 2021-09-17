@@ -77,7 +77,8 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     private static final String SQL_FILTER_RESOURCE_TYPE = " wh.resource_type = ? ";
     private static final String SQL_FILTER_USER_ACCESS_CODE = " wh.user_access_code = ? ";
     private static final String SQL_FILTER_LIST_RESOURCES = " wh.id_resource IN ( ";
-
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_resource_history SET user_access_code = ? WHERE id_history = ? ";
+    
     /**
      * {@inheritDoc}
      */
@@ -508,5 +509,20 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             }
         }
         return nPos;
+    }
+    
+    @Override
+    public void store( ResourceHistory resourceHistory )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            
+            daoUtil.setString( ++nPos, resourceHistory.getUserAccessCode( ) );
+            
+            daoUtil.setInt( ++nPos, resourceHistory.getId( ) );
+            
+            daoUtil.executeUpdate( );
+        }
     }
 }

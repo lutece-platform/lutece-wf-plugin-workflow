@@ -47,6 +47,7 @@ public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
     private static final String SQL_QUERY_SELECT = "SELECT  id_history, user_access_code, email, first_name, last_name, realm FROM workflow_resource_user_history WHERE id_history = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_resource_user_history ( id_history, user_access_code, email, first_name, last_name, realm ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_user_history WHERE id_history = ? ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_resource_user_history SET user_access_code = ?, email = ?, first_name = ?, last_name = ?, realm = ? WHERE id_history = ?";
 
     /**
      * {@inheritDoc }
@@ -112,4 +113,22 @@ public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
         }
     }
 
+    @Override
+    public void store( ResourceUserHistory resourceUserHistory )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            
+            daoUtil.setString( ++nPos, resourceUserHistory.getUserAccessCode( ) );
+            daoUtil.setString( ++nPos, resourceUserHistory.getEmail( ) );
+            daoUtil.setString( ++nPos, resourceUserHistory.getFirstName( ) );
+            daoUtil.setString( ++nPos, resourceUserHistory.getLastName( ) );
+            daoUtil.setString( ++nPos, resourceUserHistory.getRealm( ) );
+            
+            daoUtil.setInt( ++nPos, resourceUserHistory.getIdHistory( ) );
+            
+            daoUtil.executeUpdate( );
+        }
+    }
 }
