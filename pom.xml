@@ -34,13 +34,13 @@
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
-            <version>[7.0.0-RC-09,)</version>
+            <version>[7.0.0-RC-09]</version>
             <type>lutece-core</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>library-workflow-core</artifactId>
-            <version>[1.2.7,)</version>
+            <version>[1.2.7]</version>
         </dependency>
     </dependencies>
 
