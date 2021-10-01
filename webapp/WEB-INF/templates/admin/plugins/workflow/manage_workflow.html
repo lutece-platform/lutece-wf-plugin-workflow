@@ -2,7 +2,7 @@
 <@row>
 	<@columns>
 		<@box style='primary'>
-			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title'>
+			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title' boxTools=true skipHeader=true >
 				<#if permission_manage_advanced_parameters>
 					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' />
 				</#if>
@@ -10,12 +10,11 @@
 				<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
 			</@boxHeader>
 			<@boxBody>
-				<@paginationAdmin paginator=paginator combo=1 />
 				<@tform type='inline' align='right'>
-					<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}'>
+					<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
 						<@select name='is_enabled' items=active_list default_value='active_selected' size='sm' />
 					</@formGroup>
-					<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}'>
+					<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
 						<@inputGroup>
 							<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
 							<@inputGroupItem>
@@ -24,8 +23,7 @@
 						</@inputGroup>
 					</@formGroup>
 				</@tform>
-				
-				<@table responsive=false params='style="margin:50px 0;"'>
+				<@table responsive=false >
 					<@tr>
 						<@th>#i18n{workflow.manage_workflow.row_name}</@th>
 						<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
