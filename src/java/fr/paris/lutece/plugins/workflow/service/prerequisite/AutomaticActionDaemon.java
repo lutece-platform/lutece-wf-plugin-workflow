@@ -71,7 +71,7 @@ public class AutomaticActionDaemon extends Daemon
         {
             IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
             ActionFilter filter = new ActionFilter( );
-
+            filter.setAutomaticReflexiveAction( false );
             filter.setIsAutomaticState( 1 );
             filter.setIdWorkflow( workflow.getId( ) );
 

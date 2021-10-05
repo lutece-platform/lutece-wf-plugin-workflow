@@ -123,11 +123,6 @@ public class WorkflowJsonService
 
         ActionFilter filter = new ActionFilter( );
         filter.setIdWorkflow( workflow.getId( ) );
-
-        filter.setAutomaticReflexiveAction( true );
-        actionList.addAll( _actionService.getListActionByFilter( filter ) );
-
-        filter.setAutomaticReflexiveAction( false );
         actionList.addAll( _actionService.getListActionByFilter( filter ) );
 
         jsonData.setActionList( actionList );

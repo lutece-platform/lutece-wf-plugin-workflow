@@ -279,6 +279,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
         ActionFilter filter = new ActionFilter( );
+        filter.setAutomaticReflexiveAction( false );
         filter.setIdIcon( nIdIcon );
 
         List<Action> listAction = _actionService.getListActionByFilter( filter );
@@ -308,6 +309,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
         ActionFilter filter = new ActionFilter( );
+        filter.setAutomaticReflexiveAction( false );
         filter.setIdIcon( nIdIcon );
 
         List<Action> listAction = _actionService.getListActionByFilter( filter );

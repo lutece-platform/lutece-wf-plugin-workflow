@@ -239,8 +239,10 @@ public class ActionDAO implements IActionDAO
         {
             listStrFilter.add( SQL_FILTER_IS_MASS_ACTION );
         }
-
-        listStrFilter.add( SQL_FILTER_IS_AUTOMATIC_REFLEXIVE_ACTION );
+        if ( filter.containsIsAutomaticReflexiveAction( ) )
+        {
+            listStrFilter.add( SQL_FILTER_IS_AUTOMATIC_REFLEXIVE_ACTION );
+        }
 
         String strSQL = WorkflowUtils.buildRequestWithFilter( SQL_QUERY_SELECT_ACTION_BY_FILTER, listStrFilter, SQL_ORDER_BY_ORDER_DISPLAY );
 
@@ -277,7 +279,10 @@ public class ActionDAO implements IActionDAO
                 daoUtil.setInt( ++nPos, filter.getIsMassAction( ) );
             }
 
-            daoUtil.setBoolean( ++nPos, filter.isAutomaticReflexiveAction( ) );
+            if ( filter.containsIsAutomaticReflexiveAction( ) )
+            {
+                daoUtil.setInt( ++nPos, filter.isAutomaticReflexiveAction( ) );
+            }
 
             daoUtil.executeQuery( );
 
