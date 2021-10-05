@@ -91,10 +91,4 @@ public class ChangeStateTaskComponent extends NoFormTaskComponent
 
         return template.getHtml( );
     }
-
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

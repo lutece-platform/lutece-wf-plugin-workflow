@@ -61,7 +61,6 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.xml.XmlUtil;
 
 /**
  *
@@ -70,9 +69,6 @@ import fr.paris.lutece.util.xml.XmlUtil;
  */
 public class CommentTaskComponent extends AbstractTaskComponent
 {
-    // XML
-    private static final String TAG_COMMENT = "comment";
-
     // TEMPLATES
     private static final String TEMPLATE_TASK_COMMENT_CONFIG = "admin/plugins/workflow/modules/comment/task_comment_config.html";
     private static final String TEMPLATE_TASK_COMMENT_FORM = "admin/plugins/workflow/modules/comment/task_comment_form.html";
@@ -214,26 +210,5 @@ public class CommentTaskComponent extends AbstractTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );
 
         return template.getHtml( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        StringBuffer strXml = new StringBuffer( );
-        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
-
-        if ( commentValue != null )
-        {
-            XmlUtil.addElementHtml( strXml, TAG_COMMENT, commentValue.getValue( ) );
-        }
-        else
-        {
-            XmlUtil.addEmptyElement( strXml, TAG_COMMENT, null );
-        }
-
-        return strXml.toString( );
     }
 }

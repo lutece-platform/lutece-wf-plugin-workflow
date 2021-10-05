@@ -102,13 +102,4 @@ public class NotificationTaskComponent extends NoFormTaskComponent
     {
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

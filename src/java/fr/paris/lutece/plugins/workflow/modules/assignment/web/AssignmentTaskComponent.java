@@ -63,7 +63,6 @@ import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.xml.XmlUtil;
 
 /**
  *
@@ -104,11 +103,6 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.assignment.task_assignment_config.message.mandatory.field";
     private static final String MESSAGE_NO_CONFIGURATION_FOR_TASK_ASSIGNMENT = "module.workflow.assignment.task_assignment_config.message.no_configuration_for_task_comment";
     private static final String MESSAGE_NO_MAILINGLIST_FOR_WORKGROUP = "module.workflow.assignment.task_assignment_config.message.no_mailinglist_for_workgroup";
-
-    // XML
-    private static final String TAG_ASSIGNMENT = "assignment";
-    private static final String TAG_LIST_WORKGROUP = "list-workgroup";
-    private static final String TAG_WORKGROUP = "workgroup";
 
     // SERVICES
     @Inject
@@ -358,38 +352,5 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGNMENT_INFORMATION, locale, model );
 
         return template.getHtml( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        List<AssignmentHistory> listAssignmentHistory = _assignmentHistoryService.getListByHistory( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
-
-        StringBuffer strXml = new StringBuffer( );
-
-        XmlUtil.beginElement( strXml, TAG_ASSIGNMENT );
-        XmlUtil.beginElement( strXml, TAG_LIST_WORKGROUP );
-
-        for ( ReferenceItem referenceItem : AdminWorkgroupService.getUserWorkgroups( AdminUserService.getAdminUser( request ), locale ) )
-        {
-            if ( !referenceItem.getCode( ).equals( AdminWorkgroupService.ALL_GROUPS ) && listAssignmentHistory != null )
-            {
-                for ( AssignmentHistory assignmentHistory : listAssignmentHistory )
-                {
-                    if ( referenceItem.getCode( ).equals( assignmentHistory.getWorkgroup( ) ) )
-                    {
-                        XmlUtil.addElementHtml( strXml, TAG_WORKGROUP, referenceItem.getName( ) );
-                    }
-                }
-            }
-        }
-
-        XmlUtil.endElement( strXml, TAG_LIST_WORKGROUP );
-        XmlUtil.endElement( strXml, TAG_ASSIGNMENT );
-
-        return strXml.toString( );
     }
 }

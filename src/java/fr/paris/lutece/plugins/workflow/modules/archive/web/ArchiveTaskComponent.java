@@ -232,10 +232,4 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
             return I18nService.getLocalizedString( MESSAGE_INFORMATION_NOT_ARCHIVED, params, locale );
         }
     }
-
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

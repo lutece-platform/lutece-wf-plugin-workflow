@@ -147,22 +147,6 @@ public class TaskComponentManager implements ITaskComponentManager
      * {@inheritDoc}
      */
     @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        ITaskComponent component = getTaskComponent( task );
-
-        if ( component != null )
-        {
-            return component.getTaskInformationXml( nIdHistory, request, locale, task );
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );

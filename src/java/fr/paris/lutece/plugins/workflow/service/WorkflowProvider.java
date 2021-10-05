@@ -78,9 +78,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.xml.XmlUtil;
 
 /**
  *
@@ -100,17 +98,6 @@ public class WorkflowProvider implements IWorkflowProvider
     // TEMPLATES
     private static final String TEMPLATE_RESOURCE_HISTORY = "admin/plugins/workflow/resource_history.html";
     private static final String TEMPLATE_TASKS_FORM = "admin/plugins/workflow/tasks_form.html";
-
-    // XML TAGS
-    private static final String TAG_HISTORY = "history";
-    private static final String TAG_LIST_RESOURCE_HISTORY = "list-resource-history";
-    private static final String TAG_RESOURCE_HISTORY = "resource-history";
-    private static final String TAG_CREATION_DATE = "creation-date";
-    private static final String TAG_USER = "user";
-    private static final String TAG_FIRST_NAME = "first-name";
-    private static final String TAG_LAST_NAME = "last-name";
-    private static final String TAG_LIST_TASK_INFORMATION = "list-task-information";
-    private static final String TAG_TASK_INFORMATION = "task-information";
 
     // SERVICES
     @Inject
@@ -373,80 +360,6 @@ public class WorkflowProvider implements IWorkflowProvider
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_TASKS_FORM, locale, model );
 
         return templateList.getHtml( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDocumentHistoryXml( int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, Locale locale, User user )
-    {
-        List<ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
-        StringBuffer strXml = new StringBuffer( );
-
-        XmlUtil.beginElement( strXml, TAG_HISTORY );
-        XmlUtil.beginElement( strXml, TAG_LIST_RESOURCE_HISTORY );
-
-        for ( ResourceHistory resourceHistory : listResourceHistory )
-        {
-            appendResourceHistoryXml( resourceHistory, strXml, request, locale );
-        }
-
-        XmlUtil.endElement( strXml, TAG_LIST_RESOURCE_HISTORY );
-        XmlUtil.endElement( strXml, TAG_HISTORY );
-
-        return strXml.toString( );
-    }
-
-    private void appendResourceHistoryXml( ResourceHistory resourceHistory, StringBuffer strXml, HttpServletRequest request, Locale locale )
-    {
-        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale );
-
-        XmlUtil.beginElement( strXml, TAG_RESOURCE_HISTORY );
-        XmlUtil.addElement( strXml, TAG_CREATION_DATE, DateUtil.getDateString( resourceHistory.getCreationDate( ), locale ) );
-        XmlUtil.beginElement( strXml, TAG_USER );
-
-        if ( resourceHistory.getResourceUserHistory( ) != null )
-        {
-            XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, resourceHistory.getResourceUserHistory( ).getFirstName( ) );
-            XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, resourceHistory.getResourceUserHistory( ).getLastName( ) );
-        }
-        else
-        {
-            // get User by access code for older version of workflow
-            User userHistory = ( resourceHistory.getUserAccessCode( ) != null ) ? getUserByAccessCode( resourceHistory.getUserAccessCode( ) ) : null;
-            if ( userHistory != null )
-            {
-                XmlUtil.addElementHtml( strXml, TAG_FIRST_NAME, userHistory.getFirstName( ) );
-                XmlUtil.addElementHtml( strXml, TAG_LAST_NAME, userHistory.getLastName( ) );
-            }
-            else
-            {
-                XmlUtil.addEmptyElement( strXml, TAG_FIRST_NAME, null );
-                XmlUtil.addEmptyElement( strXml, TAG_LAST_NAME, null );
-
-            }
-        }
-        XmlUtil.endElement( strXml, TAG_USER );
-
-        XmlUtil.beginElement( strXml, TAG_LIST_TASK_INFORMATION );
-
-        for ( ITask task : listActionTasks )
-        {
-            XmlUtil.beginElement( strXml, TAG_TASK_INFORMATION );
-            String strTaskinformation = _taskComponentManager.getTaskInformationXml( resourceHistory.getId( ), request, locale, task );
-
-            if ( strTaskinformation != null )
-            {
-                strXml.append( strTaskinformation );
-            }
-
-            XmlUtil.endElement( strXml, TAG_TASK_INFORMATION );
-        }
-
-        XmlUtil.endElement( strXml, TAG_LIST_TASK_INFORMATION );
-
-        XmlUtil.endElement( strXml, TAG_RESOURCE_HISTORY );
     }
 
     /**
