@@ -13,9 +13,9 @@
 	<@columns>
 		<@box style='primary'>
 			<#assign boxHeaderTitle>
-				#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' params=title_param /> ${modify_icon.name}
+				#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' class='workflow-icon' params=title_param /> 
 			</#assign>
-			<@boxHeader title=boxHeaderTitle />
+			<@boxHeader title=boxHeaderTitle boxTools=true skipHeader=true />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
 					<@fieldSet>
@@ -42,3 +42,6 @@
 		</@box>
 	</@columns>
 </@row>
+<style>
+.workflow-icon{filter: drop-shadow(5px 5px 10px #222); max-width: 32px;}
+</style>

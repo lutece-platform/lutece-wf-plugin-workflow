@@ -1,8 +1,3 @@
-<@accordionPanel collapsed=true childId='wfadmindashboard'>
-	<@accordionHeader title='#i18n{workflow.adminDashboard.pageTitle}' parentId='technical_settings' id='wfadmindashboardh' />
-	<@accordionBody>
-		<@fieldSet>
-			<#include "advanced_parameters.html" />
-		</@fieldSet>
-	</@accordionBody>
-</@accordionPanel>
+<@adminDashboardPanel  title='#i18n{workflow.adminDashboard.pageTitle}'  icon='project-diagram' parentId='technical_settings' childId='wfadmindashboardh' >
+<#include "advanced_parameters.html" />
+</@adminDashboardPanel>
