@@ -41,7 +41,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;

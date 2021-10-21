@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.workflow.service.provider;
 
 import fr.paris.lutece.plugins.workflowcore.service.provider.AbstractProviderManager;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;

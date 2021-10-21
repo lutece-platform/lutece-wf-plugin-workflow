@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.workflow.service.security;
 
 import fr.paris.lutece.portal.service.security.UserAttributesService;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

@@ -43,8 +43,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignmentConfig;

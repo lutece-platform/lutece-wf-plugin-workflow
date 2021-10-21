@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.workflow.service.prerequisite;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.business.prerequisite.IPrerequisiteDAO;
 import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO;
