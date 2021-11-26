@@ -149,7 +149,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String TEMPLATE_MANAGE_WORKFLOW = "admin/plugins/workflow/manage_workflow.html";
     private static final String TEMPLATE_CREATE_WORKFLOW = "admin/plugins/workflow/create_workflow.html";
     private static final String TEMPLATE_MODIFY_WORKFLOW = "admin/plugins/workflow/modify_workflow.html";
-    private static final String TEMPLATE_GRAPH_WORKFLOW = "admin/plugins/workflow/graph_workflow.html";
     private static final String TEMPLATE_CREATE_STATE = "admin/plugins/workflow/create_state.html";
     private static final String TEMPLATE_MODIFY_STATE = "admin/plugins/workflow/modify_state.html";
     private static final String TEMPLATE_CREATE_ACTION = "admin/plugins/workflow/create_action.html";
@@ -195,7 +194,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE = "workflow.manage_workflow.page_title";
     private static final String PROPERTY_CREATE_WORKFLOW_PAGE_TITLE = "workflow.create_workflow.page_title";
     private static final String PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE = "workflow.modify_workflow.page_title";
-    private static final String PROPERTY_GRAPH_WORKFLOW_PAGE_TITLE = "workflow.graph_workflow.page_title";
     private static final String PROPERTY_CREATE_STATE_PAGE_TITLE = "workflow.create_state.page_title";
     private static final String PROPERTY_MODIFY_STATE_PAGE_TITLE = "workflow.modify_state.page_title";
     private static final String PROPERTY_CREATE_ACTION_PAGE_TITLE = "workflow.create_action.page_title";
@@ -523,81 +521,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         return getAdminPage( template.getHtml( ) );
     }
 
-    /**
-     * Gets the workflow graph page
-     * 
-     * @param request
-     *            The HTTP request
-     * @throws AccessDeniedException
-     *             the {@link AccessDeniedException}
-     * @return The workflow creation page
-     */
-    public String getWorkflowGraph( HttpServletRequest request ) throws AccessDeniedException
-    {
-        AdminUser adminUser = getUser( );
-        String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
-        String strShowTasks = request.getParameter( PARAMETER_SHOW_TASKS );
-        String strPane = request.getParameter( PARAMETER_PANE );
-        int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
-        Workflow workflow = null;
-
-        if ( nIdWorkflow != WorkflowUtils.CONSTANT_ID_NULL )
-        {
-            workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
-        }
-
-        if ( workflow == null )
-        {
-            throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
-        }
-
-        if ( strPane == null )
-        {
-            strPane = PANE_DEFAULT;
-        }
-
-        StateFilter stateFilter = new StateFilter( );
-        stateFilter.setIdWorkflow( nIdWorkflow );
-
-        List<State> listState = _stateService.getListStateByFilter( stateFilter );
-
-        ActionFilter actionFilter = new ActionFilter( );
-        actionFilter.setIdWorkflow( nIdWorkflow );
-
-        List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
-
-        for ( Action action : listAction )
-        {
-            action.setStateBefore( _stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
-            action.setStateAfter( _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
-            
-            if ( strShowTasks != null )
-            {
-                List<ITask> listTasks = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );
-                action.setAllTasks( listTasks );
-            }
-        }
-
-        workflow.setAllActions( listAction );
-        workflow.setAllStates( listState );
-
-        Map<String, Object> model = new HashMap<>( );
-        model.put( MARK_USER_WORKGROUP_REF_LIST, AdminWorkgroupService.getUserWorkgroups( adminUser, getLocale( ) ) );
-        model.put( MARK_WORKFLOW, workflow );
-        model.put( MARK_PANE, strPane );
-        if ( strShowTasks != null )
-        {
-            model.put( MARK_SHOW_TASKS, "true" );
-        }
-        model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ) ) );
-
-        setPageTitleProperty( PROPERTY_GRAPH_WORKFLOW_PAGE_TITLE );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_GRAPH_WORKFLOW, getLocale( ), model );
-
-        return getAdminPage( template.getHtml( ) );
-    }
-    
     /**
      * Perform the workflow modification
      * 
