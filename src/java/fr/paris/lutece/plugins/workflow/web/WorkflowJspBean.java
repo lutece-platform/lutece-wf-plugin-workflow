@@ -430,6 +430,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         AdminUser adminUser = getUser( );
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         String strPane = request.getParameter( PARAMETER_PANE );
+        String strShowTasks = request.getParameter( PARAMETER_SHOW_TASKS );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
         Workflow workflow = null;
 
@@ -470,6 +471,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             action.setStateBefore( _stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
             action.setStateAfter( _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
+            if ( strShowTasks != null )
+            {
+                List<ITask> listTasks = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );
+                action.setAllTasks( listTasks );
+            }
         }
 
         _strCurrentPageIndexAction = AbstractPaginator.getPageIndex( request, PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction );
@@ -503,6 +509,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
         model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
         model.put( MARK_PANE, strPane );
+        
+        if ( strShowTasks != null )
+        {
+            model.put( MARK_SHOW_TASKS, "true" );
+        }
+        model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ) ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE );
 
