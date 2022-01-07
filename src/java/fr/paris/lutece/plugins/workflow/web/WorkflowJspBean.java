@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -507,7 +507,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
         model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
         model.put( MARK_PANE, strPane );
-        
+
         if ( strShowTasks != null )
         {
             model.put( MARK_SHOW_TASKS, "true" );

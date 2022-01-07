@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,112 +52,110 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WorkflowGraphExportServiceTest extends LuteceTestCase
 {
-    
-     public void testSimpleMd( )  {
-        
+
+    public void testSimpleMd( )
+    {
+
         Workflow wf = new Workflow( );
-        
+
         wf.setId( 1 );
         wf.setName( "test" );
-        
+
         State s1 = new State( );
         State s2 = new State( );
         State s3 = new State( );
-                
+
         s1.setId( 1 );
         s2.setId( 2 );
         s3.setId( 3 );
-        
+
         s1.setWorkflow( wf );
         s2.setWorkflow( wf );
         s3.setWorkflow( wf );
-        
-        s1.setName( "brouillon");
-        s2.setName( "à valider");
+
+        s1.setName( "brouillon" );
+        s2.setName( "à valider" );
         s3.setName( "validé" );
-        
+
         Action a1 = new Action( );
         Action a2 = new Action( );
         Action a3 = new Action( );
         Action a4 = new Action( );
-        
+
         Task t1 = new MyPrivateTestTask( );
         Task t2 = new MyPrivateTestTask( );
-        Task t3 = new MyPrivateTestTask( );        
-        
+        Task t3 = new MyPrivateTestTask( );
+
         TaskType notifyTaskType = new TaskType( );
         notifyTaskType.setTitle( "notify" );
         TaskType archiveTaskType = new TaskType( );
         archiveTaskType.setTitle( "archive" );
-        
+
         t1.setTaskType( notifyTaskType );
         t2.setTaskType( notifyTaskType );
         t3.setTaskType( archiveTaskType );
-        
+
         a1.setId( 11 );
         a2.setId( 12 );
         a3.setId( 13 );
         a4.setId( 14 );
-        
-        a1.setName( "Transmettre");
+
+        a1.setName( "Transmettre" );
         a1.setStateBefore( s1 );
         a1.setStateAfter( s2 );
-        
-        a2.setName( "Valider");
+
+        a2.setName( "Valider" );
         a2.setStateBefore( s2 );
-        a2.setStateAfter( s3);
+        a2.setStateAfter( s3 );
         List<ITask> tasksA2 = new ArrayList<>( );
-        tasksA2.add(t1);
+        tasksA2.add( t1 );
         a2.setAllTasks( tasksA2 );
-                
-                
-        a3.setName( "Refuser");
+
+        a3.setName( "Refuser" );
         a3.setStateBefore( s2 );
-        a3.setStateAfter( s1);
+        a3.setStateAfter( s1 );
         List<ITask> tasksA3 = new ArrayList<>( );
-        tasksA3.add(t2);
-        tasksA3.add(t3);
+        tasksA3.add( t2 );
+        tasksA3.add( t3 );
         a3.setAllTasks( tasksA3 );
-        
-        a4.setName( "Enregistrer");
+
+        a4.setName( "Enregistrer" );
         a4.setStateBefore( s1 );
         a4.setStateAfter( s1 );
-        
 
-        
-                
         List<State> states = new ArrayList<>( );
         states.add( s1 );
         states.add( s2 );
         states.add( s3 );
         wf.setAllStates( states );
-        
+
         List<Action> actions = new ArrayList<>( );
         actions.add( a1 );
         actions.add( a2 );
         actions.add( a3 );
         actions.add( a4 );
         wf.setAllActions( actions );
-        
-        
-        
+
         String mdGraph = WorkflowGraphExportService.generate( wf, null );
-        
+
         assertNotNull( mdGraph );
-        
+
     }
-    
+
     /**
      * MyPrivateTestTask
      */
-    private class MyPrivateTestTask extends SimpleTask {
+    private class MyPrivateTestTask extends SimpleTask
+    {
 
         @Override
-        public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) { }
+        public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+        {
+        }
 
         @Override
-        public String getTitle(Locale locale) 
-        { 
+        public String getTitle( Locale locale )
+        {
             return "test";
         }
     }
