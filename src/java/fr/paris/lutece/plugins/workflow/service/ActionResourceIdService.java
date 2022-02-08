@@ -38,6 +38,8 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.rbac.Permission;
@@ -107,8 +109,6 @@ public class ActionResourceIdService extends ResourceIdService
     public ReferenceList getResourceIdList( Locale locale )
     {
         IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-
         ActionFilter actionFilter = new ActionFilter( );
         actionFilter.setAutomaticReflexiveAction( false );
 
@@ -117,8 +117,7 @@ public class ActionResourceIdService extends ResourceIdService
 
         for ( Action action : listAction )
         {
-            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
-            reflistAction.addItem( action.getId( ), action.getWorkflow( ).getName( ) + "/" + action.getName( ) );
+            reflistAction.addItem( action.getId( ), getActionLabel( action ) );
         }
 
         return reflistAction;
@@ -136,15 +135,36 @@ public class ActionResourceIdService extends ResourceIdService
     public String getTitle( String strId, Locale locale )
     {
         IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
         int nId = WorkflowUtils.convertStringToInt( strId );
         Action action = actionService.findByPrimaryKey( nId );
 
-        if ( action != null )
+        if ( action == null )
         {
-            action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
+            return null;
         }
 
-        return ( action != null ) ? ( action.getWorkflow( ).getName( ) + "/" + action.getName( ) ) : null;
+        return getActionLabel( action );
+    }
+    
+    private String getActionLabel( Action action )
+    {
+        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+        
+        action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
+        action.setStateBefore( stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
+        action.setStateAfter( stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
+        
+        StringBuilder sbTitle = new StringBuilder( );
+        sbTitle.append( action.getWorkflow( ).getName( ) );
+        sbTitle.append( "/" );
+        sbTitle.append( action.getName( ) );
+        sbTitle.append( " ( " );
+        sbTitle.append( action.getStateBefore( ).getName( ) );
+        sbTitle.append( " -> " );
+        sbTitle.append( action.getStateAfter( ).getName( ) );
+        sbTitle.append( " ) " );
+
+        return sbTitle.toString( );
     }
 }
