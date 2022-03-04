@@ -46,7 +46,9 @@
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfigDao" />
     <bean id="workflow.changeStateTaskInformationDao" 
         class="fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskInformationDAO" />
-    
+     <bean id="workflow.confirmActionTaskConfigDAO" 
+        class="fr.paris.lutece.plugins.workflow.modules.confirmaction.business.ConfirmActionTaskConfigDAO" />
+           
     <!-- Removal Services -->
     <bean id="workflow.taskRemovalService"
         class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
@@ -150,7 +152,15 @@
         p:configBeanName="workflow.taskArchiveConfig"
         p:taskForAutomaticAction="true"
         p:configRequired="true" p:formTaskRequired="false" />
-
+    <bean id="workflow.taskTypeConfirmAction"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTypeConfirmAction"
+        p:titleI18nKey="module.workflow.confirmaction.task_title"
+        p:beanName="workflow.taskConfirmAction"
+        p:configBeanName="workflow.taskConfirmActionConfig"
+        p:configRequired="true" p:formTaskRequired="true" 
+        p:taskForAutomaticAction="true" />
+        
     <!-- Tasks -->
     <bean id="workflow.taskAssignment"
         class="fr.paris.lutece.plugins.workflow.modules.assignment.service.TaskAssignment"
@@ -163,6 +173,9 @@
         scope="prototype" />
     <bean id="workflow.taskArchive"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.TaskArchive"
+        scope="prototype" />
+    <bean id="workflow.taskConfirmAction"
+        class="fr.paris.lutece.plugins.workflow.modules.confirmaction.service.ConfirmActionTask"
         scope="prototype" />
 
     <!-- Task components -->
@@ -181,7 +194,11 @@
     <bean id="workflow.archiveTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.archive.web.ArchiveTaskComponent"
         p:taskType-ref="workflow.taskTypeArchive"
-        p:taskConfigService-ref="workflow.taskArchiveConfigService" />
+        p:taskConfigService-ref="workflow.taskArchiveConfigService" />       
+    <bean id="workflow.confirmActionTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.confirmaction.web.ConfirmActionTaskComponent"
+        p:taskType-ref="workflow.taskTypeConfirmAction"
+        p:taskConfigService-ref="workflow.confirmActionTaskConfigService" />
 
     <!-- Task configs -->
     <bean id="workflow.taskAssignmentConfig"
@@ -196,7 +213,10 @@
     <bean id="workflow.taskArchiveConfig"
         class="fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig"
         scope="prototype" />
-
+    <bean id="workflow.taskConfirmActionConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.confirmaction.business.ConfirmActionTaskConfig"
+        scope="prototype" />
+        
     <!-- Prerequisites -->
     <bean id="workflow.PrerequisiteDuration"
         class="fr.paris.lutece.plugins.workflow.modules.duration.service.PrerequisiteDuration" />
@@ -222,7 +242,9 @@
         p:taskConfigDAO-ref="workflow.taskArchiveConfigDao" />
     <bean id="workflow.archiveService"
         class="fr.paris.lutece.plugins.workflow.modules.archive.service.ArchiveService" />
-        
+     <bean id="workflow.confirmActionTaskConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
+        p:taskConfigDAO-ref="workflow.confirmActionTaskConfigDAO" />
+               
     <!-- Archivers -->
     <bean id="workflow.workflowResourceArchiver"
         class="fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver" />
