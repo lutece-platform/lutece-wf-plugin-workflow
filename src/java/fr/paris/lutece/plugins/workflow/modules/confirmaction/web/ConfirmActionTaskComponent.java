@@ -54,54 +54,54 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class ConfirmActionTaskComponent extends AbstractTaskComponent
 {
-	// TEMPLATE
-	private static final String TEMPLATE_CONFIG_CONFIRM_ACTION = "admin/plugins/workflow/modules/confirmaction/task_confirm_action_config.html";
-	private static final String TEMPLATE_TASK_FORM = "admin/plugins/workflow/modules/confirmaction/task_confirm_action_form.html";
+    // TEMPLATE
+    private static final String TEMPLATE_CONFIG_CONFIRM_ACTION = "admin/plugins/workflow/modules/confirmaction/task_confirm_action_config.html";
+    private static final String TEMPLATE_TASK_FORM = "admin/plugins/workflow/modules/confirmaction/task_confirm_action_form.html";
 
-	// MARKS
-	private static final String MARK_CONFIG = "config";
-	
-	// SERVICE
+    // MARKS
+    private static final String MARK_CONFIG = "config";
+
+    // SERVICE
     private static final String BEAN_CONFIG_SERVICE = "workflow.confirmActionTaskConfigService";
-    
+
     @Inject
     @Named( BEAN_CONFIG_SERVICE )
     private ITaskConfigService _config;
 
-	@Override
-	public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
-	{	
-		return null;
-	}
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 
-	@Override
-	public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
-	{
-		Map<String, Object> model = new HashMap< >( );
-		
-		model.put( MARK_CONFIG, _config.findByPrimaryKey( task.getId( ) ) );
-		
-		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CONFIG_CONFIRM_ACTION, locale, model );
-		
-		return template.getHtml( );
-	}
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<>( );
 
-	@Override
-	public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
-	{
-		Map<String, Object> model = new HashMap< >( );
-		
-		model.put( MARK_CONFIG, _config.findByPrimaryKey( task.getId( ) ) );
-		
-		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM, locale, model );
-		
-		return template.getHtml( );
-	}
+        model.put( MARK_CONFIG, _config.findByPrimaryKey( task.getId( ) ) );
 
-	@Override
-	public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-	{
-		return null;
-	}
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CONFIG_CONFIRM_ACTION, locale, model );
+
+        return template.getHtml( );
+    }
+
+    @Override
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<>( );
+
+        model.put( MARK_CONFIG, _config.findByPrimaryKey( task.getId( ) ) );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM, locale, model );
+
+        return template.getHtml( );
+    }
+
+    @Override
+    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 
 }

@@ -62,7 +62,7 @@ public class ConfirmActionTaskConfigDAO implements ITaskConfigDAO<ConfirmActionT
 
             daoUtil.setInt( nIndex++, config.getIdTask( ) );
             daoUtil.setString( nIndex++, config.getMessage( ) );
-            
+
             daoUtil.executeUpdate( );
             daoUtil.free( );
         }

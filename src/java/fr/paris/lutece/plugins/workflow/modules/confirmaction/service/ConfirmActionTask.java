@@ -39,8 +39,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-
-
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
@@ -52,31 +50,31 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  *
  */
 public class ConfirmActionTask extends SimpleTask
-{   
-	
-	private static final String PROPERTY_TASK_TITLE = "module.workflow.confirmaction.task_title";
-	
+{
+
+    private static final String PROPERTY_TASK_TITLE = "module.workflow.confirmaction.task_title";
+
     private static final String BEAN_CONFIG_SERVICE = "workflow.confirmActionTaskConfigService";
     @Inject
     @Named( BEAN_CONFIG_SERVICE )
     private ITaskConfigService _config;
-	
-	@Override
-	public String getTitle( Locale locale )
-	{
-    	return I18nService.getLocalizedString( PROPERTY_TASK_TITLE, locale );
-	}
 
-	@Override
-	public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
-	{
-		//Nothing to do
-	}
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( PROPERTY_TASK_TITLE, locale );
+    }
 
-	@Override
-	public void doRemoveConfig ( )
-	{
-		_config.remove( getId( ) );
-	}
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        // Nothing to do
+    }
+
+    @Override
+    public void doRemoveConfig( )
+    {
+        _config.remove( getId( ) );
+    }
 
 }

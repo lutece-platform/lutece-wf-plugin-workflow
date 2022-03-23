@@ -145,16 +145,16 @@ public class ActionResourceIdService extends ResourceIdService
 
         return getActionLabel( action );
     }
-    
+
     private String getActionLabel( Action action )
     {
         IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
         IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
-        
+
         action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
         action.setStateBefore( stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
         action.setStateAfter( stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
-        
+
         StringBuilder sbTitle = new StringBuilder( );
         sbTitle.append( action.getWorkflow( ).getName( ) );
         sbTitle.append( "/" );

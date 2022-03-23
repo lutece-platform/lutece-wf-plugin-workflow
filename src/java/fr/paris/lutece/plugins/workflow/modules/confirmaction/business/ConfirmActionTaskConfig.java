@@ -38,24 +38,25 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 /**
  * ConfirmActionTaskConfig
  */
-public class ConfirmActionTaskConfig extends TaskConfig 
+public class ConfirmActionTaskConfig extends TaskConfig
 {
-	private String _strMessage;
+    private String _strMessage;
 
-	/**
-	 * @return the _strMessage
-	 */
-	public String getMessage( )
-	{
-		return _strMessage;
-	}
+    /**
+     * @return the _strMessage
+     */
+    public String getMessage( )
+    {
+        return _strMessage;
+    }
 
-	/**
-	 * @param strMessage the _strMessage to set
-	 */
-	public void setMessage( String strMessage )
-	{
-		this._strMessage = strMessage;
-	}
+    /**
+     * @param strMessage
+     *            the _strMessage to set
+     */
+    public void setMessage( String strMessage )
+    {
+        this._strMessage = strMessage;
+    }
 
 }
