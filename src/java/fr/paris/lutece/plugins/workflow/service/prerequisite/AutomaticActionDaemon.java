@@ -45,6 +45,8 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowSer
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 import java.util.List;
@@ -66,6 +68,7 @@ public class AutomaticActionDaemon extends Daemon
         List<Workflow> listWorkflows = workflowService.getListWorkflowsByFilter( workflowFilter );
         IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
         int nNbResourcesFound = 0;
+        int nNbErrors = 0;
 
         for ( Workflow workflow : listWorkflows )
         {
@@ -83,13 +86,28 @@ public class AutomaticActionDaemon extends Daemon
 
                 for ( ResourceWorkflow resource : listResource )
                 {
-                    WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ),
-                            resource.getExternalParentId( ), null, Locale.getDefault( ), true, null );
+                    try
+                    {
+                        WorkflowService.getInstance( ).doProcessAction( resource.getIdResource( ), resource.getResourceType( ), action.getId( ),
+                                resource.getExternalParentId( ), null, Locale.getDefault( ), true, null );
+                    }
+                    catch ( AppException e )
+                    {
+                        AppLogService.error( "An error occurred processing Action {} for resource Id {} of type {} ",
+                      		action.getId( ), resource.getIdResource( ), resource.getResourceType( ) ,  e);
+                        nNbErrors++;
+                    }
+
                     nNbResourcesFound++;
                 }
             }
         }
 
-        setLastRunLogs( "Found " + nNbResourcesFound + " resource(s). Automatic actions performed on those resources" );
+        StringBuilder sbResult = new StringBuilder( );
+        sbResult.append( "Automatic actions performed on ").append( nNbResourcesFound ).append(" resources ");
+        sbResult.append( " with ").append( nNbErrors ).append( "errors.");
+        if ( nNbErrors > 0 ) sbResult.append( " See logs for details.");
+
+        setLastRunLogs( sbResult.toString( ) );
     }
 }
