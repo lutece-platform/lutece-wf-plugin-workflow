@@ -1,7 +1,5 @@
 <#include "macro_workflows.html" />
-<style>
-.workflow-icon{filter: drop-shadow(5px 5px 10px #222); width: 32px;}
-</style>
+<style>.workflow-icon{filter: drop-shadow(5px 5px 10px #222); width: 32px;}</style>
 <@row>
 	<@columns>
 		<@box style='primary'>
@@ -14,22 +12,15 @@
 				<@table striped=true>
 					<@tr>
 						<@th>#i18n{workflow.manage_icon.row_icon}</@th>
-						<!-- <@th>#i18n{workflow.manage_icon.row_name}</@th> -->
 						<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
 					</@tr>
 					<@tableHeadBodySeparator />
 					<#list icon_list as icon>
 						<@tr>
 							<@td class='d-flex'>
-								<span>${icon.name}</span>
+								<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='thumbnail thumbnail-xs' />
+								<@span class='ms-3 ml-3'>${icon.name}</@span>
 								<#assign params = ''>
-								<#if icon.width!=-1>
-									<#assign params= params + 'width="${icon.width}" '>
-								</#if>
-								<#if icon.height!=-1>
-									<#assign params= params + 'height="${icon.height}" '>
-								</#if>
-								<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='workflow-icon' params=params></@img>
 							</@td>
 							<@td>
 								<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' buttonIcon='edit' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] size='sm' />
