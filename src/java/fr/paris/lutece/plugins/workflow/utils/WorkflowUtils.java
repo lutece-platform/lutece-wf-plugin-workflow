@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.workflow.utils;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -125,6 +127,25 @@ public final class WorkflowUtils
         }
 
         return nIdParameter;
+    }
+    
+    /**
+     * convert a string array to list
+     *
+     * @param strParameter
+     *            the string array parameter to convert
+     * @return the conversion
+     */
+    public static List<String> convertStringArrayToList( String[] strParameter )
+    {
+        List<String> lstStringParameter = new ArrayList<>( );
+
+        if ( ( strParameter != null ) )
+        {
+        	lstStringParameter = Arrays.asList( strParameter ); 
+        }
+
+        return lstStringParameter;
     }
 
     /**

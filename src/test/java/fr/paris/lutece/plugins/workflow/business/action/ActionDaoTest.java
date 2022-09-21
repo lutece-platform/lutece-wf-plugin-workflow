@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.business.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.workflow.business.icon.IconDAO;
@@ -57,6 +58,7 @@ public class ActionDaoTest extends LuteceTestCase
     private Workflow wf;
     private State stateBefore;
     private State stateAfter;
+    private List<State> listStateBefore = new ArrayList<>( );
 
     @Override
     protected void setUp( ) throws Exception
@@ -85,6 +87,8 @@ public class ActionDaoTest extends LuteceTestCase
         stateAfter.setInitialState( false );
         stateAfter.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateAfter );
+        
+        listStateBefore.add( stateBefore );
     }
 
     @Override
@@ -104,7 +108,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setStateBefore( stateBefore );
+        action.setListStateBefore( listStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -130,7 +134,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setStateBefore( stateBefore );
+        action.setListStateBefore( listStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -149,7 +153,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setStateBefore( stateBefore );
+        action.setListStateBefore( listStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -176,7 +180,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setStateBefore( stateBefore );
+        action.setListStateBefore( listStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 3 );
@@ -195,7 +199,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setStateBefore( stateBefore );
+        action.setListStateBefore( listStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 3 );

@@ -196,7 +196,10 @@ public class WorkflowJsonService
         {
             action.getWorkflow( ).setId( newIdWf );
             action.getStateAfter( ).setId( mapIdStates.get( action.getStateAfter( ).getId( ) ) );
-            action.getStateBefore( ).setId( mapIdStates.get( action.getStateBefore( ).getId( ) ) );
+            for ( State stateBefore : action.getListStateBefore( ) )
+            {
+            	stateBefore.setId( mapIdStates.get( stateBefore.getId( ) ) );
+            }
         }
     }
 

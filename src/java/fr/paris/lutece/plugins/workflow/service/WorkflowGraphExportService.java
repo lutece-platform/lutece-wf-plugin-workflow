@@ -81,8 +81,11 @@ public class WorkflowGraphExportService
         // list actions with tasks
         for ( Action action : wf.getAllActions( ) )
         {
-            sb.append( action.getStateBefore( ).getId( ) ).append( KEY_ASSIGN_ACTIONS_START ).append( getTransitionLabel( action ) )
-                    .append( KEY_ASSIGN_ACTIONS_END ).append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
+            for ( State state : action.getListStateBefore( ) )
+            {
+            	sb.append( state.getId( ) ).append( KEY_ASSIGN_ACTIONS_START ).append( getTransitionLabel( action ) )
+                        .append( KEY_ASSIGN_ACTIONS_END ).append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
+            }
         }
 
         if ( strBaseUrl != null )

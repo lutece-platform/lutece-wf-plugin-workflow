@@ -87,7 +87,7 @@ public class ChooseStateDaemon extends Daemon
             for ( Action action : listAutomaticActions )
             {
                 ResourceWorkflowFilter filt = new ResourceWorkflowFilter( );
-                filt.setIdState( action.getStateBefore( ).getId( ) );
+                filt.setIdAction( action.getId( ) );
                 filt.setIdWorkflow( workflow.getId( ) );
 
                 List<ITask> listActionTasks = _taskService.getListTaskByIdAction( action.getId( ), Locale.getDefault( ) );

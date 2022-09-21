@@ -62,6 +62,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
             + " FROM workflow_resource_workflow  WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_STATE = "SELECT id_resource,id_state FROM workflow_resource_workflow "
             + " WHERE id_workflow =? AND resource_type = ? AND id_external_parent = ? AND id_resource IN (?";
+    private static final String SQL_QUERY_SELECT_BY_LIST_ID_STATE = SQL_SELECT_ALL + "FROM workflow_resource_workflow  WHERE id_state IN (?";
     private static final String SQL_QUERY_SELECT_BY_WORKFLOW = SQL_SELECT_ALL + " FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_RESOURCE_BY_WORKFLOW = "SELECT id_resource  " + "FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_BY_STATE = SQL_SELECT_ALL + "FROM workflow_resource_workflow  WHERE id_state=?";
@@ -83,6 +84,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_FILTER_EXTERNAL_PARENT_ID = " r.id_external_parent = ? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " r.id_workflow = ? ";
     private static final String SQL_FILTER_ID_STATE = " r.id_state = ? ";
+    private static final String SQL_FILTER_ID_STATE_BY_ID_ACTION = " r.id_state IN ( select s.id_state_before FROM workflow_action_state_before s WHERE id_action = ? ) ";
     private static final String SQL_FILTER_RESOURCE_TYPE = " r.resource_type = ? ";
     private static final String SQL_FILTER_WORKGROUP_KEY = " r.id_resource = w.id_resource AND r.resource_type = w.resource_type AND r.id_workflow = w.id_workflow AND (w.workgroup_key IN ( ";
     private static final String SQL_FILTER_LIST_STATE = " r.id_state IN ( ";
@@ -215,6 +217,46 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
             {
                 ResourceWorkflow resourceWorkflow = dataToObject( daoUtil );
                 lisResourceWorkflow.add( resourceWorkflow );
+            }
+        }
+        return lisResourceWorkflow;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ResourceWorkflow> selectResourceWorkflowByListState( List<State> listStateBefore )
+    {
+        List<ResourceWorkflow> lisResourceWorkflow = new ArrayList<>( );
+        int nlistIdResourceSize = listStateBefore.size( );
+
+        if ( nlistIdResourceSize > 0 )
+        {
+            StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_BY_LIST_ID_STATE );
+
+            for ( int i = 1; i < nlistIdResourceSize; i++ )
+            {
+                sbSQL.append( SQL_ADITIONAL_PARAMETER );
+            }
+
+            sbSQL.append( SQL_CLOSE_PARENTHESIS );
+
+            try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), WorkflowUtils.getPlugin( ) ) )
+            {
+
+                for ( int i = 0; i < nlistIdResourceSize; i++ )
+                {
+                    daoUtil.setInt( i + 1 , listStateBefore.get( i ).getId( ) );
+                }
+
+                daoUtil.executeQuery( );
+
+                while ( daoUtil.next( ) )
+                {
+                    ResourceWorkflow resourceWorkflow = dataToObject( daoUtil );
+                    lisResourceWorkflow.add( resourceWorkflow );
+                }
             }
         }
         return lisResourceWorkflow;
@@ -603,6 +645,11 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         {
             daoUtil.setInt( ++nPosition, filter.getIdState( ) );
         }
+        
+        if ( filter.containsIdAction( ) )
+        {
+            daoUtil.setInt( ++nPosition, filter.getIdAction( ) );
+        }
 
         if ( filter.containsResourceType( ) )
         {
@@ -663,10 +710,15 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         {
             listStrFilter.add( SQL_FILTER_ID_WORKFLOW );
         }
-
+        
         if ( ( lListIdState == null ) && filter.containsIdState( ) )
         {
             listStrFilter.add( SQL_FILTER_ID_STATE );
+        }
+        
+        if ( filter.containsIdAction( ) )
+        {
+            listStrFilter.add( SQL_FILTER_ID_STATE_BY_ID_ACTION );
         }
 
         if ( filter.containsResourceType( ) )

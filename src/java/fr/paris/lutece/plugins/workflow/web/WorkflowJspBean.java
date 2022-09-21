@@ -468,7 +468,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         for ( Action action : listAction )
         {
-            action.setStateBefore( _stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
             action.setStateAfter( _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
             if ( strShowTasks != null )
             {
@@ -1183,15 +1182,17 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strName = request.getParameter( PARAMETER_NAME );
         String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
-        String strIdStateBefore = request.getParameter( PARAMETER_ID_STATE_BEFORE );
+        //String strIdStateBefore = request.getParameter( PARAMETER_ID_STATE_BEFORE );
+        String[] strTableIdStateBefore = request.getParameterValues(PARAMETER_ID_STATE_BEFORE);
         String strIdStateAfter = request.getParameter( PARAMETER_ID_STATE_AFTER );
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         String strAutomatic = request.getParameter( PARAMETER_ID_AUTOMATIC );
         String strIsMassAction = request.getParameter( PARAMETER_IS_MASS_ACTION );
 
-        int nIdStateBefore = WorkflowUtils.convertStringToInt( strIdStateBefore );
+        //int nIdStateBefore = WorkflowUtils.convertStringToInt( strIdStateBefore );
         int nIdStateAfter = WorkflowUtils.convertStringToInt( strIdStateAfter );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
+        List<String> lstStrTableIdStateBefore = WorkflowUtils.convertStringArrayToList(strTableIdStateBefore); 
         boolean bIsAutomatic = strAutomatic != null;
         boolean bIsMassAction = strIsMassAction != null;
 
@@ -1207,7 +1208,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 strFieldError = FIELD_ACTION_DESCRIPTION;
             }
             else
-                if ( nIdStateBefore == WorkflowUtils.CONSTANT_ID_NULL )
+                //if ( nIdStateBefore == WorkflowUtils.CONSTANT_ID_NULL )
+            	if ( lstStrTableIdStateBefore.isEmpty( ) )
                 {
                     strFieldError = FIELD_STATE_BEFORE;
                 }
@@ -1222,7 +1224,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                             strFieldError = FIELD_ICON;
                         }
                         else
-                            if ( bIsAutomatic && ( nIdStateBefore == nIdStateAfter ) )
+                            //if ( bIsAutomatic && ( nIdStateBefore == nIdStateAfter ) )
+                        	if ( bIsAutomatic && ( lstStrTableIdStateBefore.stream( ).anyMatch( x -> WorkflowUtils.convertStringToInt( x ) ==  nIdStateAfter ) ) )
                             {
                                 Object [ ] tabRequiredFields = {
                                         I18nService.getLocalizedString( FIELD_STATE_BEFORE, getLocale( ) ),
@@ -1259,10 +1262,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         action.setName( strName );
         action.setDescription( strDescription );
-
-        State stateBefore = new State( );
-        stateBefore.setId( nIdStateBefore );
-        action.setStateBefore( stateBefore );
+        
+        List<State> listStateBefore = new ArrayList<>();
+        for (String strStateBefore : lstStrTableIdStateBefore)
+        {
+        	int nIdStateBeforeList = WorkflowUtils.convertStringToInt( strStateBefore );
+        	State stateBeforeList = new State( );
+        	stateBeforeList.setId( nIdStateBeforeList );
+        	listStateBefore.add(stateBeforeList);
+        }
+        action.setListStateBefore(listStateBefore);
 
         State stateAfter = new State( );
         stateAfter.setId( nIdStateAfter );
@@ -1588,9 +1597,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 }
             }
 
-            if ( action.isAutomaticReflexiveAction( ) )
+            if ( action.isAutomaticReflexiveAction( ) && !action.getListStateBefore( ).isEmpty( ) )
             {
-                return getJspModifyReflexiveAction( request, action.getStateBefore( ).getId( ) );
+                return getJspModifyReflexiveAction( request, action.getListStateBefore( ).get( 0 ).getId( ) );
             }
 
             return getJspModifyAction( request, task.getAction( ).getId( ) );
@@ -1622,11 +1631,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
         UrlItem url;
 
-        if ( action.isAutomaticReflexiveAction( ) )
+        if ( action.isAutomaticReflexiveAction( ) && !action.getListStateBefore( ).isEmpty( ) )
         {
             url = new UrlItem( JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION );
             url.addParameter( PARAMETER_ID_TASK, strId );
-            url.addParameter( PARAMETER_ID_STATE, action.getStateBefore( ).getId( ) );
+            url.addParameter( PARAMETER_ID_STATE, action.getListStateBefore( ).get( 0 ).getId( ) );
         }
         else
         {
@@ -1715,9 +1724,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Action action = _actionService.findByPrimaryKey( taskToCopy.getAction( ).getId( ) );
 
-        if ( action.isAutomaticReflexiveAction( ) )
+        if ( action.isAutomaticReflexiveAction( ) && !action.getListStateBefore( ).isEmpty( ) )
         {
-            return getJspModifyReflexiveAction( request, action.getStateBefore( ).getId( ) );
+            return getJspModifyReflexiveAction( request, action.getListStateBefore( ).get( 0 ).getId( ) );
         }
 
         return getJspModifyAction( request, taskToCopy.getAction( ).getId( ) );
@@ -2134,9 +2143,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Action action = _actionService.findByPrimaryKey( taskToChangeOrder.getAction( ).getId( ) );
 
-        if ( action.isAutomaticReflexiveAction( ) )
+        if ( action.isAutomaticReflexiveAction( ) && !action.getListStateBefore( ).isEmpty( ) )
         {
-            return getJspModifyReflexiveAction( request, action.getStateBefore( ).getId( ) );
+            return getJspModifyReflexiveAction( request, action.getListStateBefore( ).get( 0 ).getId( ) );
         }
 
         return getJspModifyAction( request, action.getId( ) );
@@ -2287,8 +2296,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId( ), this.getLocale( ) );
 
             action.setStateAfter( stateToCopy );
-            action.setStateBefore( stateToCopy );
-
+            if ( !action.getListStateBefore( ).isEmpty( ) )
+            {
+            	action.getListStateBefore( ).set( 0, stateToCopy );
+            }
             _actionService.create( action );
 
             for ( ITask task : listLinkedTasks )
@@ -2524,9 +2535,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         _taskService.initializeTaskOrder( nIdAction, this.getLocale( ) );
 
-        if ( action.isAutomaticReflexiveAction( ) )
+        if ( action.isAutomaticReflexiveAction( ) && !action.getListStateBefore( ).isEmpty( ) )
         {
-            return getJspModifyReflexiveAction( request, action.getStateBefore( ).getId( ) );
+            return getJspModifyReflexiveAction( request, action.getListStateBefore( ).get( 0 ).getId( ) );
         }
 
         return getJspModifyAction( request, nIdAction );
@@ -2623,7 +2634,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             action = new Action( );
 
             State state = _stateService.findByPrimaryKey( nIdState );
-            action.setStateBefore( state );
+            //action.setStateBefore( state );
+            List<State> lstStateBefore = Arrays.asList( state );
+            action.setListStateBefore( lstStateBefore );
             action.setStateAfter( state );
             action.setAutomaticReflexiveAction( true );
             action.setAutomaticState( false );

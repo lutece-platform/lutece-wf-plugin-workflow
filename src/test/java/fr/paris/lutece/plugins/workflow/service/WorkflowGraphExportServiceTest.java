@@ -76,6 +76,14 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
         s1.setName( "brouillon" );
         s2.setName( "à valider" );
         s3.setName( "validé" );
+        
+        List<State> listStateBefore1 = new ArrayList<>( );
+        List<State> listStateBefore2 = new ArrayList<>( );
+        List<State> listStateBefore3 = new ArrayList<>( );
+        
+        listStateBefore1.add( s1 );
+        listStateBefore2.add( s2 );
+        listStateBefore3.add( s3 );
 
         Action a1 = new Action( );
         Action a2 = new Action( );
@@ -101,18 +109,18 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
         a4.setId( 14 );
 
         a1.setName( "Transmettre" );
-        a1.setStateBefore( s1 );
+        a1.setListStateBefore( listStateBefore1 );
         a1.setStateAfter( s2 );
 
         a2.setName( "Valider" );
-        a2.setStateBefore( s2 );
+        a2.setListStateBefore( listStateBefore2 );
         a2.setStateAfter( s3 );
         List<ITask> tasksA2 = new ArrayList<>( );
         tasksA2.add( t1 );
         a2.setAllTasks( tasksA2 );
 
         a3.setName( "Refuser" );
-        a3.setStateBefore( s2 );
+        a3.setListStateBefore( listStateBefore2 );
         a3.setStateAfter( s1 );
         List<ITask> tasksA3 = new ArrayList<>( );
         tasksA3.add( t2 );
@@ -120,7 +128,7 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
         a3.setAllTasks( tasksA3 );
 
         a4.setName( "Enregistrer" );
-        a4.setStateBefore( s1 );
+        a4.setListStateBefore( listStateBefore1 );;
         a4.setStateAfter( s1 );
 
         List<State> states = new ArrayList<>( );

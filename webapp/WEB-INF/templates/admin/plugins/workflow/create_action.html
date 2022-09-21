@@ -14,7 +14,9 @@
 							<@input type='textarea' name='description' />
 						</@formGroup>
 						<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
-							<@select name='id_state_before' items=state_list default_value='-1' />
+							<#list state_list as state>
+								<@checkBox name='id_state_before' id='id_state_before${state.code}'  value='${state.code}' labelKey='${state.name}' />
+							</#list>
 						</@formGroup>
 						<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
 							<@select name='id_state_after' items=state_list default_value='-1' />
