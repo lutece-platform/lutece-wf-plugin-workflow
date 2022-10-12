@@ -75,7 +75,6 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_SELECT_LINKED_ACTION_2 = " SELECT id_linked_action FROM workflow_action_action WHERE id_action = ?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action  WHERE id_action=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " a.id_workflow = ? ";
-    private static final String SQL_FILTER_ID_STATE_BEFORE = " a.id_state_before= ? ";
     private static final String SQL_FILTER_ID_STATE_BEFORE_LIST = " a.id_action in (select b.id_action from workflow_action_state_before b where b.id_state_before = ? ) ";
     private static final String SQL_FILTER_ID_STATE_AFTER = " a.id_state_after = ? ";
     private static final String SQL_FILTER_ID_ICON = " a.id_icon = ? ";
@@ -212,12 +211,6 @@ public class ActionDAO implements IActionDAO
         {
             listStrFilter.add( SQL_FILTER_ID_WORKFLOW );
         }
-        /*
-        if ( filter.containsIdStateBefore( ) )
-        {
-            listStrFilter.add( SQL_FILTER_ID_STATE_BEFORE );
-        }
-        */
         if ( filter.containsIdStateBefore( ) )
         {
             listStrFilter.add( SQL_FILTER_ID_STATE_BEFORE_LIST );

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.IActionStateDAO;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 public class ActionStateDAO implements IActionStateDAO 
@@ -18,43 +16,25 @@ public class ActionStateDAO implements IActionStateDAO
             + "(id_action,id_state_before)"
             + " VALUES(?,?)";
 	private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action_state_before  WHERE id_action=? ";
-	private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action_state_before  SET id_action=?,id_state_before=? "
-            + " WHERE id_action=? AND id_state_before = ?";
 	
 	/**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( int nIdAction, int nIdState )
+    public synchronized void insert( int nIdAction, List<Integer> listIdStateBefore )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
-            int nPos = 0;
-            daoUtil.setInt( ++nPos, nIdAction );
-            daoUtil.setInt( ++nPos, nIdState );
-
-            daoUtil.executeUpdate( );
-
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void store( int nNewIdAction, int nNewIdState, int nOldIdAction, int nOldIdState )
-    {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
-        {
-            int nPos = 0;
-
-            daoUtil.setInt( ++nPos, nNewIdAction );
-            daoUtil.setInt( ++nPos, nNewIdState );
-
-            daoUtil.setInt( ++nPos, nOldIdAction );
-            daoUtil.setInt( ++nPos, nOldIdState );
-
-            daoUtil.executeUpdate( );
+        	for ( Integer nIdStateBefore : listIdStateBefore )
+        	{
+	            int nPos = 0;
+	            daoUtil.setInt( ++nPos, nIdAction );
+	            daoUtil.setInt( ++nPos, nIdStateBefore );
+	            daoUtil.addBatch( );
+        	}
+            //daoUtil.executeUpdate( );
+        	daoUtil.executeBatch( );
+            
         }
     }
 

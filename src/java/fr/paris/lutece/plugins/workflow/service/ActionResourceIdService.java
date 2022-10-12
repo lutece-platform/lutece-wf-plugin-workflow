@@ -160,8 +160,9 @@ public class ActionResourceIdService extends ResourceIdService
         sbTitle.append( "/" );
         sbTitle.append( action.getName( ) );
         sbTitle.append( " ( " );
-        for ( State stateBefore : action.getListStateBefore( ) )
+        for ( Integer idStateBefore : action.getListIdStateBefore( ) )
         {
+        	State stateBefore = stateService.findByPrimaryKey( idStateBefore );
         	sbTitle.append( stateBefore.getName( ) );
         	sbTitle.append( " " );
         }

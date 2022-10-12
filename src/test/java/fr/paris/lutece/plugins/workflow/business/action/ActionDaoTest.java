@@ -58,7 +58,7 @@ public class ActionDaoTest extends LuteceTestCase
     private Workflow wf;
     private State stateBefore;
     private State stateAfter;
-    private List<State> listStateBefore = new ArrayList<>( );
+    private List<Integer> listIdStateBefore = new ArrayList<>( );
 
     @Override
     protected void setUp( ) throws Exception
@@ -77,10 +77,6 @@ public class ActionDaoTest extends LuteceTestCase
         wf.setWorkgroup( "group" );
         workflowDAO.insert( wf );
 
-        stateBefore = new State( );
-        stateBefore.setWorkflow( wf );
-        stateBefore.setInitialState( false );
-        stateBefore.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateBefore );
         stateAfter = new State( );
         stateAfter.setWorkflow( wf );
@@ -88,7 +84,7 @@ public class ActionDaoTest extends LuteceTestCase
         stateAfter.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateAfter );
         
-        listStateBefore.add( stateBefore );
+        listIdStateBefore.add( 0 );
     }
 
     @Override
@@ -108,7 +104,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setListStateBefore( listStateBefore );
+        action.setListIdStateBefore( listIdStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -134,7 +130,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setListStateBefore( listStateBefore );
+        action.setListIdStateBefore( listIdStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -153,7 +149,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setListStateBefore( listStateBefore );
+        action.setListIdStateBefore( listIdStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 0 );
@@ -180,7 +176,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setListStateBefore( listStateBefore );
+        action.setListIdStateBefore( listIdStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 3 );
@@ -199,7 +195,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setName( "name" );
         action.setDescription( "strDescription" );
         action.setIcon( icon );
-        action.setListStateBefore( listStateBefore );
+        action.setListIdStateBefore( listIdStateBefore );
         action.setStateAfter( stateAfter );
         action.setWorkflow( wf );
         action.setOrder( 3 );

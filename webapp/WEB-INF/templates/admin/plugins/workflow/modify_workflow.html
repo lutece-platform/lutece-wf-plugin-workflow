@@ -90,8 +90,8 @@
 									<strong>${action.name}</strong>
 									<@p>
 										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">
-											<#list action.listStateBefore as stateBefore>
-												${stateBefore.name!} 
+											<#list action.listIdStateBefore as idStateBefore>
+												${state_before_map[idStateBefore?c]!} 
 											</#list>
 										</small>
 										<@icon style='arrow-right' />

@@ -82,7 +82,7 @@ public class AutomaticActionDaemon extends Daemon
 
             for ( Action action : listAutomaticActions )
             {
-                List<ResourceWorkflow> listResource = resourceWorkflowService.getAllResourceWorkflowByListState( action.getListStateBefore( ) );
+                List<ResourceWorkflow> listResource = resourceWorkflowService.getAllResourceWorkflowByListState( action.getListIdStateBefore( ) );
 
                 for ( ResourceWorkflow resource : listResource )
                 {

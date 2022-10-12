@@ -20,8 +20,8 @@
 						<@formGroup rows=2 labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
 							<#list state_list as state>
 								<#assign isCheck=false />
-								<#list action.listStateBefore as stateChecked>
-									<#if state.name == stateChecked.name > 
+								<#list action.listIdStateBefore as stateChecked>
+									<#if state.code == stateChecked?c > 
 										<#assign isCheck=true />
 									</#if>
 								</#list>
