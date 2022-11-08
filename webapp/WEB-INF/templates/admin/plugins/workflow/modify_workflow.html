@@ -89,7 +89,11 @@
 								<@td>
 									<strong>${action.name}</strong>
 									<@p>
-										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">${action.stateBefore.name}</small>
+										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">
+											<#list action.listIdStateBefore as idStateBefore>
+												${state_before_map[idStateBefore?c]!} 
+											</#list>
+										</small>
 										<@icon style='arrow-right' />
 										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_after}"> ${action.stateAfter.name}</small>
 									</@p>

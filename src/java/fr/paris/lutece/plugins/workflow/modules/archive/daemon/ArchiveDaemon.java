@@ -102,7 +102,7 @@ public class ArchiveDaemon extends Daemon
         if ( CollectionUtils.isNotEmpty( listTasks ) )
         {
             ResourceWorkflowFilter filt = new ResourceWorkflowFilter( );
-            filt.setIdState( action.getStateBefore( ).getId( ) );
+            filt.setListIdStateBefore( action.getListIdStateBefore( ) );
             filt.setIdWorkflow( wf.getId( ) );
 
             List<ResourceWorkflow> listResource = _resourceWorkflowService.getListResourceWorkflowByFilter( filt );

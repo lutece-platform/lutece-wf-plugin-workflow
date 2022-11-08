@@ -18,7 +18,15 @@
 						</@formGroup>
 
 						<@formGroup rows=2 labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
-							<@select name='id_state_before' items=state_list default_value=action.stateBefore.id?string />
+							<#list state_list as state>
+								<#assign isCheck=false />
+								<#list action.listIdStateBefore as stateChecked>
+									<#if state.code == stateChecked?c > 
+										<#assign isCheck=true />
+									</#if>
+								</#list>
+								<@checkBox name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' checked=isCheck />
+							</#list>
 						</@formGroup>
 
 						<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>

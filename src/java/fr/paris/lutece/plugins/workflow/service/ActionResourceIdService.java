@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.service;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
@@ -152,7 +153,6 @@ public class ActionResourceIdService extends ResourceIdService
         IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
 
         action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
-        action.setStateBefore( stateService.findByPrimaryKey( action.getStateBefore( ).getId( ) ) );
         action.setStateAfter( stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
 
         StringBuilder sbTitle = new StringBuilder( );
@@ -160,7 +160,12 @@ public class ActionResourceIdService extends ResourceIdService
         sbTitle.append( "/" );
         sbTitle.append( action.getName( ) );
         sbTitle.append( " ( " );
-        sbTitle.append( action.getStateBefore( ).getName( ) );
+        for ( Integer idStateBefore : action.getListIdStateBefore( ) )
+        {
+        	State stateBefore = stateService.findByPrimaryKey( idStateBefore );
+        	sbTitle.append( stateBefore.getName( ) );
+        	sbTitle.append( " " );
+        }
         sbTitle.append( " -> " );
         sbTitle.append( action.getStateAfter( ).getName( ) );
         sbTitle.append( " ) " );
