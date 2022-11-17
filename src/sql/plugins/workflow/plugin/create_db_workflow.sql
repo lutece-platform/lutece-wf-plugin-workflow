@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS workflow_task_archive_resource;
 DROP TABLE IF EXISTS workflow_task_archive_cf;
 DROP TABLE IF EXISTS workflow_task_choose_state_config;
 DROP TABLE IF EXISTS workflow_task_choose_state_information;
+DROP TABLE IF EXISTS workflow_action_state_before;
 
 -- -----------------------------------------------
 -- Table structure for table workflow_workflow --
@@ -63,7 +64,6 @@ CREATE TABLE workflow_action
 	name VARCHAR(255) DEFAULT NULL,
 	description LONG VARCHAR DEFAULT NULL,
 	id_workflow INT DEFAULT NULL,
-	id_state_before INT DEFAULT NULL,
 	id_state_after INT DEFAULT NULL,
 	id_icon INT DEFAULT NULL,
 	is_automatic SMALLINT DEFAULT 0,
@@ -74,7 +74,6 @@ CREATE TABLE workflow_action
 );
 
 CREATE INDEX action_id_workflow_fk ON workflow_action(id_workflow);
-CREATE INDEX action_id_state_before_fk ON workflow_action(id_state_before);
 CREATE INDEX action_id_state_after_fk ON workflow_action(id_state_after);
 CREATE INDEX action_id_icon_fk ON workflow_action(id_icon);
 
@@ -322,6 +321,12 @@ CREATE TABLE workflow_task_change_state_information (
   new_state VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE workflow_action_state_before (
+id_action int NOT NULL,
+id_state_before int NOT NULL,
+PRIMARY KEY (id_action, id_state_before)
+);
+
 -- ---------------
 -- Constraints --
 -- ---------------
@@ -329,8 +334,6 @@ ALTER TABLE workflow_state ADD CONSTRAINT fk_state_id_workflow FOREIGN KEY (id_w
 	REFERENCES workflow_workflow(id_workflow) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_action ADD CONSTRAINT fk_action_id_workflow FOREIGN KEY (id_workflow)
 	REFERENCES workflow_workflow(id_workflow) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE workflow_action ADD CONSTRAINT fk_action_id_state_before FOREIGN KEY (id_state_before)
-	REFERENCES workflow_state(id_state) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_action ADD CONSTRAINT fk_action_id_state_after FOREIGN KEY (id_state_after)
 	REFERENCES workflow_state(id_state) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE workflow_action ADD CONSTRAINT fk_action_id_icon FOREIGN KEY (id_icon)
