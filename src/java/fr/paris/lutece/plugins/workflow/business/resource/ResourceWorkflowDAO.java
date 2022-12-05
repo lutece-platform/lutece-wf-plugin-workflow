@@ -66,6 +66,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_QUERY_SELECT_BY_WORKFLOW = SQL_SELECT_ALL + " FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_ID_RESOURCE_BY_WORKFLOW = "SELECT id_resource  " + "FROM workflow_resource_workflow  WHERE id_workflow=?";
     private static final String SQL_QUERY_SELECT_BY_STATE = SQL_SELECT_ALL + "FROM workflow_resource_workflow  WHERE id_state=?";
+    private static final String SQL_QUERY_FILTER_BY_ID_PARENT =  " AND id_external_parent = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_workflow "
             + "(id_resource,resource_type,id_state,id_workflow,id_external_parent,is_associated_workgroups)VALUES(?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_resource_workflow  SET id_resource=?,resource_type=?,id_state=?,id_workflow=?, "
@@ -207,11 +208,29 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     @Override
     public List<ResourceWorkflow> selectResourceWorkflowByState( int nIdState )
     {
+    	return selectResourceWorkflowByState( nIdState, -1 );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ResourceWorkflow> selectResourceWorkflowByState( int nIdState, int nIdParent )
+    {
         List<ResourceWorkflow> lisResourceWorkflow = new ArrayList<>( );
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STATE, WorkflowUtils.getPlugin( ) ) )
+        StringBuilder sql = new StringBuilder( SQL_QUERY_SELECT_BY_STATE ) ;
+        
+        if ( nIdParent > -1 ) {
+        	sql.append( SQL_QUERY_FILTER_BY_ID_PARENT );
+        }
+        
+        try ( DAOUtil daoUtil = new DAOUtil( sql.toString( ), WorkflowUtils.getPlugin( ) ) )
         {
             int nPos = 0;
             daoUtil.setInt( ++nPos, nIdState );
+            if ( nIdParent > -1 ) {
+            	daoUtil.setInt( ++nPos, nIdParent );
+            }
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
