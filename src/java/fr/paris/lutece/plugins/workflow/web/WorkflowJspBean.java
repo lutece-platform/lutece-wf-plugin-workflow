@@ -176,6 +176,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_IS_MASS_ACTION = "is_mass_action";
     private static final String PARAMETER_ID_STATE_BEFORE = "id_state_before";
     private static final String PARAMETER_ID_STATE_AFTER = "id_state_after";
+    private static final String PARAMETER_ID_ALTERNATIVE_STATE_AFTER = "id_alternative_state_after";
     private static final String PARAMETER_ORDER_ID = "order_id";
     private static final String PARAMETER_ORDER_ACTION_ID = "order_action_id";
     private static final String PARAMETER_ORDER_TASK_ID = "order_task_id";
@@ -230,6 +231,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_NB_ITEMS_PER_PAGE_STATE = "nb_items_per_page_state";
     private static final String MARK_WORKFLOW_LIST = "workflow_list";
     private static final String MARK_STATE_LIST = "state_list";
+    private static final String MARK_ALTERNATIVE_STATE_LIST = "alternative_state_list";
     private static final String MARK_ACTION_LIST = "action_list";
     private static final String MARK_STATE_BEFORE_MAP = "state_before_map";
     private static final String MARK_ICON_LIST = "icon_list";
@@ -1116,6 +1118,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         model.put( MARK_WORKFLOW, workflow );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale( ) ) );
+        model.put( MARK_ALTERNATIVE_STATE_LIST, WorkflowUtils.getRefList( listState, true, getLocale( ) ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_AVAILABLE_LINKED_ACTIONS, getAvailableActionsToLink( WorkflowUtils.CONSTANT_ID_NULL, nIdWorkflow ) );
 
@@ -1196,11 +1199,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
         String[] strTableIdStateBefore = request.getParameterValues(PARAMETER_ID_STATE_BEFORE);
         String strIdStateAfter = request.getParameter( PARAMETER_ID_STATE_AFTER );
+        String strIdAlternativeStateAfter = request.getParameter( PARAMETER_ID_ALTERNATIVE_STATE_AFTER );
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         String strAutomatic = request.getParameter( PARAMETER_ID_AUTOMATIC );
         String strIsMassAction = request.getParameter( PARAMETER_IS_MASS_ACTION );
 
         int nIdStateAfter = WorkflowUtils.convertStringToInt( strIdStateAfter );
+        int nIdAlternativeStateAfter = WorkflowUtils.convertStringToInt( strIdAlternativeStateAfter );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
         List<String> lstStrTableIdStateBefore = WorkflowUtils.convertStringArrayToList(strTableIdStateBefore); 
         boolean bIsAutomatic = strAutomatic != null;
@@ -1282,6 +1287,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         State stateAfter = new State( );
         stateAfter.setId( nIdStateAfter );
         action.setStateAfter( stateAfter );
+        
+        State alternativeStateAfter = new State( );
+        alternativeStateAfter.setId( nIdAlternativeStateAfter );
+        action.setAlternativeStateAfter( alternativeStateAfter );
 
         Icon icon = new Icon( );
         icon.setId( nIdIcon );
@@ -1366,6 +1375,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_ACTION, action );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale( ) ) );
+        model.put( MARK_ALTERNATIVE_STATE_LIST, WorkflowUtils.getRefList( listState, true, getLocale( ) ) );
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
         model.put( MARK_TASK_LIST, taskList );
         model.put( MARK_NUMBER_TASK, taskList.size( ) );

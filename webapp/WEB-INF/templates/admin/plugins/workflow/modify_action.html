@@ -33,6 +33,10 @@
 							<@select name='id_state_after' items=state_list default_value=action.stateAfter.id?string  />
 						</@formGroup>
 
+						<@formGroup rows=2 labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
+							<@select name='id_alternative_state_after' items=alternative_state_list default_value=action.alternativeStateAfter.id?string  />
+						</@formGroup>
+
 						<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' mandatory=true helpKey='#i18n{workflow.create_action.label_icon_comment}'>
 							<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
 						</@formGroup>

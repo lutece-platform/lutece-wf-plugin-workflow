@@ -56,7 +56,7 @@ import java.util.List;
 public class ActionDAO implements IActionDAO
 {
     private static final String SQL_QUERY_SELECT_ALL = "SELECT a.id_action,a.name,a.description,a.id_workflow, "
-            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action ";
+            + " a.id_state_after,a.id_icon,a.is_automatic,a.is_mass_action,a.display_order,a.is_automatic_reflexive_action,a.id_alternative_state_after ";
     private static final String SQL_QUERY_SELECT_ICON = ",i.name,i.mime_type,i.file_value,i.width,i.height ";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_QUERY_SELECT_ALL + " FROM workflow_action a WHERE a.id_action=? ";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY_WITH_ICON = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
@@ -64,10 +64,10 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_SELECT_ACTION_BY_FILTER = SQL_QUERY_SELECT_ALL + SQL_QUERY_SELECT_ICON
             + " FROM workflow_action a LEFT JOIN workflow_icon i ON (a.id_icon = i.id_icon) ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action "
-            + "(name,description,id_workflow,id_state_after,id_icon,is_automatic,is_mass_action,display_order,is_automatic_reflexive_action)"
-            + " VALUES(?,?,?,?,?,?,?,?,?)";
+            + "(name,description,id_workflow,id_state_after,id_icon,is_automatic,is_mass_action,display_order,is_automatic_reflexive_action,id_alternative_state_after)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_action  SET id_action=?,name=?,description=?,"
-            + "id_workflow=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=?, display_order=?, is_automatic_reflexive_action=? "
+            + "id_workflow=?,id_state_after=?,id_icon=?,is_automatic=?,is_mass_action=?, display_order=?, is_automatic_reflexive_action=?, id_alternative_state_after=? "
             + " WHERE id_action=?";
     private static final String SQL_QUERY_INSERT_LINKED_ACTION = " INSERT INTO workflow_action_action (id_action, id_linked_action) VALUES ( ?,? ) ";
     private static final String SQL_QUERY_REMOVE_LINKED_ACTION = " DELETE FROM workflow_action_action WHERE id_action = ? OR id_linked_action = ? ";
@@ -109,6 +109,8 @@ public class ActionDAO implements IActionDAO
             daoUtil.setBoolean( ++nPos, action.isMassAction( ) );
             daoUtil.setInt( ++nPos, action.getOrder( ) );
             daoUtil.setBoolean( ++nPos, action.isAutomaticReflexiveAction( ) );
+            daoUtil.setInt( ++nPos, (action.getAlternativeStateAfter( )!=null?
+            		action.getAlternativeStateAfter( ).getId( ):-1) );
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -137,6 +139,8 @@ public class ActionDAO implements IActionDAO
             daoUtil.setBoolean( ++nPos, action.isMassAction( ) );
             daoUtil.setInt( ++nPos, action.getOrder( ) );
             daoUtil.setBoolean( ++nPos, action.isAutomaticReflexiveAction( ) );
+            daoUtil.setInt( ++nPos, (action.getAlternativeStateAfter( )!=null?
+            		action.getAlternativeStateAfter( ).getId( ):-1) );
 
             daoUtil.setInt( ++nPos, action.getId( ) );
             daoUtil.executeUpdate( );
@@ -482,6 +486,10 @@ public class ActionDAO implements IActionDAO
         action.setMassAction( daoUtil.getBoolean( ++nPos ) );
         action.setOrder( daoUtil.getInt( ++nPos ) );
         action.setAutomaticReflexiveAction( daoUtil.getBoolean( ++nPos ) );
+        
+        State alternativeStateAfter = new State( );
+        alternativeStateAfter.setId( daoUtil.getInt( ++nPos ) );
+        action.setAlternativeStateAfter( alternativeStateAfter );
 
         if ( populateIcon )
         {

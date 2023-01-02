@@ -55,6 +55,8 @@ public class WorkflowGraphExportService
     private static final String KEY_ASSIGN_LABEL_END = "\"]";
     private static final String KEY_ASSIGN_ACTIONS_START = " --> |\"";
     private static final String KEY_ASSIGN_ACTIONS_END = "\"| ";
+    private static final String KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX = "fa:fa-ban ";
+    private static final String KEY_ASSIGN_DEFAULT_ACTION_PREFIX = "fa:fa-check ";
     private static final String KEY_NEWLINE = "<br /> ";
     private static final String KEY_CLICK = "click";
     private static final String STATE_URL_PART = "/jsp/admin/plugins/workflow/ModifyState.jsp?id_state=";
@@ -83,8 +85,19 @@ public class WorkflowGraphExportService
         {
             for ( Integer idState : action.getListIdStateBefore( ) )
             {
-            	sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START ).append( getTransitionLabel( action ) )
-                        .append( KEY_ASSIGN_ACTIONS_END ).append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
+            	sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
+            		.append( getDefaultTransitionType( action ) )
+            		.append( getTransitionLabel( action ) )
+                    .append( KEY_ASSIGN_ACTIONS_END ).append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
+            	
+            	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
+                {
+            		sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
+	            		.append( getAlternativeTransitionType( action ) )	
+	            		.append( getTransitionLabel( action ) )
+	                    .append( KEY_ASSIGN_ACTIONS_END ).append( action.getAlternativeStateAfter( ).getId( ) ).append( NEWLINE );
+        	
+                }
             }
         }
 
@@ -120,6 +133,30 @@ public class WorkflowGraphExportService
         }
 
         return sb.toString( ).replaceAll( "\"", "'" );
+    }
+    
+    private static String getDefaultTransitionType( Action action )
+    {
+    	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
+    	{
+    		return KEY_ASSIGN_DEFAULT_ACTION_PREFIX ;
+    	}
+    	else
+    	{
+    		return "";
+    	}
+    }
+    
+    private static String getAlternativeTransitionType( Action action )
+    {
+    	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
+    	{
+    		return KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX ;
+    	}
+    	else
+    	{
+    		return "";
+    	}
     }
 
 }
