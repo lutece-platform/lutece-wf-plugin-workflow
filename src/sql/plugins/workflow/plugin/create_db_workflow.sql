@@ -330,11 +330,23 @@ CREATE TABLE workflow_task_confirm_action_config (
 	 message LONG VARCHAR NOT NULL
 );
 
+-- ---------------------------------------------------------------------
+-- Table structure for table workflow_task_choice_config 	  --
+-- ---------------------------------------------------------------------
+CREATE TABLE workflow_task_choice_config (
+	 id_task INT DEFAULT 0 NOT NULL ,
+	 message LONG VARCHAR NOT NULL
+);
+
+
+
 CREATE TABLE workflow_action_state_before (
 id_action int NOT NULL,
 id_state_before int NOT NULL,
 PRIMARY KEY (id_action, id_state_before)
 );
+
+
 
 -- ---------------
 -- Constraints --

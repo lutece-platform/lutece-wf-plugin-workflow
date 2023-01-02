@@ -1,0 +1,9 @@
+<@row>
+	<@columns>
+		<@fieldSet legend='#i18n{module.workflow.choice.task_choices_config.title}'>
+			<@formGroup labelFor='message' labelKey='#i18n{module.workflow.choice.task_choice_config.label_message}' mandatory=true>
+				<@input type='textarea' name='message' rows=4 cols=80 >${(config.message)!}</@input>
+			</@formGroup>
+		</@fieldSet>
+	</@columns>
+</@row>
