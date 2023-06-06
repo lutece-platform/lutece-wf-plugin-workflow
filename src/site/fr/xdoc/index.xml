@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<properties>
-		<title>Plugin</title>
-	</properties>
-	<body>
-		<section name="Plugin">
-			<subsection name="Introduction">
-			</subsection>
-		</section>
-	</body>
+    <properties>
+        <title>Plugin</title>
+    </properties>
+    <body>
+        <section name="Plugin">
+            <subsection name="Introduction">
+                This plugin provides a workflow engine for other Lutece plugins.
+            </subsection>
+        </section>
+    </body>
 </document>
