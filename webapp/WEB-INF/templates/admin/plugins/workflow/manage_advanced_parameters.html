@@ -1,12 +1,8 @@
-<@row>
-	<@columns>
-		<@box style='primary'>
-			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_advanced_parameters.pageTitle' />
-			<@boxBody>
-				<@fieldSet>
-					<#include "advanced_parameters.html" />
-				</@fieldSet>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{workflow.manage_advanced_parameters.pageTitle}' />
+		<@fieldSet>
+			<#include "advanced_parameters.html" />
+		</@fieldSet>
+	</@pageColumn>
+</@pageContainer>

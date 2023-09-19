@@ -1,57 +1,53 @@
 <#include "macro_workflows.html" />
-<@row>
-	<@columns>
-		<@box style='primary'>
-			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.manage_workflow.title' boxTools=true skipHeader=true >
-				<#if permission_manage_advanced_parameters>
-					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' />
-				</#if>
-				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' size='sm' />
-				<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
-			</@boxHeader>
-			<@boxBody>
-				<@tform type='inline' align='right'>
-					<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
-						<@select name='is_enabled' items=active_list default_value='active_selected' size='sm' />
-					</@formGroup>
-					<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
-						<@inputGroup>
-							<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
-							<@inputGroupItem>
-								<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['all'] color='default' size='sm' />
-							</@inputGroupItem>
-						</@inputGroup>
-					</@formGroup>
-				</@tform>
-				<@table responsive=false >
-					<@tr>
-						<@th>#i18n{workflow.manage_workflow.row_name}</@th>
-						<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
-					</@tr>
-					<#list workflow_list as workflow>
-						<@tr>
-							<@td>
-								${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if>
-							</@td>
-							<@td>
-								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
-								<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='download' title='#i18n{workflow.manage_workflow.title_export}' size='sm' />
-								<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
-								<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
-								<#if workflow.enabled>
-									<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
-								<#else>
-									<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
-								</#if>
-							</@td>
-						</@tr>
-					</#list>
-				</@table>
-				<@paginationAdmin paginator=paginator combo=1 />
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{workflow.manage_workflow.title}'>
+			<@tform type='inline' align='right'>
+				<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
+					<@select name='is_enabled' items=active_list default_value='active_selected' size='sm' />
+				</@formGroup>
+				<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
+					<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
+				</@formGroup>
+				<@formGroup>
+					<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['all'] color='default' size='sm' />
+				</@formGroup>
+			</@tform>
+			<#if permission_manage_advanced_parameters>
+				<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' hideTitle=['all'] />
+			</#if>
+			<#-- btnTitle='#i18n{workflow.manage_workflow.button_create}' -->
+			<@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' position='end' />
+			<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
+		</@pageHeader>
+		<@table responsive=false >
+			<@tr>
+				<@th>#i18n{workflow.manage_workflow.row_name}</@th>
+				<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
+			</@tr>
+			<#list workflow_list as workflow>
+				<@tr>
+					<@td>
+						${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if>
+					</@td>
+					<@td>
+						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
+						<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='download' title='#i18n{workflow.manage_workflow.title_export}' size='sm' />
+						<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
+						<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
+						<#if workflow.enabled>
+							<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
+						<#else>
+							<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
+						</#if>
+					</@td>
+				</@tr>
+			</#list>
+		</@table>
+		<@paginationAdmin paginator=paginator combo=1 />
+	</@pageColumn>
+</@pageContainer>
+
 <@modal id='importJsonModal'>
 	<@modalHeader modalTitle='#i18n{workflow.manage_workflow.buttonImport}' />
 	<@modalBody>

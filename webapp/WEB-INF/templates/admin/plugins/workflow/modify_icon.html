@@ -16,7 +16,7 @@
 				#i18n{workflow.modify_icon.title} : <@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' class='workflow-icon' params=title_param /> 
 			</#assign>
 			<@boxHeader title=boxHeaderTitle boxTools=true skipHeader=true />
-			<@boxBody>
+			<@boxBody id='edit_icon_page'>
 				<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
 					<@fieldSet>
 						<@input type='hidden' name='id_icon' value=modify_icon.id />
