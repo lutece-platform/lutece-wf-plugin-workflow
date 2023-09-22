@@ -2,14 +2,14 @@
 	<@columns>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_task.title' />
-			<@boxBody>
+			<@boxBody id='edit_task_page'>
 				<@tform action='jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow'>
 					<@fieldSet>
 						<@input type='hidden' name='id_task' value=task.id!/>
 						${task_config!}
 						<@formGroup>
 							<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.modify_task.button_save}' />
-							<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />
+							<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>

@@ -2,7 +2,7 @@
 	<@columns>
 		<@box style='primary'>
 			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title' />
-			<@boxBody>
+			<@boxBody id='create_edit_prerequisite_page'>
 				<#if id_prerequisite??>
 					<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'>
 				<#else>
@@ -23,7 +23,7 @@
 					${content}
 					<@formGroup>
 						<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
-						<@button type='submit' name='cancel' value='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
+						<@button type='submit' name='cancel' value='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
 					</@formGroup>
 				</@tform>
 			</@boxBody>
