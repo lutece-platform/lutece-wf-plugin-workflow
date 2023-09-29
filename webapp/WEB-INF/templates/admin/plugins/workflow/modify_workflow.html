@@ -1,139 +1,144 @@
 <#include "macro_workflows.html" />
-<@row>
-	<@columns sm=12 md=3>
-		<@box style='primary'>
-			<@boxBody>
-				<@tform action='jsp/admin/plugins/workflow/DoModifyWorkflow.jsp'>
-					<@input type='hidden' name='id_workflow' value=workflow.id/>
-					<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
-						<@input type='text' name='name' value=workflow.name maxlength=255 />
-					</@formGroup>
-					<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_description_comment}' >
-						<@input type='textarea' name='description' rows=2 cols=80>${workflow.description}</@input>
-					</@formGroup>
-					<@formGroup rows=2 labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' >
-						<@select name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup size='sm'/>
-					</@formGroup>
-					<@formGroup rows=2>
-						 <@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_workflow.button_cancel}' cancel=true />
-						<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' />
-						<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_workflow.button_apply}' />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-		<@mermaidHelp />
-	</@columns>
-	<@columns sm=12 md=9>
-		<@tabs>
-			<@tabList>
-				<#if pane='pane-states'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-states' active=active title='#i18n{workflow.modify_workflow.manage_state.title}' />
-				<#if pane='pane-actions'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-actions' active=active title='#i18n{workflow.modify_workflow.manage_action.title}'/>
-				<#if pane='pane-graph'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' active=active title='#i18n{workflow.graph_workflow.title}' />
-			</@tabList>
-			<@tabContent>
-				<#if pane='pane-states'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabPanel id='pane-states' active=pane="pane-states">
-					<@tform type='inline' action='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state' align='right'>
-						<@button type='submit' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' size='sm' />
-					</@tform>
-					<@table striped=true condensed=true responsive=false hover=false>
-						<@tr>
-							<@th> #i18n{workflow.modify_workflow.manage_state.row_name} </@th>
-							<@th> #i18n{workflow.modify_workflow.order} </@th>
-							<@th> #i18n{workflow.modify_workflow.manage_state.row_actions} </@th>
-						</@tr>
-						<#list state_list as state>
-							<@tr>
-								<@td>${state.name}</@td>
-								<@td>
-									<!-- SELECT LIST FOR ORDER CHANGE -->
-									<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderState.jsp'>
-										<@input type='hidden' name='id_workflow' value=workflow.id />
-										<@input type='hidden' name='id_state' value=state.id />
-										<@inputGroup>
-											<@comboOrders name='order_id' default_value=state.order max=number_state />
-											<@inputGroupItem>
-												<@button type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' hideTitle=['all'] size='sm'/>
-											</@inputGroupItem>
-										</@inputGroup>
-									</@tform>
-								</@td>
-								<@td>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='list-check' title='#i18n{workflow.modify_reflexive_action.title}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_state.title_delete}' size='sm' />
-								</@td>
-							</@tr>
-						</#list>
-					</@table>
-					<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>
-				</@tabPanel>
-				<#if pane='pane-actions'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabPanel id='pane-actions' active=pane="pane-actions">
-					<@tform align='right' type='inline' action='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action'>
-						<@button type='submit' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}' size='sm' />
-					</@tform>
-					<@table striped=true condensed=true responsive=false hover=false>
-						<@tr>
-							<@th> #i18n{workflow.modify_workflow.manage_action.row_name} </@th>
-							<@th> #i18n{workflow.modify_workflow.order}</@th>
-							<@th> #i18n{workflow.modify_workflow.manage_action.row_actions} </@th>
-						</@tr>
-						<#list action_list as action>
-							<@tr>
-								<@td>
-									<strong>${action.name}</strong>
-									<@p>
-										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">
-											<#list action.listIdStateBefore as idStateBefore>
-												${state_before_map[idStateBefore?c]!} 
-											</#list>
-										</small>
-										<@icon style='arrow-right' />
-										<small title="#i18n{workflow.modify_workflow.manage_action.row_state_after}"> ${action.stateAfter.name}</small>
-									</@p>
-								</@td>
-								<@td>
-									<!-- SELECT LIST FOR ORDER CHANGE -->
-									<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderAction.jsp'>
-										<@input type='hidden' name='id_workflow' value=workflow.id />
-										<@input type='hidden' name='id_action' value=action.id />
-										<@inputGroup>
-											<@comboOrders name='order_action_id' default_value=action.order max=number_action />
-											<@inputGroupItem>
-												<@button type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' hideTitle=['all'] size='sm' />
-											</@inputGroupItem>
-										</@inputGroup>
-									</@tform>
-								</@td>
-								<@td>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' size='sm' />
-									<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' size='sm' />
-								</@td>
-							</@tr>
-						</#list>
-					</@table>
-					<@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
-				</@tabPanel>
-				<#if pane='pane-graph'><#assign active = true /><#else><#assign active = false /></#if>
-				<@tabPanel id='pane-graph' active=pane="pane-graph">
-					<#assign btnParams=' style=""' />
-					<#if showTasks?? >
-						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' buttonIcon='chart-dots-3' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' size='sm' params=btnParams />
-					<#else>
-						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?show_tasks&id_workflow=${workflow.id}&pane=pane-graph'  buttonIcon='chart-dots-3' title='#i18n{workflow.manage_workflow.title_graph_tasks}' size='sm' params=btnParams />
-					</#if>
-					<@mermaidGraph download=false />
-				</@tabPanel>
-			</@tabContent>
-		</@tabs>
-	</@columns>
-</@row>
+<@pageContainer>
+	<@pageColumn>
+		<@row>
+			<@columns sm=12 xl=3>
+				<@box>
+					<@boxBody>
+						<@tform action='jsp/admin/plugins/workflow/DoModifyWorkflow.jsp'>
+							<@input type='hidden' name='id_workflow' value=workflow.id/>
+							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
+								<@input type='text' name='name' value=workflow.name maxlength=255 />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_description_comment}' >
+								<@input type='textarea' name='description' rows=2 cols=80>${workflow.description}</@input>
+							</@formGroup>
+							<@formGroup rows=2 labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' >
+								<@select name="workgroup"  items=user_workgroup_list default_value=workflow.workgroup size='sm'/>
+							</@formGroup>
+							<@formGroup rows=2>
+								<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_workflow.button_cancel}' hideTitle=['xl'] cancel=true />
+								<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' hideTitle=['xl'] />
+								<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_workflow.button_apply}' hideTitle=['xl'] />
+							</@formGroup>
+						</@tform>
+					</@boxBody>
+				</@box>
+				<@mermaidHelp />
+			</@columns>
+			<@columns sm=12 xl=9>
+				<@tabs>
+					<@tabList>
+						<#if pane='pane-states'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-states' active=active title='#i18n{workflow.modify_workflow.manage_state.title}' />
+						<#if pane='pane-actions'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-actions' active=active title='#i18n{workflow.modify_workflow.manage_action.title}'/>
+						<#if pane='pane-graph'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' active=active title='#i18n{workflow.graph_workflow.title}' />
+					</@tabList>
+					<@tabContent>
+						<#if pane='pane-states'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabPanel id='pane-states' active=pane="pane-states">
+							<@tform type='inline' action='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state' align='right' class='mb-3'>
+								<@button type='submit' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' size='sm' />
+							</@tform>
+							<@table striped=true condensed=true responsive=false hover=false class='mb-3'>
+								<@tr>
+									<@th> #i18n{workflow.modify_workflow.manage_state.row_name} </@th>
+									<@th> #i18n{workflow.modify_workflow.order} </@th>
+									<@th> #i18n{workflow.modify_workflow.manage_state.row_actions} </@th>
+								</@tr>
+								<#list state_list as state>
+									<@tr>
+										<@td>${state.name}</@td>
+										<@td>
+											<!-- SELECT LIST FOR ORDER CHANGE -->
+											<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderState.jsp'>
+												<@input type='hidden' name='id_workflow' value=workflow.id />
+												<@input type='hidden' name='id_state' value=state.id />
+												<@inputGroup>
+													<@comboOrders name='order_id' default_value=state.order max=number_state />
+													<@inputGroupItem type='btn'>
+														<@button type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' hideTitle=['all'] size='sm'/>
+													</@inputGroupItem>
+												</@inputGroup>
+											</@tform>
+										</@td>
+										<@td>
+											<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='list-check' title='#i18n{workflow.modify_reflexive_action.title}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_state.title_delete}' size='sm' />
+										</@td>
+									</@tr>
+								</#list>
+							</@table>
+							<@paginationAdmin paginator=paginator_state combo=1 nb_items_per_page=nb_items_per_page_state/>
+						</@tabPanel>
+						<#if pane='pane-actions'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabPanel id='pane-actions' active=pane="pane-actions">
+							<@tform align='right' type='inline' action='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action' class='mb-3'>
+								<@button type='submit' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}' size='sm' />
+							</@tform>
+							<@table striped=true condensed=true responsive=false hover=false class='mb-3'>
+								<@tr>
+									<@th> #i18n{workflow.modify_workflow.manage_action.row_name} </@th>
+									<@th> #i18n{workflow.modify_workflow.order}</@th>
+									<@th> #i18n{workflow.modify_workflow.manage_action.row_actions} </@th>
+								</@tr>
+								<#list action_list as action>
+									<@tr>
+										<@td>
+											<strong>${action.name}</strong>
+											<@p>
+												<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">
+													<#list action.listIdStateBefore as idStateBefore>
+														${state_before_map[idStateBefore?c]!} 
+													</#list>
+												</small>
+												<@icon style='arrow-right' />
+												<small title="#i18n{workflow.modify_workflow.manage_action.row_state_after}"> ${action.stateAfter.name}</small>
+											</@p>
+										</@td>
+										<@td>
+											<!-- SELECT LIST FOR ORDER CHANGE -->
+											<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderAction.jsp'>
+												<@input type='hidden' name='id_workflow' value=workflow.id />
+												<@input type='hidden' name='id_action' value=action.id />
+												<@inputGroup>
+													<@comboOrders name='order_action_id' default_value=action.order max=number_action />
+													<@inputGroupItem type='btn'>
+														<@button type='submit' buttonIcon='check' color='default' title='#i18n{workflow.modify_workflow.move}' hideTitle=['all'] size='sm' />
+													</@inputGroupItem>
+												</@inputGroup>
+											</@tform>
+										</@td>
+										<@td>
+											<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' size='sm' />
+										</@td>
+									</@tr>
+								</#list>
+							</@table>
+							<@paginationAdmin paginator=paginator_action combo=1 nb_items_per_page=nb_items_per_page_action/>
+						</@tabPanel>
+						<#if pane='pane-graph'><#assign active = true /><#else><#assign active = false /></#if>
+						<@tabPanel id='pane-graph' active=pane="pane-graph">
+							<#assign btnParams=' style=""' />
+							<#if showTasks?? >
+								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' buttonIcon='chart-dots-3' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' size='sm' params=btnParams class='mb-3' />
+							<#else>
+								<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?show_tasks&id_workflow=${workflow.id}&pane=pane-graph'  buttonIcon='chart-dots-3' title='#i18n{workflow.manage_workflow.title_graph_tasks}' size='sm' params=btnParams class='mb-3' />
+							</#if>
+							<@mermaidGraph download=false />
+						</@tabPanel>
+					</@tabContent>
+				</@tabs>
+			</@columns>
+		</@row>
+	</@pageColumn>
+</@pageContainer>
+
 <@importMermaidJs />
 <@initMermaidJs />

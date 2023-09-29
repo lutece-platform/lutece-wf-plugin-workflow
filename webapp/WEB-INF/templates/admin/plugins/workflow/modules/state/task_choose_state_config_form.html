@@ -5,17 +5,15 @@
 	<#assign idStateKO = config.idStateKO>
 </#if>
 <@row>
-	<@columns sm=12 md=12 lg=12 >
+	<@columns>
 		<@fieldSet legend='#i18n{module.workflow.state.task.choose.state.config.title}'>
-			<div class="controls">
-				<@comboWithParams name="idStateOK" default_value=idStateOK?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
-				<@formHelp>#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}</@formHelp>
-			</div>
-			<div class="controls">
-				<@comboWithParams name="idStateKO" default_value=idStateKO?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
-				<@formHelp>#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}</@formHelp>
-			</div>
-			<@formGroup labelFor="controllerName" labelKey="#i18n{module.workflow.state.task.choose.state.config.controller.choice}">
+			<@formGroup labelFor='idStateOK' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}'>
+				<@select name='idStateOK' default_value=idStateOK?string items=list_states />
+			</@formGroup>
+			<@formGroup labelFor='idStateKO' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}'>
+				<@select name='idStateKO' default_value=idStateKO?string items=list_states />
+			</@formGroup>
+			<@formGroup labelFor='controllerName' labelKey='#i18n{module.workflow.state.task.choose.state.config.controller.choice}'>
 				<#if controller_list?has_content>
 					<#list controller_list as controller>
 						<#if selected_controller?? && selected_controller == controller.getName()>
@@ -36,7 +34,7 @@
 </@row>
 <#if controller_config_html??>
 	<@row>
-		<@columns sm=12 md=12 lg=12 >
+		<@columns>
 			${controller_config_html}
 		</@columns>
 	</@row>
