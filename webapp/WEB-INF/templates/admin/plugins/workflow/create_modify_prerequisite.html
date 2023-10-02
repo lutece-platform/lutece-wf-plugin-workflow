@@ -1,32 +1,28 @@
-<@row>
-	<@columns>
-		<@box style='primary'>
-			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title' />
-			<@boxBody id='create_edit_prerequisite_page'>
-				<#if id_prerequisite??>
-					<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'>
-				<#else>
-					<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'>
-				</#if>
-				<@tform action=form_action >
-					<@input type='hidden' name='id_action' value=id_action />
-					<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
-					<#if id_prerequisite??>	
-						<@input type='hidden' name='id_prerequisite' value=id_prerequisite />
-					</#if>
-					
-					<#if errors??>
-						<#list errors as error>
-							<@alert class='danger' dismissible=true title=error.message />
-						</#list>
-					</#if>
-					${content}
-					<@formGroup>
-						<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
-						<@button type='submit' name='cancel' value='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{workflow.modify_action.manage_prerequisite.title}' />
+		<#if id_prerequisite??>
+			<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'>
+		<#else>
+			<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'>
+		</#if>
+		<@tform action=form_action id='create_edit_prerequisite' boxed=true>
+			<@input type='hidden' name='id_action' value=id_action />
+			<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
+			<#if id_prerequisite??>	
+				<@input type='hidden' name='id_prerequisite' value=id_prerequisite />
+			</#if>
+			
+			<#if errors??>
+				<#list errors as error>
+					<@alert class='danger' dismissible=true title=error.message />
+				</#list>
+			</#if>
+			${content}
+			<@formGroup>
+				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
+				<@button type='submit' name='cancel' value='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
+			</@formGroup>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>

@@ -1,29 +1,25 @@
-<@row>
-	<@columns>
-		<@box style='primary'>
-			<@boxHeader titleLevel='h3' i18nTitleKey='workflow.create_icon.title' />
-			<@boxBody id='create_icon_page'>
-				<@fieldSet>
-					<@tform action='jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow' params='enctype="multipart/form-data"'>
-						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
-							<@input type='text' name='name' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
-							<@input type='file' name='id_file' inputSize=60 />
-						</@formGroup>
-						<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
-							<@input type='text' name='width' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='height' labelKey='#i18n{workflow.create_icon.label_height}' helpKey='#i18n{workflow.create_icon.label_height_comment}'>
-							<@input type='text' name='height' maxlength=255 />
-						</@formGroup>
-						<@formGroup>
-							<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_icon.button_save}' />
-							<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_icon.button_cancel}' cancel=true />
-						</@formGroup>
-					</@tform>
-				</@fieldSet>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{workflow.create_icon.title}' />
+		<@tform action='jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true id='create_icon_page'>
+			<@fieldSet>
+				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
+					<@input type='text' name='name' maxlength=255 />
+				</@formGroup>
+				<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
+					<@input type='file' name='id_file' inputSize=60 />
+				</@formGroup>
+				<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
+					<@input type='text' name='width' maxlength=255 />
+				</@formGroup>
+				<@formGroup labelFor='height' labelKey='#i18n{workflow.create_icon.label_height}' helpKey='#i18n{workflow.create_icon.label_height_comment}'>
+					<@input type='text' name='height' maxlength=255 />
+				</@formGroup>
+				<@formGroup>
+					<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_icon.button_save}' />
+					<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_icon.button_cancel}' cancel=true />
+				</@formGroup>
+			</@fieldSet>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>

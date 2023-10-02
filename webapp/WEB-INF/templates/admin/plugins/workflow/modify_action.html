@@ -1,6 +1,7 @@
 <#include "macro_workflows.html" />
 <@pageContainer>
 	<@pageColumn>
+		<@pageHeader title='#i18n{workflow.modify_action.title} : ${action.name}' />
 		<@row>
 			<@columns sm=12 md=4>
 				<@box>
@@ -64,23 +65,23 @@
 											</@tr>
 											<@tr>
 												<@td>
-													<@select name="select_linked_actions" default_value="" multiple=10 items=available_linked_actions />
+													<@select name='select_linked_actions' default_value='' multiple=10 items=available_linked_actions />
 												</@td>
 												<@td>
-													<div align="center">
-														<@button  type='submit' name='apply' title='#i18n{workflow.create_action.label_select_unselect_linked_actions}'/>
-													</div>
+													<@div align='center'>
+														<@button type='submit' name='apply' title='#i18n{workflow.create_action.label_select_unselect_linked_actions}'/>
+													</@div>
 												</@td>
 												<@td>
-													<@select name="unselect_linked_actions" default_value="" multiple=10 items=selected_linked_actions/>
+													<@select name='unselect_linked_actions' default_value='' multiple=10 items=selected_linked_actions/>
 												</@td>
 											</@tr>
 										</@table>
 									<#else>
-										<@callOut color='warning'>
-											<@icon style='exclamation-triangle'/>
+										<@alert color='warning' class='mt-3 mb-3'>
+											<@icon style='alert-triangle' class='pe-2'/>
 											&nbsp;#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}
-										</@callOut>
+										</@alert>
 									</#if>
 								</@formGroup>
 
