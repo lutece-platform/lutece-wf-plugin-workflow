@@ -18,7 +18,8 @@
 					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' hideTitle=['all'] />
 					</#if>
 					<#-- btnTitle='#i18n{workflow.manage_workflow.button_create}' -->
-					<@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' btnSize='sm' position='end' />
+					<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' btnSize='sm' position='end' /> -->
+					<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' size='sm' />
 					<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
 			</@formGroup>
 		</@pageHeader>

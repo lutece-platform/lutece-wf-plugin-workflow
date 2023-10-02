@@ -147,7 +147,8 @@
 									<@td>
 										<#if task.taskType.configRequired>
 										<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
-										<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' btnIcon='edit' position='end' />
+										<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' btnIcon='edit' position='end' /> -->
+										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 										</#if>
 										<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
 										<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
@@ -185,10 +186,10 @@
 									<@td>#i18n{${prerequisite.title}}</@td>
 									<@td>
 										<#if prerequisite.hasConfiguration>
-											<#--<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] buttonIcon='edit' size='sm' />-->
+											<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
 										
 											<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
-											<@offcanvas targetUrl='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' targetElement='#create_edit_prerequisite_page' redirectForm=false id='prerequisite${prerequisite.idPrerequisite}' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' btnTitle='' btnIcon='edit' position='end' />
+											<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' targetElement='#create_edit_prerequisite_page' redirectForm=false id='prerequisite${prerequisite.idPrerequisite}' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' btnTitle='' btnIcon='edit' position='end' /> -->
 										</#if>
 										
 										<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
