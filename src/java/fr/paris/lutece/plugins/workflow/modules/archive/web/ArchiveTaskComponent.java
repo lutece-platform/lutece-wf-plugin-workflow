@@ -66,7 +66,8 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_ARCHIVE_CONFIG = "admin/plugins/workflow/modules/archive/task_archive_config.html";
-
+    private static final String TEMPLATE_CONFIRM_TASK_ARCHIVE = "admin/plugins/workflow/modules/archive/confirm_task_archive.html";
+    
     // MARKS
     private static final String MARK_LIST_TYPE = "type_list";
     private static final String MARK_CONFIG = "config";
@@ -232,4 +233,14 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
             return I18nService.getLocalizedString( MESSAGE_INFORMATION_NOT_ARCHIVED, params, locale );
         }
     }
+    
+	@Override
+	public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+	{
+		Map<String, Object> model = new HashMap< >( );
+		
+		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CONFIRM_TASK_ARCHIVE , locale, model );
+		
+		return template.getHtml( );		
+	}
 }

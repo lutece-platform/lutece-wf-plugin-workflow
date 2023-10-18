@@ -157,7 +157,7 @@
         p:beanName="workflow.taskArchive"
         p:configBeanName="workflow.taskArchiveConfig"
         p:taskForAutomaticAction="true"
-        p:configRequired="true" p:formTaskRequired="false" />
+        p:configRequired="true" p:formTaskRequired="true" />
     <bean id="workflow.taskTypeConfirmAction"
         class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
         p:key="taskTypeConfirmAction"
