@@ -183,7 +183,7 @@ public class ActionDaoTest extends LuteceTestCase
 
         _dao.insert( action );
 
-        List<Action> list = _dao.findStatesBetweenOrders( 2, 4, wf.getId( ) );
+        List<Action> list = _dao.findActionsBetweenOrders( 2, 4, wf.getId( ) );
         assertEquals( 1, list.size( ) );
 
         _dao.delete( action.getId( ) );
@@ -202,7 +202,7 @@ public class ActionDaoTest extends LuteceTestCase
 
         _dao.insert( action );
 
-        List<Action> list = _dao.findStatesAfterOrder( 2, wf.getId( ) );
+        List<Action> list = _dao.findActionsAfterOrder( 2, wf.getId( ) );
         assertEquals( 1, list.size( ) );
 
         _dao.delete( action.getId( ) );

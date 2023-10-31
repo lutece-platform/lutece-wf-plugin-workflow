@@ -1453,7 +1453,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
-            _actionService.update( action );
+            _actionService.updateActionWithoutStates( action );
         }
 
         if ( request.getParameter( PARAMETER_APPLY ) != null )
@@ -2049,7 +2049,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // order goes up
         if ( nOrderToSet < actionToChangeOrder.getOrder( ) )
         {
-            List<Action> listWithOrderAfterChosen = _actionService.findStatesAfterOrder( nOrderToSet, nWorkflowId );
+            List<Action> listWithOrderAfterChosen = _actionService.findActionsAfterOrder( nOrderToSet, nWorkflowId );
 
             for ( Action action : listWithOrderAfterChosen )
             {
@@ -2060,7 +2060,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                         action.setOrder( action.getOrder( ) + 1 );
                     }
 
-                    _actionService.update( action );
+                    _actionService.updateActionWithoutStates( action );
                 }
             }
         }
@@ -2069,7 +2069,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         else
         {
             // get all the actions with the order lower that the chosen action
-            List<Action> listWithOrderBetweenChosen = _actionService.findStatesBetweenOrders( actionToChangeOrder.getOrder( ), nOrderToSet, nWorkflowId );
+            List<Action> listWithOrderBetweenChosen = _actionService.findActionsBetweenOrders( actionToChangeOrder.getOrder( ), nOrderToSet, nWorkflowId );
 
             // for all those action, we decrement the order
             for ( Action action : listWithOrderBetweenChosen )
@@ -2077,14 +2077,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( action.getOrder( ) != actionToChangeOrder.getOrder( ) )
                 {
                     action.setOrder( action.getOrder( ) - 1 );
-                    _actionService.update( action );
+                    _actionService.updateActionWithoutStates( action );
                 }
             }
         }
 
         // for the chosen one, we change its order too
         actionToChangeOrder.setOrder( nOrderToSet );
-        _actionService.update( actionToChangeOrder );
+        _actionService.updateActionWithoutStates( actionToChangeOrder );
 
         return getJspModifyWorkflow( request, nWorkflowId, PANE_ACTIONS );
     }
