@@ -48,12 +48,12 @@ public class TaskSerialiser extends JsonSerializer<ITask>
     public void serialize( ITask value, JsonGenerator gen, SerializerProvider serializers ) throws IOException
     {
         String taskType = value.getTaskType( ).getKey( );
-        int action = value.getAction( ).getId( );
+        String actionUid = value.getActionUid();
 
         gen.writeStartObject( );
         gen.writeNumberField( "order", value.getOrder( ) );
-        gen.writeNumberField( "action", action );
-        gen.writeNumberField( "id", value.getId( ) );
+        gen.writeStringField( "uid_action", actionUid );
+        gen.writeStringField( "uid", value.getUid( ) );
         gen.writeStringField( "taskType", taskType );
         gen.writeEndObject( );
     }

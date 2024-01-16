@@ -54,17 +54,17 @@ import javax.inject.Inject;
  */
 public class TaskDAO implements ITaskDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order" + " FROM workflow_task WHERE id_task=?";
-    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order "
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order, uid_task" + " FROM workflow_task WHERE id_task=?";
+    private static final String SQL_QUERY_SELECT_STATE_BY_ID_ACTION = "SELECT task_type_key,id_task,id_action, display_order, uid_task "
             + " FROM workflow_task WHERE id_action=? ORDER BY display_order";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " + "(task_type_key,id_action, display_order)VALUES(?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?" + " WHERE id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task " + "(task_type_key,id_action, display_order, uid_task) VALUES(?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task  SET id_task=?,task_type_key=?,id_action=?,display_order=?, uid_task=?" + " WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task  WHERE id_task=? ";
     private static final String SQL_QUERY_FIND_MAXIMUM_ORDER_BY_ACTION = "SELECT MAX(display_order) FROM workflow_task WHERE id_action=?";
-    private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_task SET display_order = display_order - 1 WHERE display_order > ? AND id_action=? ";
-    private static final String SQL_QUERY_TASKS_WITH_ORDER_BETWEEN = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE (display_order BETWEEN ? AND ?) AND id_action=?";
-    private static final String SQL_QUERY_TASKS_AFTER_ORDER = "SELECT task_type_key,id_task,id_action, display_order FROM workflow_task WHERE display_order >=? AND id_action=?";
-    private static final String SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT = "SELECT task_type_key,id_task,id_action, display_order "
+    private static final String SQL_QUERY_DECREMENT_ORDER = "UPDATE workflow_task SET display_order = display_order -1 WHERE display_order > ? AND id_action=? ";
+    private static final String SQL_QUERY_TASKS_WITH_ORDER_BETWEEN = "SELECT task_type_key,id_task,id_action, display_order, uid_task FROM workflow_task WHERE (display_order BETWEEN ? AND ?) AND id_action=?";
+    private static final String SQL_QUERY_TASKS_AFTER_ORDER = "SELECT task_type_key,id_task,id_action, display_order, uid_task FROM workflow_task WHERE display_order >=? AND id_action=?";
+    private static final String SQL_QUERY_SELECT_TASK_FOR_ORDER_INIT = "SELECT task_type_key,id_task,id_action, display_order, uid_task "
             + " FROM workflow_task WHERE id_action=? ORDER BY id_task";
     @Inject
     private ITaskFactory _taskFactory;
@@ -81,6 +81,7 @@ public class TaskDAO implements ITaskDAO
             daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
             daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
             daoUtil.setInt( ++nPos, task.getOrder( ) );
+            daoUtil.setString( ++nPos, task.getUid( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -104,6 +105,7 @@ public class TaskDAO implements ITaskDAO
             daoUtil.setString( ++nPos, task.getTaskType( ).getKey( ) );
             daoUtil.setInt( ++nPos, task.getAction( ).getId( ) );
             daoUtil.setInt( ++nPos, task.getOrder( ) );
+            daoUtil.setString( ++nPos, task.getUid( ) );
             daoUtil.setInt( ++nPos, task.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -134,6 +136,7 @@ public class TaskDAO implements ITaskDAO
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setOrder( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
+                task.setUid( daoUtil.getString( ++nPos ) );
             }
         }
         return task;
@@ -175,7 +178,10 @@ public class TaskDAO implements ITaskDAO
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
+                task.setActionUid( action.getUid( ) );
+                
                 task.setOrder( daoUtil.getInt( ++nPos ) );
+                task.setUid( daoUtil.getString( ++nPos ) );
 
                 listTask.add( task );
             }
@@ -243,6 +249,7 @@ public class TaskDAO implements ITaskDAO
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
                 task.setOrder( daoUtil.getInt( ++nPos ) );
+                task.setUid( daoUtil.getString( ++nPos ) );
 
                 listTask.add( task );
             }
@@ -275,6 +282,7 @@ public class TaskDAO implements ITaskDAO
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
                 task.setOrder( daoUtil.getInt( ++nPos ) );
+                task.setUid( daoUtil.getString( ++nPos ) );
 
                 listTask.add( task );
             }
@@ -305,6 +313,7 @@ public class TaskDAO implements ITaskDAO
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
                 task.setOrder( daoUtil.getInt( ++nPos ) );
+                task.setUid( daoUtil.getString( ++nPos ) );
 
                 listTask.add( task );
             }

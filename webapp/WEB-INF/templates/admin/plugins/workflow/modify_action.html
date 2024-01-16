@@ -15,6 +15,10 @@
 									<@input type='text' name='name' value=action.name maxlength=255 inputSize=80 />
 								</@formGroup>
 
+								<@formGroup rows=2 labelFor='uid' labelKey='#i18n{workflow.create_action.label_uid}' mandatory=true helpKey='#i18n{workflow.create_action.label_uid_comment}'>
+									<@input type='text' name='uid' value=action.uid readonly=true />
+								</@formGroup>
+
 								<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' mandatory=true helpKey='#i18n{workflow.create_action.label_description_comment}' >
 									<@input type='textarea' name='description'  rows=2 cols=80>${action.description}</@input>
 								</@formGroup>
