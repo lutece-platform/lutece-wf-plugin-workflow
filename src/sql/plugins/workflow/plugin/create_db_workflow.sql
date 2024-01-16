@@ -36,6 +36,7 @@ CREATE TABLE workflow_workflow
 	creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	is_enabled SMALLINT DEFAULT 0,
 	workgroup_key VARCHAR(255) DEFAULT NULL,
+	uid_workflow VARCHAR(255) DEFAULT NULL,
 	PRIMARY KEY (id_workflow)
 );
 
@@ -52,6 +53,7 @@ CREATE TABLE workflow_state
 	is_required_workgroup_assigned SMALLINT DEFAULT 0,
 	id_icon int DEFAULT NULL,
 	display_order INT DEFAULT 0,
+	uid_state VARCHAR(255) DEFAULT NULL,
 	PRIMARY KEY (id_state)
 );
 
@@ -71,6 +73,7 @@ CREATE TABLE workflow_action
 	is_mass_action SMALLINT DEFAULT 0,
 	display_order INT DEFAULT 0,
 	is_automatic_reflexive_action SMALLINT DEFAULT 0,
+	uid_action VARCHAR(255) DEFAULT NULL,
 	PRIMARY KEY (id_action)
 );
 
@@ -151,6 +154,7 @@ CREATE TABLE workflow_task
 	task_type_key VARCHAR(50) DEFAULT NULL, 
 	id_action INT DEFAULT 0 NOT NULL,
 	display_order INT DEFAULT 0,
+	uid_task VARCHAR(255) DEFAULT NULL,
 	PRIMARY KEY (id_task)
 );
 
@@ -265,6 +269,7 @@ CREATE TABLE workflow_prerequisite
 	id_prerequisite INT AUTO_INCREMENT,
 	id_action INT NOT NULL,
 	prerequisite_type VARCHAR(255) NOT NULL,
+	uid_prerequisite VARCHAR(255) DEFAULT NULL,
 	PRIMARY KEY (id_prerequisite)
 );
 

@@ -10,6 +10,9 @@
 							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
 								<@input type='text' name='name' value=workflow.name maxlength=255 />
 							</@formGroup>
+							<@formGroup rows=2 labelFor='uid' labelKey='#i18n{workflow.create_workflow.label_uid}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_uid_comment}'>
+								<@input type='text' name='uid' value=workflow.uid maxlength=255 readonly=true />
+						  	</@formGroup>
 							<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_description_comment}' >
 								<@input type='textarea' name='description' rows=2 cols=80>${workflow.description}</@input>
 							</@formGroup>

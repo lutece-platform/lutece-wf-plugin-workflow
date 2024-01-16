@@ -12,6 +12,7 @@ public class ActionStateDAO implements IActionStateDAO
 {
 	private static final String SQL_QUERY_SELECT_ALL = "SELECT id_action,id_state_before ";
     private static final String SQL_QUERY_FIND_BY_ID_ACTION = "SELECT id_state_before FROM workflow_action_state_before WHERE id_action= ? ";
+    private static final String SQL_QUERY_FIND_BY_UID_ACTION = "SELECT uid_state FROM workflow_action_state_before asb, workflow_state s, workflow_action a WHERE asb.id_state_before = s.id_state AND a.id_action = asb.id_action and a.uid_action = ?";
 	private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_action_state_before "
             + "(id_action,id_state_before)"
             + " VALUES(?,?)";
@@ -54,6 +55,28 @@ public class ActionStateDAO implements IActionStateDAO
             {
             	int nPos = 0;
                 listState.add( Integer.valueOf(daoUtil.getInt( ++nPos ) ) );
+            }
+
+        }
+        return listState;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> load( String strUidAction )
+    {
+        List<String> listState = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_UID_ACTION, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setString( 1, strUidAction );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+            	int nPos = 0;
+                listState.add( String.valueOf(daoUtil.getString( ++nPos ) ) );
             }
 
         }

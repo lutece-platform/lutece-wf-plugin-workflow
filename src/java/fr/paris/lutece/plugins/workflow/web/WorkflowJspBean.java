@@ -47,6 +47,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -283,6 +284,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
     private static final String LOG_WORKFLOW_NOT_FOUND = "Workflow not found for ID ";
+    
+    private static final String ERROR_NO_FILE_SELECTED = "workflow.message.error.no_file_selected";
 
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
@@ -411,6 +414,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
+            workflow.setUid( UUID.randomUUID( ).toString( ) );
             workflow.setCreationDate( WorkflowUtils.getCurrentTimestamp( ) );
             _workflowService.create( workflow );
         }
@@ -474,7 +478,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             action.setStateAfter( _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );
             if ( strShowTasks != null )
             {
-                List<ITask> listTasks = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );
+                List<ITask> listTasks = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );               
                 action.setAllTasks( listTasks );
             }
         }
@@ -512,13 +516,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_PANE, strPane );
         
         Map<String,String> mapStateBeforeName = new HashMap<>( );
-        for (Action actionBefore : paginatorAction.getPageItems( ) )
+        /*for (Action actionBefore : paginatorAction.getPageItems( ) )
         {
         	for (Integer nStateBefore : actionBefore.getListIdStateBefore( ) )
         	{
         		mapStateBeforeName.put(String.valueOf(nStateBefore), _stateService.findByPrimaryKey( nStateBefore ).getName( ) );
         	}
-        }
+        }*/
         
         model.put(MARK_STATE_BEFORE_MAP, mapStateBeforeName);
         
@@ -806,6 +810,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
 
             State state = new State( );
+            state.setUid( UUID.randomUUID( ).toString( ) );
             state.setWorkflow( workflow );
 
             String strError = getStateData( request, state );
@@ -866,6 +871,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         List<Icon> listIcon = _iconService.getListIcons( );
+        
+        if( state.getUid() == null ) {
+        	state.setUid( UUID.randomUUID( ).toString( ) );
+        }
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_STATE, state );
@@ -1158,6 +1167,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
 
             Action action = new Action( );
+            action.setUid( UUID.randomUUID( ).toString( ) );
             action.setWorkflow( workflow );
 
             String strError = getActionData( request, action );
@@ -1453,7 +1463,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return strError;
             }
 
-            _actionService.updateActionWithoutStates( action );
+            _actionService.update( action );
         }
 
         if ( request.getParameter( PARAMETER_APPLY ) != null )
@@ -1524,12 +1534,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         String strTaskTypeKey = request.getParameter( PARAMETER_TASK_TYPE_KEY );
+        String strUid = UUID.randomUUID().toString();
         Action action = _actionService.findByPrimaryKey( nIdAction );
         ITask task = _taskFactory.newTask( strTaskTypeKey, getLocale( ) );
 
         if ( ( action != null ) && ( task != null ) )
         {
             task.setAction( action );
+            task.setUid(strUid);
 
             // get the maximum order number in this workflow and set max+1
             int nMaximumOrder = _taskService.findMaximumOrderByActionId( action.getId( ) );
@@ -2049,7 +2061,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // order goes up
         if ( nOrderToSet < actionToChangeOrder.getOrder( ) )
         {
-            List<Action> listWithOrderAfterChosen = _actionService.findActionsAfterOrder( nOrderToSet, nWorkflowId );
+            List<Action> listWithOrderAfterChosen = _actionService.findStatesAfterOrder( nOrderToSet, nWorkflowId );
 
             for ( Action action : listWithOrderAfterChosen )
             {
@@ -2060,7 +2072,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                         action.setOrder( action.getOrder( ) + 1 );
                     }
 
-                    _actionService.updateActionWithoutStates( action );
+                    _actionService.update( action );
                 }
             }
         }
@@ -2069,7 +2081,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         else
         {
             // get all the actions with the order lower that the chosen action
-            List<Action> listWithOrderBetweenChosen = _actionService.findActionsBetweenOrders( actionToChangeOrder.getOrder( ), nOrderToSet, nWorkflowId );
+            List<Action> listWithOrderBetweenChosen = _actionService.findStatesBetweenOrders( actionToChangeOrder.getOrder( ), nOrderToSet, nWorkflowId );
 
             // for all those action, we decrement the order
             for ( Action action : listWithOrderBetweenChosen )
@@ -2077,14 +2089,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( action.getOrder( ) != actionToChangeOrder.getOrder( ) )
                 {
                     action.setOrder( action.getOrder( ) - 1 );
-                    _actionService.updateActionWithoutStates( action );
+                    _actionService.update( action );
                 }
             }
         }
 
         // for the chosen one, we change its order too
         actionToChangeOrder.setOrder( nOrderToSet );
-        _actionService.updateActionWithoutStates( actionToChangeOrder );
+        _actionService.update( actionToChangeOrder );
 
         return getJspModifyWorkflow( request, nWorkflowId, PANE_ACTIONS );
     }
@@ -2774,9 +2786,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         _importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
-        UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
-        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ),
-                AdminMessage.TYPE_CONFIRMATION );
+        if(!_importWorkflowFile.getName().isEmpty()) {
+            UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
+            return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ),
+                    AdminMessage.TYPE_CONFIRMATION );
+        }
+        UrlItem url = new UrlItem( JSP_MANAGE_WORKFLOW );
+        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, ERROR_NO_FILE_SELECTED, url.getUrl( ),
+                AdminMessage.TYPE_ERROR );
     }
 
     public String doImportWorkflow( HttpServletRequest request )

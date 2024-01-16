@@ -50,13 +50,13 @@ import java.util.List;
  */
 public class WorkflowDAO implements IWorkflowDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key"
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key, uid_workflow"
             + " FROM workflow_workflow WHERE id_workflow=?";
-    private static final String SQL_QUERY_SELECT_BY_FILTER = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key"
+    private static final String SQL_QUERY_SELECT_BY_FILTER = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key, uid_workflow"
             + " FROM workflow_workflow ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_workflow "
-            + "(name,description,creation_date,is_enabled,workgroup_key)VALUES(?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_workflow  SET id_workflow=?,name=?,description=?,is_enabled=?,workgroup_key=?"
+            + "(name,description,creation_date,is_enabled,workgroup_key, uid_workflow)VALUES(?,?,?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_workflow  SET id_workflow=?,name=?,description=?,is_enabled=?,workgroup_key=?,uid_workflow=?"
             + " WHERE id_workflow=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_workflow  WHERE id_workflow=? ";
     private static final String SQL_FILTER_IS_ENABLED = " is_enabled = ? ";
@@ -78,7 +78,8 @@ public class WorkflowDAO implements IWorkflowDAO
             daoUtil.setTimestamp( ++nPos, workflow.getCreationDate( ) );
             daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
             daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
-
+            daoUtil.setString( ++nPos, workflow.getUid( ) );
+            
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -102,6 +103,7 @@ public class WorkflowDAO implements IWorkflowDAO
             daoUtil.setString( ++nPos, workflow.getDescription( ) );
             daoUtil.setBoolean( ++nPos, workflow.isEnabled( ) );
             daoUtil.setString( ++nPos, workflow.getWorkgroup( ) );
+            daoUtil.setString( ++nPos, workflow.getUid( ) );
 
             daoUtil.setInt( ++nPos, workflow.getId( ) );
             daoUtil.executeUpdate( );
@@ -130,6 +132,7 @@ public class WorkflowDAO implements IWorkflowDAO
                 workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
                 workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
                 workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
+                workflow.setUid( daoUtil.getString( ++nPos ));
             }
         }
         return workflow;
@@ -203,6 +206,7 @@ public class WorkflowDAO implements IWorkflowDAO
                 workflow.setCreationDate( daoUtil.getTimestamp( ++nPos ) );
                 workflow.setEnabled( daoUtil.getBoolean( ++nPos ) );
                 workflow.setWorkgroup( daoUtil.getString( ++nPos ) );
+                workflow.setUid( daoUtil.getString( ++nPos ));
 
                 listWorkflow.add( workflow );
             }

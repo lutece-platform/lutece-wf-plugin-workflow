@@ -61,16 +61,16 @@ public class TaskDeserializer extends JsonDeserializer<ITask>
 
         String taskType = node.get( "taskType" ).asText( );
         int order = node.get( "order" ).asInt( );
-        int actionId = node.get( "action" ).asInt( );
-        int id = node.get( "id" ).asInt( );
+        String actionUid = node.get( "uid_action" ).asText( );
+        String uid = node.get( "uid" ).asText( );
 
         Action action = new Action( );
-        action.setId( actionId );
+        action.setUid( actionUid );
 
         ITask task = taskfactory.newTask( taskType, Locale.getDefault( ) );
         task.setOrder( order );
         task.setAction( action );
-        task.setId( id );
+        task.setActionUid( uid );
 
         return task;
     }

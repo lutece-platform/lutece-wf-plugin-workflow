@@ -13,6 +13,9 @@
 						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
 							<@input type='text' name='name' maxlength=255 value=state.name />
 						</@formGroup>
+						<@formGroup labelFor='uid' labelKey='#i18n{workflow.create_state.label_uid}' helpKey='#i18n{workflow.create_state.label_uid_comment}' mandatory=true>
+							<@input type='text' name='uid' maxlength=255 value=state.uid readonly=true />
+						</@formGroup>
 						<@formGroup labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
 							<@input type='textarea' name='description' >${state.description}</@input>
 						</@formGroup>

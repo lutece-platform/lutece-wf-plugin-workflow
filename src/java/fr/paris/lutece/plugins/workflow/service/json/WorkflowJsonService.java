@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -51,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
+import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
@@ -59,10 +61,12 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
@@ -82,6 +86,7 @@ public class WorkflowJsonService
     private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
     private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
     private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+    private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
     private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
 
     private WorkflowJsonService( )
@@ -116,7 +121,7 @@ public class WorkflowJsonService
         Workflow workflow = _workflowService.findByPrimaryKey( idWorkflow );
         jsonData.setWorkflow( workflow );
 
-        List<State> stateList = (List<State>) _workflowService.getAllStateByWorkflow( idWorkflow );
+        List<State> stateList = (List<State>) _workflowService.getAllStateByWorkflow( workflow.getId( ) );
         jsonData.setStateList( stateList );
 
         List<Action> actionList = new ArrayList<>( );
@@ -124,7 +129,25 @@ public class WorkflowJsonService
         ActionFilter filter = new ActionFilter( );
         filter.setIdWorkflow( workflow.getId( ) );
         actionList.addAll( _actionService.getListActionByFilter( filter ) );
-
+       
+        for( Action action : actionList ) 
+        {       	
+        	State actionStateAfter = _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) );
+    		action.setStrUidStateAfter( actionStateAfter.getUid( ) );
+    		
+    		if(action.getAlternativeStateAfter().getId() != -1) {
+            	State actionAlternativeStateAfter = _stateService.findByPrimaryKey( action.getAlternativeStateAfter( ).getId( ) );
+        		action.setStrUidAlternativeStateAfter( actionAlternativeStateAfter.getUid( ) );
+    		}
+    		
+    		List<String> listUidStateBefore = new ArrayList<>( );
+    		action.getListIdStateBefore( ).forEach( stateId -> 
+    		{
+    			listUidStateBefore.add( _stateService.findByPrimaryKey( stateId ).getUid( ) );
+    		});
+    		action.setListUidStateBefore( listUidStateBefore );
+        }
+        
         jsonData.setActionList( actionList );
 
         List<ITask> taskList = new ArrayList<>( );
@@ -133,8 +156,18 @@ public class WorkflowJsonService
         {
             taskList.addAll( _taskService.getListTaskByIdAction( action.getId( ), Locale.getDefault( ) ) );
             prerequisiteList.addAll( _prerequisiteManagementService.getListPrerequisite( action.getId( ) ) );
-
         }
+        
+        for ( ITask task : taskList ) 
+        {
+        	task.setActionUid( _actionService.findByPrimaryKey( task.getAction( ).getId( ) ).getUid( ) );
+        }
+        
+        for( Prerequisite prerequisite : prerequisiteList ) 
+        {
+        	prerequisite.setUidAction( _actionService.findByPrimaryKey( prerequisite.getIdAction() ).getUid( ) );
+        }
+
         jsonData.setTaskList( taskList );
         jsonData.setPrerequisiteList( prerequisiteList );
         return _objectMapper.writeValueAsString( jsonData );
@@ -175,55 +208,74 @@ public class WorkflowJsonService
 
     private void importStates( int newIdWf, List<State> stateList, List<Action> actionList )
     {
-        Map<Integer, Integer> mapIdStates = new HashMap<>( );
+        Map<String, Integer> mapIdStates = new HashMap<>( );
+        Workflow workflow = _workflowService.findByPrimaryKey( newIdWf );
 
         for ( State state : stateList )
         {
-            int oldId = state.getId( );
-            state.getWorkflow( ).setId( newIdWf );
+            String uid = state.getUid( );
+            state.setWorkflow( workflow );
             _stateService.create( state );
 
             int newId = state.getId( );
-            mapIdStates.put( oldId, newId );
+            mapIdStates.put( uid, newId );
         }
-
         updateActionWithStateAndWf( newIdWf, actionList, mapIdStates );
     }
 
-    private void updateActionWithStateAndWf( int newIdWf, List<Action> actionList, Map<Integer, Integer> mapIdStates )
+    private void updateActionWithStateAndWf( int newIdWf, List<Action> actionList, Map<String, Integer> mapIdStates )
     {
+    	Workflow workflow = _workflowService.findByPrimaryKey( newIdWf );
         for ( Action action : actionList )
         {
-            action.getWorkflow( ).setId( newIdWf );
-            action.getStateAfter( ).setId( mapIdStates.get( action.getStateAfter( ).getId( ) ) );
-            for (Integer nStateBefore : action.getListIdStateBefore( ) )
-            {
-            	nStateBefore = mapIdStates.get( nStateBefore );
+            action.setWorkflow( workflow );
+            action.setStateAfter( _stateService.findByPrimaryKey( mapIdStates.get( action.getStrUidStateAfter( ) ) ) );
+            
+            if(action.getStrUidAlternativeStateAfter( ) != null) {
+            	action.setAlternativeStateAfter( _stateService.findByPrimaryKey( mapIdStates.get( action.getStrUidAlternativeStateAfter( ) ) ) );
             }
+            updateStateBefore(action, mapIdStates);
         }
+    }
+    
+    private void updateStateBefore(Action action, Map<String, Integer> mapIdStates) {
+    	if(action.getListUidStateBefore( ) != null) {
+        	List<Integer> StateBefore = new ArrayList<Integer>();
+            for (String strStateBefore : action.getListUidStateBefore( ) )
+            {
+            	StateBefore.add(mapIdStates.get( strStateBefore ));
+            }
+            action.setListIdStateBefore( StateBefore );
+    	}
     }
 
     private void importActions( List<Action> actionList, List<ITask> taskList, List<Prerequisite> prerequisiteList )
     {
-        Map<Integer, Integer> mapIdActions = new HashMap<>( );
+        Map<String, Integer> mapIdActions = new HashMap<>( );
 
         for ( Action action : actionList )
         {
-            int oldId = action.getId( );
+            String uid = action.getUid( );
+            if(uid == null || uid.isEmpty()) 
+            {
+                action.setListIdStateBefore( new ArrayList<Integer>( ) );
+                action.setListIdsLinkedAction( new ArrayList<Integer>( ) );
+            }
             _actionService.create( action );
 
+
             int newId = action.getId( );
-            mapIdActions.put( oldId, newId );
+            mapIdActions.put( uid, newId );
         }
 
         // Update Linked Actions
         for ( Action action : actionList )
         {
-            Collection<Integer> listOldId = action.getListIdsLinkedAction( );
+            Collection<String> listUid = action.getListUidsLinkedAction( );
 
-            if ( CollectionUtils.isNotEmpty( listOldId ) )
+            if ( CollectionUtils.isNotEmpty( listUid ) )
             {
-                Collection<Integer> listNewId = listOldId.stream( ).map( mapIdActions::get ).collect( Collectors.toList( ) );
+                Collection<Integer> listNewId = listUid.stream( ).map( mapIdActions::get ).collect( Collectors.toList( ) );
                 action.setListIdsLinkedAction( listNewId );
                 _actionService.update( action );
             }
@@ -233,19 +285,19 @@ public class WorkflowJsonService
         updatePrerequisiteWithActions( prerequisiteList, mapIdActions );
     }
 
-    private void updateTaskWithActions( List<ITask> taskList, Map<Integer, Integer> mapIdActions )
+    private void updateTaskWithActions( List<ITask> taskList, Map<String, Integer> mapIdActions )
     {
         for ( ITask task : taskList )
         {
-            task.getAction( ).setId( mapIdActions.get( task.getAction( ).getId( ) ) );
+        	task.setAction( _actionService.findByPrimaryKey( mapIdActions.get( task.getAction( ).getUid() ) ) );
         }
     }
 
-    private void updatePrerequisiteWithActions( List<Prerequisite> prerequisiteList, Map<Integer, Integer> mapIdActions )
+    private void updatePrerequisiteWithActions( List<Prerequisite> prerequisiteList, Map<String, Integer> mapIdActions )
     {
         for ( Prerequisite prerequisite : prerequisiteList )
         {
-            prerequisite.setIdAction( mapIdActions.get( prerequisite.getIdAction( ) ) );
+            prerequisite.setIdAction( mapIdActions.get( prerequisite.getUidAction( ) ) );
         }
     }
 
@@ -253,16 +305,30 @@ public class WorkflowJsonService
     {
         for ( ITask task : taskList )
         {
-            _taskService.create( task );
+        	if( _taskFactory.getAllTaskTypes( ).stream( ).anyMatch( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) ) ) {
+            	task.setTaskType( _taskFactory.getAllTaskTypes( ).stream( )
+            			.filter( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) )
+            			.findFirst( ).orElseThrow( ) );
+                _taskService.create( task );
+        	}
         }
     }
 
     private void importPrerequisites( List<Prerequisite> prerequisiteList )
     {
+    	List<String> PrerequisiteTypeList = new ArrayList<String>();
+    	
+        for ( IAutomaticActionPrerequisiteService service : _prerequisiteManagementService.getPrerequisiteServiceList( ) )
+        {
+        	PrerequisiteTypeList.add( service.getPrerequisiteType( ) );
+        }
+    	
         for ( Prerequisite prerequisite : prerequisiteList )
         {
-            _prerequisiteManagementService.createPrerequisite( prerequisite );
-
+        	if( PrerequisiteTypeList.contains( prerequisite.getPrerequisiteType( ) ) )
+        	{
+                _prerequisiteManagementService.createPrerequisite( prerequisite );
+        	}
         }
     }
 }

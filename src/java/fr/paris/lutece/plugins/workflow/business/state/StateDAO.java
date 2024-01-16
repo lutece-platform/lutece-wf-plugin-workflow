@@ -52,14 +52,14 @@ import java.util.List;
  */
 public class StateDAO implements IStateDAO
 {
-    private static final String SQL_SELECT_ALL = "SELECT s.id_state,s.name,s.description,s.id_workflow,s.is_initial_state,s.is_required_workgroup_assigned,s.display_order,s.id_icon ";
+    private static final String SQL_SELECT_ALL = "SELECT s.id_state,s.name,s.description,s.id_workflow,s.is_initial_state,s.is_required_workgroup_assigned,s.display_order,s.id_icon, s.uid_state ";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = SQL_SELECT_ALL + " FROM workflow_state s WHERE s.id_state=?";
     private static final String SQL_QUERY_FIND_BY_RESSOURCE = SQL_SELECT_ALL
             + " FROM workflow_state s INNER JOIN workflow_resource_workflow r ON (r.id_state = s.id_state) WHERE r.id_resource=? AND r.id_workflow=? AND r.resource_type=?";
     private static final String SQL_QUERY_SELECT_STATE_BY_FILTER = SQL_SELECT_ALL + " FROM workflow_state s ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_state "
-            + "(name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon)VALUES(?,?,?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_state SET name=?,description=?,id_workflow=?,is_initial_state=?,is_required_workgroup_assigned=?, display_order=?, id_icon=? WHERE id_state=?";
+            + "(name,description,id_workflow,is_initial_state,is_required_workgroup_assigned,display_order,id_icon,uid_state)VALUES(?,?,?,?,?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_state SET name=?,description=?,id_workflow=?,is_initial_state=?,is_required_workgroup_assigned=?, display_order=?, id_icon=?, uid_state=? WHERE id_state=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_state  WHERE id_state=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " s.id_workflow = ? ";
     private static final String SQL_FILTER_IS_INITIAL_STATE = " s.is_initial_state = ? ";
@@ -96,7 +96,8 @@ public class StateDAO implements IStateDAO
             {
                 daoUtil.setInt( ++nPos, state.getIcon( ).getId( ) );
             }
-
+            
+            daoUtil.setString( ++nPos, state.getUid( ) );
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -131,6 +132,7 @@ public class StateDAO implements IStateDAO
                 daoUtil.setInt( ++nPos, state.getIcon( ).getId( ) );
             }
 
+            daoUtil.setString( ++nPos, state.getUid( ) );
             daoUtil.setInt( ++nPos, state.getId( ) );
             daoUtil.executeUpdate( );
         }
@@ -359,6 +361,8 @@ public class StateDAO implements IStateDAO
         Icon icon = new Icon( );
         icon.setId( daoUtil.getInt( ++nPos ) );
         state.setIcon( icon );
+        
+        state.setUid( daoUtil.getString( ++nPos ) );
 
         return state;
     }
