@@ -1,28 +1,34 @@
 <#include "macro_workflows.html" />
+
+<#macro manageWorkflowFilters type='' class=''>
+	<@tform align='left' class='${class}'>
+		<@formGroup formStyle="inline" labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
+			<@select name='is_enabled' items=active_list default_value='active_selected' size='' />
+		</@formGroup>
+		<@formGroup formStyle="inline" labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
+			<@inputGroup>
+				<@select name="workgroup" items=user_workgroup_list default_value=user_workgroup_selected size='' />
+				<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['all'] color='default' size='' />
+			</@inputGroup>
+		</@formGroup>
+	</@tform>
+</#macro>
+
+
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{workflow.manage_workflow.title}'>
-			<@tform type='inline' align='right'>
-				<@formGroup formStyle='inline' labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
-					<@select name='is_enabled' items=active_list default_value='active_selected' size='sm' />
-				</@formGroup>
-				<@formGroup formStyle='inline' labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
-					<@select name="workgroup"  items=user_workgroup_list default_value=user_workgroup_selected size='sm' />
-				</@formGroup>
-				<@formGroup>
-					<@button type='submit' name='filter' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['all'] color='default' size='sm' />
-				</@formGroup>
-			</@tform>
-			<@formGroup>
+			<@manageWorkflowFilters class='d-none d-md-flex' />
 			<#if permission_manage_advanced_parameters>
-					<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='sm' hideTitle=['all'] />
-					</#if>
-					<#-- btnTitle='#i18n{workflow.manage_workflow.button_create}' -->
-					<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' btnSize='sm' position='end' /> -->
-					<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' size='sm' />
-					<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
-			</@formGroup>
+			<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='' hideTitle=['all'] />
+			</#if>
+			<#-- btnTitle='#i18n{workflow.manage_workflow.button_create}' -->
+			<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' btnSize='' position='end' /> -->
+			<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' hideTitle=['all'] size='' />
+			<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
 		</@pageHeader>
+		
+		<@manageWorkflowFilters class='d-md-none mb-3' />
 		<@table responsive=false class='mb-3'>
 			<@tr>
 				<@th>#i18n{workflow.manage_workflow.row_name}</@th>
