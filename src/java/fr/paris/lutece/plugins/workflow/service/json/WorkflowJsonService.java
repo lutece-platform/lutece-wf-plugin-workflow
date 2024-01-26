@@ -308,7 +308,7 @@ public class WorkflowJsonService
         	if( _taskFactory.getAllTaskTypes( ).stream( ).anyMatch( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) ) ) {
             	task.setTaskType( _taskFactory.getAllTaskTypes( ).stream( )
             			.filter( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) )
-            			.findFirst( ).orElseThrow( ) );
+            			.findFirst( ).orElse(null) );
                 _taskService.create( task );
         	}
         }
