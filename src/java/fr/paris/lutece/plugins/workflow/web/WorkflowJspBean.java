@@ -516,13 +516,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_PANE, strPane );
         
         Map<String,String> mapStateBeforeName = new HashMap<>( );
-        /*for (Action actionBefore : paginatorAction.getPageItems( ) )
+        for (Action actionBefore : paginatorAction.getPageItems( ) )
         {
         	for (Integer nStateBefore : actionBefore.getListIdStateBefore( ) )
         	{
         		mapStateBeforeName.put(String.valueOf(nStateBefore), _stateService.findByPrimaryKey( nStateBefore ).getName( ) );
         	}
-        }*/
+        }
         
         model.put(MARK_STATE_BEFORE_MAP, mapStateBeforeName);
         
