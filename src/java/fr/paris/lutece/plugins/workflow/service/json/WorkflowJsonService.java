@@ -119,9 +119,17 @@ public class WorkflowJsonService
         WorkflowJsonData jsonData = new WorkflowJsonData( );
 
         Workflow workflow = _workflowService.findByPrimaryKey( idWorkflow );
+        if( workflow.getUid( ) == null ){
+            workflow.setUid( UUID.randomUUID( ).toString( ) );
+        }
         jsonData.setWorkflow( workflow );
 
         List<State> stateList = (List<State>) _workflowService.getAllStateByWorkflow( workflow.getId( ) );
+        stateList.forEach(state -> {
+            if( state.getUid( ) == null ){
+                state.setUid( UUID.randomUUID( ).toString( ) );
+            }
+        });
         jsonData.setStateList( stateList );
 
         List<Action> actionList = new ArrayList<>( );
@@ -129,6 +137,11 @@ public class WorkflowJsonService
         ActionFilter filter = new ActionFilter( );
         filter.setIdWorkflow( workflow.getId( ) );
         actionList.addAll( _actionService.getListActionByFilter( filter ) );
+        actionList.forEach(action -> {
+            if( action.getUid( ) == null ){
+                action.setUid( UUID.randomUUID( ).toString( ) );
+            }
+        });
        
         for( Action action : actionList ) 
         {       	
@@ -157,11 +170,23 @@ public class WorkflowJsonService
             taskList.addAll( _taskService.getListTaskByIdAction( action.getId( ), Locale.getDefault( ) ) );
             prerequisiteList.addAll( _prerequisiteManagementService.getListPrerequisite( action.getId( ) ) );
         }
+
+        taskList.forEach(task -> {
+            if( task.getUid( ) == null ){
+                task.setUid( UUID.randomUUID( ).toString( ) );
+            }
+        });
         
         for ( ITask task : taskList ) 
         {
         	task.setActionUid( _actionService.findByPrimaryKey( task.getAction( ).getId( ) ).getUid( ) );
         }
+
+        prerequisiteList.forEach(prerequisite -> {
+            if( prerequisite.getUidPrerequisite( ) == null ){
+                prerequisite.setUidPrerequisite( UUID.randomUUID( ).toString( ) );
+            }
+        });
         
         for( Prerequisite prerequisite : prerequisiteList ) 
         {
@@ -289,7 +314,10 @@ public class WorkflowJsonService
     {
         for ( ITask task : taskList )
         {
-        	task.setAction( _actionService.findByPrimaryKey( mapIdActions.get( task.getAction( ).getUid() ) ) );
+            Action action = _actionService.findByPrimaryKey( mapIdActions.get( task.getAction( ).getUid( ) ) );
+            if(action != null) {
+                task.setAction( action );
+            }
         }
     }
 
@@ -297,7 +325,11 @@ public class WorkflowJsonService
     {
         for ( Prerequisite prerequisite : prerequisiteList )
         {
-            prerequisite.setIdAction( mapIdActions.get( prerequisite.getUidAction( ) ) );
+            Action action = _actionService.findByPrimaryKey( mapIdActions.get( prerequisite.getUidAction( ) ) );
+            if ( action != null )
+            {  
+                prerequisite.setIdAction( mapIdActions.get( action.getUid( ) ) );
+            }
         }
     }
 
