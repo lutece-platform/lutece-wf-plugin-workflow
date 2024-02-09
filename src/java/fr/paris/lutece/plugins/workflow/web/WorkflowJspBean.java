@@ -2674,6 +2674,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             action.setMassAction( false );
             action.setOrder( 0 );
             action.setWorkflow( state.getWorkflow( ) );
+            action.setUid( UUID.randomUUID( ).toString( ) );
             _actionService.create( action );
         }
 
