@@ -117,6 +117,7 @@ CREATE TABLE workflow_resource_history
 
 CREATE INDEX history_id_workflow_fk ON workflow_resource_history(id_workflow);
 CREATE INDEX history_id_action_fk ON workflow_resource_history(id_action);
+CREATE INDEX history_id_resource_fk ON workflow_resource_history(id_resource);
 
 --
 -- Table Structure for table workflow_resource_user_history
