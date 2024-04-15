@@ -10,7 +10,7 @@ insert into workflow_action_state_before select id_action, id_state_before from 
 ALTER TABLE workflow_action DROP COLUMN id_state_before; 
 
 -- add alternative state (set if a task returns false)
-ALTER TABLE workflow_action ADD COLUMN id_alternative_state_after INT DEFAULT NULL; 
+ALTER TABLE workflow_action ADD COLUMN id_alternative_state_after INT NOT NULL DEFAULT -1;
 
 -- add choice task
 CREATE TABLE workflow_task_choice_config (
