@@ -10,6 +10,7 @@
 				<@tabContent>
 					<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
 						<@input type='hidden' name='id_state' value=state.id/>
+						<@input type="hidden" name="token" value="${token}" />
 						<@formGroup labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
 							<@input type='text' name='name' maxlength=255 value=state.name />
 						</@formGroup>

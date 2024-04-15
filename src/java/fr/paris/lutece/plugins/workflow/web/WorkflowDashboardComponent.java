@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.web;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
@@ -45,6 +46,7 @@ import fr.paris.lutece.portal.service.dashboard.DashboardComponent;
 import fr.paris.lutece.portal.service.database.AppConnectionService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
@@ -108,6 +110,8 @@ public class WorkflowDashboardComponent extends DashboardComponent
         model.put( MARK_WORKFLOW_LIST, listWorkflow );
         model.put( MARK_URL, url.getUrl( ) );
         model.put( MARK_ICON, plugin.getIconUrl( ) );
+        // Add CSRF Token
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
 
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 

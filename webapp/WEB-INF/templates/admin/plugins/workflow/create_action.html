@@ -5,6 +5,7 @@
 		<@tform action='jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow' boxed=true>
 			<@fieldSet>
 				<@input type='hidden' name='id_workflow' value=workflow.id/>
+				<@input type="hidden" name="token" value="${token}" />
 				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
 					<@input type='text' name='name' maxlength=255 />
 				</@formGroup>

@@ -4,6 +4,7 @@
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.create_workflow.title}' />
 		<@tform action='jsp/admin/plugins/workflow/DoCreateWorkflow.jsp?plugin_name=workflow' boxed=true>
+			<@input type="hidden" name="token" value="${token}" />
 			<@fieldSet>
 				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' helpKey='#i18n{workflow.create_workflow.label_name_comment}' mandatory=true>
 					<@input type='text' name='name' maxlength=255 />

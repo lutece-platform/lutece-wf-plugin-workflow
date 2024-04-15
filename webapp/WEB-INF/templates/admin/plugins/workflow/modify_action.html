@@ -10,6 +10,7 @@
 						<@tform action='jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow'>
 							<@fieldSet>
 								<@input type='hidden' name='id_action' value=action.id />
+								<@input type="hidden" name="token" value="${token}" />
 
 								<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' mandatory=true helpKey='#i18n{workflow.create_action.label_name_comment}'>
 									<@input type='text' name='name' value=action.name maxlength=255 inputSize=80 />
@@ -107,6 +108,7 @@
 						<@fieldSet>
 							<@tform action='jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow'>
 								<@input type='hidden' name='id_action' value=action.id/>
+								<@input type="hidden" name="token" value="${token}" />
 								<@formGroup rows=2 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}'>
 									<@inputGroup>
 										<@select name='task_type_key' default_value='-1'  items=task_type_list sort=true />
@@ -155,7 +157,7 @@
 										<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' btnIcon='edit' position='end' /> -->
 										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 										</#if>
-										<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
+										<@aButton href='jsp/admin/plugins/workflow/DoCopyTask.jsp?id_task=${task.id}&token=${token}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
 										<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
 									</@td>
 								</@tr>

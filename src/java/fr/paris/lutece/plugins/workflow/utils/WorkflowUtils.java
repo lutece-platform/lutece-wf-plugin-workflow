@@ -65,6 +65,12 @@ public final class WorkflowUtils
     public static final String EMPTY_STRING = "";
     public static final String PROPERTY_SELECT_EMPTY_CHOICE = "workflow.select_empty_choice";
 
+    // ACTIONS
+    public static final String CONSTANT_ACTION_MODIFY_WORKFLOW = "modify_workflow";
+
+    // MESSAGES
+    public static final String MESSAGE_ERROR_INVALID_SECURITY_TOKEN = "workflow.message.error.invalidSecurityToken";
+
     // property
     private static final String REGEX_ID = "^[\\d]+$";
 

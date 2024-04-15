@@ -104,6 +104,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -262,6 +263,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_SHOW_TASKS = "showTasks";
 
     // MESSAGES
+    private static final String MESSAGE_ERROR_INVALID_SECURITY_TOKEN = "workflow.message.error.invalidSecurityToken";
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
     private static final String MESSAGE_ERROR_AUTOMATIC_FIELD = "workflow.message.error.automatic.field";
     private static final String MESSAGE_CONFIRM_REMOVE_WORKFLOW = "workflow.message.confirm_remove_workflow";
@@ -361,6 +363,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_ACTIVE_SELECTED, _nIsEnabled );
         model.put( MARK_WORKFLOW_LIST, paginator.getPageItems( ) );
         model.put( MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS, bPermissionAdvancedParameter );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
 
         setPageTitleProperty( PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE );
 
@@ -386,6 +389,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_USER_WORKGROUP_REF_LIST, AdminWorkgroupService.getUserWorkgroups( adminUser, locale ) );
         model.put( MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_WORKFLOW ) );
         setPageTitleProperty( PROPERTY_CREATE_WORKFLOW_PAGE_TITLE );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_WORKFLOW, locale, model );
@@ -404,6 +408,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCreateWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         if ( ( request.getParameter( PARAMETER_CANCEL ) == null ) )
         {
             Workflow workflow = new Workflow( );
@@ -531,6 +541,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             model.put( MARK_SHOW_TASKS, "true" );
         }
         model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ) ) );
+        // Add CSRF Token
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_WORKFLOW ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE );
 
@@ -550,6 +562,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doModifyWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
             String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
@@ -599,6 +617,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         UrlItem url = new UrlItem( JSP_DO_REMOVE_WORKFLOW );
         url.addParameter( PARAMETER_ID_WORKFLOW, strIdWorkflow );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_WORKFLOW ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
@@ -614,6 +633,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
 
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
@@ -646,6 +671,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doEnableWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
         Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
@@ -672,6 +703,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doDisableWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
         Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
@@ -774,6 +811,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_WORKFLOW, workflow );
         model.put( MARK_INITIAL_STATE, _stateService.getInitialState( nIdWorkflow ) != null );
         model.put( MARK_ICON_LIST, listIcon );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_STATE ) );
         setPageTitleProperty( PROPERTY_CREATE_STATE_PAGE_TITLE );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_STATE, getLocale( ), model );
@@ -792,6 +830,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCreateState( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_STATE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
 
@@ -879,6 +923,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_STATE, state );
         model.put( MARK_ICON_LIST, listIcon );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_STATE ) );
+
         setPageTitleProperty( PROPERTY_MODIFY_STATE_PAGE_TITLE );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_STATE, getLocale( ), model );
@@ -897,6 +943,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doModifyState( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_STATE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
         int nIdState = WorkflowUtils.convertStringToInt( strIdState );
         State state = null;
@@ -977,6 +1029,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         UrlItem url = new UrlItem( JSP_DO_REMOVE_STATE );
         url.addParameter( PARAMETER_ID_STATE, strIdState );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_STATE ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_STATE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
@@ -992,6 +1045,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveState( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_STATE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
         int nIdState = WorkflowUtils.convertStringToInt( strIdState );
 
@@ -1130,6 +1189,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_ALTERNATIVE_STATE_LIST, WorkflowUtils.getRefList( listState, true, getLocale( ) ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( MARK_AVAILABLE_LINKED_ACTIONS, getAvailableActionsToLink( WorkflowUtils.CONSTANT_ID_NULL, nIdWorkflow ) );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_ACTION ) );
 
         setPageTitleProperty( PROPERTY_CREATE_ACTION_PAGE_TITLE );
 
@@ -1149,6 +1209,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCreateAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
 
@@ -1404,6 +1470,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             model.put( MARK_AVAILABLE_LINKED_ACTIONS, getAvailableActionsToLink( nIdAction, action.getWorkflow( ).getId( ) ) );
             model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
         }
+        // Add CSRF token
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_ACTION ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale( ), model );
 
@@ -1440,6 +1508,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doModifyAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         Action action = null;
@@ -1489,6 +1563,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         UrlItem url = new UrlItem( JSP_DO_REMOVE_ACTION );
         url.addParameter( PARAMETER_ID_ACTION, strIdAction );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_ACTION ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_ACTION, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
@@ -1504,6 +1579,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         Action action = _actionService.findByPrimaryKey( nIdAction );
@@ -1521,7 +1602,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     }
 
     /**
-     * Remove all workflow record of the workflow
+     * Insert a new task in an Action
      * 
      * @param request
      *            The HTTP request
@@ -1531,6 +1612,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doInsertTask( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         String strTaskTypeKey = request.getParameter( PARAMETER_TASK_TYPE_KEY );
@@ -1583,6 +1670,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         model.put( MARK_TASK, task );
         model.put( MARK_TASK_CONFIG, _taskComponentManager.getDisplayConfigForm( request, getLocale( ), task ) );
+        // Add CSRF Token
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_TASK ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_TASK_PAGE_TITLE );
 
@@ -1602,6 +1691,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doModifyTask( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_TASK ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale( ) );
@@ -1664,11 +1759,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             url = new UrlItem( JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION );
             url.addParameter( PARAMETER_ID_TASK, strId );
             url.addParameter( PARAMETER_ID_STATE, action.getListIdStateBefore( ).get( 0 ) );
+            url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION ) );
         }
         else
         {
             url = new UrlItem( JSP_DO_REMOVE_TASK );
             url.addParameter( PARAMETER_ID_TASK, strId );
+            url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_TASK ) );
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_TASK, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
@@ -1679,12 +1776,20 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * 
      * @param request
      *            The HTTP request
+     * @param isReflexiveTask
+     *            Set to true if a Reflexive Task ( automatic action ) is being removed, set to false otherwise
      * @throws AccessDeniedException
      *             the {@link AccessDeniedException}
      * @return The URL to go after performing the action
      */
-    public String doRemoveTask( HttpServletRequest request ) throws AccessDeniedException
+    public String doRemoveTask( HttpServletRequest request, boolean isReflexiveTask ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token for both types of Task forms
+        if ( !isReflexiveTask && !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_TASK ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         ITask task = _taskService.findByPrimaryKey( nIdTask, getLocale( ) );
@@ -1743,6 +1848,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String doCopyTask( HttpServletRequest request )
             throws AccessDeniedException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
+        // Control the validity of the CSRF Token when duplicating regular tasks or Reflexive tasks
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION )
+                && !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_INVALID_SECURITY_TOKEN );
+        }
+
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         ITask taskToCopy;
         int nIdTaskToCopy = WorkflowUtils.convertStringToInt( strIdTask );
@@ -2296,9 +2408,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @throws NoSuchMethodException
+     * @throws AccessDeniedException 
      */
-    public String doCopyState( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    public String doCopyState( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
         int nIdState = WorkflowUtils.convertStringToInt( strIdState );
         State stateInit = _stateService.findByPrimaryKey( nIdState );
@@ -2355,9 +2474,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *             If an illegal access is performed
      * @throws InvocationTargetException
      *             If an error occurs
+     * @throws AccessDeniedException 
      */
-    public String doCopyAction( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    public String doCopyAction( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
 
@@ -2380,9 +2506,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *             If an illegal access is performed
      * @throws NoSuchMethodException
      *             If an error occurs
+     * @throws AccessDeniedException 
      */
-    public String doCopyWorkflow( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    public String doCopyWorkflow( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         int nId = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_WORKFLOW ) );
 
         if ( nId == -1 )
@@ -2407,6 +2540,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         UrlItem url = new UrlItem( JSP_DO_COPY_WORKFLOW );
         url.addParameter( PARAMETER_ID_WORKFLOW, request.getParameter( PARAMETER_ID_WORKFLOW ) );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
+
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
 
@@ -2625,6 +2760,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
         model.put( MARK_NUMBER_TASK, listTasks.size( ) );
         model.put( MARK_STATE, state );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_REFLEXIVE_ACTION, locale, model );
 
@@ -2637,9 +2773,16 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param request
      *            The request
      * @return The next URL to redirect to
+     * @throws AccessDeniedException 
      */
-    public String doAddTaskToReflexiveAction( HttpServletRequest request )
+    public String doAddTaskToReflexiveAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
 
         if ( StringUtils.isEmpty( strIdState ) || !StringUtils.isNumeric( strIdState ) )
@@ -2706,6 +2849,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveTaskFromReflexiveAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
 
@@ -2718,7 +2867,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         Locale locale = AdminUserService.getLocale( request );
         int nIdState = Integer.parseInt( strIdState );
 
-        doRemoveTask( request );
+        doRemoveTask( request, true );
 
         List<Action> listActions = getAutomaticReflexiveActionsFromState( nIdState );
 

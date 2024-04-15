@@ -46,12 +46,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -146,6 +150,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         String strContent = service.getConfigHtml( config, request, getLocale( ) );
         model.put( MARK_CONTENT, strContent );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ), model );
 
@@ -158,9 +163,16 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
      * @param request
      *            The request
      * @return The next URL to redirect to
+     * @throws AccessDeniedException 
      */
-    public String doCreatePrerequisite( HttpServletRequest request )
+    public String doCreatePrerequisite( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         String strPrerequisiteType = request.getParameter( MARK_PREREQUISITE_TYPE );
         int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
 
@@ -277,6 +289,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         String strContent = service.getConfigHtml( config, request, getLocale( ) );
         model.put( MARK_CONTENT, strContent );
+        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ), model );
 
@@ -289,9 +302,16 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
      * @param request
      *            The request
      * @return The next URL to redirect to
+     * @throws AccessDeniedException 
      */
-    public String doModifyPrerequisite( HttpServletRequest request )
+    public String doModifyPrerequisite( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
 
         if ( StringUtils.isEmpty( request.getParameter( MARK_CANCEL ) ) )
@@ -348,6 +368,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         UrlItem urlItem = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_DO_REMOVE_PREREQUISITE );
         urlItem.addParameter( MARK_ID_ACTION, request.getParameter( MARK_ID_ACTION ) );
         urlItem.addParameter( MARK_ID_PREREQUISITE, request.getParameter( MARK_ID_PREREQUISITE ) );
+        urlItem.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_URL_DO_REMOVE_PREREQUISITE ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PREREQUISITE, urlItem.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
@@ -358,9 +379,16 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
      * @param request
      *            the request
      * @return the next URL to redirect to
+     * @throws AccessDeniedException 
      */
-    public String doRemovePrerequisite( HttpServletRequest request )
+    public String doRemovePrerequisite( HttpServletRequest request ) throws AccessDeniedException
     {
+        // Control the validity of the CSRF Token
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_URL_DO_REMOVE_PREREQUISITE ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
         int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
         int nIdPrerequisite = Integer.parseInt( request.getParameter( MARK_ID_PREREQUISITE ) );
 

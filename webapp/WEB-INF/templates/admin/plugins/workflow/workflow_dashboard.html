@@ -14,12 +14,12 @@
 		</@td>
 		<@td>
 			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] size='sm' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' />
-			<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] size='sm' buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' />
+			<@aButton href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] size='sm' buttonIcon='copy' title='#i18n{workflow.manage_workflow.title_copy}' />
 			<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] size='sm' buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' />
 			<#if workflow.enabled>
-				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] size='sm' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
+				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] size='sm' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
 			<#else>
-				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] size='sm' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
+				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] size='sm' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
 			</#if>
 		</@td>
 	</@tr>

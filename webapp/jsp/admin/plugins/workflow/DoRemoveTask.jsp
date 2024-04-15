@@ -2,5 +2,5 @@
 <jsp:useBean id="workflowWorkflow" scope="session" class="fr.paris.lutece.plugins.workflow.web.WorkflowJspBean" />
 <% 
 	workflowWorkflow.init( request, fr.paris.lutece.plugins.workflow.web.WorkflowJspBean.RIGHT_MANAGE_WORKFLOW); 
-	response.sendRedirect( workflowWorkflow.doRemoveTask(request) );
+	response.sendRedirect( workflowWorkflow.doRemoveTask( request, false ) );
 %>

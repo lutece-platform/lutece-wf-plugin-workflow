@@ -7,6 +7,7 @@
 					<@boxBody>
 						<@tform action='jsp/admin/plugins/workflow/DoModifyWorkflow.jsp'>
 							<@input type='hidden' name='id_workflow' value=workflow.id/>
+							<@input type="hidden" name="token" value="${token}" />
 							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
 								<@input type='text' name='name' value=workflow.name maxlength=255 />
 							</@formGroup>
@@ -70,7 +71,7 @@
 										<@td>
 											<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' size='sm' />
 											<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='list-check' title='#i18n{workflow.modify_reflexive_action.title}' size='sm' />
-											<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/DoCopyState.jsp?id_state=${state.id}&token=${token}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' size='sm' />
 											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_state.title_delete}' size='sm' />
 										</@td>
 									</@tr>
@@ -118,7 +119,7 @@
 										</@td>
 										<@td>
 											<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' size='sm' />
-											<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' size='sm' />
+											<@aButton href='jsp/admin/plugins/workflow/DoCopyAction.jsp?id_action=${action.id}&token=${token}' hideTitle=['all'] buttonIcon='copy' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' size='sm' />
 											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' size='sm' />
 										</@td>
 									</@tr>
