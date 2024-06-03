@@ -2184,7 +2184,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                         action.setOrder( action.getOrder( ) + 1 );
                     }
 
-                    _actionService.update( action );
+                    _actionService.updateActionWithoutStates( action );
                 }
             }
         }
@@ -2201,7 +2201,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 if ( action.getOrder( ) != actionToChangeOrder.getOrder( ) )
                 {
                     action.setOrder( action.getOrder( ) - 1 );
-                    _actionService.update( action );
+                    _actionService.updateActionWithoutStates( action );
                 }
             }
         }
