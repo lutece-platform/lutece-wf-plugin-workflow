@@ -1,0 +1,6 @@
+<#if workflow_action?exists && workflow_action?has_content>
+	<#assign contentConfirmation>${workflow_action.description!''}<@icon style='check' /></#assign>
+	<@initToast>
+		<@addToast content=contentConfirmation/>
+	</@initToast>
+</#if>

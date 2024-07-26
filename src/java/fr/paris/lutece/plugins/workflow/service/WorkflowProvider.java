@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.IManualActionPrerequisiteService;
@@ -54,6 +55,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistoryFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
@@ -94,10 +96,12 @@ public class WorkflowProvider implements IWorkflowProvider
     private static final String MARK_HISTORY_INFORMATION_LIST = "history_information_list";
     private static final String MARK_TASK_FORM_ENTRY_LIST = "task_form_entry_list";
     private static final String MARK_ADMIN_AVATAR = "adminAvatar";
+    private static final String MARK_WORKFLOW_ACTION = "workflow_action";
 
     // TEMPLATES
     private static final String TEMPLATE_RESOURCE_HISTORY = "admin/plugins/workflow/resource_history.html";
     private static final String TEMPLATE_TASKS_FORM = "admin/plugins/workflow/tasks_form.html";
+    private static final String TEMPLATE_PROCESS_ACTION_CONFIRMATION = "admin/plugins/workflow/process_action_confirmation.html";
 
     // SERVICES
     @Inject
@@ -360,6 +364,35 @@ public class WorkflowProvider implements IWorkflowProvider
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_TASKS_FORM, locale, model );
 
         return templateList.getHtml( );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayProcessActionConfirmation( int nIdResource, String strResourceType, int nIdAction, Locale locale, String strTemplate )
+    {
+    	List<Integer> listIdResources = new ArrayList<>( );
+    	listIdResources.add( nIdResource );
+    	
+    	ResourceHistoryFilter filter = new ResourceHistoryFilter( );
+    	filter.setListIdResources( listIdResources );
+        filter.setResourceType( strResourceType );
+        filter.setIdAction( nIdAction );
+        
+        if ( CollectionUtils.isNotEmpty( _resourceHistoryService.getListHistoryIdByFilter( filter ) ) )
+		{
+            Action action = _actionService.findByPrimaryKey( nIdAction );
+        	
+            Map<String, Object> model = new HashMap<>( );
+            model.put( MARK_WORKFLOW_ACTION, action );
+
+            HtmlTemplate template = AppTemplateService.getTemplate( StringUtils.isNotBlank( strTemplate ) ? strTemplate : TEMPLATE_PROCESS_ACTION_CONFIRMATION, locale, model );
+
+            return template.getHtml( );
+		}
+
+        return StringUtils.EMPTY;
     }
 
     /**
