@@ -55,7 +55,6 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistoryFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFilter;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
@@ -370,24 +369,16 @@ public class WorkflowProvider implements IWorkflowProvider
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayProcessActionConfirmation( int nIdResource, String strResourceType, int nIdAction, Locale locale, String strTemplate )
+    public String getDisplayProcessActionConfirmation( int nIdAction, Locale locale, List<Integer> actionHistoryResourceIdList )
     {
-    	List<Integer> listIdResources = new ArrayList<>( );
-    	listIdResources.add( nIdResource );
-    	
-    	ResourceHistoryFilter filter = new ResourceHistoryFilter( );
-    	filter.setListIdResources( listIdResources );
-        filter.setResourceType( strResourceType );
-        filter.setIdAction( nIdAction );
-        
-        if ( CollectionUtils.isNotEmpty( _resourceHistoryService.getListHistoryIdByFilter( filter ) ) )
+        if ( CollectionUtils.isNotEmpty( actionHistoryResourceIdList ) )
 		{
             Action action = _actionService.findByPrimaryKey( nIdAction );
         	
             Map<String, Object> model = new HashMap<>( );
             model.put( MARK_WORKFLOW_ACTION, action );
 
-            HtmlTemplate template = AppTemplateService.getTemplate( StringUtils.isNotBlank( strTemplate ) ? strTemplate : TEMPLATE_PROCESS_ACTION_CONFIRMATION, locale, model );
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_PROCESS_ACTION_CONFIRMATION, locale, model );
 
             return template.getHtml( );
 		}
