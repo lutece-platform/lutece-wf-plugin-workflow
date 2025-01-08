@@ -34,7 +34,11 @@
 package fr.paris.lutece.plugins.workflow.modules.state.business;
 
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow.changeStateTaskInformationDao" )
 public class ChangeStateTaskInformationDAO implements IChangeStateTaskInformationDAO
 {
 

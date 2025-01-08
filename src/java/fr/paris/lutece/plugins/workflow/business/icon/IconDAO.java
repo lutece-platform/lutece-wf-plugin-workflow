@@ -37,6 +37,9 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.icon.IIconDAO;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -47,6 +50,8 @@ import java.util.List;
  * IconDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.iconDAO" )
 public class IconDAO implements IIconDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_icon,name,mime_type,file_value,width,height" + " FROM workflow_icon WHERE id_icon=?";

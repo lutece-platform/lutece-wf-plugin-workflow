@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.business;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 public final class ChangeStateTaskInformationHome
 {
 
-    private static IChangeStateTaskInformationDAO _dao = SpringContextService.getBean( "workflow.changeStateTaskInformationDao" );
+    private static IChangeStateTaskInformationDAO _dao = CDI.current( ).select( IChangeStateTaskInformationDAO.class ).get( );
 
     /**
      * Private constructor

@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.workflow.service.security;
 
 import fr.paris.lutece.portal.service.security.UserAttributesService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,6 +46,8 @@ import java.util.Map;
  * WorkflowUserAttributesManager
  *
  */
+@ApplicationScoped
+@Named( WorkflowUserAttributesManager.BEAN_MANAGER )
 public class WorkflowUserAttributesManager implements IWorkflowUserAttributesManager
 {
     /**

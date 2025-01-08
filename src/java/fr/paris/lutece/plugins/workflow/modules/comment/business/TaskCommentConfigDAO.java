@@ -36,12 +36,16 @@ package fr.paris.lutece.plugins.workflow.modules.comment.business;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskCommentConfig
  *
  */
+@ApplicationScoped
+@Named( "workflow.taskCommentConfigDAO" )
 public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_mandatory,is_richtext"

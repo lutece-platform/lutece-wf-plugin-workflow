@@ -37,17 +37,20 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.AssignmentHi
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.IAssignmentHistoryDAO;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 
 /**
  *
  * AssignmentHistoryService
  *
  */
+@ApplicationScoped
+@Named( AssignmentHistoryService.BEAN_SERVICE )
 public class AssignmentHistoryService implements IAssignmentHistoryService
 {
     /**
@@ -61,7 +64,7 @@ public class AssignmentHistoryService implements IAssignmentHistoryService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void create( AssignmentHistory assignmentHistory, Plugin plugin )
     {
         _assignmentHistoryDAO.insert( assignmentHistory, plugin );
@@ -71,7 +74,7 @@ public class AssignmentHistoryService implements IAssignmentHistoryService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
         _assignmentHistoryDAO.deleteByHistory( nIdHistory, nIdTask, plugin );
@@ -81,7 +84,7 @@ public class AssignmentHistoryService implements IAssignmentHistoryService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void removeByTask( int nIdTask, Plugin plugin )
     {
         _assignmentHistoryDAO.deleteByTask( nIdTask, plugin );

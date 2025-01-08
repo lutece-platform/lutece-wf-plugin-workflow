@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 import java.util.List;
 
@@ -42,6 +44,8 @@ import java.util.List;
  * TaskCommentConfig
  *
  */
+@Dependent
+@Named( "workflow.taskAssignmentConfig" )
 public class TaskAssignmentConfig extends TaskConfig
 {
     public static final String ASSIGMENT_TYPE_ADMIN_USER = "TYPE_ADMIN_USER";

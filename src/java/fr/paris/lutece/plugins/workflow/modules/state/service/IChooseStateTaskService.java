@@ -38,8 +38,8 @@ import java.util.List;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * Service for IChooseStateTask
@@ -63,7 +63,7 @@ public interface IChooseStateTaskService
      */
     default List<IChooseStateController> getControllerList( )
     {
-        return SpringContextService.getBeansOfType( IChooseStateController.class );
+        return CDI.current( ).select( IChooseStateController.class ).stream( ).toList( );
     }
 
     /**

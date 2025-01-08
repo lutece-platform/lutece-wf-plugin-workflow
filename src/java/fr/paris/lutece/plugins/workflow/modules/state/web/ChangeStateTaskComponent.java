@@ -37,18 +37,24 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskInformationHome;
 import fr.paris.lutece.plugins.workflow.modules.state.service.IChangeStateTaskService;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+@ApplicationScoped
+@Named( "workflow.changeStateTaskComponent" )
 public class ChangeStateTaskComponent extends NoFormTaskComponent
 {
     private static final String TEMPLATE_TASK_CHANGE_STATE_CONFIG = "admin/plugins/workflow/modules/state/task_change_state_config_form.html";
@@ -59,6 +65,16 @@ public class ChangeStateTaskComponent extends NoFormTaskComponent
     private static final String MARK_NEW_STATE = "new_state";
     private static final String MARK_CONFIG = "config";
 
+    ChangeStateTaskComponent() {}
+    
+    @Inject
+    public ChangeStateTaskComponent( @Named( "workflow.changeStateTaskType" ) ITaskType taskType,
+            @Named( "workflow.changeStateTaskConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
     @Inject
     private IChangeStateTaskService _changeStateTaskService;
 

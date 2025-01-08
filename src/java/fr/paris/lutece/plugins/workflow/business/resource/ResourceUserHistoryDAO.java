@@ -37,11 +37,15 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceUserHistoryDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceUserHistory;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * This class provides Data Access methods for ResourceUserHistory objects
  */
-public final class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
+@ApplicationScoped
+@Named( "workflow.resourceUserHistoryDAO" )
+public class ResourceUserHistoryDAO implements IResourceUserHistoryDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT  id_history, user_access_code, email, first_name, last_name, realm FROM workflow_resource_user_history WHERE id_history = ?";

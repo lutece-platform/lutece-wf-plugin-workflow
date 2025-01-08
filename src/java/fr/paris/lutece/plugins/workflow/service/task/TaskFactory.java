@@ -38,15 +38,14 @@ import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.CannotLoadBeanClassException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -56,6 +55,8 @@ import java.util.Locale;
  * TaskFactory
  *
  */
+@ApplicationScoped
+@Named( TaskFactory.BEAN_SERVICE )
 public class TaskFactory implements ITaskFactory
 {
     /**
@@ -104,11 +105,11 @@ public class TaskFactory implements ITaskFactory
             {
                 try
                 {
-                    return SpringContextService.getBean( taskType.getConfigBeanName( ) );
+                    return CDI.current( ).select( ITaskConfig.class, NamedLiteral.of( taskType.getConfigBeanName( ) ) ).get( );
                 }
-                catch( BeansException e )
+                catch( Exception e )
                 {
-                    logBeanException( e );
+                    logBeanException( e, taskType.getBeanName( ) );
                 }
             }
         }
@@ -118,22 +119,10 @@ public class TaskFactory implements ITaskFactory
         return null;
     }
 
-    private void logBeanException( BeansException e )
+    private void logBeanException( Exception e, String strBeanName )
     {
-        String beanName = "unknown bean";
-        if ( e instanceof NoSuchBeanDefinitionException )
-        {
-            beanName = ( (NoSuchBeanDefinitionException) e ).getBeanName( );
-        }
-        if ( e instanceof CannotLoadBeanClassException )
-        {
-            beanName = ( (CannotLoadBeanClassException) e ).getBeanName( );
-        }
-        if ( e instanceof BeanDefinitionStoreException )
-        {
-            beanName = ( (BeanDefinitionStoreException) e ).getBeanName( );
-        }
-        AppLogService.error( "TaskFactory ERROR : could not load bean '" + beanName + "' - CAUSE : " + e.getMessage( ), e );
+        AppLogService.error( "TaskFactory ERROR : could not load bean '{}' - CAUSE : {}", e );
+        AppLogService.error( "TaskFactory ERROR : could not load bean '" + strBeanName + "' - CAUSE : " + e.getMessage( ), e );
     }
 
     /**
@@ -142,7 +131,7 @@ public class TaskFactory implements ITaskFactory
     @Override
     public Collection<ITaskType> getAllTaskTypes( )
     {
-        return SpringContextService.getBeansOfType( ITaskType.class );
+        return CDI.current( ).select( ITaskType.class ).stream( ).toList( );
     }
 
     /**
@@ -192,14 +181,14 @@ public class TaskFactory implements ITaskFactory
             {
                 try
                 {
-                    ITask task = SpringContextService.getBean( taskType.getBeanName( ) );
+                    ITask task = CDI.current( ).select( ITask.class, NamedLiteral.of( taskType.getBeanName( ) ) ).get( );
                     task.setTaskType( taskType );
 
                     return task;
                 }
-                catch( BeansException e )
+                catch( Exception e )
                 {
-                    logBeanException( e );
+                    logBeanException( e, taskType.getBeanName( ) );
                 }
             }
         }

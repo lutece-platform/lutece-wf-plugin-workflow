@@ -61,16 +61,17 @@ import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class ArchiveDaemon extends Daemon
 {
-    private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private IResourceWorkflowService _resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
-    private IArchiveService _archiveService = SpringContextService.getBean( ArchiveService.BEAN_SERVICE );
+    private IWorkflowService _workflowService = CDI.current( ).select( IWorkflowService.class, NamedLiteral.of( WorkflowService.BEAN_SERVICE ) ).get( );
+    private IActionService _actionService = CDI.current( ).select( IActionService.class, NamedLiteral.of( ActionService.BEAN_SERVICE ) ).get( );
+    private ITaskService _taskService = CDI.current( ).select( ITaskService.class, NamedLiteral.of( TaskService.BEAN_SERVICE ) ).get( );
+    private IResourceWorkflowService _resourceWorkflowService = CDI.current( ).select( IResourceWorkflowService.class, NamedLiteral.of( ResourceWorkflowService.BEAN_SERVICE ) ).get( );
+    private IArchiveService _archiveService = CDI.current( ).select( IArchiveService.class, NamedLiteral.of( ArchiveService.BEAN_SERVICE ) ).get( );
 
     @Override
     public void run( )

@@ -42,8 +42,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -85,6 +87,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * WorkflowProvider
  *
  */
+@ApplicationScoped
+@Named( "workflow.workflowProvider" )
 public class WorkflowProvider implements IWorkflowProvider
 {
     // MARKS

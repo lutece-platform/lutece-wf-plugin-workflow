@@ -44,52 +44,59 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
-import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
+@ApplicationScoped
 public class WorkflowJsonService
 {
     private static final String PROPERTY_COPY_WF_TITLE = "workflow.manage_workflow.copy_of_workflow";
 
-    public static final WorkflowJsonService INSTANCE = new WorkflowJsonService( );
-
     private ObjectMapper _objectMapper;
 
-    private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-    private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
-    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
-    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    @Inject
+    private IWorkflowService _workflowService;
+    @Inject
+    private IStateService _stateService;
+    @Inject
+    private IActionService _actionService;
+    @Inject
+    private ITaskService _taskService;
+    @Inject
+    private ITaskFactory _taskFactory;
+    @Inject
+    private IPrerequisiteManagementService _prerequisiteManagementService;
 
-    private WorkflowJsonService( )
+    WorkflowJsonService( )
+    {
+        // Ctor
+    }
+    
+    @PostConstruct
+    void init( )
     {
         SimpleModule timestampModule = new SimpleModule( "TimestampModule" );
         timestampModule.addSerializer( Timestamp.class, new TimestampSerializer( ) );
@@ -101,11 +108,6 @@ public class WorkflowJsonService
 
         _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule )
                 .registerModule( taskModule );
-    }
-
-    public static WorkflowJsonService getInstance( )
-    {
-        return INSTANCE;
     }
 
     /**

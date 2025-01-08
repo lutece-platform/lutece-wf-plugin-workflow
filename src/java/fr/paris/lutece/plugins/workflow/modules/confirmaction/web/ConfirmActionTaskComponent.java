@@ -37,11 +37,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -52,6 +54,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * ConfirmActionTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow.confirmActionTaskComponent" )
 public class ConfirmActionTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATE
@@ -68,6 +72,16 @@ public class ConfirmActionTaskComponent extends AbstractTaskComponent
     @Named( BEAN_CONFIG_SERVICE )
     private ITaskConfigService _config;
 
+    ConfirmActionTaskComponent() {}
+    
+    @Inject
+    public ConfirmActionTaskComponent( @Named( "workflow.taskTypeConfirmAction" ) ITaskType taskType,
+            @Named( "workflow.confirmActionTaskConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {

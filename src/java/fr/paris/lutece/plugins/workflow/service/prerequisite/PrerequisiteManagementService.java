@@ -38,7 +38,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.business.prerequisite.IPrerequisiteDAO;
-import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDAO;
 import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfigDAO;
@@ -47,17 +46,24 @@ import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActio
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * Implementation of the prerequisite management service
  */
+@ApplicationScoped
+@Named( PrerequisiteManagementService.BEAN_NAME )
 public class PrerequisiteManagementService implements IPrerequisiteManagementService
 {
     /**
      * Name of the bean of this service
      */
     public static final String BEAN_NAME = "workflow.prerequisiteManagementService";
+    @Inject
     private IPrerequisiteDAO _dao;
     private Plugin _plugin;
 
@@ -67,7 +73,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     @Override
     public List<IAutomaticActionPrerequisiteService> getPrerequisiteServiceList( )
     {
-        return SpringContextService.getBeansOfType( IAutomaticActionPrerequisiteService.class );
+        return CDI.current( ).select( IAutomaticActionPrerequisiteService.class ).stream( ).toList( );
     }
 
     /**
@@ -93,13 +99,13 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     @Override
     public List<Prerequisite> getListPrerequisite( int nIdAction )
     {
-        return getPrerequisiteDao( ).findByIdAction( nIdAction, getPlugin( ) );
+        return _dao.findByIdAction( nIdAction, getPlugin( ) );
     }
 
     @Override
     public Prerequisite findPrerequisite( int nIdPrerequisite )
     {
-        return getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
+        return _dao.findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
     }
 
     @Override
@@ -143,20 +149,20 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
     @Override
     public void createPrerequisite( Prerequisite prerequisite )
     {
-        getPrerequisiteDao( ).create( prerequisite, getPlugin( ) );
+        _dao.create( prerequisite, getPlugin( ) );
     }
 
     @Override
     public void modifyPrerequisite( Prerequisite prerequisite )
     {
-        getPrerequisiteDao( ).update( prerequisite, getPlugin( ) );
+        _dao.update( prerequisite, getPlugin( ) );
     }
 
     @Override
     public void deletePrerequisite( int nIdPrerequisite )
     {
-        Prerequisite prerequisite = getPrerequisiteDao( ).findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
-        getPrerequisiteDao( ).remove( nIdPrerequisite, getPlugin( ) );
+        Prerequisite prerequisite = _dao.findByPrimaryKey( nIdPrerequisite, getPlugin( ) );
+        _dao.remove( nIdPrerequisite, getPlugin( ) );
 
         IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
 
@@ -169,21 +175,6 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
                 dao.removeConfig( nIdPrerequisite );
             }
         }
-    }
-
-    /**
-     * Get the prerequisite DAO
-     * 
-     * @return The prerequisite DAO
-     */
-    private IPrerequisiteDAO getPrerequisiteDao( )
-    {
-        if ( _dao == null )
-        {
-            _dao = SpringContextService.getBean( PrerequisiteDAO.BEAN_NAME );
-        }
-
-        return _dao;
     }
 
     /**
@@ -217,7 +208,7 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
             return null;
         }
 
-        return SpringContextService.getBean( strDaoBeanName );
+        return CDI.current( ).select( IPrerequisiteConfigDAO.class, NamedLiteral.of( strDaoBeanName ) ).get( );
     }
 
     @Override

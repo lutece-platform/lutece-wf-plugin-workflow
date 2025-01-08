@@ -38,6 +38,9 @@ import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -48,6 +51,8 @@ import java.util.List;
  * WorkflowDAO
  *
  */
+@ApplicationScoped
+@Named( "worklow.workflowDAO" )
 public class WorkflowDAO implements IWorkflowDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_workflow,name,description,creation_date,is_enabled,workgroup_key, uid_workflow"

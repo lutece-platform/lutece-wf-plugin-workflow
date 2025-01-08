@@ -34,10 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.confirmaction.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 /**
  * ConfirmActionTaskConfig
  */
+@Dependent
+@Named( "workflow.taskConfirmActionConfig" )
 public class ConfirmActionTaskConfig extends TaskConfig
 {
     private String _strMessage;

@@ -34,12 +34,16 @@
 package fr.paris.lutece.plugins.workflow.modules.comment.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskCommentConfig
  *
  */
+@Dependent
+@Named( "workflow.taskCommentConfig" )
 public class TaskCommentConfig extends TaskConfig
 {
     private String _strTitle;

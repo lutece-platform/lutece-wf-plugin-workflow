@@ -48,14 +48,17 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-
+@ApplicationScoped
+@Named( "workflow.prerequisiteDuration" )
 public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
 {
     public static final String PREREQUISITE_TITLE_I18N = "module.workflow.duration.prerequisite_title";
-    public static final String CONFIG_DAO_BEAN_NAME = "workflow.PrerequisiteDurationConfigDAO";
+    public static final String CONFIG_DAO_BEAN_NAME = "workflow.prerequisiteDurationConfigDAO";
     private static final String TEMPLATE_DURATION_PREREQUISITE_CONFIG = "admin/plugins/workflow/modules/duration/prerequisite_duration_config.html";
     private static final String MARK_CONFIG = "config";
     @Inject

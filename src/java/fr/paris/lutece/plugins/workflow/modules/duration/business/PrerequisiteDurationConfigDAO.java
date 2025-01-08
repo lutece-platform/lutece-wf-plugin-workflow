@@ -38,7 +38,11 @@ import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteC
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfigDAO;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow.prerequisiteDurationConfigDAO" )
 public class PrerequisiteDurationConfigDAO implements IPrerequisiteConfigDAO
 {
     private static final String INSERT_DURATION_PREREQUISITE = " INSERT INTO workflow_prerequisite_duration_cf ( id_prerequisite, duration ) VALUES (?,?) ";

@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ import java.util.List;
  * TaskAssignmentConfigDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.workgroupConfigDAO" )
 public class WorkgroupConfigDAO implements IWorkgroupConfigDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT workgroup_key,id_mailing_list FROM workflow_workgroup_cf   WHERE id_task=? and workgroup_key=? ";

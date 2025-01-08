@@ -46,8 +46,8 @@ import fr.paris.lutece.portal.service.dashboard.DashboardComponent;
 import fr.paris.lutece.portal.service.database.AppConnectionService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -59,7 +59,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Calendar Dashboard Component This component displays directories
@@ -94,7 +96,7 @@ public class WorkflowDashboardComponent extends DashboardComponent
             return StringUtils.EMPTY;
         }
 
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+        IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class, NamedLiteral.of( WorkflowService.BEAN_SERVICE ) ).get( );
 
         UrlItem url = new UrlItem( right.getUrl( ) );
         url.addParameter( PARAMETER_PLUGIN_NAME, right.getPluginName( ) );
@@ -111,7 +113,8 @@ public class WorkflowDashboardComponent extends DashboardComponent
         model.put( MARK_URL, url.getUrl( ) );
         model.put( MARK_ICON, plugin.getIconUrl( ) );
         // Add CSRF Token
-        model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
+        ISecurityTokenService securityTokenService = CDI.current( ).select( ISecurityTokenService.class ).get( );
+        model.put( SecurityTokenService.MARK_TOKEN , securityTokenService.getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
 
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 

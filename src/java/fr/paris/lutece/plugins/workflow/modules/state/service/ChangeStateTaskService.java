@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChangeStateTaskInformation;
@@ -43,6 +44,8 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
+@ApplicationScoped
+@Named( "workflow.changeStateTaskService" )
 public class ChangeStateTaskService extends AbstractStateTaskService implements IChangeStateTaskService
 {
     @Inject

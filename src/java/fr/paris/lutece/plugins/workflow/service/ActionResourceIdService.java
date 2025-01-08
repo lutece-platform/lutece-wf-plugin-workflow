@@ -37,18 +37,15 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.rbac.Permission;
 import fr.paris.lutece.portal.service.rbac.ResourceIdService;
 import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.Locale;
@@ -109,7 +106,7 @@ public class ActionResourceIdService extends ResourceIdService
      */
     public ReferenceList getResourceIdList( Locale locale )
     {
-        IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
+        IActionService actionService = CDI.current( ).select( IActionService.class ).get( );
         ActionFilter actionFilter = new ActionFilter( );
         actionFilter.setAutomaticReflexiveAction( false );
 
@@ -135,7 +132,7 @@ public class ActionResourceIdService extends ResourceIdService
      */
     public String getTitle( String strId, Locale locale )
     {
-        IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
+        IActionService actionService = CDI.current( ).select( IActionService.class ).get( );
         int nId = WorkflowUtils.convertStringToInt( strId );
         Action action = actionService.findByPrimaryKey( nId );
 
@@ -149,8 +146,8 @@ public class ActionResourceIdService extends ResourceIdService
 
     private String getActionLabel( Action action )
     {
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+        IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class ).get( );
+        IStateService stateService = CDI.current( ).select( IStateService.class ).get( );
 
         action.setWorkflow( workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
         action.setStateAfter( stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) ) );

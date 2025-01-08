@@ -35,13 +35,12 @@ package fr.paris.lutece.plugins.workflow.service;
 
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
-import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.portal.service.image.ImageResource;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.image.ImageResourceProvider;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.url.UrlItem;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  *
@@ -84,7 +83,7 @@ public final class FileIconeService implements ImageResourceProvider
     @Override
     public ImageResource getImageResource( int nIdResource )
     {
-        IIconService iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
+        IIconService iconService = CDI.current( ).select( IIconService.class ).get( );
         Icon icon = iconService.findByPrimaryKey( nIdResource );
 
         if ( icon != null )

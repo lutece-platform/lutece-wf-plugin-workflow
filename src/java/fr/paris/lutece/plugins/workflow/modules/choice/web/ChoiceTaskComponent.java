@@ -37,15 +37,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -54,6 +54,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * ChoiceTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow.choiceTaskComponent" )
 public class ChoiceTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATE
@@ -70,6 +72,16 @@ public class ChoiceTaskComponent extends AbstractTaskComponent
     @Named( BEAN_CONFIG_SERVICE )
     private ITaskConfigService _config;
 
+    ChoiceTaskComponent() {}
+    
+    @Inject
+    public ChoiceTaskComponent( @Named( "workflow.taskTypeChoice" ) ITaskType taskType,
+            @Named( "workflow.choiceTaskConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {

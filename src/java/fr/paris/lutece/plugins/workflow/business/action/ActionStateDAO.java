@@ -7,7 +7,11 @@ import java.util.List;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.IActionStateDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow.actionStateDAO" )
 public class ActionStateDAO implements IActionStateDAO 
 {
 	private static final String SQL_QUERY_SELECT_ALL = "SELECT id_action,id_state_before ";

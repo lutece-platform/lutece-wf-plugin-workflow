@@ -35,16 +35,15 @@ package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 
-import org.springframework.beans.factory.InitializingBean;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * ITaskInfoProvider
  *
  */
-public interface ITaskInfoProvider extends InitializingBean
+public interface ITaskInfoProvider
 {
     /**
      * Set the task type

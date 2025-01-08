@@ -33,8 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.business;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
@@ -43,6 +45,8 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
  * Config for Archival Task.
  *
  */
+@Dependent
+@Named( "workflow.taskArchiveConfig" )
 public class ArchiveConfig extends TaskConfig
 {
     @NotNull

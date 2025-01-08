@@ -37,7 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 
@@ -69,22 +69,16 @@ public class MockTask extends Task
     @Override
     public void init( )
     {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void doRemoveConfig( )
     {
-        // TODO Auto-generated method stub
-
     }
 
 }

@@ -36,20 +36,23 @@ package fr.paris.lutece.plugins.workflow.modules.archive.service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
-import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResourceDao;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.IArchiveResourceDao;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class ArchiveServiceTest extends LuteceTestCase
 {
-    private ArchiveService _service = SpringContextService.getBean( ArchiveService.BEAN_SERVICE );
+    @Inject
+    private ArchiveService _service;
+    @Inject
+    private IArchiveResourceDao _archiveResourceDao;
 
-    private IArchiveResourceDao _archiveResourceDao = SpringContextService.getBean( ArchiveResourceDao.BEAN_NAME );
-
+    @Test
     public void testIsResourceUpForArchival_Yes( )
     {
         ArchiveResource archiveResource = new ArchiveResource( );
@@ -71,6 +74,7 @@ public class ArchiveServiceTest extends LuteceTestCase
         _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
+    @Test
     public void testIsResourceUpForArchival_No( )
     {
         ArchiveResource archiveResource = new ArchiveResource( );
@@ -92,6 +96,7 @@ public class ArchiveServiceTest extends LuteceTestCase
         _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
+    @Test
     public void testIsResourceUpForArchival_AlreadyArchived( )
     {
         Timestamp yesterday = Timestamp.valueOf( LocalDateTime.now( ).minusDays( 1 ) );
@@ -114,6 +119,7 @@ public class ArchiveServiceTest extends LuteceTestCase
         _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
+    @Test
     public void testIsResourceUpForArchival_Immediate( )
     {
         ArchiveResource archiveResource = new ArchiveResource( );

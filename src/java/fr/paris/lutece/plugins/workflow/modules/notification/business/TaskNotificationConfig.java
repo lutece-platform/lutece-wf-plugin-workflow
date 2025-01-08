@@ -34,12 +34,16 @@
 package fr.paris.lutece.plugins.workflow.modules.notification.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskNotificationtConfig
  *
  */
+@Dependent
+@Named( "workflow.taskNotificationConfig" )
 public class TaskNotificationConfig extends TaskConfig
 {
     private int _nIdMailingList;

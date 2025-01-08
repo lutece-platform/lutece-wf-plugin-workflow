@@ -37,7 +37,11 @@ import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow.taskArchiveConfigDao" )
 public class ArchiveConfigDao implements ITaskConfigDAO<ArchiveConfig>
 {
     public static final String BEAN_NAME = "workflow.taskArchiveConfigDao";

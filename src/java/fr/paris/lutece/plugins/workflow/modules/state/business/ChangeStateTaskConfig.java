@@ -33,11 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.business;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
+@Dependent
+@Named( "workflow.changeStateTaskConfig" )
 public class ChangeStateTaskConfig extends TaskConfig
 {
     @NotNull

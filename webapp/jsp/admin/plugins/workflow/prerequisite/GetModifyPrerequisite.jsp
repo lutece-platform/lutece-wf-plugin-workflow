@@ -1,15 +1,10 @@
 <%@ page errorPage="../../../ErrorPage.jsp" %>
-<jsp:useBean id="workflowPrerequisite" scope="session" class="fr.paris.lutece.plugins.workflow.web.prerequisite.PrerequisiteJspBean" />
-<%
-	workflowPrerequisite.init( request, fr.paris.lutece.plugins.workflow.web.WorkflowJspBean.RIGHT_MANAGE_WORKFLOW);
-	String strContent = workflowPrerequisite.getModifyPrerequisite( request, response );
-	if ( strContent != null )
-	{
-%>
 <jsp:include page="../../../AdminHeader.jsp" />
 
-<%= strContent %>
+<%@page import="fr.paris.lutece.plugins.workflow.web.prerequisite.PrerequisiteJspBean"%>
+<%@page import="fr.paris.lutece.plugins.workflow.web.WorkflowJspBean"%>
+
+${ prerequisiteJspBean.init( pageContext.request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) }
+${ prerequisiteJspBean.getModifyPrerequisite( pageContext.request, pageContext.response ) }
+
 <%@ include file="../../../AdminFooter.jsp" %>
-<%
-	}
-%>

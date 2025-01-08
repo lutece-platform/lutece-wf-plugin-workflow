@@ -48,16 +48,19 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * TaskNotification
  *
  */
+@Dependent
+@Named( "workflow.taskNotification" )
 public class TaskNotification extends Task
 {
     // TEMPLATES

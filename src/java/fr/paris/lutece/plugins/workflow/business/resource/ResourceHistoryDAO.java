@@ -41,6 +41,9 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistoryFil
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceUserHistory;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,8 @@ import org.apache.commons.lang3.StringUtils;
  * ResourceHistoryDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.resourceHistoryDAO" )
 public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
     private static final String SQL_QUERY_SELECT_ALL = "SELECT wh.id_history,wh.id_resource,wh.resource_type,"

@@ -36,23 +36,36 @@ package fr.paris.lutece.plugins.workflow.business.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.workflow.business.icon.IconDAO;
-import fr.paris.lutece.plugins.workflow.business.state.StateDAO;
-import fr.paris.lutece.plugins.workflow.business.workflow.WorkflowDAO;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.action.IActionDAO;
+import fr.paris.lutece.plugins.workflowcore.business.action.IActionStateDAO;
+import fr.paris.lutece.plugins.workflowcore.business.icon.IIconDAO;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.state.IStateDAO;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class ActionDaoTest extends LuteceTestCase
 {
-    private ActionDAO _dao = new ActionDAO( );
-    private IconDAO iconDAO = new IconDAO( );
-    private StateDAO stateDAO = new StateDAO( );
-    private WorkflowDAO workflowDAO = new WorkflowDAO( );
+    @Inject
+    private IActionDAO _dao;
+    @Inject
+    private IIconDAO iconDAO;
+    @Inject
+    private IStateDAO stateDAO;
+    @Inject
+    private IWorkflowDAO workflowDAO;
+    @Inject
+    private IActionStateDAO _actionStateDAO;
 
     private Icon icon;
     private Workflow wf;
@@ -60,7 +73,7 @@ public class ActionDaoTest extends LuteceTestCase
     private State stateAfter;
     private List<Integer> listIdStateBefore = new ArrayList<>( );
 
-    @Override
+    @BeforeEach
     protected void setUp( ) throws Exception
     {
         super.setUp( );
@@ -77,6 +90,10 @@ public class ActionDaoTest extends LuteceTestCase
         wf.setWorkgroup( "group" );
         workflowDAO.insert( wf );
 
+        stateBefore = new State( );
+        stateBefore.setWorkflow( wf );
+        stateBefore.setInitialState( false );
+        stateBefore.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateBefore );
         stateAfter = new State( );
         stateAfter.setWorkflow( wf );
@@ -84,20 +101,21 @@ public class ActionDaoTest extends LuteceTestCase
         stateAfter.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateAfter );
         
-        listIdStateBefore.add( 0 );
+        listIdStateBefore.add( stateBefore.getId( ) );
     }
 
-    @Override
+    @AfterEach
     protected void tearDown( ) throws Exception
     {
         iconDAO.delete( icon.getId( ) );
         stateDAO.delete( stateBefore.getId( ) );
         stateDAO.delete( stateAfter.getId( ) );
         workflowDAO.delete( wf.getId( ) );
-
+        listIdStateBefore.clear( );
         super.tearDown( );
     }
 
+    @Test
     public void testCRUD( )
     {
         Action action = new Action( );
@@ -124,6 +142,7 @@ public class ActionDaoTest extends LuteceTestCase
         assertNull( load );
     }
 
+    @Test
     public void testLoadWithIcon( )
     {
         Action action = new Action( );
@@ -143,6 +162,7 @@ public class ActionDaoTest extends LuteceTestCase
         _dao.delete( action.getId( ) );
     }
 
+    @Test
     public void testSelectActionsByFilter( )
     {
         Action action = new Action( );
@@ -155,7 +175,8 @@ public class ActionDaoTest extends LuteceTestCase
         action.setOrder( 0 );
 
         _dao.insert( action );
-
+        _actionStateDAO.insert( action.getId( ), listIdStateBefore );
+        
         ActionFilter filter = new ActionFilter( );
         filter.setIdStateAfter( stateAfter.getId( ) );
         filter.setIdStateBefore( stateBefore.getId( ) );
@@ -170,6 +191,7 @@ public class ActionDaoTest extends LuteceTestCase
         _dao.delete( action.getId( ) );
     }
 
+    @Test
     public void testFindStatesBetweenOrders( )
     {
         Action action = new Action( );
@@ -189,6 +211,7 @@ public class ActionDaoTest extends LuteceTestCase
         _dao.delete( action.getId( ) );
     }
 
+    @Test
     public void testFindStatesAfterOrder( )
     {
         Action action = new Action( );

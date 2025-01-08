@@ -36,16 +36,12 @@ package fr.paris.lutece.plugins.workflow.modules.comment.web;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService;
-import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentValueService;
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -53,7 +49,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -63,7 +58,10 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -71,6 +69,8 @@ import org.apache.commons.lang3.StringUtils;
  * Controller for Comments
  *
  */
+@SessionScoped
+@Named
 public class CommentJspBean extends MVCAdminJspBean
 {
     /**
@@ -93,10 +93,14 @@ public class CommentJspBean extends MVCAdminJspBean
     private static final String PARAMETER_ENCODING = "UTF-8";
 
     // Services
-    private ICommentValueService _commentValueService = SpringContextService.getBean( CommentValueService.BEAN_SERVICE );
-    private IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
+    @Inject
+    private transient ICommentValueService _commentValueService;
+    @Inject
+    private transient IResourceHistoryService _resourceHistoryService;
+    @Inject
+    private transient ITaskService _taskService;
+    @Inject
+    private transient ITaskComponentManager _taskComponentManager;
 
     /**
      * Gets the confirmation page to remove a comment

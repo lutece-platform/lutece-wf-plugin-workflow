@@ -33,15 +33,20 @@
  */
 package fr.paris.lutece.plugins.workflow.business.workflow;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class WorkflowDAOTest extends LuteceTestCase
 {
+    @Inject
+    private IWorkflowDAO _dao;
 
-    private WorkflowDAO _dao = new WorkflowDAO( );
-
+    @Test
     public void testCRUD( )
     {
         Workflow wf1 = new Workflow( );

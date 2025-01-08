@@ -36,13 +36,16 @@ package fr.paris.lutece.plugins.workflow.service;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.portal.service.init.PostStartUpService;
-
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * WorkflowPostStartupService
  *
  */
+@ApplicationScoped
+@Named( "workflow.postStartupService" )
 public class WorkflowPostStartupService implements PostStartUpService
 {
     @Inject

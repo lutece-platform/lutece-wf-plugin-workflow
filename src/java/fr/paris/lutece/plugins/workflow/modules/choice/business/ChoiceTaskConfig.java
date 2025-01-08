@@ -34,10 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.choice.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 /**
  * ChoiceTaskConfig
  */
+@Dependent
+@Named( "workflow.taskChoiceConfig" )
 public class ChoiceTaskConfig extends TaskConfig
 {
     private String _strMessage;
