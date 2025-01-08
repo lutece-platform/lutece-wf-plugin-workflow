@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.workflow.modules.comment.service;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import jakarta.transaction.Transactional;
 
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -54,7 +54,7 @@ public interface ICommentValueService
      * @param plugin
      *            the plugin
      */
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     void create( CommentValue commentValue, Plugin plugin );
 
     /**
@@ -67,7 +67,7 @@ public interface ICommentValueService
      * @param plugin
      *            the Plugin
      */
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -78,7 +78,7 @@ public interface ICommentValueService
      * @param plugin
      *            the Plugin
      */
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**

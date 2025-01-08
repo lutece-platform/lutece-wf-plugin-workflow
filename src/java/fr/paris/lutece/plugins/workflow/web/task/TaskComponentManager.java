@@ -36,18 +36,22 @@ package fr.paris.lutece.plugins.workflow.web.task;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponent;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * TaskComponentManager
  *
  */
+@ApplicationScoped
+@Named( TaskComponentManager.BEAN_MANAGER )
 public class TaskComponentManager implements ITaskComponentManager
 {
     /**
@@ -61,7 +65,7 @@ public class TaskComponentManager implements ITaskComponentManager
     @Override
     public List<ITaskComponent> getTaskComponents( )
     {
-        return SpringContextService.getBeansOfType( ITaskComponent.class );
+        return CDI.current( ).select( ITaskComponent.class ).stream( ).toList( );
     }
 
     /**

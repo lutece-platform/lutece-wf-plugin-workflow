@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformation;
@@ -46,6 +47,8 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 /**
  * Implements IChooseStateTaskService
  */
+@ApplicationScoped
+@Named( "workflow.chooseStateTaskService" )
 public class ChooseStateTaskService extends AbstractStateTaskService implements IChooseStateTaskService
 {
 

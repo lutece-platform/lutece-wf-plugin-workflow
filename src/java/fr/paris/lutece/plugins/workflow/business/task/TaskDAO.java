@@ -45,13 +45,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.taskDAO" )
 public class TaskDAO implements ITaskDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT task_type_key,id_task,id_action, display_order, uid_task" + " FROM workflow_task WHERE id_task=?";

@@ -37,19 +37,23 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.TaskAssignme
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 
 /**
  *
  * TaskAssignmentConfigService
  *
  */
+@ApplicationScoped
+@Named( TaskAssignmentConfigService.BEAN_SERVICE )
 public class TaskAssignmentConfigService extends TaskConfigService
 {
     /**
@@ -59,11 +63,18 @@ public class TaskAssignmentConfigService extends TaskConfigService
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;
 
+    TaskAssignmentConfigService() {}
+    
+    @Inject
+    public TaskAssignmentConfigService(@Named( "workflow.taskAssignmentConfigDAO" ) ITaskConfigDAO<TaskAssignmentConfig> taskArchiveConfigDao) {
+       setTaskConfigDAO( (ITaskConfigDAO) taskArchiveConfigDao ); 
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void create( ITaskConfig config )
     {
         super.create( config );
@@ -90,7 +101,7 @@ public class TaskAssignmentConfigService extends TaskConfigService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void update( ITaskConfig config )
     {
         super.update( config );
@@ -117,7 +128,7 @@ public class TaskAssignmentConfigService extends TaskConfigService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void remove( int nIdTask )
     {
         _workgroupConfigService.removeByTask( nIdTask, WorkflowUtils.getPlugin( ) );

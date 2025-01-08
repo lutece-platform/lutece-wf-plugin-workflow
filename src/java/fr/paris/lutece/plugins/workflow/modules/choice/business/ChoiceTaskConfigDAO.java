@@ -36,12 +36,16 @@ package fr.paris.lutece.plugins.workflow.modules.choice.business;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * 
  * ChoiceTaskConfigDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.choiceTaskConfigDAO" )
 public class ChoiceTaskConfigDAO implements ITaskConfigDAO<ChoiceTaskConfig>
 {
 

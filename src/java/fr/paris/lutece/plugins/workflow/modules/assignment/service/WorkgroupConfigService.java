@@ -37,17 +37,20 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.IWorkgroupCo
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 
 /**
  *
  * WorkgroupConfigService
  *
  */
+@ApplicationScoped
+@Named( WorkgroupConfigService.BEAN_SERVICE )
 public class WorkgroupConfigService implements IWorkgroupConfigService
 {
     /**
@@ -61,7 +64,7 @@ public class WorkgroupConfigService implements IWorkgroupConfigService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void create( WorkgroupConfig workgroupConfig, Plugin plugin )
     {
         _workgroupConfigDAO.insert( workgroupConfig, plugin );
@@ -71,7 +74,7 @@ public class WorkgroupConfigService implements IWorkgroupConfigService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void removeByTask( int nIdTask, Plugin plugin )
     {
         _workgroupConfigDAO.deleteByTask( nIdTask, plugin );

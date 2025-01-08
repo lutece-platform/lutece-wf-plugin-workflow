@@ -46,28 +46,26 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFi
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class ChooseStateDaemon extends Daemon
 {
 
-    private IChooseStateTaskService _chooseStateTaskService = SpringContextService.getBean( "workflow.chooseStateTaskService" );
-    private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-    private IResourceWorkflowService _resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
-    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-
+    private IChooseStateTaskService _chooseStateTaskService = CDI.current( ).select( IChooseStateTaskService.class).get( );
+    private IWorkflowService _workflowService = CDI.current( ).select( IWorkflowService.class).get( );
+    private IResourceWorkflowService _resourceWorkflowService = CDI.current( ).select( IResourceWorkflowService.class, NamedLiteral.of( ResourceWorkflowService.BEAN_SERVICE ) ).get( );
+    private IActionService _actionService = CDI.current( ).select( IActionService.class ).get( );
+    private ITaskService _taskService = CDI.current( ).select( ITaskService.class).get( );
+    
     @Override
     public void run( )
     {

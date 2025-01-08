@@ -36,12 +36,16 @@ package fr.paris.lutece.plugins.workflow.modules.assignment.business;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskAssignmentConfigDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.taskAssignmentConfigDAO" )
 public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,title,is_multiple_owner,is_notify,message,subject,is_use_user_name"

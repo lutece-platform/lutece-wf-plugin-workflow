@@ -35,25 +35,33 @@ package fr.paris.lutece.plugins.workflow.business.state;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.workflow.business.icon.IconDAO;
-import fr.paris.lutece.plugins.workflow.business.workflow.WorkflowDAO;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.icon.IIconDAO;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.state.IStateDAO;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class StateDaoTest extends LuteceTestCase
 {
-    private StateDAO _dao = new StateDAO( );
-
-    private WorkflowDAO workflowDAO = new WorkflowDAO( );
-    private IconDAO iconDAO = new IconDAO( );
+    @Inject
+    private IStateDAO _dao;
+    @Inject
+    private IWorkflowDAO workflowDAO;
+    @Inject
+    private IIconDAO iconDAO;
     private Workflow wf;
     private Icon icon;
 
-    @Override
+    @BeforeEach
     protected void setUp( ) throws Exception
     {
         super.setUp( );
@@ -71,7 +79,7 @@ public class StateDaoTest extends LuteceTestCase
         workflowDAO.insert( wf );
     }
 
-    @Override
+    @AfterEach
     protected void tearDown( ) throws Exception
     {
         iconDAO.delete( icon.getId( ) );
@@ -80,6 +88,7 @@ public class StateDaoTest extends LuteceTestCase
         super.tearDown( );
     }
 
+    @Test
     public void testCRUD( )
     {
         State state = new State( );
@@ -106,6 +115,7 @@ public class StateDaoTest extends LuteceTestCase
         assertNull( load );
     }
 
+    @Test
     public void testSelectStatesByFilter( )
     {
         State state = new State( );
@@ -129,6 +139,7 @@ public class StateDaoTest extends LuteceTestCase
         _dao.delete( state.getId( ) );
     }
 
+    @Test
     public void testFindStatesBetweenOrders( )
     {
         State state = new State( );
@@ -152,6 +163,7 @@ public class StateDaoTest extends LuteceTestCase
         _dao.delete( state.getId( ) );
     }
 
+    @Test
     public void testFindStatesAfterOrder( )
     {
         State state = new State( );

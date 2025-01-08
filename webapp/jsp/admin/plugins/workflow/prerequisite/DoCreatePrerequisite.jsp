@@ -1,6 +1,7 @@
 <%@ page errorPage="../../../ErrorPage.jsp" %>
-<jsp:useBean id="workflowPrerequisite" scope="session" class="fr.paris.lutece.plugins.workflow.web.prerequisite.PrerequisiteJspBean" />
-<%
-	workflowPrerequisite.init( request, fr.paris.lutece.plugins.workflow.web.WorkflowJspBean.RIGHT_MANAGE_WORKFLOW); 
-	response.sendRedirect( workflowPrerequisite.doCreatePrerequisite( request ) );
-%>
+
+<%@page import="fr.paris.lutece.plugins.workflow.web.prerequisite.PrerequisiteJspBean"%>
+<%@page import="fr.paris.lutece.plugins.workflow.web.WorkflowJspBean"%>
+
+${ prerequisiteJspBean.init( pageContext.request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) }
+${ pageContext.response.sendRedirect( prerequisiteJspBean.doCreatePrerequisite( pageContext.request )) }

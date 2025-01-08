@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.workflow.service.provider;
 import fr.paris.lutece.plugins.workflowcore.service.provider.IMarkerProvider;
 import java.util.List;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * <p>
@@ -57,7 +57,7 @@ public final class MarkerProviderService
      */
     private MarkerProviderService( )
     {
-        _listMarkerProviders = SpringContextService.getBeansOfType( IMarkerProvider.class );
+        _listMarkerProviders = CDI.current( ).select( IMarkerProvider.class ).stream( ).toList( );
     }
 
     /**

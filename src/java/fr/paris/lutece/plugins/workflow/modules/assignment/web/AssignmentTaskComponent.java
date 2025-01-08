@@ -40,8 +40,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +54,8 @@ import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupCon
 import fr.paris.lutece.plugins.workflow.modules.assignment.service.IAssignmentHistoryService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -69,6 +73,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * AssignmentTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow.assignmentTaskComponent" )
 public class AssignmentTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATES
@@ -108,6 +114,16 @@ public class AssignmentTaskComponent extends AbstractTaskComponent
     @Inject
     private IAssignmentHistoryService _assignmentHistoryService;
 
+    AssignmentTaskComponent() {}
+    
+    @Inject
+    public AssignmentTaskComponent( @Named( "workflow.taskTypeAssignment" ) ITaskType taskType,
+            @Named( "workflow.taskAssignmentConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
     /**
      * {@inheritDoc}
      */

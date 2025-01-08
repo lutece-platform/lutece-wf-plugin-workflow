@@ -44,8 +44,8 @@ import fr.paris.lutece.portal.service.rbac.Permission;
 import fr.paris.lutece.portal.service.rbac.ResourceIdService;
 import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.Locale;
@@ -105,8 +105,8 @@ public class StateResourceIdService extends ResourceIdService
     @Override
     public ReferenceList getResourceIdList( Locale locale )
     {
-        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+        IStateService stateService = CDI.current( ).select( IStateService.class ).get( );
+        IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class ).get( );
         List<State> listState = stateService.getListStateByFilter( new StateFilter( ) );
 
         ReferenceList reflistState = new ReferenceList( );
@@ -126,8 +126,8 @@ public class StateResourceIdService extends ResourceIdService
     @Override
     public String getTitle( String strId, Locale locale )
     {
-        IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
-        IWorkflowService workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
+        IStateService stateService = CDI.current( ).select( IStateService.class ).get( );
+        IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class ).get( );
         int nId = WorkflowUtils.convertStringToInt( strId );
         State state = stateService.findByPrimaryKey( nId );
 

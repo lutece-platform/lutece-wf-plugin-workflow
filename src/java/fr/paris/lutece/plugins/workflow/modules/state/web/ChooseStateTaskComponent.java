@@ -37,8 +37,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskConfig;
 import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskInformation;
@@ -46,10 +48,14 @@ import fr.paris.lutece.plugins.workflow.modules.state.business.ChooseStateTaskIn
 import fr.paris.lutece.plugins.workflow.modules.state.service.IChooseStateController;
 import fr.paris.lutece.plugins.workflow.modules.state.service.IChooseStateTaskService;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+@ApplicationScoped
+@Named( "workflow.chooseStateTaskComponent" )
 public class ChooseStateTaskComponent extends NoFormTaskComponent
 {
     private static final String TEMPLATE_TASK_CHOOSE_STATE_CONFIG = "admin/plugins/workflow/modules/state/task_choose_state_config_form.html";
@@ -69,6 +75,16 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
 
     private ChooseStateTaskConfig _config;
 
+    ChooseStateTaskComponent() {}
+    
+    @Inject
+    public ChooseStateTaskComponent( @Named( "workflow.chooseStateTaskType" ) ITaskType taskType,
+            @Named( "workflow.chooseStateTaskConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {

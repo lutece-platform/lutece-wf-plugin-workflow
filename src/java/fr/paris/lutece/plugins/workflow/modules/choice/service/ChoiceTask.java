@@ -35,9 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.choice.service;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -50,6 +51,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  * ChoiceTask
  *
  */
+@Dependent
+@Named ("workflow.taskChoice")
 public class ChoiceTask extends SimpleTask
 {
 

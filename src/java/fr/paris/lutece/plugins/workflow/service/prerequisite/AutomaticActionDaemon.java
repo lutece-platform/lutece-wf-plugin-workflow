@@ -38,16 +38,14 @@ import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.Locale;
@@ -63,16 +61,16 @@ public class AutomaticActionDaemon extends Daemon
     @Override
     public void run( )
     {
-        IWorkflowService workflowService = SpringContextService.getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
+        IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class ).get( );
         WorkflowFilter workflowFilter = new WorkflowFilter( );
         List<Workflow> listWorkflows = workflowService.getListWorkflowsByFilter( workflowFilter );
-        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
+        IResourceWorkflowService resourceWorkflowService = CDI.current( ).select( IResourceWorkflowService.class ).get( );
         int nNbResourcesFound = 0;
         int nNbErrors = 0;
 
         for ( Workflow workflow : listWorkflows )
         {
-            IActionService actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
+            IActionService actionService = CDI.current( ).select( IActionService.class ).get( );
             ActionFilter filter = new ActionFilter( );
             filter.setAutomaticReflexiveAction( false );
             filter.setIsAutomaticState( 1 );

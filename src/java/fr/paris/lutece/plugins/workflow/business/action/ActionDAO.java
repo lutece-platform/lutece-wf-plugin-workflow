@@ -41,6 +41,9 @@ import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ import java.util.List;
  * ActionDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.actionDAO" )
 public class ActionDAO implements IActionDAO
 {
     private static final String SQL_QUERY_SELECT_ALL = "SELECT a.id_action,a.name,a.description,a.id_workflow, "

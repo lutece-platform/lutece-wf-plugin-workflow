@@ -37,24 +37,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
-import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -68,6 +68,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * JspBean to manage workflow icons
  */
+@SessionScoped
+@Named
 public class IconJspBean extends PluginAdminPageJspBean
 {
     /**
@@ -122,8 +124,10 @@ public class IconJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 15 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-    private IIconService _iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
-    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
+    @Inject
+    private transient IIconService _iconService;
+    @Inject
+    private transient IActionService _actionService;
 
     /**
      * Return management icon ( list of icon )

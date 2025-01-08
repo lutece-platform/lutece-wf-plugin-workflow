@@ -44,7 +44,10 @@ import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
+
+import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -53,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 public class WorkflowGraphExportServiceTest extends LuteceTestCase
 {
 
+    @Test
     public void testSimpleMd( )
     {
 

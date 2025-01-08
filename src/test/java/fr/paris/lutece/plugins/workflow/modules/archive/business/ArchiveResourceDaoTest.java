@@ -36,21 +36,27 @@ package fr.paris.lutece.plugins.workflow.modules.archive.business;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class ArchiveResourceDaoTest extends LuteceTestCase
 {
-    private ArchiveResourceDao _dao = new ArchiveResourceDao( );
+    @Inject
+    private IArchiveResourceDao _dao;
     private static final int ID_RESOURCE = 1;
     private static final int ID_TASK = 2;
 
-    @Override
+    @AfterEach
     protected void tearDown( ) throws Exception
     {
         _dao.delete( ID_RESOURCE, ID_TASK );
         super.tearDown( );
     }
 
+    @Test
     public void testCRUD( )
     {
         Timestamp now = Timestamp.valueOf( LocalDateTime.now( ) );

@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.business.task;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.RemovalListenerService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * TaskRemovalListenerService
@@ -57,6 +58,6 @@ public final class TaskRemovalListenerService
      */
     public static RemovalListenerService getService( )
     {
-        return SpringContextService.getBean( BEAN_TASK_REMOVAL_SERVICE );
+        return CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of( BEAN_TASK_REMOVAL_SERVICE ) ).get( );
     }
 }

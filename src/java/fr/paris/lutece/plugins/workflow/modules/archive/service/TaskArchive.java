@@ -35,8 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.archive.service;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -47,6 +49,8 @@ import fr.paris.lutece.portal.service.daemon.AppDaemonService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+@Dependent
+@Named( "workflow.taskArchive" )
 public class TaskArchive extends SimpleTask
 {
     private static final String MESSAGE_TASK_TITLE = "module.workflow.archive.task.task_title";

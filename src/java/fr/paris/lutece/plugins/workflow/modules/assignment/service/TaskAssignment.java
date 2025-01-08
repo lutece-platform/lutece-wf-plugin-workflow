@@ -50,7 +50,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -61,16 +60,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * TaskAssignment
  *
  */
+@Dependent
+@Named( "workflow.taskAssignment" )
 public class TaskAssignment extends Task
 {
     // TEMPLATE
@@ -97,7 +99,11 @@ public class TaskAssignment extends Task
     private ITaskConfigService _taskAssignmentConfigService;
     @Inject
     private IWorkgroupConfigService _workgroupConfigService;
-
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    @Inject
+    private IResourceWorkflowService _resourceWorkflowService;
+    
     /**
      * {@inheritDoc}
      */
@@ -135,15 +141,12 @@ public class TaskAssignment extends Task
             }
         }
 
-        IResourceHistoryService resourceHistoryService = SpringContextService.getBean( "workflow.resourceHistoryService" );
-        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( "workflow.resourceWorkflowService" );
-
         // update resource workflow
-        ResourceHistory resourceHistory = resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        ResourceWorkflow resourceWorkflow = resourceWorkflowService.findByPrimaryKey( resourceHistory.getIdResource( ), resourceHistory.getResourceType( ),
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( resourceHistory.getIdResource( ), resourceHistory.getResourceType( ),
                 resourceHistory.getWorkflow( ).getId( ) );
         resourceWorkflow.setWorkgroups( listWorkgroup );
-        resourceWorkflowService.update( resourceWorkflow );
+        _resourceWorkflowService.update( resourceWorkflow );
     }
 
     private void notifyUser( TaskAssignmentConfig config, String workgroup, AdminUser admin, Locale locale )

@@ -42,11 +42,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class TaskDeserializer extends JsonDeserializer<ITask>
 {
@@ -57,7 +56,7 @@ public class TaskDeserializer extends JsonDeserializer<ITask>
         ObjectCodec oc = p.getCodec( );
         JsonNode node = oc.readTree( p );
 
-        ITaskFactory taskfactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
+        ITaskFactory taskfactory = CDI.current( ).select( ITaskFactory.class ).get( );
 
         String taskType = node.get( "taskType" ).asText( );
         int order = node.get( "order" ).asInt( );

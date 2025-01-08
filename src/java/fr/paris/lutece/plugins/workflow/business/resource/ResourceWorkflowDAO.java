@@ -41,6 +41,8 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +57,8 @@ import org.apache.commons.collections.CollectionUtils;
  * ResourceWorkflowDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.resourceWorkflowDAO" )
 public class ResourceWorkflowDAO implements IResourceWorkflowDAO
 {
     private static final String SQL_SELECT_ALL = "SELECT id_resource,resource_type,id_state,id_workflow,id_external_parent,is_associated_workgroups ";

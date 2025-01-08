@@ -36,8 +36,9 @@ package fr.paris.lutece.plugins.workflow.modules.archive.service;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
@@ -46,6 +47,8 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 /**
  * Service for archival of type delete of plugin-workflow.
  */
+@ApplicationScoped
+@Named( WorkflowDeleteArchiveProcessingService.BEAN_NAME )
 public class WorkflowDeleteArchiveProcessingService extends AbstractArchiveProcessingService
 {
     public static final String BEAN_NAME = "workflow.workflowDeleteArchiveProcessingService";

@@ -40,6 +40,9 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ import java.util.List;
  * StateDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow.stateDAO" )
 public class StateDAO implements IStateDAO
 {
     private static final String SQL_SELECT_ALL = "SELECT s.id_state,s.name,s.description,s.id_workflow,s.is_initial_state,s.is_required_workgroup_assigned,s.display_order,s.id_icon, s.uid_state ";

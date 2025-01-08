@@ -38,10 +38,14 @@ import java.util.List;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * Service for archival of type anonymize of plugin-workflow.
  */
+@ApplicationScoped
+@Named( WorkflowAnonymizeArchiveProcessingService.BEAN_NAME )
 public class WorkflowAnonymizeArchiveProcessingService extends AbstractArchiveProcessingService
 {
     public static final String BEAN_NAME = "workflow.workflowAnonymizeArchiveProcessingService";

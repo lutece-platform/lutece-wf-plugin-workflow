@@ -39,8 +39,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver;
@@ -61,12 +63,13 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowSe
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
  * Implements {@link IArchiveService}
  */
+@ApplicationScoped
+@Named( ArchiveService.BEAN_SERVICE )
 public class ArchiveService implements IArchiveService
 {
     public static final String BEAN_SERVICE = "workflow.archiveService";
@@ -95,6 +98,9 @@ public class ArchiveService implements IArchiveService
 
     @Inject
     private IResourceWorkflowService _resourceWorkflowService;
+    
+    @Inject
+    private WorkflowService _coreWorkflowService;
 
     private static final String USER_AUTO = "auto";
 
@@ -181,7 +187,7 @@ public class ArchiveService implements IArchiveService
             doChangeState( task, resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ),
                     config.getNextState( ) );
         }
-        List<IResourceArchiver> archiverList = SpringContextService.getBeansOfType( IResourceArchiver.class );
+        List<IResourceArchiver> archiverList = CDI.current( ).select( IResourceArchiver.class ).stream( ).toList( );
         IResourceArchiver lastArchiver = null;
 
         for ( IResourceArchiver archiver : archiverList )
@@ -237,7 +243,7 @@ public class ArchiveService implements IArchiveService
 
             // Execute the relative tasks of the state in the workflow
             // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
-            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
+            _coreWorkflowService.doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
         }
     }
 

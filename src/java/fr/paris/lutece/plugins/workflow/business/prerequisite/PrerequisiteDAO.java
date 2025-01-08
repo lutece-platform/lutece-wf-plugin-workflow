@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.workflow.business.prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -44,6 +47,8 @@ import java.util.List;
 /**
  * DAO for prerequisite
  */
+@ApplicationScoped
+@Named( PrerequisiteDAO.BEAN_NAME )
 public class PrerequisiteDAO implements IPrerequisiteDAO
 {
     /**

@@ -34,10 +34,12 @@
 package fr.paris.lutece.plugins.workflow.service.provider;
 
 import fr.paris.lutece.plugins.workflowcore.service.provider.AbstractProviderManager;
+
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides utility methods for {@link AbstractProviderManager} objects
@@ -68,7 +70,7 @@ public final class ProviderManagerUtil
 
         try
         {
-            result = SpringContextService.getBean( strProviderManagerId );
+            result = CDI.current( ).select( AbstractProviderManager.class, NamedLiteral.of( strProviderManagerId ) ).get( );
         }
         catch( Exception e )
         {

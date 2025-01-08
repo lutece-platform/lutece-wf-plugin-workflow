@@ -45,16 +45,19 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * TaskComment
  *
  */
+@Dependent
+@Named( "workflow.taskComment" )
 public class TaskComment extends Task
 {
     private static final String PARAMETER_COMMENT_VALUE = "comment_value";

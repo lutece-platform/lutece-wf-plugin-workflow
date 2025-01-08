@@ -49,12 +49,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -66,10 +63,7 @@ import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
 import fr.paris.lutece.plugins.workflow.service.WorkflowGraphExportService;
 import fr.paris.lutece.plugins.workflow.service.json.WorkflowJsonService;
-import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
-import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
@@ -80,21 +74,16 @@ import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
-import fr.paris.lutece.plugins.workflowcore.service.icon.IconService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
-import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -105,7 +94,6 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -122,10 +110,18 @@ import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * class ManageDirectoryJspBean
  */
+@SessionScoped
+@Named
 public class WorkflowJspBean extends PluginAdminPageJspBean
 {
     /**
@@ -299,14 +295,24 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private int _nItemsPerPageAction;
     private int _nIsEnabled = -1;
     private String _strWorkGroup = AdminWorkgroupService.ALL_GROUPS;
-    private IWorkflowService _workflowService = SpringContextService.getBean( WorkflowService.BEAN_SERVICE );
-    private IStateService _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
-    private IActionService _actionService = SpringContextService.getBean( ActionService.BEAN_SERVICE );
-    private IIconService _iconService = SpringContextService.getBean( IconService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
-    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
-    private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
+    @Inject
+    private transient IWorkflowService _workflowService;
+    @Inject
+    private transient IStateService _stateService;
+    @Inject
+    private transient IActionService _actionService;
+    @Inject
+    private transient IIconService _iconService;
+    @Inject
+    private transient ITaskService _taskService;
+    @Inject
+    private transient ITaskFactory _taskFactory;
+    @Inject
+    private transient ITaskComponentManager _taskComponentManager;
+    @Inject
+    private transient IPrerequisiteManagementService _prerequisiteManagementService;
+    @Inject
+    private transient WorkflowJsonService _workflowJsonService;
     private FileItem _importWorkflowFile;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
@@ -1901,7 +1907,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         _taskService.create( taskToCopy );
 
         // get all taskConfigService
-        List<ITaskConfigService> listTaskConfigService = SpringContextService.getBeansOfType( ITaskConfigService.class );
+        List<ITaskConfigService> listTaskConfigService = CDI.current( ).select( ITaskConfigService.class ).stream( ).toList( );
 
         // For each taskConfigService, update parameter if exists
         for ( ITaskConfigService taskConfigService : listTaskConfigService )
@@ -2525,8 +2531,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         try
         {
-            String json = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
-            WorkflowJsonService.getInstance( ).jsonImportWorkflow( json, getLocale( ) );
+            String json = _workflowJsonService.jsonExportWorkflow( nId );
+            _workflowJsonService.jsonImportWorkflow( json, getLocale( ) );
         }
         catch( JsonProcessingException e )
         {
@@ -2920,7 +2926,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String content;
         try ( OutputStream os = response.getOutputStream( ) )
         {
-            content = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
+            content = _workflowJsonService.jsonExportWorkflow( nId );
             Workflow workflow = _workflowService.findByPrimaryKey( nId );
 
             MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( workflow.getName( ) ) + ".json", "application/json" );
@@ -2952,7 +2958,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             if ( _importWorkflowFile != null )
             {
-                WorkflowJsonService.getInstance( ).jsonImportWorkflow( new String( _importWorkflowFile.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+                _workflowJsonService.jsonImportWorkflow( new String( _importWorkflowFile.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             }
         }
         catch( JsonProcessingException e )

@@ -35,16 +35,15 @@ package fr.paris.lutece.plugins.workflow.service.taskinfo;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -67,7 +66,7 @@ public final class TaskInfoManager
      */
     public static List<ITaskInfoProvider> getProvidersList( )
     {
-        return SpringContextService.getBeansOfType( ITaskInfoProvider.class );
+        return CDI.current( ).select( ITaskInfoProvider.class ).stream( ).toList( );
     }
 
     /**
@@ -108,7 +107,7 @@ public final class TaskInfoManager
     {
         String strInfo = StringUtils.EMPTY;
         Locale locale = getLocale( request );
-        ITaskService taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+        ITaskService taskService = CDI.current( ).select( ITaskService.class ).get( );
         ITask task = taskService.findByPrimaryKey( nIdTask, locale );
 
         if ( task != null )

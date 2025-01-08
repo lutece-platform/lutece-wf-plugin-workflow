@@ -38,8 +38,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +56,8 @@ import fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceI
 import fr.paris.lutece.plugins.workflow.modules.comment.service.ICommentValueService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -67,6 +74,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * CommentTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow.commentTaskComponent" )
 public class CommentTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATES
@@ -105,6 +114,14 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         this( );
         _listContentPostProcessors = listContentPostProcessors;
+    }
+    
+    @PostConstruct
+    public void afterPropertiesSet( )
+    {
+        setTaskType( CDI.current( ).select( ITaskType.class, NamedLiteral.of( "workflow.taskTypeComment" ) ).get( ) );
+        setTaskConfigService( CDI.current( ).select( ITaskConfigService.class, NamedLiteral.of( "workflow.taskCommentConfigService" ) ).get( ) );
+        super.afterPropertiesSet( );
     }
 
     /**

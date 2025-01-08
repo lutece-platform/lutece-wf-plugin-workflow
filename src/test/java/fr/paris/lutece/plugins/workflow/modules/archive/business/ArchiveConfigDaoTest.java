@@ -33,14 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.business;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class ArchiveConfigDaoTest extends LuteceTestCase
 {
-    ITaskConfigDAO<ArchiveConfig> _dao = new ArchiveConfigDao( );
+    @Inject
+    ITaskConfigDAO<ArchiveConfig> _dao; // = new ArchiveConfigDao( );
 
+    @Test
     public void testCRUD( )
     {
         ArchiveConfig config = new ArchiveConfig( );

@@ -41,15 +41,19 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 
 /**
  *
  * CommentValueService
  *
  */
+@ApplicationScoped
+@Named( CommentValueService.BEAN_SERVICE )
 public class CommentValueService implements ICommentValueService
 {
     /**
@@ -65,7 +69,7 @@ public class CommentValueService implements ICommentValueService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void create( CommentValue commentValue, Plugin plugin )
     {
         _dao.insert( commentValue, plugin );
@@ -75,7 +79,7 @@ public class CommentValueService implements ICommentValueService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
         _dao.deleteByHistory( nIdHistory, nIdTask, plugin );
@@ -85,7 +89,7 @@ public class CommentValueService implements ICommentValueService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     public void removeByTask( int nIdTask, Plugin plugin )
     {
         _dao.deleteByTask( nIdTask, plugin );

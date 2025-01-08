@@ -35,8 +35,7 @@ package fr.paris.lutece.plugins.workflow.modules.assignment.service;
 
 import fr.paris.lutece.plugins.workflow.modules.assignment.business.WorkgroupConfig;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public interface IWorkgroupConfigService
      * @param plugin
      *            the plugin
      */
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     void create( WorkgroupConfig workgroupConfig, Plugin plugin );
 
     /**
@@ -66,7 +65,7 @@ public interface IWorkgroupConfigService
      * @param plugin
      *            the Plugin
      */
-    @Transactional( "workflow.transactionManager" )
+    @Transactional
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**
