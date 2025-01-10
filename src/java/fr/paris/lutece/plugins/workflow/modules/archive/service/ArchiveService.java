@@ -147,7 +147,12 @@ public class ArchiveService implements IArchiveService
 
         if ( archiveResource == null || archiveResource.isArchived( ) )
         {
-            return false;
+            ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ), resourceWorkflow.getWorkflow( ).getId( ) );
+            if ( resourceHistory == null )
+            {
+                return false;
+            }
+            return LocalDateTime.now( ).isAfter( calculateArchivalDate( resourceHistory, config.getDelayArchival( ) ) );
         }
         return LocalDateTime.now( ).isAfter( calculateArchivalDate( archiveResource, config.getDelayArchival( ) ) );
     }
@@ -169,6 +174,15 @@ public class ArchiveService implements IArchiveService
         if ( daysBeforeArchival > 0 )
         {
             return archiveResource.getInitialDate( ).toLocalDateTime( ).plusDays( daysBeforeArchival );
+        }
+        return LocalDate.now( ).atStartOfDay( );
+    }
+
+    private LocalDateTime calculateArchivalDate( ResourceHistory resourceHistory, int daysBeforeArchival )
+    {
+        if ( daysBeforeArchival > 0 )
+        {
+            return resourceHistory.getCreationDate( ).toLocalDateTime( ).plusDays( daysBeforeArchival );
         }
         return LocalDate.now( ).atStartOfDay( );
     }
