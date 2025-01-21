@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.archive.web;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -242,7 +243,7 @@ public class ArchiveTaskComponent extends NoFormTaskComponent
         else
         {
             String [ ] params = new String [ ] {
-                    DateUtil.getDateString( archiveResource.getInitialDate( ), locale ),
+                    DateUtil.getDateString( Timestamp.valueOf( archiveResource.getInitialDate( ).toLocalDateTime( ).plusDays( config.getDelayArchival( ) ) ), locale ),
                     I18nService.getLocalizedString( PREFIX_TYPE + config.getTypeArchival( ), locale )
             };
             return I18nService.getLocalizedString( MESSAGE_INFORMATION_NOT_ARCHIVED, params, locale );
