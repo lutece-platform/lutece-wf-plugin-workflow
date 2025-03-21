@@ -1215,12 +1215,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCreateAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        // Control the validity of the CSRF Token
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_ACTION ) )
-        {
-            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
-        }
-
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
 
@@ -1247,6 +1241,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             if ( strError != null )
             {
                 return strError;
+            }
+
+            if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_ACTION ) )
+            {
+                throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
             }
 
             // get the maximum order number in this workflow and set max+1
@@ -1514,12 +1513,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doModifyAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        // Control the validity of the CSRF Token
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION ) )
-        {
-            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
-        }
-
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         Action action = null;
@@ -1541,6 +1534,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             if ( strError != null )
             {
                 return strError;
+            }
+
+            if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION ) )
+            {
+                throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
             }
 
             _actionService.update( action );
