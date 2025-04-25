@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-workflow</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>6.0.4-SNAPSHOT</version>
+    <version>6.0.4</version>
     <name>Lutece workflow plugin</name>
 
     <repositories>
@@ -62,7 +62,7 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-wf-plugin-workflow.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-wf-plugin-workflow.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-wf-plugin-workflow.git</url>
-        <tag>HEAD</tag>
+        <tag>plugin-workflow-6.0.4</tag>
     </scm>
 
 </project>
