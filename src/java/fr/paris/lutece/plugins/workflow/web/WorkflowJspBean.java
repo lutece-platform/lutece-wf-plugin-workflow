@@ -51,7 +51,6 @@ import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,6 +94,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -313,7 +313,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private transient IPrerequisiteManagementService _prerequisiteManagementService;
     @Inject
     private transient WorkflowJsonService _workflowJsonService;
-    private FileItem _importWorkflowFile;
+    private MultipartItem _importWorkflowFile;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
