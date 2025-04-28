@@ -43,7 +43,6 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload2.core.FileItem;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -349,7 +348,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         int nHeight = WorkflowUtils.convertStringToInt( strHeight );
 
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        FileItem fileItem = multipartRequest.getFile( PARAMETER_ID_FILE );
+        var fileItem = multipartRequest.getFile( PARAMETER_ID_FILE );
 
         if ( ( strName == null ) || strName.trim( ).equals( EMPTY_STRING ) )
         {
