@@ -125,9 +125,9 @@ public class IconJspBean extends PluginAdminPageJspBean
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
     @Inject
-    private transient IIconService _iconService;
+    private IIconService _iconService;
     @Inject
-    private transient IActionService _actionService;
+    private IActionService _actionService;
 
     /**
      * Return management icon ( list of icon )

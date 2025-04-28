@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +69,7 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * JspBean to manage prerequisite of automatic actions
  */
-@SessionScoped
+@RequestScoped
 @Named
 public class PrerequisiteJspBean extends PluginAdminPageJspBean
 {
@@ -89,7 +89,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String SESSION_ERRORS = "workflow.prerequisite.session.errors";
     private static final String SESSION_CONFIG = "workflow.prerequisite.session.config";
     @Inject
-    private transient IPrerequisiteManagementService _prerequisiteManagementService;
+    private IPrerequisiteManagementService _prerequisiteManagementService;
 
     /**
      * Creates a new prerequisite. If the prerequisite needs to display a configuration form, then the form is returned. Otherwise, redirects the user to the

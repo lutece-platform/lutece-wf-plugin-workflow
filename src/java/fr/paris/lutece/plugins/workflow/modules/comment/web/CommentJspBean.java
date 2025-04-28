@@ -58,7 +58,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +69,7 @@ import org.apache.commons.lang3.StringUtils;
  * Controller for Comments
  *
  */
-@SessionScoped
+@RequestScoped
 @Named
 public class CommentJspBean extends MVCAdminJspBean
 {
@@ -94,13 +94,13 @@ public class CommentJspBean extends MVCAdminJspBean
 
     // Services
     @Inject
-    private transient ICommentValueService _commentValueService;
+    private ICommentValueService _commentValueService;
     @Inject
-    private transient IResourceHistoryService _resourceHistoryService;
+    private IResourceHistoryService _resourceHistoryService;
     @Inject
-    private transient ITaskService _taskService;
+    private ITaskService _taskService;
     @Inject
-    private transient ITaskComponentManager _taskComponentManager;
+    private ITaskComponentManager _taskComponentManager;
 
     /**
      * Gets the confirmation page to remove a comment
