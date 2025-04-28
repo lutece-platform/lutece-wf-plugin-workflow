@@ -67,7 +67,7 @@ CREATE TABLE workflow_action
 	description LONG VARCHAR DEFAULT NULL,
 	id_workflow INT DEFAULT NULL,
 	id_state_after INT DEFAULT NULL,
-	id_alternative_state_after INT NOT NULL DEFAULT -1,
+	id_alternative_state_after INT DEFAULT -1 NOT NULL,
 	id_icon INT DEFAULT NULL,
 	is_automatic SMALLINT DEFAULT 0,
 	is_mass_action SMALLINT DEFAULT 0,
