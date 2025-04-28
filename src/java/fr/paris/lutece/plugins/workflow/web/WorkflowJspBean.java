@@ -51,7 +51,6 @@ import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -296,24 +295,24 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private int _nIsEnabled = -1;
     private String _strWorkGroup = AdminWorkgroupService.ALL_GROUPS;
     @Inject
-    private transient IWorkflowService _workflowService;
+    private IWorkflowService _workflowService;
     @Inject
-    private transient IStateService _stateService;
+    private IStateService _stateService;
     @Inject
-    private transient IActionService _actionService;
+    private IActionService _actionService;
     @Inject
-    private transient IIconService _iconService;
+    private IIconService _iconService;
     @Inject
-    private transient ITaskService _taskService;
+    private ITaskService _taskService;
     @Inject
-    private transient ITaskFactory _taskFactory;
+    private ITaskFactory _taskFactory;
     @Inject
-    private transient ITaskComponentManager _taskComponentManager;
+    private ITaskComponentManager _taskComponentManager;
     @Inject
-    private transient IPrerequisiteManagementService _prerequisiteManagementService;
+    private IPrerequisiteManagementService _prerequisiteManagementService;
     @Inject
-    private transient WorkflowJsonService _workflowJsonService;
-    private FileItem _importWorkflowFile;
+    private WorkflowJsonService _workflowJsonService;
+    private byte[] _importWorkflowFileData;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -2941,24 +2940,25 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String getConfirmImportWorkflow( HttpServletRequest request )
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        _importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
-        if(!_importWorkflowFile.getName().isEmpty()) {
+        var importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        if ( !importWorkflowFile.getName( ).isEmpty( ) )
+        {
+            _importWorkflowFileData = importWorkflowFile.get( );
             UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
             return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ),
                     AdminMessage.TYPE_CONFIRMATION );
         }
         UrlItem url = new UrlItem( JSP_MANAGE_WORKFLOW );
-        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, ERROR_NO_FILE_SELECTED, url.getUrl( ),
-                AdminMessage.TYPE_ERROR );
+        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, ERROR_NO_FILE_SELECTED, url.getUrl( ), AdminMessage.TYPE_ERROR );
     }
 
     public String doImportWorkflow( HttpServletRequest request )
     {
         try
         {
-            if ( _importWorkflowFile != null )
+            if ( _importWorkflowFileData != null )
             {
-                _workflowJsonService.jsonImportWorkflow( new String( _importWorkflowFile.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+                _workflowJsonService.jsonImportWorkflow( new String( _importWorkflowFileData, StandardCharsets.UTF_8 ), getLocale( ) );
             }
         }
         catch( JsonProcessingException e )
@@ -2967,7 +2967,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
         finally
         {
-            _importWorkflowFile = null;
+            _importWorkflowFileData = null;
         }
         return getJspManageWorkflow( request );
     }
