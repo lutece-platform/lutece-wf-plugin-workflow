@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.workflow.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -2923,13 +2924,15 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         String content;
-        try ( OutputStream os = response.getOutputStream( ) )
+        try ( PrintWriter writer = response.getWriter( ) )
         {
             content = _workflowJsonService.jsonExportWorkflow( nId );
             Workflow workflow = _workflowService.findByPrimaryKey( nId );
 
             MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( workflow.getName( ) ) + ".json", "application/json" );
-            os.write( content.getBytes( StandardCharsets.UTF_8 ) );
+            writer.write( content );
+            writer.flush( );
+            writer.close( );
         }
         catch( IOException e )
         {

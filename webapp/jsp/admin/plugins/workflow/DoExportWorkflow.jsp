@@ -3,4 +3,4 @@
 <%@page import="fr.paris.lutece.plugins.workflow.web.WorkflowJspBean"%>
 
 ${ workflowJspBean.init( pageContext.request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) }
-${ pageContext.response.sendRedirect( workflowJspBean.doExportWorkflow( pageContext.request, pageContext.response )) }
+${ workflowJspBean.doExportWorkflow( pageContext.request, pageContext.response ) }
