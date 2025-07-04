@@ -64,7 +64,7 @@ public abstract class AbstractTaskInfoProvider implements ITaskInfoProvider
     }
 
     @PostConstruct
-    public void afterPropertiesSet( ) throws Exception
+    public void afterPropertiesSet( )
     {
         if ( _taskType == null )
         {
