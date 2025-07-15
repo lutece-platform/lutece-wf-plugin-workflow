@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.service.provider;
 
 import fr.paris.lutece.plugins.workflowcore.service.provider.AbstractProviderManager;
+import fr.paris.lutece.plugins.workflowcore.service.provider.IProviderManager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,18 +64,35 @@ public final class ProviderManagerUtil
      * @param strProviderManagerId
      *            the id of the {@code AbstractProviderManager}
      * @return the {@code AbstractProviderManager} object corresponding to the specified id, or {@code null} if no {@code AbstractProviderManager} can be found.
+     * 
+     * @Deprecated Use {@link #retrieveProviderManager(String)} method instead
      */
     public static AbstractProviderManager fetchProviderManager( String strProviderManagerId )
     {
-        AbstractProviderManager result = null;
+        IProviderManager result = retrieveProviderManager( strProviderManagerId );
+
+        return result != null ? ( AbstractProviderManager ) result : null;
+    }
+    
+    /**
+     * Retrieves the {@link IProviderManager} from its id
+     * 
+     * @param strProviderManagerId
+     *            the id of the {@code IProviderManager}
+     * @return the {@code IProviderManager} object corresponding to the specified id, or {@code null} if no {@code IProviderManager} can be found.
+     */
+    public static IProviderManager retrieveProviderManager( String strProviderManagerId )
+    {
+    	IProviderManager result = null;
 
         try
         {
-            result = CDI.current( ).select( AbstractProviderManager.class, NamedLiteral.of( strProviderManagerId ) ).get( );
+            result = CDI.current( ).select( IProviderManager.class, NamedLiteral.of( strProviderManagerId ) ).get( );
         }
-        catch( Exception e )
+        catch( IllegalArgumentException e )
         {
-            AppLogService.error( "Unable to retrieve the provider manager '" + strProviderManagerId + "'" );
+            AppLogService.info( "Unable to retrieve the provider manager IProviderManager '{}'", strProviderManagerId );
+            AppLogService.debug("Unable to retrieve the provider manager '{}'", strProviderManagerId, e);
         }
 
         return result;
