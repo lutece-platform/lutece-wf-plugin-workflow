@@ -141,6 +141,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String JSP_DO_COPY_WORKFLOW = "jsp/admin/plugins/workflow/DoCopyWorkflow.jsp";
     private static final String JSP_DO_IMPORT_WORKFLOW = "jsp/admin/plugins/workflow/DoImportWorkflow.jsp";
     private static final String JSP_DO_REMOVE_TASK = "jsp/admin/plugins/workflow/DoRemoveTask.jsp";
+    private static final String JSP_DO_COPY_TASK = "jsp/admin/plugins/workflow/DoCopyTask.jsp";
+    private static final String JSP_DO_COPY_STATE = "jsp/admin/plugins/workflow/DoCopyState.jsp";
+    private static final String JSP_DO_COPY_ACTION = "jsp/admin/plugins/workflow/DoCopyAction.jsp";
     private static final String JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveTaskFromReflexiveAction.jsp";
     private static final String JSP_MANAGE_WORKFLOW = "jsp/admin/plugins/workflow/ManageWorkflow.jsp";
 
@@ -266,6 +269,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_STATE = "workflow.message.confirm_remove_state";
     private static final String MESSAGE_CONFIRM_REMOVE_ACTION = "workflow.message.confirm_remove_action";
     private static final String MESSAGE_CONFIRM_REMOVE_TASK = "workflow.message.confirm_remove_task";
+    private static final String MESSAGE_CONFIRM_COPY_TASK = "workflow.message.confirm_copy_task";
+    private static final String MESSAGE_CONFIRM_COPY_STATE = "workflow.message.confirm_copy_state";
+    private static final String MESSAGE_CONFIRM_COPY_ACTION = "workflow.message.confirm_copy_action";
     private static final String MESSAGE_CONFIRM_COPY_WORKFLOW = "workflow.message.confirm_copy_workflow";
     private static final String MESSAGE_INITIAL_STATE_ALREADY_EXIST = "workflow.message.initial_state_already_exist";
     private static final String MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE = "workflow.message.can_not_remove_state_actions_are_associate";
@@ -1835,6 +1841,33 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     }
 
     /**
+     * Gets the confirmation page of copy task
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return the confirmation page of copy Task
+     */
+    public String getConfirmCopyTask( HttpServletRequest request ) throws AccessDeniedException
+    {
+        String strId = request.getParameter( PARAMETER_ID_TASK );
+
+        if ( StringUtils.isEmpty( strId ) || !StringUtils.isNumeric( strId ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        UrlItem url;
+
+        url = new UrlItem( JSP_DO_COPY_TASK );
+        url.addParameter( PARAMETER_ID_TASK, strId );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_COPY_TASK ) );
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_TASK, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+
+    /**
      * copy the task whose key is specified in the Http request
      * 
      * @param request
@@ -1853,8 +1886,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throws AccessDeniedException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         // Control the validity of the CSRF Token when duplicating regular tasks or Reflexive tasks
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION )
-                && !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_COPY_TASK ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_INVALID_SECURITY_TOKEN );
         }
@@ -2404,6 +2436,33 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     }
 
     /**
+     * Gets the confirmation page of copy state
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return the confirmation page of copy State
+     */
+    public String getConfirmCopyState( HttpServletRequest request ) throws AccessDeniedException
+    {
+        String strId = request.getParameter( PARAMETER_ID_STATE );
+
+        if ( StringUtils.isEmpty( strId ) || !StringUtils.isNumeric( strId ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        UrlItem url;
+
+        url = new UrlItem( JSP_DO_COPY_STATE );
+        url.addParameter( PARAMETER_ID_STATE, strId );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_COPY_STATE ) );
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_STATE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+
+    /**
      * duplicate a state
      * 
      * @param request
@@ -2417,7 +2476,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String doCopyState( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
         // Control the validity of the CSRF Token
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_WORKFLOW ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_COPY_STATE ) )
         {
             throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
         }
@@ -2466,6 +2525,34 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         return getJspModifyWorkflow( request, stateToCopy.getWorkflow( ).getId( ) );
     }
 
+
+    /**
+     * Gets the confirmation page of copy action
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             the {@link AccessDeniedException}
+     * @return the confirmation page of copy action
+     */
+    public String getConfirmCopyAction( HttpServletRequest request ) throws AccessDeniedException
+    {
+        String strId = request.getParameter( PARAMETER_ID_ACTION );
+
+        if ( StringUtils.isEmpty( strId ) || !StringUtils.isNumeric( strId ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        UrlItem url;
+
+        url = new UrlItem( JSP_DO_COPY_ACTION );
+        url.addParameter( PARAMETER_ID_ACTION, strId );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_COPY_ACTION ) );
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_COPY_ACTION, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+
     /**
      * Duplicate an action
      * 
@@ -2483,7 +2570,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     public String doCopyAction( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
         // Control the validity of the CSRF Token
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_WORKFLOW ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_COPY_ACTION ) )
         {
             throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
         }
