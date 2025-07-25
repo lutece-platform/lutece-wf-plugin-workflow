@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-1.1.1-1.1.2.sql
+--preconditions onFail:MARK_RAN onError:WARN
 -- Add state icon
 ALTER TABLE workflow_state ADD COLUMN id_icon int DEFAULT NULL;
 

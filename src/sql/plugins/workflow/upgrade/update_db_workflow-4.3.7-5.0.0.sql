@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-4.3.7-5.0.0.sql
+--preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS workflow_task_archive_resource;
 CREATE TABLE workflow_task_archive_resource
 (

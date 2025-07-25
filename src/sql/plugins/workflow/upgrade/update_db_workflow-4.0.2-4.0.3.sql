@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-4.0.2-4.0.3.sql
+--preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS workflow_prerequisite;
 CREATE TABLE workflow_prerequisite
 (

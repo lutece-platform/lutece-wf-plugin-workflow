@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-4.3.4-4.3.5.sql
+--preconditions onFail:MARK_RAN onError:WARN
 /*
     Note : This script works with Mysql. For PostgreSQL, you have to 
     replace the queries, depending on your PostgreSQL version. You can
