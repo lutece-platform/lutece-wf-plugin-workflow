@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_core_workflow-2.0.0-2.0.1.sql
+--preconditions onFail:MARK_RAN onError:WARN
 --
 -- Update table core_admin_right
 --

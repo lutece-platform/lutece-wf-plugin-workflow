@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-6.0.0-6.0.2.sql
+--preconditions onFail:MARK_RAN onError:WARN
 -- Add uuids for workflows, states, actions and tasks
 ALTER TABLE workflow_workflow ADD COLUMN uid_workflow VARCHAR(255) DEFAULT NULL;
 UPDATE workflow_workflow SET uid_workflow = UUID();

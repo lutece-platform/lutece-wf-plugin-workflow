@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:create_db_workflow.sql
+--preconditions onFail:MARK_RAN onError:WARN
 -- ---------------
 -- Drop tables --
 -- ---------------

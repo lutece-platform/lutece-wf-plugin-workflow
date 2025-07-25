@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset workflow:update_db_workflow-2.0.2-2.0.3.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE workflow_resource_workflow ADD COLUMN is_associated_workgroups SMALLINT DEFAULT 0;
 
 UPDATE workflow_resource_workflow r 
