@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.web;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -102,6 +100,7 @@ import fr.paris.lutece.portal.service.workflow.WorkflowRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
+import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
@@ -109,6 +108,7 @@ import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.method.MethodUtil;
+import fr.paris.lutece.util.sort.AttributeComparator;
 import fr.paris.lutece.util.url.UrlItem;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.spi.CDI;
@@ -260,6 +260,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_LIST_PREREQUISITE = "listPrerequisite";
     private static final String MARK_MDGRAPH = "mdgraph";
     private static final String MARK_SHOW_TASKS = "showTasks";
+    private static final String MARK_SORT_SEARCH_ATTRIBUTE = "sort_search_attribute";
 
     // MESSAGES
     private static final String MESSAGE_ERROR_INVALID_SECURITY_TOKEN = "workflow.message.error.invalidSecurityToken";
@@ -285,6 +286,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PANE_STATES = "pane-states";
     private static final String PANE_ACTIONS = "pane-actions";
     private static final String PANE_DEFAULT = PANE_STATES;
+    private static final String SORT_SEARCH_ATTRIBUTE_DEFAULT = "name";
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
     private static final String LOG_WORKFLOW_NOT_FOUND = "Workflow not found for ID ";
@@ -320,6 +322,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     @Inject
     private WorkflowJsonService _workflowJsonService;
     private byte[] _importWorkflowFileData;
+    private String _strSortedAttributeName = SORT_SEARCH_ATTRIBUTE_DEFAULT;
+    private boolean _bIsAscSort = false;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -357,7 +361,19 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         List<Workflow> listWorkflow = _workflowService.getListWorkflowsByFilter( filter );
         listWorkflow = (List<Workflow>) AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) );
-        Collections.sort( listWorkflow, Comparator.comparing( Workflow::getName ) );
+
+        // SORT
+        String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
+        String strAscSort = null;
+
+        if ( strSortedAttributeName != null )
+        {
+            _strSortedAttributeName = strSortedAttributeName;
+            strAscSort = request.getParameter( Parameters.SORTED_ASC );
+            _bIsAscSort = Boolean.parseBoolean( strAscSort );
+        }
+
+        Collections.sort( listWorkflow, new AttributeComparator( _strSortedAttributeName, _bIsAscSort ) );
 
         LocalizedPaginator<Workflow> paginator = new LocalizedPaginator<>( listWorkflow, _nItemsPerPageWorkflow, getJspManageWorkflow( request ),
                 PARAMETER_PAGE_INDEX, _strCurrentPageIndexWorkflow, getLocale( ) );
@@ -367,6 +383,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
 
+        model.put( MARK_SORT_SEARCH_ATTRIBUTE, _strSortedAttributeName );
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageWorkflow );
         model.put( MARK_USER_WORKGROUP_REF_LIST, AdminWorkgroupService.getUserWorkgroups( getUser( ), getLocale( ) ) );
