@@ -3,7 +3,7 @@
 <#macro manageWorkflowFilters type='' class=''>
 	<@tform align='left' class='${class}'>
 		<@formGroup formStyle="inline" labelFor='is_enabled' labelKey='#i18n{workflow.manage_workflow.label_active}' hideLabel=['all']>
-			<@select name='is_enabled' items=active_list default_value='active_selected' size='' />
+			<@select name='is_enabled' items=active_list default_value=active_selected?string!'' size='' />
 		</@formGroup>
 		<@formGroup formStyle="inline" labelFor='workgroup' labelKey='#i18n{workflow.manage_workflow.label_workgroup}' hideLabel=['all']>
 			<@inputGroup>
@@ -31,7 +31,9 @@
 		<@manageWorkflowFilters class='d-md-none mb-3' />
 		<@table responsive=false class='mb-3'>
 			<@tr>
-				<@th>#i18n{workflow.manage_workflow.row_name}</@th>
+				<@th hide=['xs']>#i18n{workflow.manage_workflow.row_name}
+					<@sort jsp_url="jsp/admin/plugins/workflow/ManageWorkflow.jsp" attribute="name" />
+				</@th>
 				<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
 			</@tr>
 			<#list workflow_list as workflow>
