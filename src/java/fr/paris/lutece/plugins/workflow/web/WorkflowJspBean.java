@@ -480,6 +480,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         StateFilter stateFilter = new StateFilter( );
         stateFilter.setIdWorkflow( nIdWorkflow );
 
+        // States
         List<State> listState = _stateService.getListStateByFilter( stateFilter );
 
         _strCurrentPageIndexState = AbstractPaginator.getPageIndex( request, PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState );
@@ -489,6 +490,15 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 getJspModifyWorkflow( request, nIdWorkflow, MARK_PANE_STATE ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState,
                 PARAMETER_ITEMS_PER_PAGE_STATE, getLocale( ) );
 
+        // get feflexive actions (associated with states)
+        for ( State state : listState )
+        {
+        	List<Action> listReflexiveAction = getAutomaticReflexiveActionsFromState( state.getId( ) ) ;
+        	state.setAllActions( listReflexiveAction );
+        }
+                
+        
+        // Classic actions
         ActionFilter actionFilter = new ActionFilter( );
         actionFilter.setAutomaticReflexiveAction( false );
         actionFilter.setIdWorkflow( nIdWorkflow );
