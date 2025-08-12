@@ -40,6 +40,7 @@ package fr.paris.lutece.plugins.workflow.service;
 
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
@@ -59,6 +60,7 @@ public class WorkflowGraphExportService
     private static final String KEY_ASSIGN_DEFAULT_ACTION_PREFIX = "fa:fa-check ";
     private static final String KEY_NEWLINE = "<br /> ";
     private static final String KEY_CLICK = "click";
+    private static final String KEY_AUTOMATIC_ACTION_SYMBOL = "  fa:fa-bolt";
     private static final String STATE_URL_PART = "/jsp/admin/plugins/workflow/ModifyState.jsp?id_state=";
     private static final String NEWLINE = "\n";
 
@@ -76,7 +78,14 @@ public class WorkflowGraphExportService
         // list states
         for ( State state : wf.getAllStates( ) )
         {
-            sb.append( state.getId( ) ).append( KEY_ASSIGN_LABEL_START ).append( state.getName( ).replaceAll( "\"", "'" ) ).append( KEY_ASSIGN_LABEL_END )
+            sb.append( state.getId( ) ).append( KEY_ASSIGN_LABEL_START ).append( state.getName( ).replaceAll( "\"", "'" ) ); 
+            
+            if ( state.getAllActions( ) != null && state.getAllActions( ).size( ) > 0 )
+            {
+            	sb.append( KEY_AUTOMATIC_ACTION_SYMBOL );
+            }
+            
+            sb.append( KEY_ASSIGN_LABEL_END )
                     .append( NEWLINE );
         }
 
