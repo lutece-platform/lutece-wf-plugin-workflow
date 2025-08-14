@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:update_db_workflow-1.0.0-1.0.1.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:update_db_workflow-1.0.0-1.0.1.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS workflow_task_notification_cf;
 DROP TABLE IF EXISTS workflow_task_assignment_cf;
 DROP TABLE IF EXISTS workflow_workgroup_cf;

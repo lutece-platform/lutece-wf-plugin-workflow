@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:update_db_workflow-5.3.2-6.0.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:update_db_workflow-5.3.2-6.0.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 -- select multiple states before action 
 DROP TABLE IF EXISTS workflow_action_state_before;
 CREATE TABLE workflow_action_state_before (

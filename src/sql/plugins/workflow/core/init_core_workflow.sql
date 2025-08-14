@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:init_core_workflow.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:init_core_workflow.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 -- ---------------------------------------------------------
 --	Init  table core_admin_right							
 -- ---------------------------------------------------------

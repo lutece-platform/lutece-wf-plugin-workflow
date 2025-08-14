@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:update_db_workflow-5.0.0-5.1.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:update_db_workflow-5.0.0-5.1.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS workflow_task_choose_state_config;
 CREATE TABLE workflow_task_choose_state_config (
 	 id_task INT DEFAULT 0 NOT NULL ,
