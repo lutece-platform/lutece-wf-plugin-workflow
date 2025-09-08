@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.business.task;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
-import fr.paris.lutece.plugins.workflowcore.business.task.TaskType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
@@ -56,7 +55,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeComment.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeComment.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -70,7 +69,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeNotification.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeNotification.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -84,7 +83,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeAssignment.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeAssignment.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -98,7 +97,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeArchive.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeArchive.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -112,7 +111,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeConfirmAction.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeConfirmAction.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -126,7 +125,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.taskTypeChoice.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.taskTypeChoice.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -140,7 +139,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.chooseStateTaskType.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.chooseStateTaskType.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
     @Produces
@@ -154,20 +153,7 @@ public class TaskTypeProducer
             @ConfigProperty( name = "workflow.changeStateTaskType.formTaskRequired", defaultValue = "false" ) boolean formTaskRequired,
             @ConfigProperty( name = "workflow.changeStateTaskType.taskForAutomaticAction", defaultValue = "false" ) boolean taskForAutomaticAction )
     {
-        return buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
+        return TaskTypeBuilder.buildTaskType( key, titleI18nKey, beanName, configBeanName, configRequired, formTaskRequired, taskForAutomaticAction );
     }
 
-    private ITaskType buildTaskType( String strKey, String strTitleI18nKey, String strBeanName, String strConfigBeanName, boolean bIsConfigRequired,
-            boolean bIsFormTaskRequired, boolean bIsTaskForAutomaticAction )
-    {
-        TaskType taskType = new TaskType( );
-        taskType.setKey( strKey );
-        taskType.setTitleI18nKey( strTitleI18nKey );
-        taskType.setBeanName( strBeanName );
-        taskType.setConfigBeanName( strConfigBeanName );
-        taskType.setConfigRequired( bIsConfigRequired );
-        taskType.setFormTaskRequired( bIsFormTaskRequired );
-        taskType.setTaskForAutomaticAction( bIsTaskForAutomaticAction );
-        return taskType;
-    }
 }
