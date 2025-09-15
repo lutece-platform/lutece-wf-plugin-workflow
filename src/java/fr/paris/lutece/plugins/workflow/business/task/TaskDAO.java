@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskDAO;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
 
@@ -134,7 +135,13 @@ public class TaskDAO implements ITaskDAO
 
             if ( daoUtil.next( ) )
             {
-                task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+                String taskTypeKey = daoUtil.getString( ++nPos );
+                task = _taskFactory.newTask( taskTypeKey, locale );
+                if ( task == null )
+                {
+                    AppLogService.error( "Workflow load ERROR: Unknown task type key='{}' for taskId={}. Returning null.", taskTypeKey, nIdTask );
+                    return null;
+                }
                 task.setId( daoUtil.getInt( ++nPos ) );
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
@@ -177,13 +184,19 @@ public class TaskDAO implements ITaskDAO
             while ( daoUtil.next( ) )
             {
                 int nPos = 0;
-                task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+                String taskTypeKey = daoUtil.getString( ++nPos );
+                task = _taskFactory.newTask( taskTypeKey, locale );
+                if ( task == null )
+                {
+                    AppLogService.error( "Workflow ERROR: Unknown task type key='{}' for actionId={} — skipping.",taskTypeKey, nIdAction );
+                    continue;
+                }
                 task.setId( daoUtil.getInt( ++nPos ) );
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
                 task.setAction( action );
                 task.setActionUid( action.getUid( ) );
-                
+
                 task.setOrder( daoUtil.getInt( ++nPos ) );
                 task.setUid( daoUtil.getString( ++nPos ) );
 
@@ -247,7 +260,13 @@ public class TaskDAO implements ITaskDAO
                 ITask task = null;
                 Action action = null;
                 nPos = 0;
-                task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+                String taskTypeKey = daoUtil.getString( ++nPos );
+                task = _taskFactory.newTask( taskTypeKey, locale );
+                if ( task == null )
+                {
+                    AppLogService.error( "Workflow ERROR: Unknown task type key='{}' for actionId={}, orderRange=[{},{}] — skipping.", taskTypeKey, nIdAction, nOrder1, nOrder2 );
+                    continue;
+                }
                 task.setId( daoUtil.getInt( ++nPos ) );
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
@@ -280,7 +299,13 @@ public class TaskDAO implements ITaskDAO
                 ITask task = null;
                 Action action = null;
                 nPos = 0;
-                task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+                String taskTypeKey = daoUtil.getString( ++nPos );
+                task = _taskFactory.newTask( taskTypeKey, locale );
+                if ( task == null )
+                {
+                    AppLogService.error( "Workflow ERROR: Unknown task type key='{}' for actionId={}, afterOrder={}. Skipping.", taskTypeKey, nIdAction, nOrder );
+                    continue;
+                }
                 task.setId( daoUtil.getInt( ++nPos ) );
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
@@ -311,7 +336,13 @@ public class TaskDAO implements ITaskDAO
                 ITask task = null;
                 Action action = null;
                 int nPos = 0;
-                task = _taskFactory.newTask( daoUtil.getString( ++nPos ), locale );
+                String taskTypeKey = daoUtil.getString( ++nPos );
+                task = _taskFactory.newTask( taskTypeKey, locale );
+                if ( task == null )
+                {
+                    AppLogService.error( "Workflow ERROR: Unknown/misconfigured task type key='{}' for actionId={} (order init) — skipping.", taskTypeKey, nIdAction );
+                    continue;
+                }
                 task.setId( daoUtil.getInt( ++nPos ) );
                 action = new Action( );
                 action.setId( daoUtil.getInt( ++nPos ) );
