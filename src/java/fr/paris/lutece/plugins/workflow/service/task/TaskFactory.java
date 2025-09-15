@@ -193,7 +193,7 @@ public class TaskFactory implements ITaskFactory
             }
         }
 
-        AppLogService.error( "TaskFactory ERROR : The task type is not found." );
+        AppLogService.error( "TaskFactory ERROR : The task type='{}' is not found.", strKey );
 
         return null;
     }
