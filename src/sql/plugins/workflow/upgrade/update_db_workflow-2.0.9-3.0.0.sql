@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:update_db_workflow-2.0.9-3.0.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:update_db_workflow-2.0.9-3.0.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- WORKFLOW-56 : Add the possibility to link actions between each other
 --

@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:update_db_workflow-2.0.0-2.0.1.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:update_db_workflow-2.0.0-2.0.1.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 -- indexes on workflow_resource_workgroup
 CREATE INDEX workflow_resource_workgroup_id_resource_fk ON workflow_resource_workgroup(id_resource);
 CREATE INDEX workflow_resource_workgroup_resource_type_fk ON workflow_resource_workgroup(resource_type);

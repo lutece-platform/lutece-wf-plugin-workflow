@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset workflow:init_db_workflow.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset workflow:init_db_workflow.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Dumping data in table workflow_icon
 --
