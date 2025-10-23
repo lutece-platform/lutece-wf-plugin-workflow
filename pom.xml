@@ -45,7 +45,7 @@
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-mermaidjs</artifactId>
-	        <version>[1.0.0,)</version>
+	        <version>[2.0.0-SNAPSHOT,)</version>
             <type>lutece-plugin</type>
             <exclusions>
             	<exclusion>
@@ -65,7 +65,6 @@
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 	        <artifactId>jaxb-runtime</artifactId>
-	        <version>4.0.5</version>
 	        <scope>test</scope>  
 		</dependency>
 
@@ -73,8 +72,6 @@
 
     <properties>
         <componentName>workflow</componentName>
-        <jiraProjectName>WORKFLOW</jiraProjectName>
-        <jiraComponentId>10202</jiraComponentId>
     </properties>
 
     <scm>
