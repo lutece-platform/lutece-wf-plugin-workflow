@@ -95,17 +95,22 @@ public class WorkflowGraphExportService
             for ( Integer idState : action.getListIdStateBefore( ) )
             {
             	sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
-            		.append( getDefaultTransitionType( action ) )
-            		.append( getTransitionLabel( action ) )
-                    .append( KEY_ASSIGN_ACTIONS_END ).append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
+            		.append( ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_DEFAULT_ACTION_PREFIX:"" )
+            		.append( action.getName( ) )
+            		.append( addActionTasks( action ) )
+            		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
+            		.append( KEY_ASSIGN_ACTIONS_END )
+            		.append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
             	
             	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
                 {
             		sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
-	            		.append( getAlternativeTransitionType( action ) )	
-	            		.append( getTransitionLabel( action ) )
-	                    .append( KEY_ASSIGN_ACTIONS_END ).append( action.getAlternativeStateAfter( ).getId( ) ).append( NEWLINE );
-        	
+	            		.append( (action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX:"" )	
+	            		.append( action.getName( ) )
+	            		.append( addActionTasks( action ) )
+	            		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
+	            		.append( KEY_ASSIGN_ACTIONS_END )
+	            		.append( action.getAlternativeStateAfter( ).getId( ) ).append( NEWLINE );
                 }
             }
         }
@@ -124,17 +129,17 @@ public class WorkflowGraphExportService
     }
 
     /**
-     * get labels for actions and tasks
+     * add tasks labels for action
      * 
      * @param action
      * @return the label
      */
-    private static String getTransitionLabel( Action action )
+    private static String addActionTasks( Action action )
     {
-        StringBuilder sb = new StringBuilder( action.getName( ) );
+        StringBuilder sb = new StringBuilder( );
 
         if ( action.getAllTasks( ) == null )
-            return sb.toString( );
+            return "";
 
         for ( ITask task : action.getAllTasks( ) )
         {
@@ -143,29 +148,4 @@ public class WorkflowGraphExportService
 
         return sb.toString( ).replaceAll( "\"", "'" );
     }
-    
-    private static String getDefaultTransitionType( Action action )
-    {
-    	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
-    	{
-    		return KEY_ASSIGN_DEFAULT_ACTION_PREFIX ;
-    	}
-    	else
-    	{
-    		return "";
-    	}
-    }
-    
-    private static String getAlternativeTransitionType( Action action )
-    {
-    	if ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)
-    	{
-    		return KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX ;
-    	}
-    	else
-    	{
-    		return "";
-    	}
-    }
-
 }
