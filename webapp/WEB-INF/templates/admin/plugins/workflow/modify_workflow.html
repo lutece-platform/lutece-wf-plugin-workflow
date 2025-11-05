@@ -97,7 +97,7 @@
 								<#list action_list as action>
 									<@tr>
 										<@td>
-											<strong>${action.name}</strong>
+											<strong>${action.name}</strong> <#if action.isAutomaticState( ) ><span class="fa fa-bolt">&nbsp;</span></#if>
 											<@p>
 												<small title="#i18n{workflow.modify_workflow.manage_action.row_state_before}">
 													<#list action.listIdStateBefore as idStateBefore>
