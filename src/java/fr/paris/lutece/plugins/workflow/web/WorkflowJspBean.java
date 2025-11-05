@@ -515,6 +515,15 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
         	List<Action> listReflexiveAction = getAutomaticReflexiveActionsFromState( state.getId( ) ) ;
         	state.setAllActions( listReflexiveAction );
+        	
+        	if ( strShowTasks != null ) 
+        	{
+        	    for ( Action action : listReflexiveAction )
+        	    {
+                        List<ITask> listTasks = _taskService.getListTaskByIdAction( action.getId( ), getLocale( ) );               
+                        action.setAllTasks( listTasks );
+                    }
+                }
         }
                 
         
@@ -590,7 +599,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             model.put( MARK_SHOW_TASKS, "true" );
         }
-        model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ) ) );
+        model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ), strShowTasks != null ) );
         // Add CSRF Token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_WORKFLOW ) );
 

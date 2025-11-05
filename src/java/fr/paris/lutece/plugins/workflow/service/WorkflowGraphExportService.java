@@ -71,7 +71,7 @@ public class WorkflowGraphExportService
      * @param locale
      * @return the markdown definition of the workflow
      */
-    public static String generate( Workflow wf, String strBaseUrl )
+    public static String generate( Workflow wf, String strBaseUrl, boolean withTasks )
     {
         StringBuilder sb = new StringBuilder( KEY_GRAPH ).append( NEWLINE );
 
@@ -83,6 +83,7 @@ public class WorkflowGraphExportService
             if ( state.getAllActions( ) != null && state.getAllActions( ).size( ) > 0 )
             {
             	sb.append( KEY_AUTOMATIC_ACTION_SYMBOL );
+            	sb.append ( withTasks?addStateTasks( state ):"" ); 
             }
             
             sb.append( KEY_ASSIGN_LABEL_END )
@@ -97,7 +98,7 @@ public class WorkflowGraphExportService
             	sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
             		.append( ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_DEFAULT_ACTION_PREFIX:"" )
             		.append( action.getName( ) )
-            		.append( addActionTasks( action ) )
+            		.append( withTasks?addActionTasks( action ):"" )
             		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
             		.append( KEY_ASSIGN_ACTIONS_END )
             		.append( action.getStateAfter( ).getId( ) ).append( NEWLINE );
@@ -107,7 +108,7 @@ public class WorkflowGraphExportService
             		sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
 	            		.append( (action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX:"" )	
 	            		.append( action.getName( ) )
-	            		.append( addActionTasks( action ) )
+	            		.append( withTasks?addActionTasks( action ):"" )
 	            		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
 	            		.append( KEY_ASSIGN_ACTIONS_END )
 	            		.append( action.getAlternativeStateAfter( ).getId( ) ).append( NEWLINE );
@@ -148,4 +149,21 @@ public class WorkflowGraphExportService
 
         return sb.toString( ).replaceAll( "\"", "'" );
     }
+    
+    /**
+     * add tasks labels for states
+     * 
+     * @param state
+     * @return the label
+     */
+    private static String addStateTasks( State state )
+    {
+        StringBuilder sb = new StringBuilder( );
+
+        if ( state.getAllActions( ) == null || state.getAllActions( ).isEmpty ( ) ) return "";
+
+        return addActionTasks ( state.getAllActions( ).get( 0 ) );
+    }
+    
+
 }
