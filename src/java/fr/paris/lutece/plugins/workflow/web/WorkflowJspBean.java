@@ -51,7 +51,9 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.paris.lutece.plugins.workflow.utils.WorkflowCycleUtils;
 import fr.paris.lutece.portal.web.constants.Parameters;
+import fr.paris.lutece.util.ErrorMessage;
 import fr.paris.lutece.util.sort.AttributeComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.iterators.EntrySetMapIterator;
@@ -266,6 +268,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_MDGRAPH = "mdgraph";
     private static final String MARK_SHOW_TASKS = "showTasks";
     private static final String MARK_SORT_SEARCH_ATTRIBUTE = "sort_search_attribute";
+    private static final String MARK_WARNINGS = "warnings";
 
     // MESSAGES
     private static final String MESSAGE_ERROR_INVALID_SECURITY_TOKEN = "workflow.message.error.invalidSecurityToken";
@@ -527,6 +530,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
         }
 
+        ErrorMessage warningLoop = WorkflowCycleUtils.detectCycle( listState, listAction, getLocale());
+        List<ErrorMessage> listWarning = new ArrayList<>();
+        if(warningLoop!=null)
+        {
+            listWarning.add(warningLoop);
+        }
+
         _strCurrentPageIndexAction = AbstractPaginator.getPageIndex( request, PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction );
 
         int nOldItemsPerPageAction = _nItemsPerPageAction;
@@ -558,6 +568,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
         model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
         model.put( MARK_PANE, strPane );
+        model.put( MARK_WARNINGS, listWarning );
         
         Map<String,String> mapStateBeforeName = new HashMap<>( );
         for (Action actionBefore : paginatorAction.getPageItems( ) )
