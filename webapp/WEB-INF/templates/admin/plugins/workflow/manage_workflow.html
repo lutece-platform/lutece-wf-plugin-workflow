@@ -14,18 +14,21 @@
 	</@tform>
 </#macro>
 
-
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{workflow.manage_workflow.title}'>
 			<@manageWorkflowFilters class='d-none d-md-flex' />
 			<#if permission_manage_advanced_parameters>
-			<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='' hideTitle=['all'] />
+				<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' size='' hideTitle=['all'] />
 			</#if>
 			<#-- btnTitle='#i18n{workflow.manage_workflow.button_create}' -->
 			<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateWorkflow.jsp' targetElement='#create_workflow_page' redirectForm=false id='workflow-create' title='#i18n{workflow.create_workflow.title}' btnTitle='' btnIcon='plus' btnSize='' position='end' /> -->
-			<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' hideTitle=['all'] size='' />
-			<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
+			<#if glb_perms.PERM_WORKFLOW_CREATE??>
+				<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' title='#i18n{workflow.manage_workflow.button_create}' hideTitle=['all'] size='' />
+			</#if>
+			<#if glb_perms.PERM_WORKFLOW_IMPORT??>
+				<@aButton title='#i18n{workflow.manage_workflow.buttonImport}' buttonIcon='upload' size='' params='data-toggle="modal" data-target="#importJsonModal"' hideTitle=['all'] />
+			</#if>
 		</@pageHeader>
 		
 		<@manageWorkflowFilters class='d-md-none mb-3' />
@@ -42,14 +45,25 @@
 						${workflow.name} <#if !workflow.enabled><@icon style='times' class='fa-fw text-danger' title='#i18n{portal.util.labelDisabled}' /></#if>
 					</@td>
 					<@td>
-						<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
-						<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='download' title='#i18n{workflow.manage_workflow.title_export}' size='sm' />
-						<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
-						<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
-						<#if workflow.enabled>
-							<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
-						<#else>
-							<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
+						<#assign spec_perms = perms[workflow.id?c]!{}>
+						<#if spec_perms.PERM_WORKFLOW_EDIT?? || spec_perms.PERM_WORKFLOW_READ??>
+							<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
+						</#if>
+						<#if spec_perms.PERM_WORKFLOW_EDIT??>
+							<@aButton href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='download' title='#i18n{workflow.manage_workflow.title_export}' size='sm' />
+						</#if>
+						<#if spec_perms.PERM_WORKFLOW_IMPORT??>
+							<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.manage_workflow.title_copy}' size='sm' />
+						</#if>
+						<#if spec_perms.PERM_WORKFLOW_DELETE??>
+							<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.manage_workflow.title_delete}' size='sm' />
+						</#if>
+						<#if spec_perms.PERM_WORKFLOW_EDIT??>
+							<#if workflow.enabled>
+								<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
+							<#else>
+								<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
+							</#if>
 						</#if>
 					</@td>
 				</@tr>
