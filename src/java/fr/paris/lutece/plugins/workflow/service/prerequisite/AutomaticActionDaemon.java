@@ -63,6 +63,7 @@ public class AutomaticActionDaemon extends Daemon
     {
         IWorkflowService workflowService = CDI.current( ).select( IWorkflowService.class ).get( );
         WorkflowFilter workflowFilter = new WorkflowFilter( );
+        workflowFilter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
         List<Workflow> listWorkflows = workflowService.getListWorkflowsByFilter( workflowFilter );
         IResourceWorkflowService resourceWorkflowService = CDI.current( ).select( IResourceWorkflowService.class ).get( );
         int nNbResourcesFound = 0;
