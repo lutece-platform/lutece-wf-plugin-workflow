@@ -76,7 +76,7 @@ public class ArchiveDaemon extends Daemon
     public void run( )
     {
         WorkflowFilter workflowFilter = new WorkflowFilter( );
-        workflowFilter.setIsEnabled( 1 );
+        workflowFilter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
 
         List<Workflow> listWorkflows = _workflowService.getListWorkflowsByFilter( workflowFilter );
 

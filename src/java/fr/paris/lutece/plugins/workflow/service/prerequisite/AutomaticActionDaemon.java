@@ -65,6 +65,7 @@ public class AutomaticActionDaemon extends Daemon
     {
         IWorkflowService workflowService = SpringContextService.getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
         WorkflowFilter workflowFilter = new WorkflowFilter( );
+        workflowFilter.setIsEnabled( WorkflowFilter.FILTER_TRUE );
         List<Workflow> listWorkflows = workflowService.getListWorkflowsByFilter( workflowFilter );
         IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
         int nNbResourcesFound = 0;
