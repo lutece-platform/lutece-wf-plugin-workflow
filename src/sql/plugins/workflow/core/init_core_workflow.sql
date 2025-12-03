@@ -17,6 +17,8 @@ INSERT INTO core_admin_role (role_key,role_description) VALUES ('workflow_manage
 INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (912,'workflow_manager','WORKFLOW_ACTION_TYPE','*','*');
 INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (923,'workflow_manager','WORKFLOW_STATE_TYPE','*','*');
 INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (924,'workflow_manager','WORKFLOW_APP','*','PERM_WORKFLOW_LIST');
+INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (925,'super_admin','WORKFLOW_APP','*','*');
+INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (926,'super_admin','WORKFLOW','*','*');
 
 INSERT INTO core_user_right (id_right,id_user) VALUES ('WORKFLOW_MANAGEMENT',1);
 INSERT INTO core_user_right (id_right,id_user) VALUES('WORKFLOW_MANAGEMENT',2);
