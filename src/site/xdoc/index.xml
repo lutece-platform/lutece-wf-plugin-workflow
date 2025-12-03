@@ -3,10 +3,231 @@
     <properties>
         <title>Plugin Workflow</title>
     </properties>
+    <head>
+        <meta name="keywords" content="workflow, process, automation, task, action"/>
+    </head>
     <body>
         <section name="Plugin Workflow">
             <subsection name="Introduction">
-                This plugin provides a workflow engine for other Lutece plugins.
+                <p>
+                    The Workflow plugin provides a complete workflow engine. 
+                    It manages the lifecycle of resources by defining states, transitions, and 
+                    associated actions. 
+                </p>
+                <p>
+                    The workflow engine offers the following main features:
+                </p>
+                <ul>
+                    <li>Definition of workflows with configurable states and transitions</li>
+                    <li>Management of manual and automatic actions on resources</li>
+                    <li>Extensible task system (notification, comments, assignment, etc.)</li>
+                    <li>Complete history tracking of actions and state changes</li>
+                    <li>Access rights management by state and action (RBAC)</li>
+                    <li>Workgroup assignment and access constraints</li>
+                    <li>Automatic action execution via daemon</li>
+                    <li>REST API for external integration</li>
+                </ul>
+      
+            </subsection>
+            
+            <subsection name="Configuration">
+               
+
+                <p><strong>Configuration Properties</strong></p>
+                <p>
+                    The plugin properties file (workflow.properties) allows configuration of the 
+                    following parameters:
+                </p>
+                <ul>
+                    <li><code>daemon.automaticActionDaemon.interval</code>: Execution interval for the automatic 
+                    action processing daemon (in seconds)</li>
+                    <li><code>daemon.automaticActionDaemon.onstartup</code>: Enables (1) or disables (0) daemon 
+                    execution at startup</li>
+                    <li><code>daemon.archiveDaemon.interval</code>: : Execution interval for the archive  daemon (in seconds)</li>
+                    <li><code>daemon.archiveDaemon.onstartup</code>: : Enables (1) or disables (0) daemon 
+                    execution at startup</li>
+                    <li><code>workflow.itemsPerPage</code>: default paginator value</li>
+                </ul>
+
+
+                <p><strong>Daemons to Activate</strong></p>
+                <p>
+                    The plugin provides the following daemons that must be activated in the 
+                    administration interface:
+                </p>
+                <ul>
+                    <li><code>AutomaticActionDaemon</code>: Daemon that processes pending automatic actions. 
+                    It traverses eligible resources and executes automatic actions configured in workflows.</li>
+                </ul>
+
+                <p><strong>Caches</strong></p>
+                <p>
+                    The plugin uses several caches to optimize performance:
+                </p>
+                <ul>
+                    <li>Workflow cache (WorkflowCache)</li>
+                    <li>State cache (StateCache)</li>
+                    <li>Action cache (ActionCache)</li>
+                </ul>
+                <p>
+                    These caches are automatically managed and can be activated or cleared through the administration 
+                    interface if necessary.
+                </p>
+            </subsection>
+            
+            <subsection name="Usage">
+            
+            	<p><strong>Administration Rights</strong></p>
+                <p>
+                    The following right should be granted to access to the workflow management feature :
+                </p>
+                <ul>
+                    <li><code>WORKFLOW_MANAGEMENT</code>: Workflow management</li>
+                </ul>
+
+
+                <p><strong>Administration RBAC (for roles)</strong></p>
+                <p>
+                    The following RBAC rights are available, and should be associated to custom roles to manage each workflow separately :
+                </p>
+                <ul>
+                    <li><code>WORKFLOW_APP</code>: Workflow management (creation, modification, deletion)</li>
+                    <li><code>WORKFLOW_STATE_TYPE</code>: State management</li>
+                    <li><code>WORKFLOW_ACTION_TYPE</code>: Action management</li>
+                </ul>
+
+
+
+                <p><strong>Roles</strong></p>
+                <p>
+                    Roles are defined in the CORE_ADMIN_ROLE and CORE_ADMIN_ROLE_RESOURCE tables to 
+                    control access to various workflow features.
+                </p>
+
+                <p><strong>Workgroups</strong></p>
+                <p>
+                    Workflow can be assigned to  workgroups.
+                </p>
+
+                <p><strong>Java Services</strong></p>
+                <p>
+                    Main services exposed by the plugin:
+                </p>
+                <ul>
+                    <li><strong>WorkflowService</strong>
+                        <ul>
+                            <li><code>getState(int idResource, String resourceType, int idWorkflow, Integer externalParentId)</code>: 
+                            Retrieves the current state of a resource (or init the resource in the initial state on first call)</li>
+                            <li><code>doProcessAction(int idResource, String resourceType, int idAction, Integer externalParentId, 
+                            HttpServletRequest request, Locale locale, boolean isAutomatic)</code>: 
+                            Executes an action on a resource</li>
+                            <li><code>getActions(int idResource, String resourceType, int idWorkflow, AdminUser user)</code>: 
+                            Retrieves available actions for a resource</li>
+                            <li><code>getDisplayDocumentHistory(int idResource, String resourceType, int idWorkflow, 
+                            HttpServletRequest request, Locale locale)</code>: 
+                            Displays action history</li>
+                            <li><code>getResourceIdListByIdState(int idState, String resourceType)</code>: 
+                            Retrieves the list of resources in a given state</li>
+                            <li>...</li>
+                        </ul>
+                    </li>
+                    <li><strong>StateService</strong>
+                        <ul>
+                            <li><code>findByResource(int idResource, String resourceType, int idWorkflow)</code>: 
+                            Retrieves the state of a resource</li>
+                            <li><code>getStatesListByIdWorkflow(int idWorkflow)</code>: 
+                            Lists workflow states</li>
+                            <li>...</li>
+                        </ul>
+                    </li>
+                    <li><strong>ActionService</strong>
+                        <ul>
+                            <li><code>getListActionByIdStateBefore(int idStateBefore, int idWorkflow)</code>: 
+                            Lists actions available from a state</li>
+                        </ul>
+                    </li>
+                    <li><strong>TaskService</strong>
+                        <ul>
+                            <li><code>getListTaskByIdAction(int idAction, Locale locale)</code>: 
+                            Lists tasks for an action</li>
+                        </ul>
+                    </li>
+                    <li><strong>ResourceHistoryService</strong>
+                        <ul>
+                            <li><code>getAllHistoryByResource(int idResource, String resourceType, int idWorkflow)</code>: 
+                            Retrieves complete resource history</li>
+                            <li><code>getLastHistoryResource(int idResource, String resourceType, int idWorkflow)</code>: 
+                            Retrieves the last history entry</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <p><strong>REST API</strong></p>
+                <p>
+                    The plugin exposes a REST API for external integration. Main endpoints are:
+                </p>
+                <ul>
+                    <li><code>GET /rest/workflow/workflow/{id}</code>: Retrieves a workflow by its ID</li>
+                    <li><code>GET /rest/workflow/workflow</code>: Lists all workflows</li>
+                    <li><code>GET /rest/workflow/state/{id_resource}/{resource_type}/{id_workflow}</code>: 
+                    Retrieves the state of a resource</li>
+                    <li><code>GET /rest/workflow/actions/{id_resource}/{resource_type}/{id_workflow}</code>: 
+                    Lists available actions for a resource</li>
+                    <li><code>POST /rest/workflow/action/{id_action}/{id_resource}/{resource_type}</code>: 
+                    Executes an action on a resource</li>
+                    <li><code>GET /rest/workflow/history/{id_resource}/{resource_type}/{id_workflow}</code>: 
+                    Retrieves resource history</li>
+                </ul>
+                <p>
+                    The REST API requires appropriate authentication and respects the access rights 
+                    defined in the workflow.
+                </p>
+
+                <p><strong>Workflow Tasks</strong></p>
+                <p>
+                    The plugin provides several types of extensible tasks that can be associated with 
+                    actions:
+                </p>
+                <ul>
+                    <li><code>TaskNotification</code>: Sending email notifications</li>
+                    <li><code>TaskComment</code>: Adding comments to resources</li>
+                    <li><code>TaskAssignment</code>: Assigning resources to users or workgroups</li>
+                    <li><code>TaskChangeState</code>: Automatic state change</li>
+                    <li><code>TaskLinkedAction</code>: Executing linked actions</li>
+                </ul>
+                <p>
+                    Each task can be configured through the administration interface and has its own 
+                    set of parameters. It is possible to create new custom tasks by extending the 
+                    abstract Task class from the library-workflow-core library.
+                </p>
+
+                <p><strong>Integration in a Plugin</strong></p>
+                <p>
+                    To integrate the workflow into a custom plugin, simply use the WorkflowService by 
+                    providing:
+                </p>
+                <ul>
+                    <li>A unique resource identifier (idResource)</li>
+                    <li>A resource type as a string (resourceType)</li>
+                    <li>The workflow identifier to use (idWorkflow)</li>
+                </ul>
+                <p>
+                    Integration example:
+                </p>
+                <pre><![CDATA[
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
+
+// Initialize resource state
+WorkflowService.getInstance().getState(idResource, "MY_RESOURCE_TYPE", idWorkflow, -1);
+
+// Get available actions
+Collection<Action> actions = WorkflowService.getInstance()
+    .getActions(idResource, "MY_RESOURCE_TYPE", idWorkflow, adminUser);
+
+// Execute an action
+WorkflowService.getInstance().doProcessAction(idResource, "MY_RESOURCE_TYPE", 
+    idAction, -1, request, locale, false);
+]]></pre>
             </subsection>
         </section>
     </body>
