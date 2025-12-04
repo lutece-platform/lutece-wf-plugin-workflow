@@ -48,16 +48,6 @@
         </rbac-resource-type>
         <rbac-resource-type>
             <rbac-resource-type-class>
-                fr.paris.lutece.plugins.workflow.service.WorkflowResourceIdService
-            </rbac-resource-type-class>
-        </rbac-resource-type>
-        <rbac-resource-type>
-            <rbac-resource-type-class>
-                fr.paris.lutece.plugins.workflow.service.WorkflowAppResourceIdService
-            </rbac-resource-type-class>
-        </rbac-resource-type>
-        <rbac-resource-type>
-            <rbac-resource-type-class>
                 fr.paris.lutece.plugins.workflow.modules.comment.service.CommentResourceIdService
             </rbac-resource-type-class>
         </rbac-resource-type>

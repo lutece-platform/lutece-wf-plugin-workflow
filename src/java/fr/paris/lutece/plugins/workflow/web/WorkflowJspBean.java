@@ -51,9 +51,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fr.paris.lutece.plugins.workflow.service.WorkflowAppResourceIdService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowRBACService;
-import fr.paris.lutece.plugins.workflow.service.WorkflowResourceIdService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowCycleUtils;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ErrorMessage;
@@ -129,21 +126,16 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.method.MethodUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
-import static fr.paris.lutece.plugins.workflow.service.WorkflowAppResourceIdService.*;
-import static fr.paris.lutece.plugins.workflow.service.WorkflowResourceIdService.*;
-
 /**
  * class ManageDirectoryJspBean
  */
 public class WorkflowJspBean extends PluginAdminPageJspBean
 {
-    private static final long serialVersionUID = -3521312136519134434L;
-
     /**
      * Right to manage workflows
      */
     public static final String RIGHT_MANAGE_WORKFLOW = "WORKFLOW_MANAGEMENT";
-
+    private static final long serialVersionUID = -3521312136519134434L;
 
     // jsp
     private static final String JSP_MODIFY_WORKFLOW = "jsp/admin/plugins/workflow/ModifyWorkflow.jsp";
@@ -264,8 +256,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_ACTION = "action";
     private static final String MARK_INITIAL_STATE = "initial_state";
     private static final String MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS = "permission_manage_advanced_parameters";
-    private static final String MARK_MAP_GLOBAL_PERMISSIONS = "glb_perms";
-    private static final String MARK_MAP_SPECIFIC_PERMISSIONS = "perms";
     private static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
     private static final String MARK_AVAILABLE_LINKED_ACTIONS = "available_linked_actions";
     private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
@@ -342,10 +332,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html management page of plugin workflow
      */
-    public String getManageWorkflow( HttpServletRequest request ) throws AccessDeniedException
+    public String getManageWorkflow( HttpServletRequest request )
     {
-        checkGlobalPermissions( request, PERM_WORKFLOW_LIST );
-
         setPageTitleProperty( WorkflowUtils.EMPTY_STRING );
 
         String strWorkGroup = request.getParameter( PARAMETER_WORKGROUP );
@@ -403,8 +391,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_WORKFLOW_LIST, paginator.getPageItems( ) );
         model.put( MARK_PERMISSION_MANAGE_ADVANCED_PARAMETERS, bPermissionAdvancedParameter );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
-        model.put( MARK_MAP_GLOBAL_PERMISSIONS, WorkflowRBACService.getAuthorizedActionsMap( AdminUserService.getAdminUser( request ) ) );
-        model.put( MARK_MAP_SPECIFIC_PERMISSIONS, WorkflowRBACService.getAuthorizedActionsMap( AdminUserService.getAdminUser( request ), listWorkflow ) );
 
         setPageTitleProperty( PROPERTY_MANAGE_WORKFLOW_PAGE_TITLE );
 
@@ -424,7 +410,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String getCreateWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, PERM_WORKFLOW_CREATE );
         AdminUser adminUser = getUser( );
         Locale locale = getLocale( );
 
@@ -450,7 +435,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCreateWorkflow( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, PERM_WORKFLOW_CREATE );
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_CREATE_WORKFLOW ) )
         {
@@ -502,8 +486,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
-
-        checkWorkflowPermissions( request, workflow.getId( ), PERM_WORKFLOW_EDIT, PERM_WORKFLOW_READ );
 
         if ( strPane == null )
         {
@@ -595,9 +577,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
         model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
         model.put( MARK_PANE, strPane );
-        model.put( MARK_MAP_SPECIFIC_PERMISSIONS, WorkflowRBACService.getAuthorizedActionsMap( AdminUserService.getAdminUser( request ), workflow.getId( ) ) );
         model.put( MARK_WARNINGS, listWarning );
-
+        
         Map<String,String> mapStateBeforeName = new HashMap<>( );
         for (Action actionBefore : paginatorAction.getPageItems( ) )
         {
@@ -656,8 +637,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
                 }
 
-                checkWorkflowPermissions( request, workflow.getId( ), PERM_WORKFLOW_EDIT );
-
                 String strError = getWorkflowData( request, workflow );
 
                 if ( strError != null )
@@ -690,8 +669,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     {
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
 
-        checkWorkflowPermissions( request, strIdWorkflow, WorkflowResourceIdService.PERM_WORKFLOW_DELETE );
-
         UrlItem url = new UrlItem( JSP_DO_REMOVE_WORKFLOW );
         url.addParameter( PARAMETER_ID_WORKFLOW, strIdWorkflow );
         url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_WORKFLOW ) );
@@ -719,8 +696,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         String strIdWorkflow = request.getParameter( PARAMETER_ID_WORKFLOW );
 
         int nIdWorkflow = WorkflowUtils.convertStringToInt( strIdWorkflow );
-
-        checkWorkflowPermissions( request, nIdWorkflow, WorkflowResourceIdService.PERM_WORKFLOW_DELETE );
 
         ArrayList<String> listErrors = new ArrayList<>( );
 
@@ -765,8 +740,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
 
-        checkWorkflowPermissions( request, workflow.getId( ), PERM_WORKFLOW_EDIT );
-
         workflow.setEnabled( true );
         _workflowService.update( workflow );
 
@@ -800,8 +773,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
 
-        checkWorkflowPermissions( request, workflow.getId( ), PERM_WORKFLOW_EDIT );
-
         if ( !WorkflowRemovalListenerService.getService( ).checkForRemoval( strIdWorkflow, listErrors, getLocale( ) ) )
         {
             String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
@@ -825,6 +796,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param workflow
      *            the workflow object
+     * @param locale
+     *            the locale
      * @return null if no error appear
      */
     private String getWorkflowData( HttpServletRequest request, Workflow workflow )
@@ -886,8 +859,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
 
-        checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
-
         List<Icon> listIcon = _iconService.getListIcons( );
 
         Map<String, Object> model = new HashMap<>( );
@@ -935,8 +906,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             {
                 throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
             }
-
-            checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
 
             State state = new State( );
             state.setUid( UUID.randomUUID( ).toString( ) );
@@ -999,8 +968,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( "State not found for ID " + nIdState );
         }
 
-        checkWorkflowPermissions( request, state.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
-
         List<Icon> listIcon = _iconService.getListIcons( );
         
         if( state.getUid() == null ) {
@@ -1049,8 +1016,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             throw new AccessDeniedException( "State not found for ID " + nIdState );
         }
-
-        checkWorkflowPermissions( request, state.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
 
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
@@ -1160,8 +1125,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         State state = _stateService.findByPrimaryKey( nIdState );
 
-        checkWorkflowPermissions( request, state.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_DELETE_STATES );
-
         if ( state != null )
         {
             List<Action> listActions = getAutomaticReflexiveActionsFromState( nIdState );
@@ -1195,6 +1158,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param state
      *            the state object
+     * @param locale
+     *            the locale
      * @return null if no error appear
      */
     private String getStateData( HttpServletRequest request, State state )
@@ -1265,8 +1230,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
 
-        checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
-
         Map<String, Object> model = new HashMap<>( );
 
         StateFilter filter = new StateFilter( );
@@ -1317,8 +1280,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
             }
 
-            checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
-
             Action action = new Action( );
             action.setUid( UUID.randomUUID( ).toString( ) );
             action.setWorkflow( workflow );
@@ -1357,6 +1318,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param action
      *            the action object
+     * @param locale
+     *            the locale
      * @return null if no error appear
      */
     private String getActionData( HttpServletRequest request, Action action )
@@ -1495,8 +1458,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_ACTION_NOT_FOUND + nIdAction );
         }
 
-        checkWorkflowPermissions( request, action.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
-
         StateFilter filter = new StateFilter( );
         filter.setIdWorkflow( action.getWorkflow( ).getId( ) );
 
@@ -1614,8 +1575,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_ACTION_NOT_FOUND + nIdAction );
         }
 
-        checkWorkflowPermissions( request, action.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
-
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
             String strError = getActionData( request, action );
@@ -1684,8 +1643,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( action != null )
         {
-            checkWorkflowPermissions( request, action.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_DELETE_ACTIONS);
-
             _prerequisiteManagementService.deletePrerequisiteByAction( nIdAction );
             _actionService.remove( nIdAction );
             _actionService.decrementOrderByOne( action.getOrder( ), action.getWorkflow( ).getId( ) );
@@ -1722,8 +1679,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( ( action != null ) && ( task != null ) )
         {
-            checkWorkflowPermissions( request, action.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
-
             task.setAction( action );
             task.setUid(strUid);
 
@@ -1816,8 +1771,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     return getJspModifyTask( request, nIdTask );
                 }
             }
-
-            checkWorkflowPermissions( request, action.getWorkflow( ).getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS);
 
             if ( action.isAutomaticReflexiveAction( ) && !action.getListIdStateBefore( ).isEmpty( ) )
             {
@@ -2061,7 +2014,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html form
      */
-    public String getManageAdvancedParameters( HttpServletRequest request ) throws AccessDeniedException
+    public String getManageAdvancedParameters( HttpServletRequest request )
     {
         if ( !RBACService.isAuthorized( Action.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ActionResourceIdService.PERMISSION_MANAGE_ADVANCED_PARAMETERS,
                 (User) getUser( ) ) )
@@ -2188,7 +2141,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @return return url of the jsp change order state
      */
-    public String doChangeOrderState( HttpServletRequest request ) throws AccessDeniedException
+    public String doChangeOrderState( HttpServletRequest request )
     {
         // gets the state which needs to be changed (order)
         String strStateId = request.getParameter( PARAMETER_ID_STATE );
@@ -2207,8 +2160,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
-
-        checkWorkflowPermissions( request, nWorkflowId, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
 
         if ( StringUtils.isNotBlank( strOrderToSet ) )
         {
@@ -2270,7 +2221,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @return return url of the jsp change order action
      */
-    public String doChangeOrderAction( HttpServletRequest request ) throws AccessDeniedException
+    public String doChangeOrderAction( HttpServletRequest request )
     {
         // gets the action which needs to be changed (order)
         String strActionId = request.getParameter( PARAMETER_ID_ACTION );
@@ -2289,8 +2240,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
-
-        checkWorkflowPermissions( request, nWorkflowId, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
 
         if ( StringUtils.isNotBlank( strOrderToSet ) )
         {
@@ -2349,7 +2298,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @return return url of the jsp change order task
      */
-    public String doChangeOrderTask( HttpServletRequest request ) throws AccessDeniedException
+    public String doChangeOrderTask( HttpServletRequest request )
     {
         // gets the task which needs to be changed (order)
         String strTaskId = request.getParameter( PARAMETER_ID_TASK );
@@ -2539,8 +2488,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String getConfirmCopyState( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
-
         String strId = request.getParameter( PARAMETER_ID_STATE );
 
         if ( StringUtils.isEmpty( strId ) || !StringUtils.isNumeric( strId ) )
@@ -2570,7 +2517,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCopyState( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_COPY_STATE ) )
         {
@@ -2633,7 +2579,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String getConfirmCopyAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
         String strId = request.getParameter( PARAMETER_ID_ACTION );
 
         if ( StringUtils.isEmpty( strId ) || !StringUtils.isNumeric( strId ) )
@@ -2666,7 +2611,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCopyAction( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_COPY_ACTION ) )
         {
@@ -2699,7 +2643,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doCopyWorkflow( HttpServletRequest request ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException
     {
-        checkGlobalPermissions( request, PERM_WORKFLOW_IMPORT );
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) )
         {
@@ -2826,8 +2769,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
         }
 
-        checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_STATES );
-
         _stateService.initializeStateOrder( nIdWorkflow );
 
         return getJspModifyWorkflow( request, nIdWorkflow, PANE_STATES );
@@ -2852,8 +2793,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
         }
-
-        checkWorkflowPermissions( request, workflow.getId( ), WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
 
         if ( workflow == null )
         {
@@ -2907,10 +2846,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The request
      * @return The modify reflexive action page, or the manage workflow page if no valid state id is specified
      */
-    public String getModifyReflexiveAction( HttpServletRequest request ) throws AccessDeniedException
+    public String getModifyReflexiveAction( HttpServletRequest request )
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
-
         String strIdState = request.getParameter( PARAMETER_ID_STATE );
 
         if ( StringUtils.isEmpty( strIdState ) || !StringUtils.isNumeric( strIdState ) )
@@ -2973,8 +2910,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doAddTaskToReflexiveAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
-
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) )
         {
@@ -3047,7 +2982,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveTaskFromReflexiveAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkGlobalPermissions( request, WorkflowResourceIdService.PERM_WORKFLOW_EDIT_ACTIONS );
         // Control the validity of the CSRF Token
         if ( !SecurityTokenService.getInstance( ).validate( request, JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION ) )
         {
@@ -3107,17 +3041,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * 
      * @param request
      */
-    public void doExportWorkflow( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    public void doExportWorkflow( HttpServletRequest request, HttpServletResponse response )
     {
-
         int nId = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_WORKFLOW ) );
 
         if ( nId == -1 )
         {
             return;
         }
-
-        checkWorkflowPermissions( request, nId, PERM_WORKFLOW_EDIT );
 
         String content;
         try ( OutputStream os = response.getOutputStream( ) )
@@ -3148,10 +3079,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 AdminMessage.TYPE_ERROR );
     }
 
-    public String doImportWorkflow( HttpServletRequest request ) throws AccessDeniedException
+    public String doImportWorkflow( HttpServletRequest request )
     {
-        checkGlobalPermissions( request, PERM_WORKFLOW_IMPORT );
-
         try
         {
             if ( _importWorkflowFile != null )
@@ -3168,41 +3097,5 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             _importWorkflowFile = null;
         }
         return getJspManageWorkflow( request );
-    }
-
-    private void checkGlobalPermissions(HttpServletRequest request, String... perms ) throws AccessDeniedException
-    {
-        User user = AdminUserService.getAdminUser( request );
-
-        for ( String perm : perms )
-        {
-            if ( RBACService.isAuthorized( WorkflowAppResourceIdService.RESOURCE_TYPE_KEY, RBAC.WILDCARD_RESOURCES_ID, perm, user ) )
-            {
-                return;
-            }
-        }
-
-        throw new AccessDeniedException( "User has NONE of the required global permissions: " + Arrays.toString( perms ) );
-    }
-
-    private void checkWorkflowPermissions( HttpServletRequest request, int idWorkflow, String... perms ) throws AccessDeniedException
-    {
-        checkWorkflowPermissions( request, String.valueOf( idWorkflow ), perms );
-    }
-
-    private void checkWorkflowPermissions( HttpServletRequest request, String strResourceId, String... perms ) throws AccessDeniedException
-    {
-        User user = AdminUserService.getAdminUser( request );
-        for ( String perm : perms )
-        {
-            boolean isGloballyAuthorized = RBACService.isAuthorized( WorkflowResourceIdService.RESOURCE_TYPE_KEY, RBAC.WILDCARD_RESOURCES_ID, perm, user );
-            boolean isResourceAuthorized = RBACService.isAuthorized( WorkflowResourceIdService.RESOURCE_TYPE_KEY, strResourceId, perm, user );
-
-            if ( isGloballyAuthorized || isResourceAuthorized )
-            {
-                return;
-            }
-        }
-        throw new AccessDeniedException( "User has NONE of the required permissions: " + Arrays.toString( perms ) );
     }
 }
