@@ -144,7 +144,7 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
         actions.add( a4 );
         wf.setAllActions( actions );
 
-        String mdGraph = WorkflowGraphExportService.generate( wf, null );
+        String mdGraph = WorkflowGraphExportService.generate( wf, null, false );
 
         assertNotNull( mdGraph );
 
