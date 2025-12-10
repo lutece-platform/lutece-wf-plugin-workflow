@@ -24,7 +24,7 @@
 					<@select name='id_alternative_state_after' items=alternative_state_list default_value='-1'  />
 				</@formGroup>
 				<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}'>
-					<@radioIconList name='id_icon' default_value=-1 icons=icon_list />
+					<@radioIconList name='id_icon' default_value=1 icons=icon_list />
 				</@formGroup>
 				<@formGroup helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
 					<@checkBox name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
