@@ -91,7 +91,6 @@
                     The following RBAC rights are available, and should be associated to custom roles to manage each workflow separately :
                 </p>
                 <ul>
-                    <li><code>WORKFLOW_APP</code>: Workflow management (creation, modification, deletion)</li>
                     <li><code>WORKFLOW_STATE_TYPE</code>: State management</li>
                     <li><code>WORKFLOW_ACTION_TYPE</code>: Action management</li>
                 </ul>
@@ -162,26 +161,7 @@
                     </li>
                 </ul>
 
-                <p><strong>REST API</strong></p>
-                <p>
-                    The plugin exposes a REST API for external integration. Main endpoints are:
-                </p>
-                <ul>
-                    <li><code>GET /rest/workflow/workflow/{id}</code>: Retrieves a workflow by its ID</li>
-                    <li><code>GET /rest/workflow/workflow</code>: Lists all workflows</li>
-                    <li><code>GET /rest/workflow/state/{id_resource}/{resource_type}/{id_workflow}</code>: 
-                    Retrieves the state of a resource</li>
-                    <li><code>GET /rest/workflow/actions/{id_resource}/{resource_type}/{id_workflow}</code>: 
-                    Lists available actions for a resource</li>
-                    <li><code>POST /rest/workflow/action/{id_action}/{id_resource}/{resource_type}</code>: 
-                    Executes an action on a resource</li>
-                    <li><code>GET /rest/workflow/history/{id_resource}/{resource_type}/{id_workflow}</code>: 
-                    Retrieves resource history</li>
-                </ul>
-                <p>
-                    The REST API requires appropriate authentication and respects the access rights 
-                    defined in the workflow.
-                </p>
+          
 
                 <p><strong>Workflow Tasks</strong></p>
                 <p>
@@ -189,11 +169,12 @@
                     actions:
                 </p>
                 <ul>
-                    <li><code>TaskNotification</code>: Sending email notifications</li>
-                    <li><code>TaskComment</code>: Adding comments to resources</li>
                     <li><code>TaskAssignment</code>: Assigning resources to users or workgroups</li>
-                    <li><code>TaskChangeState</code>: Automatic state change</li>
-                    <li><code>TaskLinkedAction</code>: Executing linked actions</li>
+                    <li><code>TaskComment</code>: Adding comments to resources</li>
+                    <li><code>TaskNotification</code>: Sending email notifications</li>
+                    <li><code>taskArchive</code>Archive the resource</li>
+                    <li><code>taskConfirmAction</code>Confirmation step</li>
+                    <li><code>taskChoice</code> : Choice of next state</li>
                 </ul>
                 <p>
                     Each task can be configured through the administration interface and has its own 

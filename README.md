@@ -66,7 +66,6 @@ The following right should be granted to access to the workflow management featu
 The following RBAC rights are available, and should be associated to custom roles to manage each workflow separately :
 
  
-*  `WORKFLOW_APP` : Workflow management (creation, modification, deletion)
 *  `WORKFLOW_STATE_TYPE` : State management
 *  `WORKFLOW_ACTION_TYPE` : Action management
 
@@ -112,30 +111,17 @@ Main services exposed by the plugin:
 *  `getLastHistoryResource(int idResource, String resourceType, int idWorkflow)` : Retrieves the last history entry
 
 
- **REST API** 
-
-The plugin exposes a REST API for external integration. Main endpoints are:
-
- 
-*  `GET /rest/workflow/workflow/{id}` : Retrieves a workflow by its ID
-*  `GET /rest/workflow/workflow` : Lists all workflows
-*  `GET /rest/workflow/state/{id_resource}/{resource_type}/{id_workflow}` : Retrieves the state of a resource
-*  `GET /rest/workflow/actions/{id_resource}/{resource_type}/{id_workflow}` : Lists available actions for a resource
-*  `POST /rest/workflow/action/{id_action}/{id_resource}/{resource_type}` : Executes an action on a resource
-*  `GET /rest/workflow/history/{id_resource}/{resource_type}/{id_workflow}` : Retrieves resource history
-
-The REST API requires appropriate authentication and respects the access rights defined in the workflow.
-
  **Workflow Tasks** 
 
 The plugin provides several types of extensible tasks that can be associated with actions:
 
  
-*  `TaskNotification` : Sending email notifications
-*  `TaskComment` : Adding comments to resources
 *  `TaskAssignment` : Assigning resources to users or workgroups
-*  `TaskChangeState` : Automatic state change
-*  `TaskLinkedAction` : Executing linked actions
+*  `TaskComment` : Adding comments to resources
+*  `TaskNotification` : Sending email notifications
+*  `taskArchive` Archive the resource
+*  `taskConfirmAction` Confirmation step
+*  `taskChoice` : Choice of next state
 
 Each task can be configured through the administration interface and has its own set of parameters. It is possible to create new custom tasks by extending theabstract Task class from the library-workflow-core library.
 
