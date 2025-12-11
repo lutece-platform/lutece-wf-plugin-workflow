@@ -81,7 +81,6 @@
                     Les droits RBAC suivants sont disponibles et doivent être associés à des rôles personnalisés pour gérer chaque workflow séparément :
                 </p>
                 <ul>
-                    <li><code>WORKFLOW_APP</code> : Gestion des workflows (création, modification, suppression)</li>
                     <li><code>WORKFLOW_STATE_TYPE</code> : Gestion des états</li>
                     <li><code>WORKFLOW_ACTION_TYPE</code> : Gestion des actions</li>
                 </ul>
@@ -150,26 +149,7 @@
                     </li>
                 </ul>
 
-                <p><strong>API REST</strong></p>
-                <p>
-                    Le plugin expose une API REST pour l’intégration externe. Les principaux endpoints sont :
-                </p>
-                <ul>
-                    <li><code>GET /rest/workflow/workflow/{id}</code> : Récupère un workflow par son ID</li>
-                    <li><code>GET /rest/workflow/workflow</code> : Liste tous les workflows</li>
-                    <li><code>GET /rest/workflow/state/{id_resource}/{resource_type}/{id_workflow}</code> : 
-                    Récupère l’état d’une ressource</li>
-                    <li><code>GET /rest/workflow/actions/{id_resource}/{resource_type}/{id_workflow}</code> : 
-                    Liste les actions disponibles pour une ressource</li>
-                    <li><code>POST /rest/workflow/action/{id_action}/{id_resource}/{resource_type}</code> : 
-                    Exécute une action sur une ressource</li>
-                    <li><code>GET /rest/workflow/history/{id_resource}/{resource_type}/{id_workflow}</code> : 
-                    Récupère l’historique d’une ressource</li>
-                </ul>
-                <p>
-                    L’API REST nécessite une authentification appropriée et respecte les droits d’accès 
-                    définis dans le workflow.
-                </p>
+              
 
                 <p><strong>Tâches du workflow</strong></p>
                 <p>
@@ -177,11 +157,15 @@
                     actions :
                 </p>
                 <ul>
-                    <li><code>TaskNotification</code> : Envoi de notifications par email</li>
-                    <li><code>TaskComment</code> : Ajout de commentaires aux ressources</li>
+                    
                     <li><code>TaskAssignment</code> : Affectation de ressources aux utilisateurs ou groupes de travail</li>
-                    <li><code>TaskChangeState</code> : Changement automatique d’état</li>
-                    <li><code>TaskLinkedAction</code> : Exécution d’actions liées</li>
+                    <li><code>TaskComment</code>: Ajout de commentaires aux ressources</li>
+                    <li><code>TaskNotification</code>: Envoi de notifications par email</li>
+                    <li><code>taskArchive</code>Archivage</li>
+                    <li><code>taskConfirmAction</code>Message de confirmation </li>
+                    <li><code>taskChoice</code> : Choix permettant de définir l'étape suivante</li>
+                    
+                    
                 </ul>
                 <p>
                     Chaque tâche peut être configurée via l’interface d’administration et possède son propre 

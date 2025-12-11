@@ -66,7 +66,6 @@ Le droit suivant doit être accordé pour accéder à la gestion des workflows :
 Les droits RBAC suivants sont disponibles et doivent être associés à des rôles personnalisés pour gérer chaque workflow séparément :
 
  
-*  `WORKFLOW_APP` : Gestion des workflows (création, modification, suppression)
 *  `WORKFLOW_STATE_TYPE` : Gestion des états
 *  `WORKFLOW_ACTION_TYPE` : Gestion des actions
 
@@ -112,30 +111,17 @@ Principaux services exposés par le plugin :
 *  `getLastHistoryResource(int idResource, String resourceType, int idWorkflow)` : Récupère la dernière entrée de l’historique
 
 
- **API REST** 
-
-Le plugin expose une API REST pour l’intégration externe. Les principaux endpoints sont :
-
- 
-*  `GET /rest/workflow/workflow/{id}` : Récupère un workflow par son ID
-*  `GET /rest/workflow/workflow` : Liste tous les workflows
-*  `GET /rest/workflow/state/{id_resource}/{resource_type}/{id_workflow}` : Récupère l’état d’une ressource
-*  `GET /rest/workflow/actions/{id_resource}/{resource_type}/{id_workflow}` : Liste les actions disponibles pour une ressource
-*  `POST /rest/workflow/action/{id_action}/{id_resource}/{resource_type}` : Exécute une action sur une ressource
-*  `GET /rest/workflow/history/{id_resource}/{resource_type}/{id_workflow}` : Récupère l’historique d’une ressource
-
-L’API REST nécessite une authentification appropriée et respecte les droits d’accès définis dans le workflow.
-
  **Tâches du workflow** 
 
 Le plugin fournit plusieurs types de tâches extensibles pouvant être associées aux actions :
 
  
-*  `TaskNotification` : Envoi de notifications par email
-*  `TaskComment` : Ajout de commentaires aux ressources
 *  `TaskAssignment` : Affectation de ressources aux utilisateurs ou groupes de travail
-*  `TaskChangeState` : Changement automatique d’état
-*  `TaskLinkedAction` : Exécution d’actions liées
+*  `TaskComment` : Ajout de commentaires aux ressources
+*  `TaskNotification` : Envoi de notifications par email
+*  `taskArchive` Archivage
+*  `taskConfirmAction` Message de confirmation
+*  `taskChoice` : Choix permettant de définir l'étape suivante
 
 Chaque tâche peut être configurée via l’interface d’administration et possède son propre ensemble de paramètres. Il est possible de créer de nouvelles tâches personnalisées en étendant laclasse abstraite Task de la bibliothèque library-workflow-core.
 
