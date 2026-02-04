@@ -1,7 +1,5 @@
 <#assign idNextState = -1>
-<#if config?exists>
-	<#assign idNextState = config.idNextState>
-</#if>
+<#if config?exists><#assign idNextState = config.idNextState></#if>
 <@row>
 	<@columns>
 		<@fieldSet legend='#i18n{module.workflow.state.task.change.state.config.title}'>

@@ -1,9 +1,8 @@
 <#if config?exists&&config.title?exists >
-    <label>${config.title}</label>
+    <@h level=3>${config.title}</@h>
 </#if>
+<@ul>
 <#list workgroup_list as workgroup>
-     <p>${workgroup.name}</p>
+     <@li>${workgroup.name}</@li>
 </#list>
-
-
-
+</@ul>

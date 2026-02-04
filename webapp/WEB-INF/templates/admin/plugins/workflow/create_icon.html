@@ -1,13 +1,14 @@
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.create_icon.title}' />
-		<@tform action='jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true id='create_icon_page'>
+		<@div id='create_icon_page'>
+		<@tform action='jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true >
 			<@fieldSet>
 				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
 					<@input type='text' name='name' maxlength=255 />
 				</@formGroup>
 				<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
-					<@input type='file' name='id_file' inputSize=60 />
+					<@input type='file' name='id_file' />
 				</@formGroup>
 				<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
 					<@input type='text' name='width' maxlength=255 />
@@ -21,5 +22,6 @@
 				</@formGroup>
 			</@fieldSet>
 		</@tform>
+		</@div>
 	</@pageColumn>
 </@pageContainer>

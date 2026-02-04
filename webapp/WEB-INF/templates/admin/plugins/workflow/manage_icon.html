@@ -1,38 +1,28 @@
 <#include "macro_workflows.html" />
-<style>.workflow-icon{filter: drop-shadow(5px 5px 10px #222); width: 32px;}</style>
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{workflow.manage_icon.title}'>
-			<#-- btnTitle='#i18n{workflow.manage_icon.button_create}' -->
 			<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateIcon.jsp' targetElement='#create_icon_page' redirectForm=false id='icon-create' title='#i18n{workflow.create_icon.title}' btnTitle='' btnIcon='plus' position='end' /> -->
-			
 			<@tform action='jsp/admin/plugins/workflow/CreateIcon.jsp' class='pull-right'>
 				<@button type='submit' name='save' buttonIcon='plus' title='#i18n{workflow.manage_icon.button_create}' size='sm' />
 			</@tform>
 		</@pageHeader>
-		<@table striped=true>
-			<@tr>
-				<@th>#i18n{workflow.manage_icon.row_icon}</@th>
-				<@th>#i18n{workflow.manage_workflow.row_actions}</@th>
-			</@tr>
-			<@tableHeadBodySeparator />
-			<#list icon_list as icon>
-				<@tr>
-					<@td class='d-flex'>
-						<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='thumbnail thumbnail-xs' />
-						<@span class='ms-3 ml-3'>${icon.name}</@span>
-						<#assign params = ''>
-					</@td>
-					<@td>
-						<#-- btnTitle='#i18n{workflow.manage_icon.title_modify}' -->
-						<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' targetElement='#edit_icon_page' redirectForm=false id='icon${icon.id}-edit' title='#i18n{#i18n{workflow.modify_icon.title}' btnTitle='' btnIcon='pencil' position='end' /> -->
-						<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' buttonIcon='edit' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] size='sm' />
-
-						<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] color='danger' size='sm' />
-					</@td>
-				</@tr>
-			</#list>
-		</@table>
+		<@manageFeature>
+		<#list icon_list as icon>
+			<@manageFeatureItem>
+				<@manageFeatureItemColumn auto=true>
+					<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='img-fluid img-thumbnail' params='width="32"'  />
+					<@span class='ms-3 ml-3'>${icon.name}</@span>
+					<#assign params = ''>
+				</@manageFeatureItemColumn>
+				<@manageFeatureItemColumn align='end'>
+					<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' targetElement='#edit_icon_page' redirectForm=false id='icon${icon.id}-edit' title='#i18n{#i18n{workflow.modify_icon.title}' btnTitle='' btnIcon='pencil' position='end' /> -->
+					<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' buttonIcon='edit' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] size='sm' />
+					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] color='danger' size='sm' />
+				</@manageFeatureItemColumn>
+			</@manageFeatureItem>
+		</#list>
+		</@manageFeature>
 		<@paginationAdmin paginator=paginator combo=1/>
 	</@pageColumn>
 </@pageContainer>

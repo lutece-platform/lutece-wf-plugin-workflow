@@ -1,19 +1,6 @@
 <#if config?exists>
-  <script src="js/plugins/workflow/modules/comment/comment.js"></script>
-  <div class="clearfix">
-    <div class="pull-left">
-      <#if config.title?exists >
-        <label>${config.title} :</label>
-      </#if>
-    </div>
-    <div class="pull-right">
-      <#if has_permission_delete >
-      	<@aButton color='danger' size='xs' href='#' buttonIcon='trash' title='#i18n{module.workflow.comment.button.remove_comment}' params='onclick="removeComment(${id_history}, ${task.id});return false;"'/>
-      </#if>
-    </div>
-  </div>
-  <#if comment_value?exists && comment_value.value?has_content>
-    ${comment_value.value}
-  </#if>
+<#if config.title?exists ><@h level=3>${config.title}</@h></#if>
+<#if has_permission_delete ><@aButton color='danger' size='xs' href='#' buttonIcon='trash' title='#i18n{module.workflow.comment.button.remove_comment}' params='onclick="removeComment(${id_history}, ${task.id});return false;"'/></#if>
+<#if comment_value?exists && comment_value.value?has_content>${comment_value.value}</#if>
+<script src="js/plugins/workflow/modules/comment/comment.js"></script>
 </#if>
-

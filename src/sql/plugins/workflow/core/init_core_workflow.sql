@@ -4,7 +4,8 @@
 -- ---------------------------------------------------------
 --	Init  table core_admin_right							
 -- ---------------------------------------------------------
-INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url, documentation_url) VALUES ('WORKFLOW_MANAGEMENT','workflow.adminFeature.workflow_management.name',2,'jsp/admin/plugins/workflow/ManageWorkflow.jsp','workflow.adminFeature.workflow_management.description',0,'workflow','APPLICATIONS','ti ti-subtask', 'jsp/admin/documentation/AdminDocumentation.jsp?doc=admin-workflow');
+INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url, documentation_url) VALUES ('WORKFLOW_MANAGEMENT','workflow.adminFeature.workflow_management.name',2,'jsp/admin/plugins/workflow/ManageWorkflow.jsp','workflow.adminFeature.workflow_management.description',0,'workflow','APPLICATIONS','ti ti-arrow-guide', 'jsp/admin/documentation/AdminDocumentation.jsp?doc=admin-workflow');
+
 
 -- ---------------------------------------------------------
 --	Init  table  core_admin_role								

@@ -1,15 +1,6 @@
-<#if config.richText>
-    <#include "/admin/util/editor/editor.html" />
-</#if>
-
+<#if config.richText><#include "/admin/util/editor/editor.html" /></#if>
 <#if config?exists>
-    <#if config.title?exists >
-    <label for="comment_value_${config.idTask}">  ${config.title} <#if config.mandatory>*</#if> :</label>
-    </#if>
-	<@input type='textarea' name='comment_value_${config.idTask}' rows=4 cols=80 richtext=config.richText>${comment_value!}</@input>
+<#if config.title?exists ><@formLabel labelFor='comment_value_${config.idTask}' mandatory=config.mandatory>${config.title}</@formLabel> </#if>
+<@input type='textarea' name='comment_value_${config.idTask}' rows=4 cols=80 richtext=config.richText>${comment_value!}</@input>
 </#if>
-
-<#if config.richText>
-	<@initEditor />     
-</#if>
-	
+<#if config.richText><@initEditor /></#if>

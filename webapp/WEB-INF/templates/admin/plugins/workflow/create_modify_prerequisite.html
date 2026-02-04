@@ -1,24 +1,13 @@
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.modify_action.manage_prerequisite.title}' />
-		<#if id_prerequisite??>
-			<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'>
-		<#else>
-			<#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'>
-		</#if>
+		<#if id_prerequisite??><#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'><#else><#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'></#if>
 		<@tform action=form_action id='create_edit_prerequisite' boxed=true>
 			<@input type='hidden' name='id_action' value=id_action />
 			<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
 			<@input type="hidden" name="token" value="${token}" />
-			<#if id_prerequisite??>	
-				<@input type='hidden' name='id_prerequisite' value=id_prerequisite />
-			</#if>
-			
-			<#if errors??>
-				<#list errors as error>
-					<@alert class='danger' dismissible=true title=error.message />
-				</#list>
-			</#if>
+			<#if id_prerequisite??>	<@input type='hidden' name='id_prerequisite' value=id_prerequisite /></#if>
+			<#if errors??><#list errors as error><@alert class='danger' dismissible=true title=error.message /></#list></#if>
 			${content}
 			<@formGroup>
 				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />

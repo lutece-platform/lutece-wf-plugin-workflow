@@ -1,25 +1,24 @@
 <#include "macro_workflows.html" />
-
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.create_workflow.title}' />
+		<@div id='create_workflow_page'>
 		<@tform action='jsp/admin/plugins/workflow/DoCreateWorkflow.jsp?plugin_name=workflow' boxed=true>
 			<@input type="hidden" name="token" value="${token}" />
-			<@fieldSet>
-				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' helpKey='#i18n{workflow.create_workflow.label_name_comment}' mandatory=true>
-					<@input type='text' name='name' maxlength=255 />
-				</@formGroup>
-				<@formGroup labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' helpKey='#i18n{workflow.create_workflow.label_name_comment}' mandatory=true>
-					<@input type='textarea' name='description' />
-				</@formGroup>
-				<@formGroup labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' mandatory=true>
-					<@select name='workgroup' items=user_workgroup_list default_value=workgroup_key_default_value />
-				</@formGroup>
-				<@formGroup>
-					<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' />
-					<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_workflow.button_cancel}' cancel=true />
-				</@formGroup>
-			</@fieldSet>
+			<@formGroup labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' helpKey='#i18n{workflow.create_workflow.label_name_comment}' mandatory=true>
+				<@input type='text' name='name' maxlength=255 />
+			</@formGroup>
+			<@formGroup labelFor='description' labelKey='#i18n{workflow.create_workflow.label_description}' helpKey='#i18n{workflow.create_workflow.label_name_comment}' mandatory=true>
+				<@input type='textarea' name='description' />
+			</@formGroup>
+			<@formGroup labelFor='workgroup' labelKey='#i18n{workflow.create_workflow.label_workgroup}' helpKey='#i18n{workflow.create_workflow.label_workgroup_comment}' mandatory=true>
+				<@select name='workgroup' items=user_workgroup_list default_value=workgroup_key_default_value />
+			</@formGroup>
+			<@formGroup>
+				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_workflow.button_save}' />
+				<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_workflow.button_cancel}' cancel=true />
+			</@formGroup>
 		</@tform>
+		</@div>
 	</@pageColumn>
 </@pageContainer>

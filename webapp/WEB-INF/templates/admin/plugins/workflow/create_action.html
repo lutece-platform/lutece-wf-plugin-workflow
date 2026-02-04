@@ -3,9 +3,10 @@
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.create_action.title}' />
 		<@tform action='jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow' boxed=true>
-			<@fieldSet>
-				<@input type='hidden' name='id_workflow' value=workflow.id/>
-				<@input type="hidden" name="token" value="${token}" />
+		<@input type='hidden' name='id_workflow' value=workflow.id/>
+		<@input type="hidden" name="token" value="${token}" />
+		<@row>
+			<@columns>	
 				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
 					<@input type='text' name='name' maxlength=255 />
 				</@formGroup>
@@ -14,7 +15,7 @@
 				</@formGroup>
 				<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
 					<#list state_list as state>
-						<@checkBox name='id_state_before' id='id_state_before${state.code}'  value='${state.code}' labelKey='${state.name}' />
+						<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}'  value='${state.code}' labelKey='${state.name}' />
 					</#list>
 				</@formGroup>
 				<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
@@ -23,29 +24,32 @@
 				<@formGroup labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
 					<@select name='id_alternative_state_after' items=alternative_state_list default_value='-1'  />
 				</@formGroup>
+			</@columns>
+			<@columns>	
 				<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}'>
 					<@radioIconList name='id_icon' default_value=1 icons=icon_list />
 				</@formGroup>
 				<@formGroup helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
-					<@checkBox name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
+					<@checkBox orientation='switch' name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
 				</@formGroup>
 				<@formGroup helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
-					<@checkBox name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
+					<@checkBox orientation='switch' name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
 				</@formGroup>
 				<@formGroup>
-					<h4>#i18n{workflow.create_action.label_link_actions}</h4>
-					<p class="help-block">#i18n{workflow.create_action.label_link_actions_comment}</p>
-					<em>#i18n{workflow.create_action.label_link_actions_example}</em>
+					<@h level=3>#i18n{workflow.create_action.label_link_actions}</@h>
+					<@p>#i18n{workflow.create_action.label_link_actions_comment}</@p>
+					<@p><em>#i18n{workflow.create_action.label_link_actions_example}</em></@p>
 				</@formGroup>
 				<@formGroup labelFor='selected_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
 					<@select name='select_linked_actions' default_value='' multiple=10 size='sm' items=available_linked_actions />
 				</@formGroup>
-				<@formGroup rows=2>
-					<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
-					<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
-					<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' cancel=true />
-				</@formGroup>
-			</@fieldSet>
+				</@columns>
+			</@row>
+			<@formGroup rows=2>
+				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
+				<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
+				<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' cancel=true />
+			</@formGroup>
 		</@tform>
 	</@pageColumn>
 </@pageContainer>

@@ -3,23 +3,17 @@
 		<@fieldSet legend='#i18n{module.workflow.notification.task_notification_config.title}'>
 			<@formGroup labelFor='idMailingList' labelKey='#i18n{module.workflow.notification.task_notification_config.label_mailing_list}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_mailing_list_comment}' mandatory=true>
 				<#assign default='-1'>
-				<#if config?exists>
-					<#assign default=config.idMailingList!>
-				</#if>
+				<#if config?exists><#assign default=config.idMailingList!></#if>
 				<@select name='idMailingList' items=mailing_list default_value='${default}' />
 			</@formGroup>
 			<@formGroup labelFor='senderName' labelKey='#i18n{module.workflow.notification.task_notification_config.label_sender_name}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_sender_name_comment}' mandatory=true>
 				<#assign sender=default_sender_name>
-				<#if config?exists>
-					<#assign sender=config.senderName>
-				</#if>
+				<#if config?exists><#assign sender=config.senderName></#if>
 				<@input type='text' name='senderName' value=sender maxlength=255 />
 			</@formGroup>
 			<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.notification.task_notification_config.label_subject}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_subject_comment}' mandatory=true>
 				<#assign subject=''>
-				<#if config?exists>
-					<#assign subject=config.subject>
-				</#if>
+				<#if config?exists><#assign subject=config.subject></#if>
 				<@input type='text' name='subject' value=subject maxlength=255 />
 			</@formGroup>
 			<@formGroup labelFor='message' labelKey='#i18n{module.workflow.notification.task_notification_config.label_message}' helpKey='#i18n{module.workflow.notification.task_notification_config.label_message_comment}' mandatory=true>

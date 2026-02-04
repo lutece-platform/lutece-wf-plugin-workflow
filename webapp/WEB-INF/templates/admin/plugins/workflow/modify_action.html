@@ -2,213 +2,170 @@
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.modify_action.title} : ${action.name}' />
+		<@breadcrumbs class='py-3'>
+			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${action.workflow.id!}&pane=pane-actions' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title} ${action.workflow.id!}'/></@breadcrumbItem>	
+			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_action.title}' /></@breadcrumbItem>	
+		</@breadcrumbs>
 		<@row>
 			<@columns sm=12 md=4>
 				<@box>
 					<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.title' />
 					<@boxBody>
 						<@tform action='jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow'>
-							<@fieldSet>
-								<@input type='hidden' name='id_action' value=action.id />
-								<@input type="hidden" name="token" value="${token}" />
-
-								<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' mandatory=true helpKey='#i18n{workflow.create_action.label_name_comment}'>
-									<@input type='text' name='name' value=action.name maxlength=255  />
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='uid' labelKey='#i18n{workflow.create_action.label_uid}' mandatory=true helpKey='#i18n{workflow.create_action.label_uid_comment}'>
-									<@input type='text' name='uid' value=action.uid readonly=true />
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' mandatory=true helpKey='#i18n{workflow.create_action.label_description_comment}' >
-									<@input type='textarea' name='description'  rows=2 cols=80>${action.description}</@input>
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
-									<#list state_list as state>
-										<#assign isCheck=false />
-										<#list action.listIdStateBefore as stateChecked>
-											<#if state.code == stateChecked?c > 
-												<#assign isCheck=true />
-											</#if>
-										</#list>
-										<@checkBox name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' checked=isCheck />
+							<@input type='hidden' name='id_action' value=action.id />
+							<@input type="hidden" name="token" value="${token}" />
+							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' mandatory=true helpKey='#i18n{workflow.create_action.label_name_comment}'>
+								<@input type='text' name='name' value=action.name maxlength=255  />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='uid' labelKey='#i18n{workflow.create_action.label_uid}' mandatory=true helpKey='#i18n{workflow.create_action.label_uid_comment}'>
+								<@input type='text' name='uid' value=action.uid readonly=true />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' mandatory=true helpKey='#i18n{workflow.create_action.label_description_comment}' >
+								<@input type='textarea' name='description'  rows=2 cols=80>${action.description}</@input>
+							</@formGroup>
+							<@formGroup rows=2 labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
+								<#list state_list as state>
+									<#assign isCheck=false />
+									<#list action.listIdStateBefore as stateChecked>
+										<#if state.code == stateChecked?c > 
+											<#assign isCheck=true />
+										</#if>
 									</#list>
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>
-									<@select name='id_state_after' items=state_list default_value=action.stateAfter.id?string  />
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
-									<@select name='id_alternative_state_after' items=alternative_state_list default_value=action.alternativeStateAfter.id?string  />
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' mandatory=true helpKey='#i18n{workflow.create_action.label_icon_comment}'>
-									<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='automatic' helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
-									<@checkBox name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' checked=action.automaticState />
-								</@formGroup>
-
-								<@formGroup rows=2 labelFor='is_mass_action' helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
-									<@checkBox name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' checked=action.massAction/>
-								</@formGroup>
-
-								<@formGroup rows=2 >
-									<@formHelp>#i18n{workflow.create_action.label_link_actions}</@formHelp>
-									<@formHelp>#i18n{workflow.create_action.label_link_actions_comment}</@formHelp>
-									<@formHelp>#i18n{workflow.create_action.label_link_actions_example}</@formHelp>
-
-									<#if !display_tasks_form>
-										<@table striped=true condensed=true responsive=false hover=false>
-											<@tr>
-												<@th>#i18n{workflow.create_action.label_available_linked_actions}</@th>
-												<@th> </@th>
-												<@th>#i18n{workflow.create_action.label_selected_linked_actions}</@th>
-											</@tr>
-											<@tr>
-												<@td>
-													<@select name='select_linked_actions' default_value='' multiple=10 items=available_linked_actions />
-												</@td>
-												<@td>
-													<@div align='center'>
-														<@button type='submit' name='apply' title='#i18n{workflow.create_action.label_select_unselect_linked_actions}'/>
-													</@div>
-												</@td>
-												<@td>
-													<@select name='unselect_linked_actions' default_value='' multiple=10 items=selected_linked_actions/>
-												</@td>
-											</@tr>
-										</@table>
-									<#else>
-										<@alert color='warning' class='mt-3 mb-3'>
-											<@icon style='alert-triangle' class='pe-2'/>
-											&nbsp;#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}
-										</@alert>
-									</#if>
-								</@formGroup>
-
-								<@formGroup rows=2 >
-									<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
-									<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
-									<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' cancel=true />
-								</@formGroup>
-							</@fieldSet>
+									<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' checked=isCheck />
+								</#list>
+							</@formGroup>
+							<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>
+								<@select name='id_state_after' items=state_list default_value=action.stateAfter.id?string  />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
+								<@select name='id_alternative_state_after' items=alternative_state_list default_value=action.alternativeStateAfter.id?string  />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' mandatory=true helpKey='#i18n{workflow.create_action.label_icon_comment}'>
+								<@radioIconList name="id_icon" default_value=action.icon.id icons=icon_list />	
+							</@formGroup>
+							<@formGroup rows=2 labelFor='automatic' helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
+								<@checkBox orientation='switch' name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' checked=action.automaticState />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='is_mass_action' helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
+								<@checkBox orientation='switch' name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' checked=action.massAction/>
+							</@formGroup>
+							<@formGroup rows=2 >
+								<@formHelp>#i18n{workflow.create_action.label_link_actions}</@formHelp>
+								<@formHelp>#i18n{workflow.create_action.label_link_actions_comment}</@formHelp>
+								<@formHelp>#i18n{workflow.create_action.label_link_actions_example}</@formHelp>
+								<#if !display_tasks_form>
+									<@formGroup labelFor='select_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}' rows=2 >
+										<@select name='select_linked_actions' default_value='' multiple=10 items=available_linked_actions />
+									</@formGroup>
+									<@formGroup labelFor='unselect_linked_actions' labelKey='#i18n{workflow.create_action.label_selected_linked_actions}' rows=2 >
+										<@select name='unselect_linked_actions' default_value='' multiple=10 items=selected_linked_actions/>
+									</@formGroup>
+									<@button type='submit' name='apply' title='#i18n{workflow.create_action.label_select_unselect_linked_actions}'/>
+								<#else>
+									<#-- <@alert color='warning' iconTitle='alert-triangle'>#i18n{workflow.create_action.label_link_actions_display_task_forms}</@alert> -->
+									<@alert color='warning' class='my-3'>
+										<@span>#i18n{workflow.create_action.label_link_actions_display_task_forms}</@span>
+									</@alert>
+									<@alert color='warning' class='my-3'>
+										<@icon style='alert-triangle' class='me-2'/> #i18n{workflow.create_action.label_link_actions_comment_display_task_forms}
+									</@alert>
+								</#if>
+							</@formGroup>
+							<@formGroup rows=2 >
+								<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
+								<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
+								<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' cancel=true />
+							</@formGroup>
 						</@tform>
 					</@boxBody>
 				</@box>
 			</@columns>
-
 			<@columns sm=12 md=8>
 				<@box>
-					<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_task.title' />
+					<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_task.title' >
+						<@tform action='jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow' type='inline'>
+							<@input type='hidden' name='id_action' value=action.id/>
+							<@input type="hidden" name="token" value="${token}" />
+							<@formGroup rows=2 labelFor='task_type_key' formStyle='' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}' hideLabel=['all']>
+								<@inputGroup>
+									<@select name='task_type_key' default_value='-1'  items=task_type_list sort=true />
+									<@button type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
+									<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] color='secondary' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right'  />
+								</@inputGroup>
+							</@formGroup>
+						</@tform>
+					</@boxHeader>
 					<@boxBody>
-						<@fieldSet>
-							<@tform action='jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow'>
-								<@input type='hidden' name='id_action' value=action.id/>
-								<@input type="hidden" name="token" value="${token}" />
-								<@formGroup rows=2 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}'>
-									<@inputGroup>
-										<@select name='task_type_key' default_value='-1'  items=task_type_list sort=true />
-										<@inputGroupItem type='btn'>
-											<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' size='sm' />
-										</@inputGroupItem>
-									</@inputGroup>
-								</@formGroup>
-							</@tform>
-							<@tag color='info' tagIcon='exclamation-triangle'> #i18n{workflow.modify_action.manage_task.warning_assignment}</@tag>
-							<@div align='right' class='mb-3'>
-								<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' size='sm' />
-							</@div>
-							<@table striped=true condensed=true responsive=false hover=false>
-								<@tr>
-									<@th> #i18n{workflow.modify_workflow.order} </@th>
-									<@th> #i18n{workflow.modify_action.manage_task.title}</@th>
-									<@th> #i18n{workflow.modify_action.manage_task.row_actions} </@th>
-								</@tr>
-								<#list task_list as task>
-								<@tr>
-									<@td>
+							<@callOut color='info' callOutIcon='info-triangle' title='#i18n{workflow.modify_action.manage_task.warning_assignment}' />
+							<@manageFeature>
+							<#list task_list as task>
+								<@manageFeatureItem>
+									<@manageFeatureItemColumn>
 										<!-- SELECT LIST FOR ORDER CHANGE -->
 										<@tform action='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp'>
 											<#if (task_list?size > 1)>
-											<@inputGroup>
-												<@comboOrders name='order_task_id' default_value=task.order max=number_task />
 												<@input type='hidden' name='id_workflow' value=action.workflow.id />
 												<@input type='hidden' name='id_task' value=task.id/>
-												<@inputGroupItem type='btn'>
-													<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' size='sm' />
-												</@inputGroupItem>
-											</@inputGroup>
+												<@inputGroup>
+													<@comboOrders name='order_task_id' default_value=task.order max=number_task />
+													<@button type='submit' buttonIcon='check' color='secondary' title='#i18n{workflow.modify_workflow.move}' hideTitle=['all'] />
+												</@inputGroup>
 											<#else>
-											${task.order}
+												#i18n{workflow.modify_workflow.order} : ${task.order}
 											</#if>
 										</@tform>
-									</@td>
-									<@td>
-										<#if task.taskType.title!="">${task.taskType.title}</#if>
-										<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
-									</@td>
-									<@td>
+									</@manageFeatureItemColumn>
+									<@manageFeatureItemColumn auto=true>
+										<#if task.taskType.title!=""><@span class='d-inline-block'>${task.taskType.title}</@span></#if>
+										<#if task.getTitle(locale)!=""><@span class='d-inline-block'>${task.getTitle(locale)}</@span></#if>
+									</@manageFeatureItemColumn>
+									<@manageFeatureItemColumn align='end'>
 										<#if task.taskType.configRequired>
-										<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
-										<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' btnIcon='edit' position='end' /> -->
-										<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
+											<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' btnIcon='edit' position='end' /> -->
+											<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}' size='sm' />
 										</#if>
 										<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] color='warning' buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}' size='sm' />
 										<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' size='sm' />
-									</@td>
-								</@tr>
+									</@manageFeatureItemColumn>
+								</@manageFeatureItem>
 								</#list>
-							</@table>
-						</@fieldSet>
+							</@manageFeature>
 					</@boxBody>
 				</@box>
-
 				<@box>
 					<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_prerequisite.title'>
 						<@tform action='jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp' type='inline'>
+							<@input type='hidden' name='id_action' value=action.id/>
+							<@formGroup rows=2 formStyle='' labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' hideLabel=['all']>
 							<@inputGroup>
 								<@select name='prerequisite_type' items=list_prerequisite_type default_value='' />
-								<@input type='hidden' name='id_action' value=action.id/>
-								<@inputGroupItem type='btn'>
-									<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' size='sm' />
-								</@inputGroupItem>
+								<@button  type='submit' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}'  />
 							</@inputGroup>
+							</@formGroup>
 						</@tform>
 					</@boxHeader>
-
 					<@boxBody>
-						<@fieldSet>
-							<#if listPrerequisite?? && listPrerequisite?size &gt; 0>
-							<@table striped=true condensed=true responsive=false hover=false>
-								<@tr>
-									<@th>#i18n{workflow.modify_action.manage_prerequisite.columnTitle}</@th>
-									<@th>#i18n{workflow.modify_action.manage_task.row_actions}</@th>
-								</@tr>
+						<#if listPrerequisite?? && listPrerequisite?size gt 0>
+							<@manageFeature striped=true condensed=true responsive=false hover=false>
+								<#-- #i18n{workflow.modify_action.manage_prerequisite.columnTitle} / #i18n{workflow.modify_action.manage_task.row_actions} -->
 								<#list listPrerequisite as prerequisite>
-								<@tr>
-									<@td>#i18n{${prerequisite.title}}</@td>
-									<@td>
+								<@manageFeatureItem>
+									<@manageFeatureItemColumn>#i18n{${prerequisite.title}}</@manageFeatureItemColumn>
+									<@manageFeatureItemColumn align='end'>
 										<#if prerequisite.hasConfiguration>
 											<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
-										
 											<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
 											<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' targetElement='#create_edit_prerequisite_page' redirectForm=false id='prerequisite${prerequisite.idPrerequisite}' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' btnTitle='' btnIcon='edit' position='end' /> -->
 										</#if>
-										
 										<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
-									</@td>
-								</@tr>
+									</@manageFeatureItemColumn>
+								</@manageFeatureItem>
 								</#list>
-							</@table>
-							<#else>
-								<div>#i18n{workflow.modify_action.manage_prerequisite.noItem}</div>
-							</#if>
-							<@formHelp>#i18n{workflow.modify_action.manage_prerequisite.help}</@formHelp>
-						</@fieldSet>
+							</@manageFeature>
+							<@callOut color='info' callOutIcon='info-triangle' title='#i18n{workflow.modify_action.manage_prerequisite.help}' />
+						<#else>
+							<@empty  />
+						</#if>
 					</@boxBody>
 				</@box>
 			</@columns>

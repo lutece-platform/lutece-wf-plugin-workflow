@@ -1,17 +1,7 @@
-<@table striped=true>
-	<@tr>
-		<@th></@th>
-		<@th></@th>
-	</@tr>
-	<@tableHeadBodySeparator />
-	<@tr>
-		<@td>
-			<@link href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow'>
-				#i18n{workflow.manage_plugin_workflow.label_manage_icon}
-			</@link>
-		</@td>
-		<@td>
-			#i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}
-		</@td>
-	</@tr>
-</@table>
+<@row>
+	<@columns>
+		<@link href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow'>
+			#i18n{workflow.manage_plugin_workflow.label_manage_icon} #i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}
+		</@link>
+	</@columns>
+</@row>

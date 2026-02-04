@@ -1,82 +1,68 @@
 <@fieldSet legend='#i18n{module.workflow.assignment.task_assignment_config.title}'>
 	<@formGroup labelFor='title' labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_title}' mandatory=true>
 		<#assign inputValue=''>
-		<#if config?exists>
-			<#assign inputValue=config.title>
-		</#if>
+		<#if config?exists><#assign inputValue=config.title></#if>
 		<@input type='text' size='sm' name='title' value=inputValue maxlength=255 />
 	</@formGroup>
 	<@formGroup helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner_comment}'>
 		<#assign multipleOwner=config?exists&&config.multipleOwner>
-		<@checkBox name='is_multiple_owner' id='is_multiple_owner' value='1' checked=multipleOwner labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner}' />
+		<@checkBox orientation='switch' name='is_multiple_owner' id='is_multiple_owner' value='1' checked=multipleOwner labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner}' />
 	</@formGroup>
 	<@formGroup labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' >
 		<#list workgroup_list as workgroup>
-			<@checkBox name='workgroups' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
-			<span id="div_${workgroup.item.code}">
+			<@checkBox orientation='switch' name='workgroups' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
+			<@span id='div_${workgroup.item.code}'²>
 				#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
 				<#if workgroup.config?exists>
 					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value=workgroup.config.idMailingList />
 				<#else>
 					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value="-1" />
 				</#if>
-			</span>
+			</@span>
 		</#list>
 	</@formGroup>
 	<@formGroup>
 		<#assign notify=config?exists&&config.notify>
 		<@checkBox name='is_notify' id='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' params='onclick="javascript:notification();"'/>
 	</@formGroup>
-	<div id="notification">
+	<@div id="notification">
 		<@formGroup helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}'>
 			<#assign multipleOwner=config?exists&&config.multipleOwner>
-			<@checkBox name='is_use_user_name' id='is_use_user_name' value='1' checked=config?exists&&config.useUserName labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name}' />
+			<@checkBox orientation='switch' name='is_use_user_name' id='is_use_user_name' value='1' checked=config?exists&&config.useUserName labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name}' />
 		</@formGroup>
 		<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_subject}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_subject_comment}' mandatory=true>
 			<#assign subjectValue=''>
-			<#if config?exists && config.subject?exists>
-				<#assign subjectValue=config.subject>
-			</#if>
+			<#if config?exists && config.subject?exists><#assign subjectValue=config.subject></#if>
 			<@input type='text' size='sm' name='subject' value=subjectValue maxlength=255 />
 		</@formGroup>
 		<@formGroup labelFor='message' labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_message}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_message_comment}' mandatory=true>
 			<#assign messageValue=''>
-			<#if config?exists && config.message?exists>
-				<#assign messageValue=config.message>
-			</#if>
+			<#if config?exists && config.message?exists><#assign messageValue=config.message></#if>
 			<#assign configMessage=''>
-			<#if config?exists && config.message?exists>
-				<#assign configMessage=config.message>
-			</#if>
+			<#if config?exists && config.message?exists><#assign configMessage=config.message></#if>
 			<@input type='textarea' name='message'>${configMessage}</@input>
 		</@formGroup>
-	</div>
+	</@div>
 </@fieldSet>
-<script type="text/javascript" charset="utf-8">
-    function notification()
-    {
-        var notif = document.getElementsByName("is_notify");
+<script>
+function notification(){
+	var notif = document.getElementsByName("is_notify");
+	if(notif[0].checked)	{
+		document.getElementById("notification").style.display = "block";
+		<#list workgroup_list as workgroup>
+			if( document.getElementById('div_${workgroup.item.code}') ){
+				document.getElementById('div_${workgroup.item.code}').style.display = "inline";
+			}
+		</#list>
+	} else {
+		document.getElementById( 'notification' ).style.display = "none";
+		<#list workgroup_list as workgroup>
+			if(document.getElementById('div_${workgroup.item.code}') ){
+				document.getElementById('div_${workgroup.item.code}').style.display = "none";
+			}
+		</#list>
+		}
+}
 
-        if(notif[0].checked)
-        {
-            document.getElementById("notification").style.display = "block";
-                <#list workgroup_list as workgroup>
-                if(document.getElementById("div_${workgroup.item.code}"))
-            {
-                document.getElementById("div_${workgroup.item.code}").style.display = "inline";
-            }
-                </#list>
-            }
-        else
-        {
-            document.getElementById("notification").style.display = "none";
-                <#list workgroup_list as workgroup>
-                if(document.getElementById("div_${workgroup.item.code}"))
-            {
-                document.getElementById("div_${workgroup.item.code}").style.display = "none";
-            }
-                </#list>
-            }
-    }
-    notification();
+notification();
 </script>
