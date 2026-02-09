@@ -36,13 +36,15 @@ package fr.paris.lutece.plugins.workflow.modules.archive.service;
 import java.util.Locale;
 
 import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
-
+import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.service.event.ResourceDeletionStartedEvent;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.daemon.AppDaemonService;
@@ -61,6 +63,9 @@ public class TaskArchive extends SimpleTask
     @Inject
     private IResourceHistoryService _resourceHistoryService;
 
+    @Inject
+    private Event<ResourceDeletionStartedEvent> deletingEvent;
+
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -76,6 +81,11 @@ public class TaskArchive extends SimpleTask
 
         if ( _archiveService.isResourceUpForArchival( resourceWorkflow, config ) )
         {
+            if ( ArchivalType.DELETE.equals( config.getTypeArchival( ) ) )
+            {
+            	deletingEvent.fire( 
+            			new ResourceDeletionStartedEvent( resourceWorkflow.getIdResource( ), resourceWorkflow.getResourceType( ) ) );	
+            }
             AppDaemonService.signalDaemon( "archiveDaemon" );
         }
     }
