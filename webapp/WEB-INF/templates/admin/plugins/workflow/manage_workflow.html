@@ -41,6 +41,7 @@
 				</@tform>
 			</@columns>
 		</@row>
+		<#if workflow_list?size gt 0>
 		<@manageFeature id='workflow-list' >
 			<#list workflow_list as workflow>
 				<@manageFeatureItem>
@@ -65,6 +66,11 @@
 			</#list>
 		</@manageFeature>
 		<@paginationAdmin paginator=paginator combo=1 />
+		<#else>
+			<@box>
+				<@empty title='#i18n{workflow.manage_workflow.no_workflow}' subtitle='#i18n{workflow.manage_workflow.add_workflow}' iconName='mood-plus' />
+			</@box>
+		</#if>
 	</@pageColumn>
 </@pageContainer>
 <script type="module">

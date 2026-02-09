@@ -1,4 +1,5 @@
 <@adminDashboardWidget title='#i18n{workflow.dashboard.workflowList}'  id='workflow_dashboard' url=url  >
+<#if workflow_list?size gt 0>
 <@manageFeature>
 	<#list workflow_list as workflow>
 	<@manageFeatureItem>
@@ -32,4 +33,7 @@
 	</@manageFeatureItem>
 	</#list>
 </@manageFeature>
+<#else>
+	<@empty title='#i18n{workflow.manage_workflow.no_workflow}' subtitle='#i18n{workflow.manage_workflow.add_workflow}' iconName='mood-plus' actionTitle='#i18n{workflow.manage_workflow.button_create}' actionUrl='jsp/admin/plugins/workflow/ManageWorkflow.jsp?plugin_name=workflow' />
+</#if>
 </@adminDashboardWidget>
