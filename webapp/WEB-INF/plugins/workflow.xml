@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>workflow</name>
     <class>fr.paris.lutece.plugins.workflow.service.WorkflowPlugin</class>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.0</version>
     <documentation/>
     <installation/>
     <changes/>
