@@ -1,7 +1,10 @@
 <@row>
 	<@columns>
-		<@link href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow'>
-			#i18n{workflow.manage_plugin_workflow.label_manage_icon} #i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}
-		</@link>
+		<@card class='mt-5 py-3'>
+			<@link href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow'>
+				<@p class='mb-0'><@icon style='icons' /> #i18n{workflow.manage_plugin_workflow.label_manage_icon}</@p>
+				<@p class='fs-4 text-muted text-italic'>#i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}</@p>
+			</@link>
+		</@card>
 	</@columns>
 </@row>
