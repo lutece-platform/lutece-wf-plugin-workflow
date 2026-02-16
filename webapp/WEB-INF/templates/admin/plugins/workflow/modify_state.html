@@ -3,7 +3,7 @@
 	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.modify_state.title} : ${state.name}' />
 		<@breadcrumbs class='py-3'>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id!}' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title} ${state.workflow.id!}'/></@breadcrumbItem>	
+			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id!}' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>	
 			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_state.title}' /></@breadcrumbItem>	
 		</@breadcrumbs>
 		<@fieldSet>
