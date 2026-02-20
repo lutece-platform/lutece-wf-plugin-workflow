@@ -116,8 +116,8 @@
 										</@tform>
 									</@manageFeatureItemColumn>
 									<@manageFeatureItemColumn auto=true>
-										<#if task.taskType.title!=""><@span class='d-inline-block'>${task.taskType.title}</@span></#if>
-										<#if task.getTitle(locale)!=""><@span class='d-inline-block'>${task.getTitle(locale)}</@span></#if>
+										<#if task.taskType.title!=""><@span class='d-inline-block'>${task.taskType.title}</@span>
+										<#elseif task.getTitle(locale)!=""><@span class='d-inline-block'>${task.getTitle(locale)}</@span></#if>
 									</@manageFeatureItemColumn>
 									<@manageFeatureItemColumn align='end'>
 										<#if task.taskType.configRequired>
