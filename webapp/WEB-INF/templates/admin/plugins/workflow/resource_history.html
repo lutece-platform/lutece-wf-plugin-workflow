@@ -1,31 +1,26 @@
 <#if history_information_list?has_content>
-<@table striped=true condensed=true responsive=false hover=false>
-	<@tr>
-		<@th> #i18n{workflow.resource_history.row_action_name} </@th>
-		<@th> #i18n{workflow.resource_history.row_action_user}</@th>
-		<@th> #i18n{workflow.resource_history.row_action_date} </@th>
-		<@th> #i18n{workflow.resource_history.row_task_information}</@th>
-	</@tr>
+ <!-- #i18n{workflow.resource_history.row_action_name}  / #i18n{workflow.resource_history.row_action_user} /  #i18n{workflow.resource_history.row_action_date}  / #i18n{workflow.resource_history.row_task_information}</@th> -->
+<@manageFeature>
 	<#list history_information_list as history_information>
-		<@tr>
-			<@td>${history_information.resource_history.action.name}</@td>
-			<@td>
-				<#if history_information.user_history?exists>
-					<#if adminAvatar><@img class='img-fluid w-25' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!""}' alt='Avatar' title='Avatar' /></#if>
-					<@em> ${history_information.resource_history.userAccessCode!''} ${history_information.user_history.firstName} ${history_information.user_history.lastName}</@em>
-				</#if>
-			</@td>
-			<@td>
-				<@em>${history_information.resource_history.creationDate}</@em>
-			</@td>
-			<@td>
-				<#list history_information.task_information_list as task_information>
-					${task_information}
-				</#list>
-			</@td>
-		</@tr>
+	<@manageFeatureItem>
+		<@manageFeatureItemColumn auto=true>${history_information.resource_history.action.name}</@manageFeatureItemColumn>
+		<@manageFeatureItemColumn auto=true>
+			<#if history_information.user_history?exists>
+				<#if adminAvatar><@img class='img-fluid w-25' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!""}' alt='Avatar' title='Avatar' /></#if>
+				<@em> ${history_information.resource_history.userAccessCode!''} ${history_information.user_history.firstName} ${history_information.user_history.lastName}</@em>
+			<#else>
+				<@icon style='user-off' /><@em> #i18n{portal.theme.labelNoValue}</@em>
+			</#if>
+		</@manageFeatureItemColumn>
+		<@manageFeatureItemColumn>
+			<@em>${history_information.resource_history.creationDate}</@em>
+		</@manageFeatureItemColumn>
+		<@manageFeatureItemColumn align='end'>
+			<#list history_information.task_information_list as task_information>${task_information}</#list>
+		</@manageFeatureItemColumn>
+	</@manageFeatureItem>
 	</#list>
-</@table>
+</@manageFeature>
 <#else>
-<@alert class='danger' title='#i18n{workflow.resource_history.history_empty}' />
+	<@empty title='#i18n{workflow.resource_history.history_empty}' />
 </#if>

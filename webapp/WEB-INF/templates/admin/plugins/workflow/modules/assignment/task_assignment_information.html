@@ -1,8 +1,4 @@
-<#if config?exists&&config.title?exists >
-    <@h level=3>${config.title}</@h>
-</#if>
+<#if config?exists&&config.title?exists ><@h level=3>${config.title}</@h></#if>
 <@ul>
-<#list workgroup_list as workgroup>
-     <@li>${workgroup.name}</@li>
-</#list>
+<#list workgroup_list as workgroup><@li>${workgroup.name}</@li></#list>
 </@ul>
