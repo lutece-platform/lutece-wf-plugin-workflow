@@ -32,10 +32,10 @@
 					</@formGroup>
 				</@tform>
 				<@tform>
-					<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all']>
+					<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.util.labelSearch}' hideLabel=['all']>
 						<@inputGroup>
-							<@input type='text' name='search_workflow' id='search_workflow' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
-							<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
+							<@input type='text' name='search_workflow' id='search_workflow' placeHolder='#i18n{portal.util.labelSearch}' params='autocomplete="off" addons' />
+							<@button color='primary' title='#i18n{portal.util.labelSearch}' buttonIcon='search' hideTitle=['all'] />
 						</@inputGroup>
 					</@formGroup>
 				</@tform>
@@ -45,10 +45,8 @@
 		<@manageFeature id='workflow-list' >
 			<#list workflow_list as workflow>
 				<@manageFeatureItem>
-					<@manageFeatureItemColumn auto=true>
-						<#if !workflow.enabled><@icon style='player-pause fs-1 text-warning' title='#i18n{portal.util.labelDisabled}' /></#if>
-					</@manageFeatureItemColumn>
-					<@manageFeatureItemColumn class='searchable'>
+					<@manageFeatureItemColumn auto=true class='searchable'>
+						<#if !workflow.enabled><@icon style='player-pause fs-1 text-warning me-2' title='#i18n{portal.util.labelDisabled}' /></#if>
 						<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}'>${workflow.name}</@link>
 					</@manageFeatureItemColumn>
 					<@manageFeatureItemColumn align='end'>
@@ -65,7 +63,9 @@
 				</@manageFeatureItem>
 			</#list>
 		</@manageFeature>
-		<@paginationAdmin paginator=paginator combo=1 />
+		<#if workflow_list?size gt 10>
+			<@paginationAdmin paginator=paginator combo=1 />
+		</#if>	
 		<#else>
 			<@box>
 				<@empty title='#i18n{workflow.manage_workflow.no_workflow}' subtitle='#i18n{workflow.manage_workflow.add_workflow}' iconName='mood-plus' />

@@ -1,19 +1,19 @@
-<@adminDashboardWidget title='#i18n{workflow.dashboard.workflowList}'  id='workflow_dashboard' url=url  >
+<@adminDashboardWidget title='#i18n{workflow.dashboard.workflowList}' id='workflow_dashboard' url=url  >
 <#if workflow_list?size gt 0>
-<@manageFeature>
+<@manageFeature class='' >
 	<#list workflow_list as workflow>
 	<@manageFeatureItem>
 		<@manageFeatureItemColumn auto=true>
-			<@h level=3 class='mb-0' params='title="#i18n{workflow.manage_workflow.title_modify} ${workflow.name}" style="--tw:300px"'>
-				<#if !workflow.enabled><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
-				<@span class='truncate'><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' label=workflow.name /></@span>
+			<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{workflow.manage_workflow.title_modify} ${workflow.name}" style="--tw:300px"'>
+				<#if !workflow.enabled><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
+				<@span class='d-inline-block text-truncate mw-sm'><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' label=workflow.name /></@span>
 			</@h>
 		</@manageFeatureItemColumn>
 		<@manageFeatureItemColumn align='end'>
 			<#if workflow.enabled>
-				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] size='sm' buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' />
+				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
 			<#else>
-				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] size='sm' buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' />
+				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
 			</#if>
 			<@div class='dropdown'>
 				<a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">

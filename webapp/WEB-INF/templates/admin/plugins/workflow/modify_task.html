@@ -7,8 +7,8 @@
 				<@input type="hidden" name="token" value="${token}" />
 				${task_config!}
 				<@formGroup>
-					<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.modify_task.button_save}' />
-					<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />
+					<@button type='submit' class='form-validation' name='save' buttonIcon='check' title='#i18n{workflow.modify_task.button_save}'  />
+					<@button type='submit'  class='form-validation' name='cancel' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />
 				</@formGroup>
 			</@fieldSet>
 		</@tform>
