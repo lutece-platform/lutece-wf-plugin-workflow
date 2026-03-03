@@ -14,28 +14,22 @@
 				<@select name='idStateKO' default_value=idStateKO?string items=list_states />
 			</@formGroup>
 			<@formGroup labelFor='controllerName' labelKey='#i18n{module.workflow.state.task.choose.state.config.controller.choice}'>
-				<#if controller_list?has_content>
-					<#list controller_list as controller>
-						<#if selected_controller?? && selected_controller == controller.getName()>
-							<#assign checked=true>
-						<#else>
-							<#assign checked=false>
-						</#if>
-						<@radioButton name="controllerName" value='${controller.getName()}' mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
-						<@formHelp>#i18n{controller.getHelpKey()}</@formHelp>
-					</#list>
-					<@inputGroupItem>
-						<@button type='submit' buttonIcon='check' name='apply' value='select_controller_config' />
-					</@inputGroupItem>
-				</#if>
+			<#if controller_list?has_content>
+				<#list controller_list as controller>
+					<#if selected_controller?? && selected_controller == controller.getName()><#assign checked=true><#else><#assign checked=false></#if>
+					<@radioButton name="controllerName" value='${controller.getName()}' orientation='inline'  mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
+					<@formHelp>#i18n{controller.getHelpKey()}</@formHelp>
+				</#list>
+				<@button type='submit' buttonIcon='check' name='apply' title='#i18n{workflow.modify_action.button_apply}' value='select_controller_config' />
+			</#if>
 			</@formGroup>
 		</@fieldSet>
 	</@columns>
 </@row>
 <#if controller_config_html??>
-	<@row>
-		<@columns>
-			${controller_config_html}
-		</@columns>
-	</@row>
+<@row>
+	<@columns>
+		${controller_config_html}
+	</@columns>
+</@row>
 </#if>

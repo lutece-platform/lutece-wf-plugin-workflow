@@ -1,7 +1,7 @@
 <#include "macro_workflows.html" />
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_action.title} : ${action.name}' />
+		<@pageHeader title='#i18n{workflow.modify_action.title} : ${action.name}' class='' />
 		<@breadcrumbs class='py-3'>
 			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${action.workflow.id!}&pane=pane-actions' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>	
 			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_action.title}' /></@breadcrumbItem>	
@@ -62,9 +62,6 @@
 									</@formGroup>
 									<@button type='submit' name='apply' title='#i18n{workflow.create_action.label_select_unselect_linked_actions}'/>
 								<#else>
-									<@alert color='warning' class='my-3'>
-										<@span>#i18n{workflow.create_action.label_link_actions_display_task_forms}</@span>
-									</@alert>
 									<@alert color='warning' class='my-3'>
 										<@icon style='alert-triangle' class='me-2'/> #i18n{workflow.create_action.label_link_actions_comment_display_task_forms}
 									</@alert>
