@@ -4,7 +4,7 @@
 	<#list workflow_list as workflow>
 	<@manageFeatureItem>
 		<@manageFeatureItemColumn auto=true>
-			<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{workflow.manage_workflow.title_modify} ${workflow.name}" style="--tw:300px"'>
+			<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{workflow.manage_workflow.title_modify} ${workflow.name}"'>
 				<#if !workflow.enabled><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
 				<@span class='d-inline-block text-truncate mw-sm'><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' label=workflow.name /></@span>
 			</@h>
@@ -15,20 +15,11 @@
 			<#else>
 				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
 			</#if>
-			<@div class='dropdown'>
-				<a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-						<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-						<path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-						<path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-					</svg>
-				</a>
-				<@div class="dropdown-menu dropdown-menu-end">
-					<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item'><@icon style='pencil' /> #i18n{workflow.manage_workflow.title_modify}</@link>
-					<@link href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' class='dropdown-item'><@icon style='copy' /> #i18n{workflow.manage_workflow.title_copy}</@link>
-					<@link href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item text-danger'><@icon style='trash' /> #i18n{workflow.manage_workflow.title_delete}</@link>
-				</@div>
-			</@div>
+			<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' dropdownMenu=true>
+				<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item'><@icon style='pencil' /> #i18n{workflow.manage_workflow.title_modify}</@link>
+				<@link href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' class='dropdown-item'><@icon style='copy' /> #i18n{workflow.manage_workflow.title_copy}</@link>
+				<@link href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item text-danger'><@icon style='trash' /> #i18n{workflow.manage_workflow.title_delete}</@link>
+			</@button>
 		</@manageFeatureItemColumn>
 	</@manageFeatureItem>
 	</#list>
