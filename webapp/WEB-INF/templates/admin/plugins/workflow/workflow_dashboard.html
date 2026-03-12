@@ -11,9 +11,9 @@
 		</@manageFeatureItemColumn>
 		<@manageFeatureItemColumn align='end'>
 			<#if workflow.enabled>
-				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-stop' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
+				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-stop-filled' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
 			<#else>
-				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-play' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
+				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-play-filled' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
 			</#if>
 			<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' dropdownMenu=true>
 				<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item'><@icon style='pencil' /> #i18n{workflow.manage_workflow.title_modify}</@link>
