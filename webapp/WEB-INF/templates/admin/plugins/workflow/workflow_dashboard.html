@@ -9,7 +9,7 @@
 				<@span class='d-inline-block text-truncate mw-sm'><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' label=workflow.name /></@span>
 			</@h>
 		</@manageFeatureItemColumn>
-		<@manageFeatureItemColumn align='end'>
+		<@manageFeatureItemColumn flex=false align='end'>
 			<#if workflow.enabled>
 				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-stop-filled' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
 			<#else>
