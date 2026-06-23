@@ -80,6 +80,10 @@ const searchElementList = document.querySelectorAll("#workflow-list .col ul li")
 new LuteceSearchList( searchInput, searchElementList, {
     searchableChild: [".searchable"],
     highlight: true,
+	// Keep the filter value across form submits / page reloads.
+    persist: true,
+    persistKey: "lutece-admin-workflow-list-search",
+    
 });
 </script>
 <@scrollTopBtn />
