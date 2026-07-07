@@ -40,6 +40,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.ArchiveService;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.IArchiveService;
@@ -96,6 +97,11 @@ public class ArchiveDaemon extends Daemon
         }
     }
 
+    /**
+     * Method to select the valid ressources to process the archive task.
+     * @param action Automatic Archivage task linked to a state
+     * @param wf the workflow
+     */
     private void processAction( Action action, Workflow wf )
     {
         List<ITask> listTasks = getListTaskByIdActionAndTaskType( action.getId( ), "taskTypeArchive", Locale.getDefault( ) );
@@ -103,7 +109,8 @@ public class ArchiveDaemon extends Daemon
         if ( CollectionUtils.isNotEmpty( listTasks ) )
         {
             ResourceWorkflowFilter filt = new ResourceWorkflowFilter( );
-            filt.setListIdStateBefore( action.getListIdStateBefore( ) );
+            List<Integer> listIdStateToTreat = buildListIdStateToTreat(action, listTasks);
+            filt.setListIdStateBefore( listIdStateToTreat);
             filt.setIdWorkflow( wf.getId( ) );
 
             List<ResourceWorkflow> listResource = _resourceWorkflowService.getListResourceWorkflowByFilter( filt );
@@ -124,6 +131,32 @@ public class ArchiveDaemon extends Daemon
                 }
             }
         }
+    }
+
+    /**
+     * Build the list of the states totreat by the dameon archive
+     * Example: [Validated, Canceled, Archived - Deleted]
+     * @param action the action to process
+     * @param listTasks the list of tasks to process
+     * @return the list of the states to treat
+     */
+    private List<Integer> buildListIdStateToTreat(Action action, List<ITask> listTasks) {
+        List<Integer> listIdStateToTreat =  new ArrayList<>();
+
+        // Add source states configured on the archive action.
+        listIdStateToTreat.addAll( action.getListIdStateBefore( ) );
+        // Add target archive states for DELETE tasks
+        for ( ITask task : listTasks)
+        {
+            ArchiveConfig config = _archiveService.loadConfig( task );
+            if ( config != null
+                    && ArchivalType.DELETE.equals( config.getTypeArchival( ) )
+                    && !listIdStateToTreat.contains( config.getNextState( ) ) )
+            {
+                listIdStateToTreat.add( config.getNextState( ) );
+            }
+        }
+        return listIdStateToTreat;
     }
 
     private List<ITask> getListTaskByIdActionAndTaskType( int nIdAction, String taskType, Locale locale )

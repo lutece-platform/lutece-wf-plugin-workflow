@@ -44,6 +44,7 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.WorkflowResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
@@ -145,6 +146,11 @@ public class ArchiveService implements IArchiveService
     @Override
     public boolean isResourceUpForArchival( ResourceWorkflow resourceWorkflow, ArchiveConfig config )
     {
+        if ( ArchivalType.DELETE.equals( config.getTypeArchival( ) ) && resourceWorkflow.getState( ) != null
+                && resourceWorkflow.getState( ).getId( ) == config.getNextState( ) )
+        {
+            return true;
+        }
         if ( config.getDelayArchival( ) <= 0 )
         {
             return true;
