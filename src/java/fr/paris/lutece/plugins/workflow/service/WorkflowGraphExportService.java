@@ -52,6 +52,7 @@ public class WorkflowGraphExportService
 {
 
     private static final String KEY_GRAPH = "graph TD";
+    private static final String KEY_START = "Start(( )) --> ";
     private static final String KEY_ASSIGN_LABEL_START = "[\"";
     private static final String KEY_ASSIGN_LABEL_END = "\"]";
     private static final String KEY_ASSIGN_ACTIONS_START = " --> |\"";
@@ -78,6 +79,11 @@ public class WorkflowGraphExportService
         // list states
         for ( State state : wf.getAllStates( ) )
         {
+            if ( state.isInitialState( ) )
+            {
+        	sb.append( KEY_START ).append( state.getId( ) ).append( NEWLINE );
+            }
+            
             sb.append( state.getId( ) ).append( KEY_ASSIGN_LABEL_START ).append( state.getName( ).replaceAll( "\"", "'" ) ); 
             
             if ( state.getAllActions( ) != null && state.getAllActions( ).size( ) > 0 )
