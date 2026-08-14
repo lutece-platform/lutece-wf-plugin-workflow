@@ -41,6 +41,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -90,7 +91,7 @@ public class CommentTaskComponent extends AbstractTaskComponent
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.comment.task_comment_config.message.mandatory.field";
     private static final String MESSAGE_NO_CONFIGURATION_FOR_TASK_COMMENT = "module.workflow.comment.task_comment_config.message.no_configuration_for_task_comment";
-
+    private static final String MESSAGE_DEFAULT_COMMENT_TITLE = "module.workflow.comment.task_comment_config.default_title";
     // SERVICES
     @Inject
     private ICommentValueService _commentValueService;
@@ -210,5 +211,16 @@ public class CommentTaskComponent extends AbstractTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );
 
         return template.getHtml( );
+    }
+
+    @Override
+    public void doCreateDefaultConfig( ITask task ){
+        TaskCommentConfig taskCommentConfig = new TaskCommentConfig( );
+        taskCommentConfig.setRichText( false );
+        taskCommentConfig.setMandatory( false );
+        taskCommentConfig.setIdTask( task.getId( ) );
+        taskCommentConfig.setTitle( I18nService.getLocalizedString( MESSAGE_DEFAULT_COMMENT_TITLE, I18nService.getDefaultLocale( ) ) );
+
+        this.getTaskConfigService( ).create( taskCommentConfig );
     }
 }
