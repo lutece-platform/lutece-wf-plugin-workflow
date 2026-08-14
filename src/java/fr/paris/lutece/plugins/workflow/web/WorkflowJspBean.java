@@ -1687,6 +1687,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             task.setOrder( nMaximumOrder + 1 );
 
             _taskService.create( task );
+            _taskComponentManager.doCreateDefaultConfig(task);
 
             // If the task requires a form, then remove any links to the action
             if ( task.getTaskType( ).isFormTaskRequired( ) )

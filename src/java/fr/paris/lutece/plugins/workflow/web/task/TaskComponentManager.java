@@ -174,4 +174,14 @@ public class TaskComponentManager implements ITaskComponentManager
 
         return null;
     }
+
+    @Override
+    public void doCreateDefaultConfig(ITask task) {
+        ITaskComponent component = getTaskComponent( task );
+
+        if ( component != null )
+        {
+            component.doCreateDefaultConfig( task );
+        }
+    }
 }
