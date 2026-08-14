@@ -167,6 +167,20 @@ public class TaskComponentManager implements ITaskComponentManager
      * {@inheritDoc}
      */
     @Override
+    public void doCreateDefaultConfig( ITask task )
+    {
+        ITaskComponent component = getTaskComponent( task );
+
+        if ( component != null )
+        {
+            component.doCreateDefaultConfig( task );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
         ITaskComponent component = getTaskComponent( task );
