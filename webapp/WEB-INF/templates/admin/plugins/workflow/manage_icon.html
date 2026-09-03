@@ -8,13 +8,13 @@
 		<#list icon_list as icon>
 			<@manageFeatureItem>
 				<@manageFeatureItemColumn auto=true>
-					<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='img-fluid img-thumbnail' params='width="32"'  />
+					<@img url='image?resource_type=workflow_icon_img&id=' + icon.id class='img-fluid img-thumbnail' params='width="32"'  />
 					<@span class='ms-3 ml-3'>${icon.name}</@span>
 					<#assign params = ''>
 				</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn align='end'>
-					<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' targetElement='#edit_icon_page' redirectForm=false id='icon${icon.id}-edit' title='#i18n{#i18n{workflow.modify_icon.title}' btnTitle='' btnIcon='pencil' position='end' />
-					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] color='danger'/>
+					<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=' + icon.id targetElement='#edit_icon_page' redirectForm=false id='icon' + icon.id + '-edit' title='#i18n{#i18n{workflow.modify_icon.title}' btnTitle='' btnIcon='pencil' position='end' />
+					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=' + icon.id buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] color='danger'/>
 				</@manageFeatureItemColumn>
 			</@manageFeatureItem>
 		</#list>

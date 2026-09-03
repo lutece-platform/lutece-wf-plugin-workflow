@@ -1,7 +1,7 @@
 <#macro radioIconList name default_value icons >
 <#list icons as icon> 
-<@radioButton name=name value='${icon.id}' labelKey='' orientation='inline' checked=(default_value==icon.id) >
-	<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='img-fluid img-thumbnail' params='width="32"' />	
+<@radioButton name=name value=icon.id?string labelKey='' orientation='inline' checked=(default_value==icon.id) >
+	<@img url='image?resource_type=workflow_icon_img&id=' + icon.id class='img-fluid img-thumbnail' params='width="32"' />
 </@radioButton>
 </#list>
 </#macro>

@@ -18,7 +18,7 @@
 					<@boxBody>
 						<@tform action='jsp/admin/plugins/workflow/DoModifyWorkflow.jsp'>
 							<@input type='hidden' name='id_workflow' value=workflow.id/>
-							<@input type="hidden" name="token" value="${token}" />
+							<@input type="hidden" name="token" value=token />
 							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_workflow.label_name}' mandatory=true helpKey='#i18n{workflow.create_workflow.label_name_comment}'>
 								<@input type='text' name='name' value=workflow.name maxlength=255 />
 							</@formGroup>
@@ -44,28 +44,28 @@
 				<@tabs>
 					<@tabList>
 						<#if pane='pane-states'><#assign active = true /><#else><#assign active = false /></#if>
-						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-states' active=active title='#i18n{workflow.modify_workflow.manage_state.title}' />
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + workflow.id + '&pane=pane-states' active=active title='#i18n{workflow.modify_workflow.manage_state.title}' />
 						<#if pane='pane-actions'><#assign active = true /><#else><#assign active = false /></#if>
-						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-actions' active=active title='#i18n{workflow.modify_workflow.manage_action.title}'/>
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + workflow.id + '&pane=pane-actions' active=active title='#i18n{workflow.modify_workflow.manage_action.title}'/>
 						<#if pane='pane-graph'><#assign active = true /><#else><#assign active = false /></#if>
-						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' active=active title='#i18n{workflow.graph_workflow.title}' />
+						<@tabLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + workflow.id + '&pane=pane-graph' active=active title='#i18n{workflow.graph_workflow.title}' />
 						<#switch pane>
 							<#case 'pane-states'>
 								<@tabLink tabClass='ms-auto'>
-									<@aButton href='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}#list_state' style='' color='' class='nav-link' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' />
+									<@aButton href='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=' + workflow.id + '#list_state' style='' color='' class='nav-link' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' />
 								</@tabLink>
 								<#break>
 							<#case 'pane-actions'>
 								<@tabLink tabClass='ms-auto'>
-									<@aButton href='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}#list_action' style='' color='' class='nav-link' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}'  />
+									<@aButton href='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=' + workflow.id + '#list_action' style='' color='' class='nav-link' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}'  />
 								</@tabLink>
 								<#break>
 							<#case 'pane-graph'>
 								<@tabLink tabClass='ms-auto'>
 								<#if showTasks?? >
-									<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-graph' style='' color='' class='nav-link' buttonIcon='mist-off' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' />
+									<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + workflow.id + '&pane=pane-graph' style='' color='' class='nav-link' buttonIcon='mist-off' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' />
 								<#else>
-									<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?show_tasks&id_workflow=${workflow.id}&pane=pane-graph' style='' color='' class='nav-link' buttonIcon='mist' title='#i18n{workflow.manage_workflow.title_graph_tasks}' />
+									<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?show_tasks&id_workflow=' + workflow.id + '&pane=pane-graph' style='' color='' class='nav-link' buttonIcon='mist' title='#i18n{workflow.manage_workflow.title_graph_tasks}' />
 								</#if>
 								</@tabLink>
 								<#break>
@@ -82,7 +82,7 @@
 											<@manageFeatureItemColumn class='searchable'>
 											${state.name}  
 											<#if state.allActions?? && state.allActions?size gt 0 >
-												<@link href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'><@icon name='fa-bolt' /></@link> 
+												<@link href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=' + state.id title='#i18n{workflow.modify_reflexive_action.title}'><@icon name='fa-bolt' /></@link>
 											</#if>
 											</@manageFeatureItemColumn>
 											<@manageFeatureItemColumn auto=true align='end'>
@@ -97,10 +97,10 @@
 												</@tform>
 											</@manageFeatureItemColumn>
 											<@manageFeatureItemColumn align='end'>
-												<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' />
-												<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='list-check' title='#i18n{workflow.modify_reflexive_action.title}' />
-												<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}'/>
-												<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_state.title_delete}'/>
+												<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=' + state.id hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' />
+												<@aButton href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=' + state.id hideTitle=['all'] buttonIcon='list-check' title='#i18n{workflow.modify_reflexive_action.title}' />
+												<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyState.jsp?id_state=' + state.id hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.modify_workflow.manage_state.title_copy_state}'/>
+												<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=' + state.id hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_state.title_delete}'/>
 											</@manageFeatureItemColumn>
 										</@manageFeatureItem>
 									</#list>
@@ -136,9 +136,9 @@
 												</@tform>
 											</@manageFeatureItemColumn>
 											<@manageFeatureItemColumn align='end'>
-												<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' />
-												<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' />
-												<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' />
+												<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=' + action.id hideTitle=['all'] buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' />
+												<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyAction.jsp?id_action=' + action.id hideTitle=['all'] buttonIcon='copy' color='warning' title='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' />
+												<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=' + action.id hideTitle=['all'] buttonIcon='trash' color='danger' title='#i18n{workflow.modify_workflow.manage_action.title_delete}' />
 											</@manageFeatureItemColumn>
 										</@manageFeatureItem>
 									</#list>

@@ -1,9 +1,9 @@
 <#include "macro_workflows.html" />
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_action.title} : ${action.name}' class='' />
+		<@pageHeader title='#i18n{workflow.modify_action.title} : ' + action.name class='' />
 		<@breadcrumbs class='py-3'>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${action.workflow.id!}&pane=pane-actions' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>	
+			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + (action.workflow.id!) + '&pane=pane-actions' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>
 			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_action.title}' /></@breadcrumbItem>	
 		</@breadcrumbs>
 		<@row>
@@ -13,7 +13,7 @@
 					<@boxBody>
 						<@tform action='jsp/admin/plugins/workflow/DoModifyAction.jsp?plugin_name=workflow'>
 							<@input type='hidden' name='id_action' value=action.id />
-							<@input type="hidden" name="token" value="${token}" />
+							<@input type="hidden" name="token" value=token />
 							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' mandatory=true helpKey='#i18n{workflow.create_action.label_name_comment}'>
 								<@input type='text' name='name' value=action.name maxlength=255  />
 							</@formGroup>
@@ -31,7 +31,7 @@
 											<#assign isCheck=true />
 										</#if>
 									</#list>
-									<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' checked=isCheck />
+									<@checkBox orientation='switch' name='id_state_before' id='id_state_before' + state.code value=state.code?string labelKey=state.name checked=isCheck />
 								</#list>
 							</@formGroup>
 							<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>
@@ -81,12 +81,12 @@
 					<@boxHeader titleLevel='h3' i18nTitleKey='workflow.modify_action.manage_task.title' >
 						<@tform action='jsp/admin/plugins/workflow/DoInsertTask.jsp?plugin_name=workflow' type='inline'>
 							<@input type='hidden' name='id_action' value=action.id/>
-							<@input type="hidden" name="token" value="${token}" />
+							<@input type="hidden" name="token" value=token />
 							<@formGroup rows=2 labelFor='task_type_key' formStyle='' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}' hideLabel=['all']>
 								<@inputGroup>
 									<@select name='task_type_key' default_value='-1'  items=task_type_list sort=true />
 									<@button type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
-									<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] color='secondary' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right'  />
+									<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=' + action.id hideTitle=['all'] color='secondary' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right'  />
 								</@inputGroup>
 							</@formGroup>
 						</@tform>
@@ -117,10 +117,10 @@
 									</@manageFeatureItemColumn>
 									<@manageFeatureItemColumn align='end'>
 										<#if task.taskType.configRequired>
-											<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' useIframe=true targetElement='#edit_task_page' id='task${task.id}-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' size='half' btnIcon='pencil' position='end' />
+											<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=' + task.id useIframe=true targetElement='#edit_task_page' id='task' + task.id + '-edit' title='#i18n{workflow.modify_task.title}' btnTitle='' size='half' btnIcon='pencil' position='end' />
 										</#if>
-										<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] color='warning' class='me-2' buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}'  />
-										<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}'  />
+											<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=' + task.id hideTitle=['all'] color='warning' class='me-2' buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}'  />
+											<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=' + task.id hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}'  />
 									</@manageFeatureItemColumn>
 								</@manageFeatureItem>
 								</#list>
@@ -148,11 +148,11 @@
 									<@manageFeatureItemColumn>#i18n{${prerequisite.title}}</@manageFeatureItemColumn>
 									<@manageFeatureItemColumn align='end'>
 										<#if prerequisite.hasConfiguration>
-											<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] buttonIcon='edit'  />
+											<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=' + prerequisite.idPrerequisite + '&id_action=' + action.id title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] buttonIcon='edit'  />
 											<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
 											<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' targetElement='#create_edit_prerequisite_page' redirectForm=false id='prerequisite${prerequisite.idPrerequisite}' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' btnTitle='' btnIcon='edit' position='end' /> -->
 										</#if>
-										<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
+										<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=' + prerequisite.idPrerequisite + '&id_action=' + action.id title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
 									</@manageFeatureItemColumn>
 								</@manageFeatureItem>
 								</#list>

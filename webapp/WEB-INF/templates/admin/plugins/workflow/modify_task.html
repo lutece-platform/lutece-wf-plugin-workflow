@@ -4,8 +4,8 @@
 		<@tform action='jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow' id='edit_task_page'>
 			<@fieldSet>
 				<@input type='hidden' name='id_task' value=task.id!/>
-				<@input type="hidden" name="token" value="${token}" />
-				${task_config!}
+				<@input type="hidden" name="token" value=token />
+				${task_config!?no_esc}
 				<@formGroup>
 					<@button type='submit' class='form-validation' name='save' buttonIcon='check' title='#i18n{workflow.modify_task.button_save}'  />
 					<@button type='submit'  class='form-validation' name='cancel' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />

@@ -4,7 +4,7 @@
 		<@pageHeader title='#i18n{workflow.create_action.title}' />
 		<@tform action='jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow' boxed=true>
 		<@input type='hidden' name='id_workflow' value=workflow.id/>
-		<@input type="hidden" name="token" value="${token}" />
+		<@input type="hidden" name="token" value=token />
 		<@row>
 			<@columns>	
 				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
@@ -15,7 +15,7 @@
 				</@formGroup>
 				<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
 					<#list state_list as state>
-						<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}'  value='${state.code}' labelKey='${state.name}' />
+							<@checkBox orientation='switch' name='id_state_before' id='id_state_before' + state.code value=state.code?string labelKey=state.name />
 					</#list>
 				</@formGroup>
 				<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>

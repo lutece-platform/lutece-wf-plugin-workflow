@@ -17,7 +17,7 @@
 			<#if controller_list?has_content>
 				<#list controller_list as controller>
 					<#if selected_controller?? && selected_controller == controller.getName()><#assign checked=true><#else><#assign checked=false></#if>
-					<@radioButton name="controllerName" value='${controller.getName()}' orientation='inline'  mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
+					<@radioButton name="controllerName" value=controller.getName() orientation='inline' mandatory=true labelKey='#i18n{' + controller.getLabelKey() + '}' checked=checked />
 					<@formHelp>#i18n{controller.getHelpKey()}</@formHelp>
 				</#list>
 				<@button type='submit' buttonIcon='check' name='apply' title='#i18n{workflow.modify_action.button_apply}' value='select_controller_config' />
@@ -29,7 +29,7 @@
 <#if controller_config_html??>
 <@row>
 	<@columns>
-		${controller_config_html}
+		${controller_config_html?no_esc}
 	</@columns>
 </@row>
 </#if>
