@@ -5,10 +5,10 @@
 		<@tform action=form_action id='create_edit_prerequisite' boxed=true>
 			<@input type='hidden' name='id_action' value=id_action />
 			<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
-			<@input type="hidden" name="token" value="${token}" />
+			<@input type="hidden" name="token" value=token />
 			<#if id_prerequisite??>	<@input type='hidden' name='id_prerequisite' value=id_prerequisite /></#if>
 			<#if errors??><#list errors as error><@alert class='danger' dismissible=true title=error.message /></#list></#if>
-			${content}
+			${content?no_esc}
 			<@formGroup>
 				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
 				<@button type='submit' name='cancel' value='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />

@@ -11,12 +11,12 @@
 	<@formGroup labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' >
 		<#list workgroup_list as workgroup>
 			<@checkBox orientation='switch' name='workgroups' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
-			<@span id='div_${workgroup.item.code}'>
+			<@span id='div_' + workgroup.item.code>
 				#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
 				<#if workgroup.config?exists>
-					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='${workgroup.config.idMailingList}' />
+					<@select name='id_mailing_list_' + workgroup.item.code items=mailing_list default_value=workgroup.config.idMailingList?string />
 				<#else>
-					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='-1' />
+					<@select name='id_mailing_list_' + workgroup.item.code items=mailing_list default_value='-1' />
 				</#if>
 			</@span>
 		</#list>
@@ -50,15 +50,15 @@ function notification(){
 	if(notif[0].checked)	{
 		document.getElementById("notification").style.display = "block";
 		<#list workgroup_list as workgroup>
-			if( document.getElementById('div_${workgroup.item.code}') ){
-				document.getElementById('div_${workgroup.item.code}').style.display = "inline";
+			if( document.getElementById('div_${workgroup.item.code?js_string?no_esc}') ){
+				document.getElementById('div_${workgroup.item.code?js_string?no_esc}').style.display = "inline";
 			}
 		</#list>
 	} else {
 		document.getElementById( 'notification' ).style.display = "none";
 		<#list workgroup_list as workgroup>
-		if(document.getElementById('div_${workgroup.item.code}') ){
-			document.getElementById('div_${workgroup.item.code}').style.display = "none";
+		if(document.getElementById('div_${workgroup.item.code?js_string?no_esc}') ){
+			document.getElementById('div_${workgroup.item.code?js_string?no_esc}').style.display = "none";
 		}
 		</#list>
 	}

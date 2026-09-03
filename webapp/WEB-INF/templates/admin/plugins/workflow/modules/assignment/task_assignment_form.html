@@ -1,9 +1,9 @@
 <#if config?exists && config.multipleOwner>
-	<@formGroup labelFor='workgroups_${config.idTask}' labelKey='${config.title}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' mandatory=true>
-		<@checkboxList name='workgroups_${config.idTask}' items=workgroup_list default_values='' />
+	<@formGroup labelFor='workgroups_' + config.idTask labelKey=config.title helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' mandatory=true>
+		<@checkboxList name='workgroups_' + config.idTask items=workgroup_list default_values='' />
 	</@formGroup>
 <#elseif config?exists>	
-	<@formGroup labelFor='workgroups_${config.idTask}' labelKey='${config.title}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' mandatory=true>
-		<@select name='workgroups_${config.idTask}' items=workgroup_list default_value='' />
+	<@formGroup labelFor='workgroups_' + config.idTask labelKey=config.title helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' mandatory=true>
+		<@select name='workgroups_' + config.idTask items=workgroup_list default_value='' />
     </@formGroup>
 </#if>

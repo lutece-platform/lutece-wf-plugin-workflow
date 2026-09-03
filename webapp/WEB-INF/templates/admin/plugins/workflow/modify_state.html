@@ -1,22 +1,22 @@
 <#include "macro_workflows.html" />
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_state.title} : ${state.name}' />
+		<@pageHeader title='#i18n{workflow.modify_state.title} : ' + state.name />
 		<@breadcrumbs class='py-3'>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id!}' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>	
+			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + (state.workflow.id!) label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>
 			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_state.title}' /></@breadcrumbItem>	
 		</@breadcrumbs>
 		<@fieldSet>
 			<@tabs>
 				<@tabList>
-					<@tabLink active=true href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}'/>
-					<@tabLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'/>
-					<@tabLink  href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' tabClass='ms-auto' title='#i18n{portal.util.labelBack}' />
+					<@tabLink active=true href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=' + state.id title='#i18n{workflow.modify_state.title}'/>
+					<@tabLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=' + state.id title='#i18n{workflow.modify_reflexive_action.title}'/>
+					<@tabLink  href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=' + state.workflow.id tabClass='ms-auto' title='#i18n{portal.util.labelBack}' />
 				</@tabList>
 				<@tabContent>
 					<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
 						<@input type='hidden' name='id_state' value=state.id/>
-						<@input type="hidden" name="token" value="${token}" />
+						<@input type="hidden" name="token" value=token />
 						<@row>
 							<@columns>
 								<@formGroup labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
