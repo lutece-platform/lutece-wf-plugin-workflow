@@ -209,6 +209,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PROPERTY_CREATE_ACTION_PAGE_TITLE = "workflow.create_action.page_title";
     private static final String PROPERTY_MODIFY_ACTION_PAGE_TITLE = "workflow.modify_action.page_title";
     private static final String PROPERTY_MODIFY_TASK_PAGE_TITLE = "workflow.modify_task.page_title";
+    private static final String PROPERTY_MODIFY_REFLEXIVE_ACTION_PAGE_TITLE = "workflow.modify_reflexive_action.title";
     private static final String PROPERTY_ITEM_PER_PAGE = "workflow.itemsPerPage";
     private static final String PROPERTY_COPY_OF_STATE = "workflow.manage_workflow.copy_of_state";
     private static final String PROPERTY_COPY_OF_ACTION = "workflow.manage_workflow.copy_of_action";
@@ -870,7 +871,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_STATE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), new WorkflowBreadcrumbs( getLocale( ) ).workflow( workflow, WorkflowBreadcrumbs.PANE_STATES ).getItems( ) );
     }
 
     /**
@@ -983,7 +984,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_STATE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), new WorkflowBreadcrumbs( getLocale( ) )
+                .workflow( _workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ), WorkflowBreadcrumbs.PANE_STATES ).getItems( ) );
     }
 
     /**
@@ -1249,7 +1251,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_ACTION, getLocale( ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), new WorkflowBreadcrumbs( getLocale( ) ).workflow( workflow, WorkflowBreadcrumbs.PANE_ACTIONS ).getItems( ) );
     }
 
     /**
@@ -1528,7 +1530,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale( ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), new WorkflowBreadcrumbs( getLocale( ) )
+                .workflow( _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ), WorkflowBreadcrumbs.PANE_ACTIONS ).getItems( ) );
     }
 
     /**
@@ -1728,9 +1731,28 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         setPageTitleProperty( PROPERTY_MODIFY_TASK_PAGE_TITLE );
 
+        // The tasks of a reflexive action are managed from the page of its state
+        WorkflowBreadcrumbs breadcrumbs = new WorkflowBreadcrumbs( getLocale( ) );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+
+        if ( action != null )
+        {
+            Workflow workflow = _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) );
+
+            if ( action.isAutomaticReflexiveAction( ) && !action.getListIdStateBefore( ).isEmpty( ) )
+            {
+                State state = _stateService.findByPrimaryKey( action.getListIdStateBefore( ).get( 0 ) );
+                breadcrumbs.workflow( workflow, WorkflowBreadcrumbs.PANE_STATES ).state( state ).reflexiveTasks( state );
+            }
+            else
+            {
+                breadcrumbs.workflow( workflow, WorkflowBreadcrumbs.PANE_ACTIONS ).action( action );
+            }
+        }
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_TASK, getLocale( ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), breadcrumbs.getItems( ) );
     }
 
     /**
@@ -2896,9 +2918,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_STATE, state );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) );
 
+        setPageTitleProperty( PROPERTY_MODIFY_REFLEXIVE_ACTION_PAGE_TITLE );
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_REFLEXIVE_ACTION, locale, model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml( ), new WorkflowBreadcrumbs( locale )
+                .workflow( _workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ), WorkflowBreadcrumbs.PANE_STATES ).state( state ).getItems( ) );
     }
 
     /**
