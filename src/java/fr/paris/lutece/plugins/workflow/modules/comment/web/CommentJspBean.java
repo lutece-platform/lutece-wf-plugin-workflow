@@ -70,7 +70,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 @RequestScoped
-@Named
+@Named( "workflow_commentJspBean" )
 public class CommentJspBean extends MVCAdminJspBean
 {
     /**

@@ -1,3 +1,3 @@
 <%@ page errorPage="../../ErrorPage.jsp" %>
 
-${ pageContext.response.sendRedirect( commentJspBean.getConfirmRemoveComment( pageContext.request )) }
+${ pageContext.response.sendRedirect( workflow_commentJspBean.getConfirmRemoveComment( pageContext.request )) }
