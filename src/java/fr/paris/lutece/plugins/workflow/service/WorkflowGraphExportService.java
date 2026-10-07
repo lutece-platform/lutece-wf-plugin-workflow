@@ -79,7 +79,7 @@ public class WorkflowGraphExportService
         // list states
         for ( State state : wf.getAllStates( ) )
         {
-            if ( state.isInitialState( ) )
+            if ( Boolean.TRUE.equals( state.isInitialState( ) ) )
             {
         	sb.append( KEY_START ).append( state.getId( ) ).append( NEWLINE );
             }

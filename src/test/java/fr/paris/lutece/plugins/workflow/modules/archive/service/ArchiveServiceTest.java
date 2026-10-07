@@ -36,12 +36,14 @@ package fr.paris.lutece.plugins.workflow.modules.archive.service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveConfig;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.IArchiveResourceDao;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.test.LuteceTestCase;
 import jakarta.inject.Inject;
 
@@ -51,6 +53,12 @@ public class ArchiveServiceTest extends LuteceTestCase
     private ArchiveService _service;
     @Inject
     private IArchiveResourceDao _archiveResourceDao;
+
+    @AfterEach
+    public void tearDown( )
+    {
+        _archiveResourceDao.delete( 1, 2 );
+    }
 
     @Test
     public void testIsResourceUpForArchival_Yes( )
@@ -70,8 +78,6 @@ public class ArchiveServiceTest extends LuteceTestCase
         resourceWorkflow.setIdResource( 1 );
 
         assertTrue( _service.isResourceUpForArchival( resourceWorkflow, config ) );
-
-        _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
     @Test
@@ -92,8 +98,6 @@ public class ArchiveServiceTest extends LuteceTestCase
         resourceWorkflow.setIdResource( 1 );
 
         assertFalse( _service.isResourceUpForArchival( resourceWorkflow, config ) );
-
-        _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
     @Test
@@ -113,10 +117,12 @@ public class ArchiveServiceTest extends LuteceTestCase
 
         ResourceWorkflow resourceWorkflow = new ResourceWorkflow( );
         resourceWorkflow.setIdResource( 1 );
+        resourceWorkflow.setResourceType( "TEST" );
+        Workflow workflow = new Workflow( );
+        workflow.setId( 1 );
+        resourceWorkflow.setWorkFlow( workflow );
 
         assertFalse( _service.isResourceUpForArchival( resourceWorkflow, config ) );
-
-        _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 
     @Test
@@ -137,7 +143,5 @@ public class ArchiveServiceTest extends LuteceTestCase
         resourceWorkflow.setIdResource( 1 );
 
         assertTrue( _service.isResourceUpForArchival( resourceWorkflow, config ) );
-
-        _archiveResourceDao.delete( resourceWorkflow.getIdResource( ), config.getIdTask( ) );
     }
 }
