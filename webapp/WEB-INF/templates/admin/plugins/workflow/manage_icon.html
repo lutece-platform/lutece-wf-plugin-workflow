@@ -1,24 +1,34 @@
 <#include "macro_workflows.html" />
 <@pageContainer>
-    <@pageColumn>
+	<@pageColumn>
 		<@pageHeader title='#i18n{workflow.manage_icon.title}'>
-			<@offcanvas targetUrl='jsp/admin/plugins/workflow/CreateIcon.jsp' targetElement='#create_icon_page' redirectForm=false id='icon-create' title='#i18n{workflow.create_icon.title}' btnTitle='#i18n{workflow.manage_icon.button_create}' btnIcon='plus' position='end' /> 
+			<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='arrow-left' color='light' class='me-1' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+			<@aButton href='jsp/admin/plugins/workflow/CreateIcon.jsp?plugin_name=workflow' buttonIcon='plus' color='primary' title='#i18n{workflow.manage_icon.button_create}' hideTitle=['xs','sm'] />
 		</@pageHeader>
+		<#if icon_list?has_content>
 		<@manageFeature>
-		<#list icon_list as icon>
+			<#list icon_list as icon>
 			<@manageFeatureItem>
 				<@manageFeatureItemColumn auto=true>
-					<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='img-fluid img-thumbnail' params='width="32"'  />
-					<@span class='ms-3 ml-3'>${icon.name}</@span>
-					<#assign params = ''>
+					<@img url='image?resource_type=workflow_icon_img&amp;id=${icon.id}' alt='' class='img-fluid img-thumbnail' params='width="32"' />
+				</@manageFeatureItemColumn>
+				<@manageFeatureItemColumn auto=true flex=false>
+					<@link href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' class='fw-bold' label=icon.name />
 				</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn align='end'>
-					<@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' targetElement='#edit_icon_page' redirectForm=false id='icon${icon.id}-edit' title='#i18n{#i18n{workflow.modify_icon.title}' btnTitle='' btnIcon='pencil' position='end' />
-					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] color='danger'/>
+					<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] />
 				</@manageFeatureItemColumn>
 			</@manageFeatureItem>
-		</#list>
+			</#list>
 		</@manageFeature>
-		<@paginationAdmin paginator=paginator combo=1/>
+		<#if paginator.itemsCount gte 10>
+		<@paginationAdmin paginator=paginator combo=1 />
+		</#if>
+		<#else>
+		<@card>
+			<@empty title='#i18n{workflow.manage_icon.no_icon}' subtitle='#i18n{workflow.manage_plugin_workflow.label_manage_icon_comment}' iconName='icons-off' actionTitle='#i18n{workflow.manage_icon.button_create}' actionUrl='jsp/admin/plugins/workflow/CreateIcon.jsp?plugin_name=workflow' />
+		</@card>
+		</#if>
 	</@pageColumn>
 </@pageContainer>

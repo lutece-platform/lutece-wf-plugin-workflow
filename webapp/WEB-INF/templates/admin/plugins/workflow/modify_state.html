@@ -1,54 +1,49 @@
 <#include "macro_workflows.html" />
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-states' label='#i18n{workflow.modify_workflow.manage_state.title}' /><@workflowBreadcrumbCurrent label=state.name /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_state.title} : ${state.name}' />
-		<@breadcrumbs class='py-3'>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id!}' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title}'/></@breadcrumbItem>	
-			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_state.title}' /></@breadcrumbItem>	
-		</@breadcrumbs>
-		<@fieldSet>
-			<@tabs>
-				<@tabList>
-					<@tabLink active=true href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}'/>
-					<@tabLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'/>
-					<@tabLink  href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' tabClass='ms-auto' title='#i18n{portal.util.labelBack}' />
-				</@tabList>
-				<@tabContent>
-					<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
-						<@input type='hidden' name='id_state' value=state.id/>
-						<@input type="hidden" name="token" value="${token}" />
-						<@row>
-							<@columns>
-								<@formGroup labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
-									<@input type='text' name='name' maxlength=255 value=state.name />
-								</@formGroup>
-								<@formGroup labelFor='uid' labelKey='#i18n{workflow.create_state.label_uid}' helpKey='#i18n{workflow.create_state.label_uid_comment}' mandatory=true>
-									<@input type='text' name='uid' maxlength=255 value=state.uid readonly=true />
-								</@formGroup>
-								<@formGroup labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
-									<@input type='textarea' name='description' >${state.description}</@input>
-								</@formGroup>
-							</@columns>
-							<@columns>
-								<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}'hideLabel=['all'] >
-									<@checkBox labelKey='#i18n{workflow.create_state.label_initial_state}' orientation='switch' name='is_initial_state' id='is_initial_state' value='1' checked=state.isInitialState( ) />
-								</@formGroup>
-								<@formGroup labelFor='is_initial_state' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}'hideLabel=['all'] >
-									<@checkBox labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}'orientation='switch' name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' checked=state.isRequiredWorkgroupAssigned( ) />
-								</@formGroup>
-								<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
-									<@radioIconList name='id_icon' default_value=state.icon.id icons=icon_list />
-									<@radioButton orientation='horizontal' name='id_icon' value='-1' checked=state.icon.id==0 labelKey='#i18n{workflow.create_state.label_no_icon}' />
-								</@formGroup>
-							</@columns>
-						</@row>
-						<@formGroup>
-							<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
-							<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
-						</@formGroup>
-					</@tform>
-				</@tabContent>
-			</@tabs>
-		</@fieldSet>
+		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_state.title} : ${state.name}'>
+			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}&amp;pane=pane-states' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+		</@pageHeader>
+		<@tabs>
+			<@tabList>
+				<@tabLink active=true href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}' />
+				<@tabLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}' />
+			</@tabList>
+			<@tabContent>
+				<@tform action='jsp/admin/plugins/workflow/DoModifyState.jsp?plugin_name=workflow'>
+					<@input type='hidden' name='id_state' value='${state.id}' />
+					<@input type='hidden' name='token' value='${token}' />
+					<@row>
+						<@columns lg=6>
+							<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_state.label_name}' helpKey='#i18n{workflow.create_state.label_name_comment}' mandatory=true>
+								<@input type='text' name='name' id='name' maxlength=255 value=state.name mandatory=true />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='uid' labelKey='#i18n{workflow.create_state.label_uid}' helpKey='#i18n{workflow.create_state.label_uid_comment}'>
+								<@input type='text' name='uid' id='uid' maxlength=255 value=state.uid readonly=true />
+							</@formGroup>
+							<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
+								<@input type='textarea' name='description' id='description' rows=3 mandatory=true>${state.description!}</@input>
+							</@formGroup>
+						</@columns>
+						<@columns lg=6>
+							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}' hideLabel=['all']>
+								<@checkBox orientation='switch' name='is_initial_state' id='is_initial_state' value='1' labelKey='#i18n{workflow.create_state.label_initial_state}' checked=(state.isInitialState( ))!false />
+							</@formGroup>
+							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}' hideLabel=['all']>
+								<@checkBox orientation='switch' name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' checked=(state.isRequiredWorkgroupAssigned( ))!false />
+							</@formGroup>
+							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
+								<@radioIconList name='id_icon' default_value=state.icon.id icons=icon_list noIconLabel='#i18n{workflow.create_state.label_no_icon}' />
+							</@formGroup>
+						</@columns>
+					</@row>
+					<@formGroup rows=2>
+						<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_state.button_save}' />
+						<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' params='formnovalidate' />
+					</@formGroup>
+				</@tform>
+			</@tabContent>
+		</@tabs>
 	</@pageColumn>
 </@pageContainer>

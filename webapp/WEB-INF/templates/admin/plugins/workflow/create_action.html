@@ -1,54 +1,60 @@
 <#include "macro_workflows.html" />
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-actions' label='#i18n{workflow.modify_workflow.manage_action.title}' /><@workflowBreadcrumbCurrent label='#i18n{workflow.create_action.title}' /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.create_action.title}' />
+		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.create_action.title}'>
+			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-actions' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+		</@pageHeader>
 		<@tform action='jsp/admin/plugins/workflow/DoCreateAction.jsp?plugin_name=workflow' boxed=true>
-		<@input type='hidden' name='id_workflow' value=workflow.id/>
-		<@input type="hidden" name="token" value="${token}" />
-		<@row>
-			<@columns>	
-				<@formGroup labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
-					<@input type='text' name='name' maxlength=255 />
-				</@formGroup>
-				<@formGroup labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
-					<@input type='textarea' name='description' />
-				</@formGroup>
-				<@formGroup labelFor='id_state_before' labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
-					<#list state_list as state>
-						<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}'  value='${state.code}' labelKey='${state.name}' />
-					</#list>
-				</@formGroup>
-				<@formGroup labelFor='label_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
-					<@select name='id_state_after' items=state_list default_value='-1' />
-				</@formGroup>
-				<@formGroup labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
-					<@select name='id_alternative_state_after' items=alternative_state_list default_value='-1'  />
-				</@formGroup>
-			</@columns>
-			<@columns>	
-				<@formGroup labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}'>
-					<@radioIconList name='id_icon' default_value=1 icons=icon_list />
-				</@formGroup>
-				<@formGroup helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
-					<@checkBox orientation='switch' name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
-				</@formGroup>
-				<@formGroup helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
-					<@checkBox orientation='switch' name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
-				</@formGroup>
-				<@formGroup>
-					<@h level=3>#i18n{workflow.create_action.label_link_actions}</@h>
-					<@p>#i18n{workflow.create_action.label_link_actions_comment}</@p>
-					<@p><em>#i18n{workflow.create_action.label_link_actions_example}</em></@p>
-				</@formGroup>
-				<@formGroup labelFor='selected_linked_actions' labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
-					<@select name='select_linked_actions' default_value='' multiple=10  items=available_linked_actions />
-				</@formGroup>
+			<@input type='hidden' name='id_workflow' value='${workflow.id}' />
+			<@input type='hidden' name='token' value='${token}' />
+			<@row>
+				<@columns lg=6>
+					<@formGroup rows=2 labelFor='name' labelKey='#i18n{workflow.create_action.label_name}' helpKey='#i18n{workflow.create_action.label_name_comment}' mandatory=true>
+						<@input type='text' name='name' id='name' maxlength=255 mandatory=true />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
+						<@input type='textarea' name='description' id='description' rows=3 mandatory=true />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}' mandatory=true>
+						<@radioIconList name='id_icon' default_value=1 icons=icon_list />
+					</@formGroup>
+				</@columns>
+				<@columns lg=6>
+					<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
+						<#list state_list as state>
+						<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' />
+						</#list>
+					</@formGroup>
+					<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
+						<@select name='id_state_after' id='id_state_after' items=state_list default_value='-1' />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='id_alternative_state_after' labelKey='#i18n{workflow.create_action.label_alternative_state_after}' helpKey='#i18n{workflow.create_action.label_alternative_state_after_comment}'>
+						<@select name='id_alternative_state_after' id='id_alternative_state_after' items=alternative_state_list default_value='-1' />
+					</@formGroup>
+					<@fieldSet legend='#i18n{workflow.modify_action.legend_behaviour}'>
+						<@formGroup rows=2 helpKey='#i18n{workflow.create_action.label_automatic_comment}'>
+							<@checkBox orientation='switch' name='automatic' id='automatic' value='1' labelKey='#i18n{workflow.create_action.label_automatic}' />
+						</@formGroup>
+						<@formGroup rows=2 helpKey='#i18n{workflow.create_action.label_mass_action_comment}'>
+							<@checkBox orientation='switch' name='is_mass_action' id='is_mass_action' value='1' labelKey='#i18n{workflow.create_action.label_mass_action}' />
+						</@formGroup>
+					</@fieldSet>
+					<#if available_linked_actions?has_content>
+					<@fieldSet legend='#i18n{workflow.create_action.label_link_actions}'>
+						<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_available_linked_actions}' helpKey='#i18n{workflow.create_action.label_link_actions_comment}'>
+							<#list available_linked_actions as linkedAction>
+							<@checkBox orientation='switch' name='select_linked_actions' id='select_linked_actions_${linkedAction.code}' value='${linkedAction.code}' labelKey='${linkedAction.name}' />
+							</#list>
+						</@formGroup>
+					</@fieldSet>
+					</#if>
 				</@columns>
 			</@row>
 			<@formGroup rows=2>
-				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_action.button_save}' />
-				<@button type='submit' name='apply' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
-				<@button type='submit' name='cancel' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' cancel=true />
+				<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_action.button_save}' />
+				<@button type='submit' name='apply' color='light' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
+				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' params='formnovalidate' />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>

@@ -1,12 +1,115 @@
-<#macro radioIconList name default_value icons >
-<#list icons as icon> 
-<@radioButton name=name value='${icon.id}' labelKey='' orientation='inline' checked=(default_value==icon.id) >
-	<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' class='img-fluid img-thumbnail' params='width="32"' />	
+<#--
+Macro: radioIconList
+Description: radio list of the workflow icons, with an optional "no icon" choice in first position.
+Parameters:
+- name (string, required): name of the radio inputs.
+- default_value (number, required): id of the checked icon.
+- icons (list, required): the workflow icons.
+- noIconLabel (string, optional): label of the "no icon" choice (value -1); no such choice when empty.
+-->
+<#macro radioIconList name default_value icons noIconLabel='' >
+<#if noIconLabel != ''>
+<@radioButton name=name id='${name}_none' value='-1' labelKey=noIconLabel orientation='inline' checked=( default_value lte 0 ) />
+</#if>
+<#list icons as icon>
+<@radioButton name=name id='${name}_${icon.id}' value='${icon.id}' labelKey='' title=icon.name orientation='inline' checked=( default_value == icon.id ) >
+	<@img url='image?resource_type=workflow_icon_img&amp;id=${icon.id}' alt=icon.name class='img-fluid img-thumbnail' params='width="32"' />
 </@radioButton>
 </#list>
 </#macro>
+<#--
+Macro: comboOrders
+Description: select of the positions from 1 to max.
+Parameters:
+- name (string, required): name of the select.
+- default_value (number, required): selected position.
+- max (number, required): last position.
+-->
 <#macro comboOrders name default_value max >
 <@select name=name>
 <#list 1..max as i><@option selected=(default_value == i) value=i label=i /></#list>
 </@select>
+</#macro>
+<#--
+Macro: orderButtons
+Description: move up / move down buttons of an ordered list row. The first row has no up button, the last row no down button.
+Parameters:
+- url (string, required): URL of the order change, without the order parameter.
+- orderParam (string, required): name of the parameter that carries the new position.
+- order (number, required): current position of the row.
+- max (number, required): number of rows.
+- token (string, required): security token of the order change.
+-->
+<#macro orderButtons url orderParam order max token >
+<@btnGroup size='sm' ariaLabel='#i18n{workflow.modify_workflow.order}'>
+	<#if order gt 1>
+	<@aButton href='${url}&amp;${orderParam}=${order - 1}&amp;token=${token}' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] />
+	<#else>
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] disabled=true class='disabled' params='aria-disabled="true" tabindex="-1"' />
+	</#if>
+	<#if order lt max>
+	<@aButton href='${url}&amp;${orderParam}=${order + 1}&amp;token=${token}' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] />
+	<#else>
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] disabled=true class='disabled' params='aria-disabled="true" tabindex="-1"' />
+	</#if>
+</@btnGroup>
+</#macro>
+<#--
+Macro: actionsMenu
+Description: "more actions" dropdown of a list row; the nested content is a list of @actionsMenuItem.
+Parameters:
+- id (string, required): unique id of the dropdown in the page.
+-->
+<#macro actionsMenu id >
+<@button type='button' id=id class='ms-1' title='#i18n{portal.util.labelActions}' hideTitle=['all'] buttonIcon='dots-vertical' dropdownMenu=true>
+	<#nested>
+</@button>
+</#macro>
+<#--
+Macro: actionsMenuItem
+Description: one entry of an @actionsMenu.
+Parameters:
+- href (string, required): target URL.
+- label (string, required): text of the entry.
+- iconName (string, required): Tabler icon name.
+- danger (boolean, optional): red entry for a destructive action.
+-->
+<#macro actionsMenuItem href label iconName danger=false >
+<@li><@link href=href class='dropdown-item${danger?then(" text-danger", "")}'><@icon style=iconName class='me-2' />${label}</@link></@li>
+</#macro>
+<#--
+Macro: workflowBreadcrumb
+Description: breadcrumb of the workflow screens; the workflow name is always the first item, the nested content adds the next items (@breadcrumbItem).
+Parameters:
+- workflow (object, required): the workflow of the screen.
+- active (boolean, optional): true on the workflow screen itself, the name is then the current item and not a link.
+-->
+<#macro workflowBreadcrumb workflow active=false >
+<@breadcrumbs class='mb-1'>
+	<#if active>
+	<@breadcrumbItem class='active' params='aria-current="page"'><@icon style='git-merge' class='me-1' />${workflow.name}</@breadcrumbItem>
+	<#else>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}'><@icon style='git-merge' class='me-1' />${workflow.name}</@link></@breadcrumbItem>
+	</#if>
+	<#nested>
+</@breadcrumbs>
+</#macro>
+<#--
+Macro: workflowBreadcrumbCurrent
+Description: last item of a @workflowBreadcrumb, the current screen.
+Parameters:
+- label (string, required): text of the item.
+-->
+<#macro workflowBreadcrumbCurrent label >
+<@breadcrumbItem class='active' params='aria-current="page"'>${label}</@breadcrumbItem>
+</#macro>
+<#--
+Macro: workflowBreadcrumbLink
+Description: intermediate item of a @workflowBreadcrumb.
+Parameters:
+- href (string, required): target URL.
+- label (string, required): text of the item.
+-->
+<#macro workflowBreadcrumbLink href label >
+<@breadcrumbItem><@link href=href label=label /></@breadcrumbItem>
 </#macro>

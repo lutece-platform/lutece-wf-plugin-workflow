@@ -1,72 +1,71 @@
 <#include "macro_workflows.html" />
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-states' label='#i18n{workflow.modify_workflow.manage_state.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' label=state.name /><@workflowBreadcrumbCurrent label='#i18n{workflow.modify_reflexive_action.title}' /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_state.title} : ${state.name}' />
-		<@breadcrumbs class='py-3'>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id!}' label='#i18n{portal.util.labelBack} #i18n{workflow.modify_workflow.page_title} ${state.workflow.id!}'/></@breadcrumbItem>	
-			<@breadcrumbItem class='active'><@link href='jsp/admin/plugins/workflow/ManageStates.jsp' label='#i18n{workflow.modify_state.title}' /></@breadcrumbItem>	
-		</@breadcrumbs>
-		<@fieldSet>
-			<@tabs>
-				<@tabList>
-					<@tabLink href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}'/>
-					<@tabLink active=true href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'/>
-					<@tabLink  href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}' tabClass='ms-auto' title='#i18n{portal.util.labelBack}' />
-				</@tabList>
-				<@tabContent>
-					<@tform action='jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow'>
-						<@input type='hidden' name='id_state' value=state.id/>
-						<@input type="hidden" name="token" value="${token}" />
-						<@formGroup rows=1 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}' helpKey='#i18n{workflow.modify_reflexive_action.help}'>
-							<@inputGroup>
-								<@select name='task_type_key' default_value='-1' items=task_type_list sort=true  />
-									<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}'  />
-									<#if action??><@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&amp;token=${token_update_task_order}' hideTitle=['all'] buttonIcon='arrows-move-vertical' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' color='secondary' /></#if>
-							</@inputGroup>
-						</@formGroup>
-					</@tform>
-					<#if task_list?size == 0>
-						<@empty />
-					<#else>
-						<@manageFeature>
-							<#-- #i18n{workflow.modify_workflow.order} -->
-							<#list task_list as task>
-								<@manageFeatureItem>
-									<@manageFeatureItemColumn auto=true>
-										<!-- SELECT LIST FOR ORDER CHANGE -->
-										<@tform action='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp'>
-											<@input type='hidden' name='token' value='${token_change_order_task}' />
-											<#if (task_list?size > 1)>
-												<@input type='hidden' name='id_workflow' value=action.workflow.id />
-												<@input type='hidden' name='id_task' value=task.id/>
-												<@inputGroup>
-													<@comboOrders name='order_task_id' default_value=task.order max=number_task  />
-													<@button hideTitle=['all'] type='submit' buttonIcon='check' title='#i18n{workflow.modify_workflow.move}' />
-												</@inputGroup>
-											<#else>
-												${task.order}
-											</#if>
-										</@tform>
-									</@manageFeatureItemColumn>
-									<@manageFeatureItemColumn>
-										<#if task.taskType.title!="">${task.taskType.title}</#if>
-										<#if task.getTitle(locale)!=""><br>${task.getTitle(locale)} </#if>
-									</@manageFeatureItemColumn>
-									<@manageFeatureItemColumn align='end'>
-										<#if task.taskType.configRequired>
-											<#-- btnTitle='#i18n{workflow.manage_workflow.title_modify}' -->
-											<#-- <@offcanvas targetUrl='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' targetElement='#edit_task_page' redirectForm=false id='task${task.id}-edit' title='#i18n{workflow.modify_task.page_title}' btnTitle='' btnIcon='pencil' position='end' btn /> -->
-											<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' hideTitle=['all'] buttonIcon='edit' title='#i18n{workflow.manage_workflow.title_modify}'  />
-										</#if>
-										<@aButton href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' hideTitle=['all'] color='warning' buttonIcon='copy' title='#i18n{workflow.modify_action.manage_task.title_copy}'  />
-										<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' hideTitle=['all'] color='danger' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}'  />
-									</@manageFeatureItemColumn>
-								</@manageFeatureItem>
-							</#list>
-						</@manageFeature>
-					</#if>
-				</@tabContent>
-			</@tabs>
-		</@fieldSet>
+		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_state.title} : ${state.name}'>
+			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}&amp;pane=pane-states' buttonIcon='arrow-left' color='light' class='me-1' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+			<@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' hideTitle=['xs','sm'] params='data-bs-toggle="modal" data-bs-target="#add-reflexive-task"' />
+		</@pageHeader>
+		<@modal id='add-reflexive-task'>
+			<@modalHeader modalTitle='#i18n{workflow.create_action.button_insert_new_task}' />
+			<@modalBody>
+				<@tform id='form-add-reflexive-task' action='jsp/admin/plugins/workflow/DoAddTaskToReflexiveAction.jsp?plugin_name=workflow'>
+					<@input type='hidden' name='id_state' value='${state.id}' />
+					<@input type='hidden' name='token' value='${token}' />
+					<@formGroup rows=2 labelFor='task_type_key' labelKey='#i18n{workflow.modify_action.manage_task.insert_new_task}' helpKey='#i18n{workflow.modify_reflexive_action.help}' mandatory=true>
+						<@select name='task_type_key' id='task_type_key' default_value='-1' items=task_type_list sort=true />
+					</@formGroup>
+				</@tform>
+			</@modalBody>
+			<@modalFooter>
+				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+				<@button type='submit' formId='form-add-reflexive-task' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
+			</@modalFooter>
+		</@modal>
+		<@tabs>
+			<@tabList>
+				<@tabLink href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' title='#i18n{workflow.modify_state.title}' />
+				<@tabLink active=true href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'><@tag color='secondary' class='ms-2'>${number_task}</@tag></@tabLink>
+				<#if action?? && task_list?size gt 1>
+				<@tabLink tabClass='ms-auto d-flex align-items-center pe-2'>
+					<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&amp;token=${token_update_task_order}' color='light' size='sm' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' hideTitle=['all'] />
+				</@tabLink>
+				</#if>
+			</@tabList>
+			<@tabContent>
+				<#if task_list?has_content>
+				<#assign taskCountByAction = {} />
+				<#list task_list as countedTask><#assign countKey = countedTask.action.id?c /><#assign taskCountByAction = taskCountByAction + { countKey : ( taskCountByAction[countKey]!0 ) + 1 } /></#list>
+				<@manageFeature>
+					<#list task_list as task>
+					<@manageFeatureItem>
+						<@manageFeatureItemColumn auto=true>
+							<@tag color='secondary'>${task.order}</@tag>
+						</@manageFeatureItemColumn>
+						<@manageFeatureItemColumn auto=true flex=false class='text-truncate'>
+							<#assign taskTitle = task.getTitle( locale )!'' />
+							<@span class='fw-bold'>${task.taskType.title!}</@span>
+							<#if taskTitle?has_content && taskTitle != task.taskType.title!''><@p class='text-secondary small mb-0 text-truncate'>${taskTitle}</@p></#if>
+						</@manageFeatureItemColumn>
+						<@manageFeatureItemColumn align='end'>
+							<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=taskCountByAction[task.action.id?c] token=token_change_order_task />
+							<#if task.taskType.configRequired>
+							<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_action.manage_task.title_modify}' hideTitle=['all'] />
+							</#if>
+							<@actionsMenu id='task-actions-${task.id}'>
+								<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' iconName='copy' label='#i18n{workflow.modify_action.manage_task.title_copy}' />
+								<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' iconName='trash' label='#i18n{workflow.modify_action.manage_task.title_delete}' danger=true />
+							</@actionsMenu>
+						</@manageFeatureItemColumn>
+					</@manageFeatureItem>
+					</#list>
+				</@manageFeature>
+				<#else>
+				<@empty title='#i18n{workflow.modify_action.manage_task.no_task}' subtitle='#i18n{workflow.modify_reflexive_action.help}' iconName='bolt-off'>
+					<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' params='data-bs-toggle="modal" data-bs-target="#add-reflexive-task"' /></@div>
+				</@empty>
+				</#if>
+			</@tabContent>
+		</@tabs>
 	</@pageColumn>
 </@pageContainer>

@@ -1,30 +1,39 @@
-<@adminDashboardWidget title='#i18n{workflow.dashboard.workflowList}' id='workflow_dashboard' url=url  >
-<#if workflow_list?size gt 0>
-<@manageFeature class='' >
+<#assign createWorkflowButton><@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' size='sm' buttonIcon='plus' title='#i18n{portal.util.labelCreate}' /></#assign>
+<@adminDashboardWidget title='#i18n{workflow.dashboard.workflowList}' id='workflow_dashboard' url=url boxIcon='git-merge' iconColor='teal' subtitle=( workflow_list?size gt 0 )?then( '', '#i18n{workflow.manage_workflow.no_workflow}' ) headerActions=createWorkflowButton flush=true>
+<#if workflow_list?has_content>
+<@listGroup class='list-group-flush'>
 	<#list workflow_list as workflow>
-	<@manageFeatureItem>
-		<@manageFeatureItemColumn auto=true>
-			<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{workflow.manage_workflow.title_modify} ${workflow.name}"'>
-				<#if !workflow.enabled><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
-				<@span class='d-inline-block text-truncate mw-md'><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' label=workflow.name /></@span>
-			</@h>
-		</@manageFeatureItemColumn>
-		<@manageFeatureItemColumn align='end'>
-			<#if workflow.enabled>
-				<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-stop-filled' color='danger' title='#i18n{workflow.manage_workflow.title_disable}' size='sm' />
-			<#else>
-				<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' hideTitle=['all'] buttonIcon='player-play-filled' color='success' title='#i18n{workflow.manage_workflow.title_enable}' size='sm' />
-			</#if>
-			<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' dropdownMenu=true>
-				<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item'><@icon style='pencil' /> #i18n{workflow.manage_workflow.title_modify}</@link>
-				<@link href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' class='dropdown-item'><@icon style='copy' /> #i18n{workflow.manage_workflow.title_copy}</@link>
-				<@link href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item text-danger'><@icon style='trash' /> #i18n{workflow.manage_workflow.title_delete}</@link>
-			</@button>
-		</@manageFeatureItemColumn>
-	</@manageFeatureItem>
+	<#assign workflowStatus><#if workflow.enabled>#i18n{portal.util.labelEnabled}<#else>#i18n{portal.util.labelDisabled}</#if></#assign>
+	<@listGroupItem>
+		<@row class='align-items-center g-2'>
+			<@columns class='col-auto'>
+				<@span class='status-dot ${workflow.enabled?then("status-green", "status-red")}' params='title="${workflowStatus}"'></@span>
+				<@span class='visually-hidden'>${workflowStatus}</@span>
+			</@columns>
+			<@columns class='col text-truncate'>
+				<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='text-reset fw-semibold' title='#i18n{workflow.manage_workflow.title_modify} ${workflow.name}' label=workflow.name />
+				<@div class='text-secondary small text-truncate'>${workflowStatus}<#if workflow.description?has_content> · ${workflow.description}</#if></@div>
+			</@columns>
+			<@columns class='col-auto btn-actions'>
+				<#if workflow.enabled>
+				<@link href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&amp;token=${token}' class='btn-action' title='#i18n{workflow.manage_workflow.title_disable}'><@icon style='player-stop' /><@span class='visually-hidden'>#i18n{workflow.manage_workflow.title_disable}</@span></@link>
+				<#else>
+				<@link href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&amp;token=${token}' class='btn-action' title='#i18n{workflow.manage_workflow.title_enable}'><@icon style='player-play' /><@span class='visually-hidden'>#i18n{workflow.manage_workflow.title_enable}</@span></@link>
+				</#if>
+				<@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' class='btn-action' title='#i18n{workflow.manage_workflow.title_modify}'><@icon style='pencil' /><@span class='visually-hidden'>#i18n{workflow.manage_workflow.title_modify}</@span></@link>
+				<@div class='dropdown'>
+					<@link href='#' class='btn-action' title='#i18n{portal.util.labelActions}' params='data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"'><@icon style='dots' /><@span class='visually-hidden'>#i18n{portal.util.labelActions}</@span></@link>
+					<@div class='dropdown-menu dropdown-menu-end'>
+						<@link href='jsp/admin/plugins/workflow/DoCopyWorkflow.jsp?id_workflow=${workflow.id}&amp;token=${token}' class='dropdown-item'><@icon style='copy' class='me-2' />#i18n{workflow.manage_workflow.title_copy}</@link>
+						<@link href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' class='dropdown-item text-danger'><@icon style='trash' class='me-2' />#i18n{workflow.manage_workflow.title_delete}</@link>
+					</@div>
+				</@div>
+			</@columns>
+		</@row>
+	</@listGroupItem>
 	</#list>
-</@manageFeature>
+</@listGroup>
 <#else>
-	<@empty title='#i18n{workflow.manage_workflow.no_workflow}' subtitle='#i18n{workflow.manage_workflow.add_workflow}' iconName='mood-plus' actionTitle='#i18n{workflow.manage_workflow.button_create}' actionUrl='jsp/admin/plugins/workflow/ManageWorkflow.jsp?plugin_name=workflow' />
+<@div class='d-flex align-items-center gap-2 px-3 py-2 text-secondary small'><@icon style='info-circle' />#i18n{workflow.manage_workflow.add_workflow}</@div>
 </#if>
 </@adminDashboardWidget>
