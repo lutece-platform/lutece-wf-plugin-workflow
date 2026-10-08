@@ -1,17 +1,19 @@
+<#include "macro_workflows.html" />
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><#if state??><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-states' label='#i18n{workflow.modify_workflow.manage_state.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' label=state.name /><#else><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-actions' label='#i18n{workflow.modify_workflow.manage_action.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}&amp;pane=pane-tasks' label=action.name /></#if><@workflowBreadcrumbCurrent label=task.taskType.title!'' /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_task.title}' />
-		<@tform action='jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow' id='edit_task_page'>
-			<@fieldSet>
-				<@input type='hidden' name='id_task' value=task.id!/>
-				<@input type="hidden" name="token" value="${token}" />
-				${task_config!}
-				<@formGroup>
-					<@button type='submit' class='form-validation' name='save' buttonIcon='check' title='#i18n{workflow.modify_task.button_save}'  />
-					<@button type='submit'  class='form-validation' name='cancel' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' cancel=true />
-				</@formGroup>
-			</@fieldSet>
+		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_task.title} : ${task.taskType.title!}' description=task.getTitle( locale )!''>
+			<@button type='submit' formId='edit_task_page' name='cancel' color='light' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] params='formnovalidate' />
+		</@pageHeader>
+		<@tform action='jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow' id='edit_task_page' boxed=true>
+			<@input type='hidden' name='id_task' value='${task.id!}' />
+			<@input type='hidden' name='token' value='${token}' />
+			${task_config!}
+			<@formGroup>
+				<@button type='submit' class='form-validation' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.modify_task.button_save}' />
+				<@button type='submit' class='form-validation' name='apply' color='light' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
+				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' params='formnovalidate' />
+			</@formGroup>
 		</@tform>
 	</@pageColumn>
 </@pageContainer>
-

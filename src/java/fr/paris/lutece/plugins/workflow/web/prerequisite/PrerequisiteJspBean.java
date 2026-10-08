@@ -49,10 +49,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -77,12 +80,16 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_PREREQUISITE = "workflow.modify_action.manage_prerequisite.confirmRemovePrerequisite";
     private static final String MARK_PREREQUISITE_TYPE = "prerequisite_type";
     private static final String MARK_ID_ACTION = "id_action";
+    private static final String MARK_ACTION = "action";
+    private static final String MARK_WORKFLOW = "workflow";
     private static final String MARK_CONTENT = "content";
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_ID_PREREQUISITE = "id_prerequisite";
     private static final String MARK_CANCEL = "cancel";
     private static final String TEMPLATE_CREATE_MODIFY_PREREQUISITE = "admin/plugins/workflow/create_modify_prerequisite.html";
     private static final String JSP_URL_MODIFY_ACTION = "jsp/admin/plugins/workflow/ModifyAction.jsp";
+    private static final String PARAMETER_PANE = "pane";
+    private static final String PANE_PREREQUISITES = "pane-prerequisites";
     private static final String JSP_URL_CREATE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp";
     private static final String JSP_URL_MODIFY_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp";
     private static final String JSP_URL_DO_REMOVE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/DoRemovePrerequisite.jsp";
@@ -90,6 +97,10 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String SESSION_CONFIG = "workflow.prerequisite.session.config";
     @Inject
     private IPrerequisiteManagementService _prerequisiteManagementService;
+    @Inject
+    private IActionService _actionService;
+    @Inject
+    private IWorkflowService _workflowService;
 
     /**
      * Creates a new prerequisite. If the prerequisite needs to display a configuration form, then the form is returned. Otherwise, redirects the user to the
@@ -115,12 +126,9 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             prerequisite.setPrerequisiteType( strPrerequisiteType );
             _prerequisiteManagementService.createPrerequisite( prerequisite );
 
-            UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
-            url.addParameter( MARK_ID_ACTION, nIdAction );
-
             try
             {
-                response.sendRedirect( url.getUrl( ) );
+                response.sendRedirect( getJspModifyActionPrerequisites( request, nIdAction ) );
             }
             catch( IOException e )
             {
@@ -133,6 +141,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_PREREQUISITE_TYPE, strPrerequisiteType );
         model.put( MARK_ID_ACTION, nIdAction );
+        putWorkflowContext( model, nIdAction );
 
         Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( )
                 .getAttribute( SESSION_ERRORS );
@@ -221,10 +230,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             }
         }
 
-        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
-        url.addParameter( MARK_ID_ACTION, nIdAction );
-
-        return url.getUrl( );
+        return getJspModifyActionPrerequisites( request, nIdAction );
     }
 
     /**
@@ -246,12 +252,9 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         if ( !service.hasConfiguration( ) )
         {
-            UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
-            url.addParameter( MARK_ID_ACTION, nIdAction );
-
             try
             {
-                response.sendRedirect( url.getUrl( ) );
+                response.sendRedirect( getJspModifyActionPrerequisites( request, nIdAction ) );
             }
             catch( IOException e )
             {
@@ -266,6 +269,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_PREREQUISITE_TYPE, prerequisite.getPrerequisiteType( ) );
         model.put( MARK_ID_ACTION, nIdAction );
+        putWorkflowContext( model, nIdAction );
         model.put( MARK_ID_PREREQUISITE, nIdPrerequisite );
 
         Set<ConstraintViolation<IPrerequisiteConfig>> listErrors = (Set<ConstraintViolation<IPrerequisiteConfig>>) request.getSession( )
@@ -354,10 +358,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             _prerequisiteManagementService.updatePrerequisiteConfiguration( config, service );
         }
 
-        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
-        url.addParameter( MARK_ID_ACTION, nIdAction );
-
-        return url.getUrl( );
+        return getJspModifyActionPrerequisites( request, nIdAction );
     }
 
     /**
@@ -398,8 +399,42 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
 
         _prerequisiteManagementService.deletePrerequisite( nIdPrerequisite );
 
+        return getJspModifyActionPrerequisites( request, nIdAction );
+    }
+
+    /**
+     * Put in the model the action of the prerequisite and its workflow, displayed in the page breadcrumb
+     * 
+     * @param model
+     *            The model of the page
+     * @param nIdAction
+     *            The id of the action of the prerequisite
+     */
+    private void putWorkflowContext( Map<String, Object> model, int nIdAction )
+    {
+        Action action = _actionService.findByPrimaryKey( nIdAction );
+
+        if ( action != null )
+        {
+            model.put( MARK_ACTION, action );
+            model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
+        }
+    }
+
+    /**
+     * Return the URL of the prerequisites tab of the action screen
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdAction
+     *            The id of the action
+     * @return the URL of the prerequisites tab
+     */
+    private String getJspModifyActionPrerequisites( HttpServletRequest request, int nIdAction )
+    {
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_ACTION );
         url.addParameter( MARK_ID_ACTION, nIdAction );
+        url.addParameter( PARAMETER_PANE, PANE_PREREQUISITES );
 
         return url.getUrl( );
     }

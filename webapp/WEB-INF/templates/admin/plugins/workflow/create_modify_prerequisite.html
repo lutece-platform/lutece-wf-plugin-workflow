@@ -1,17 +1,21 @@
+<#include "macro_workflows.html" />
+<#assign pageBreadcrumb><#if workflow??><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-actions' label='#i18n{workflow.modify_workflow.manage_action.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}&amp;pane=pane-prerequisites' label=action.name /><@workflowBreadcrumbCurrent label='#i18n{workflow.modify_action.manage_prerequisite.title}' /></@workflowBreadcrumb></#if></#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_action.manage_prerequisite.title}' />
+		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_action.manage_prerequisite.title}'>
+			<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${id_action}&amp;pane=pane-prerequisites' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+		</@pageHeader>
 		<#if id_prerequisite??><#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoModifyPrerequisite.jsp'><#else><#assign form_action='jsp/admin/plugins/workflow/prerequisite/DoCreatePrerequisite.jsp'></#if>
 		<@tform action=form_action id='create_edit_prerequisite' boxed=true>
-			<@input type='hidden' name='id_action' value=id_action />
-			<@input type='hidden' name='prerequisite_type' value=prerequisite_type />
-			<@input type="hidden" name="token" value="${token}" />
-			<#if id_prerequisite??>	<@input type='hidden' name='id_prerequisite' value=id_prerequisite /></#if>
-			<#if errors??><#list errors as error><@alert class='danger' dismissible=true title=error.message /></#list></#if>
+			<@input type='hidden' name='id_action' value='${id_action}' />
+			<@input type='hidden' name='prerequisite_type' value='${prerequisite_type}' />
+			<@input type='hidden' name='token' value='${token}' />
+			<#if id_prerequisite??><@input type='hidden' name='id_prerequisite' value='${id_prerequisite}' /></#if>
+			<#list (errors![]) as error><@alert color='danger' dismissible=true title=error.message /></#list>
 			${content}
 			<@formGroup>
-				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_state.button_save}' />
-				<@button type='submit' name='cancel' value='cancel' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' cancel=true />
+				<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_state.button_save}' />
+				<@button type='submit' name='cancel' value='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_state.button_cancel}' params='formnovalidate' />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>

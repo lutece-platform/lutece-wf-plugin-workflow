@@ -1,6 +1,8 @@
 <@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='#i18n{workflow.manage_advanced_parameters.pageTitle}' />
+	<@pageColumn>
+		<@pageHeader title='#i18n{workflow.manage_advanced_parameters.pageTitle}'>
+			<@aButton href='jsp/admin/plugins/workflow/ManageWorkflow.jsp' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+		</@pageHeader>
 		<@div id='manage_advanced_parameters'>
 			<#include "advanced_parameters.html" />
 		</@div>

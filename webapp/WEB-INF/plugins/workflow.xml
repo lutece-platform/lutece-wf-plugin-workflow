@@ -11,7 +11,7 @@
     <description>workflow.plugin.description</description>
     <provider>workflow.plugin.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
-    <icon-url>images/admin/skin/plugins/workflow/workflow.png</icon-url>
+    <icon-url>themes/shared/plugins/workflow/images/admin/workflow.svg</icon-url>
     <copyright>Copyright 2001-2012 Mairie de Paris</copyright>
     <core-version-dependency>
         <min-core-version>5.0.0</min-core-version>
@@ -29,8 +29,7 @@
             <feature-level>3</feature-level>
             <feature-url>jsp/admin/plugins/workflow/ManageWorkflow.jsp
             </feature-url>
-            <feature-icon-url>images/admin/skin/plugins/workflow/workflow_feature.png
-            </feature-icon-url>
+            <feature-icon-url>ti ti-arrow-guide</feature-icon-url>
         </admin-feature>
     </admin-features>
 

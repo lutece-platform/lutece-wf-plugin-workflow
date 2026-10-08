@@ -190,13 +190,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PARAMETER_ORDER_ACTION_ID = "order_action_id";
     private static final String PARAMETER_ORDER_TASK_ID = "order_task_id";
     private static final String PARAMETER_APPLY = "apply";
-    private static final String PARAMETER_PAGE_INDEX_STATE = "page_index_state";
-    private static final String PARAMETER_PAGE_INDEX_ACTION = "page_index_action";
-    private static final String PARAMETER_ITEMS_PER_PAGE_STATE = "items_per_page_state";
-    private static final String PARAMETER_ITEMS_PER_PAGE_ACTION = "items_per_page_action";
     private static final String PARAMETER_TASK_TYPE_KEY = "task_type_key";
     private static final String PARAMETER_SELECT_LINKED_ACTIONS = "select_linked_actions";
     private static final String PARAMETER_UNSELECT_LINKED_ACTIONS = "unselect_linked_actions";
+    private static final String PARAMETER_ID_LINKED_ACTION = "id_linked_action";
     private static final String PARAMETER_PANE = "pane";
     private static final String PARAMETER_JSON_FILE = "json_file";
     private static final String PARAMETER_SHOW_TASKS = "show_tasks";
@@ -233,15 +230,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_TOKEN_CHANGE_ORDER_TASK = "token_change_order_task";
     private static final String MARK_TOKEN_UPDATE_TASK_ORDER = "token_update_task_order";
     private static final String MARK_PAGINATOR = "paginator";
-    private static final String MARK_PAGINATOR_ACTION = "paginator_action";
-    private static final String MARK_PAGINATOR_STATE = "paginator_state";
     private static final String MARK_USER_WORKGROUP_REF_LIST = "user_workgroup_list";
     private static final String MARK_USER_WORKGROUP_SELECTED = "user_workgroup_selected";
     private static final String MARK_ACTIVE_REF_LIST = "active_list";
     private static final String MARK_ACTIVE_SELECTED = "active_selected";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
-    private static final String MARK_NB_ITEMS_PER_PAGE_ACTION = "nb_items_per_page_action";
-    private static final String MARK_NB_ITEMS_PER_PAGE_STATE = "nb_items_per_page_state";
+    private static final String MARK_STATUS_TOKEN = "status_token";
     private static final String MARK_WORKFLOW_LIST = "workflow_list";
     private static final String MARK_STATE_LIST = "state_list";
     private static final String MARK_ALTERNATIVE_STATE_LIST = "alternative_state_list";
@@ -266,8 +260,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String MARK_SELECTED_LINKED_ACTIONS = "selected_linked_actions";
     private static final String MARK_DISPLAY_TASKS_FORM = "display_tasks_form";
     private static final String MARK_PANE = "pane";
-    private static final String MARK_PANE_ACTIONS = "pane-actions";
-    private static final String MARK_PANE_STATE = "pane-states";
     private static final String MARK_LIST_PREREQUISITE_TYPE = "list_prerequisite_type";
     private static final String MARK_LIST_PREREQUISITE = "listPrerequisite";
     private static final String MARK_MDGRAPH = "mdgraph";
@@ -299,6 +291,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String PANE_STATES = "pane-states";
     private static final String PANE_ACTIONS = "pane-actions";
     private static final String PANE_DEFAULT = PANE_STATES;
+    private static final String PANE_GRAPH = "pane-graph";
+    private static final String PANE_GENERAL = "pane-general";
+    private static final String PANE_TASKS = "pane-tasks";
+    private static final String PANE_LINKED_ACTIONS = "pane-linked-actions";
     private static final String SORT_SEARCH_ATTRIBUTE_DEFAULT = "name";
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
@@ -311,10 +307,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndexWorkflow;
     private int _nItemsPerPageWorkflow;
-    private String _strCurrentPageIndexState;
-    private int _nItemsPerPageState;
-    private String _strCurrentPageIndexAction;
-    private int _nItemsPerPageAction;
     private int _nIsEnabled = -1;
     private String _strWorkGroup = AdminWorkgroupService.ALL_GROUPS;
     @Inject
@@ -618,13 +610,6 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // States
         List<State> listState = _stateService.getListStateByFilter( stateFilter );
 
-        _strCurrentPageIndexState = AbstractPaginator.getPageIndex( request, PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState );
-        _nItemsPerPageState = AbstractPaginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_STATE, _nItemsPerPageState, _nDefaultItemsPerPage );
-
-        LocalizedPaginator<State> paginatorState = new LocalizedPaginator<>( listState, _nItemsPerPageState,
-                getJspModifyWorkflow( request, nIdWorkflow, MARK_PANE_STATE ), PARAMETER_PAGE_INDEX_STATE, _strCurrentPageIndexState,
-                PARAMETER_ITEMS_PER_PAGE_STATE, getLocale( ) );
-
         // get feflexive actions (associated with states)
         for ( State state : listState )
         {
@@ -666,41 +651,21 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             listWarning.add(warningLoop);
         }
 
-        _strCurrentPageIndexAction = AbstractPaginator.getPageIndex( request, PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction );
-
-        int nOldItemsPerPageAction = _nItemsPerPageAction;
-        _nItemsPerPageAction = AbstractPaginator.getItemsPerPage( request, PARAMETER_ITEMS_PER_PAGE_ACTION, _nItemsPerPageAction, _nDefaultItemsPerPage );
-
-        // Boolean that indicates if the action table or the state table should
-        // be displayed
-        if ( ( nOldItemsPerPageAction != _nItemsPerPageAction ) && ( nOldItemsPerPageAction > 0 ) )
-        {
-            strPane = PANE_ACTIONS;
-        }
-
-        LocalizedPaginator<Action> paginatorAction = new LocalizedPaginator<>( listAction, _nItemsPerPageAction,
-                getJspModifyWorkflow( request, nIdWorkflow, MARK_PANE_ACTIONS ), PARAMETER_PAGE_INDEX_ACTION, _strCurrentPageIndexAction,
-                PARAMETER_ITEMS_PER_PAGE_ACTION, getLocale( ) );
-
-        workflow.setAllActions( paginatorAction.getPageItems( ) );
-        workflow.setAllStates( paginatorState.getPageItems( ) );
+        workflow.setAllActions( listAction );
+        workflow.setAllStates( listState );
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_USER_WORKGROUP_REF_LIST, AdminWorkgroupService.getUserWorkgroups( adminUser, getLocale( ) ) );
         model.put( MARK_WORKFLOW, workflow );
-        model.put( MARK_PAGINATOR_STATE, paginatorState );
-        model.put( MARK_PAGINATOR_ACTION, paginatorAction );
-        model.put( MARK_STATE_LIST, paginatorState.getPageItems( ) );
-        model.put( MARK_ACTION_LIST, paginatorAction.getPageItems( ) );
+        model.put( MARK_STATE_LIST, listState );
+        model.put( MARK_ACTION_LIST, listAction );
         model.put( MARK_NUMBER_STATE, listState.size( ) );
         model.put( MARK_NUMBER_ACTION, listAction.size( ) );
-        model.put( MARK_NB_ITEMS_PER_PAGE_STATE, WorkflowUtils.EMPTY_STRING + _nItemsPerPageState );
-        model.put( MARK_NB_ITEMS_PER_PAGE_ACTION, WorkflowUtils.EMPTY_STRING + _nItemsPerPageAction );
         model.put( MARK_PANE, strPane );
         model.put( MARK_WARNINGS, listWarning );
-        
+
         Map<String,String> mapStateBeforeName = new HashMap<>( );
-        for (Action actionBefore : paginatorAction.getPageItems( ) )
+        for (Action actionBefore : listAction )
         {
         	for (Integer nStateBefore : actionBefore.getListIdStateBefore( ) )
         	{
@@ -714,11 +679,15 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         {
             model.put( MARK_SHOW_TASKS, "true" );
         }
-        model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ), strShowTasks != null ) );
+        if ( PANE_GRAPH.equals( strPane ) )
+        {
+            model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ), strShowTasks != null ) );
+        }
         // Add CSRF Token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_WORKFLOW ) );
         model.put( MARK_TOKEN_CHANGE_ORDER_STATE, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_STATE ) );
         model.put( MARK_TOKEN_CHANGE_ORDER_ACTION, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_ACTION ) );
+        model.put( MARK_STATUS_TOKEN, SecurityTokenService.getInstance( ).getToken( request, WorkflowUtils.CONSTANT_ACTION_MODIFY_WORKFLOW ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE );
 
@@ -865,7 +834,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         workflow.setEnabled( true );
         _workflowService.update( workflow );
 
-        return getJspManageWorkflow( request );
+        return getJspAfterStatusChange( request, nIdWorkflow );
     }
 
     /**
@@ -908,7 +877,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         workflow.setEnabled( false );
         _workflowService.update( workflow );
 
-        return getJspManageWorkflow( request );
+        return getJspAfterStatusChange( request, nIdWorkflow );
     }
 
     /**
@@ -1098,6 +1067,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_STATE, state );
+        model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ) );
         model.put( MARK_ICON_LIST, listIcon );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_STATE ) );
 
@@ -1625,6 +1595,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_ACTION, action );
+        model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
         model.put( MARK_STATE_LIST, WorkflowUtils.getRefList( listState, false, getLocale( ) ) );
         model.put( MARK_ALTERNATIVE_STATE_LIST, WorkflowUtils.getRefList( listState, true, getLocale( ) ) );
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
@@ -1636,14 +1607,20 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_LIST_PREREQUISITE, listPrerequisiteDTO );
         model.put( MARK_LIST_PREREQUISITE_TYPE, getPrerequisiteServiceRefList( getLocale( ) ) );
 
-        boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale( ) );
-        model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
+        String strPane = request.getParameter( PARAMETER_PANE );
+        model.put( MARK_PANE, StringUtils.isNotBlank( strPane ) ? strPane : PANE_GENERAL );
 
-        // The action can be linked only it has no task that requires a form
-        if ( !bDisplayTasksForm )
+        if ( PANE_LINKED_ACTIONS.equals( strPane ) )
         {
-            model.put( MARK_AVAILABLE_LINKED_ACTIONS, getAvailableActionsToLink( nIdAction, action.getWorkflow( ).getId( ) ) );
-            model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
+            boolean bDisplayTasksForm = _workflowService.isDisplayTasksForm( nIdAction, getLocale( ) );
+            model.put( MARK_DISPLAY_TASKS_FORM, bDisplayTasksForm );
+
+            // The action can be linked only it has no task that requires a form
+            if ( !bDisplayTasksForm )
+            {
+                model.put( MARK_AVAILABLE_LINKED_ACTIONS, getAvailableActionsToLink( nIdAction, action.getWorkflow( ).getId( ) ) );
+                model.put( MARK_SELECTED_LINKED_ACTIONS, getLinkedActions( nIdAction ) );
+            }
         }
         // Add CSRF token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_ACTION ) );
@@ -1722,6 +1699,53 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         return getJspModifyWorkflow( request, action.getWorkflow( ).getId( ), PANE_ACTIONS );
+    }
+
+    /**
+     * Replace the linked actions of an action by the ones checked in the linked actions pane
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             if the action does not exist or the security token is invalid
+     * @return The URL to go after performing the action
+     */
+    public String doModifyLinkedActions( HttpServletRequest request ) throws AccessDeniedException
+    {
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MODIFY_ACTION ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
+        int nIdAction = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_ACTION ) );
+        Action action = ( nIdAction != WorkflowUtils.CONSTANT_ID_NULL ) ? _actionService.findByPrimaryKey( nIdAction ) : null;
+
+        if ( action == null )
+        {
+            throw new AccessDeniedException( LOG_ACTION_NOT_FOUND + nIdAction );
+        }
+
+        if ( !_workflowService.isDisplayTasksForm( nIdAction, getLocale( ) ) )
+        {
+            Set<String> setAllowedIds = new HashSet<>( );
+            getAvailableActionsToLink( nIdAction, action.getWorkflow( ).getId( ) ).forEach( item -> setAllowedIds.add( item.getCode( ) ) );
+            getLinkedActions( nIdAction ).forEach( item -> setAllowedIds.add( item.getCode( ) ) );
+
+            Collection<Integer> listIdsLinkedAction = new LinkedHashSet<>( );
+            String [ ] strIdsLinkedAction = request.getParameterValues( PARAMETER_ID_LINKED_ACTION );
+
+            if ( ArrayUtils.isNotEmpty( strIdsLinkedAction ) )
+            {
+                Arrays.stream( strIdsLinkedAction ).filter( setAllowedIds::contains ).map( WorkflowUtils::convertStringToInt )
+                        .forEach( listIdsLinkedAction::add );
+            }
+
+            action.setListIdsLinkedAction( listIdsLinkedAction );
+            _actionService.removeLinkedActions( nIdAction );
+            _actionService.createLinkedActions( action );
+        }
+
+        return getJspModifyAction( request, nIdAction, PANE_LINKED_ACTIONS );
     }
 
     /**
@@ -1820,7 +1844,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             }
         }
 
-        return getJspModifyAction( request, nIdAction );
+        return getJspModifyAction( request, nIdAction, PANE_TASKS );
     }
 
     /**
@@ -1845,8 +1869,23 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
 
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+
+        if ( action == null )
+        {
+            throw new AccessDeniedException( LOG_ACTION_NOT_FOUND + task.getAction( ).getId( ) );
+        }
+
         model.put( MARK_TASK, task );
         model.put( MARK_TASK_CONFIG, _taskComponentManager.getDisplayConfigForm( request, getLocale( ), task ) );
+        model.put( MARK_LOCALE, getLocale( ) );
+        model.put( MARK_ACTION, action );
+        model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );
+
+        if ( action.isAutomaticReflexiveAction( ) && !action.getListIdStateBefore( ).isEmpty( ) )
+        {
+            model.put( MARK_STATE, _stateService.findByPrimaryKey( action.getListIdStateBefore( ).get( 0 ) ) );
+        }
         // Add CSRF Token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_TASK ) );
 
@@ -1902,7 +1941,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 return getJspModifyReflexiveAction( request, action.getListIdStateBefore( ).get( 0 ) );
             }
 
-            return getJspModifyAction( request, task.getAction( ).getId( ) );
+            return getJspModifyAction( request, task.getAction( ).getId( ), PANE_TASKS );
         }
 
         return getJspManageWorkflow( request );
@@ -1997,10 +2036,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             if ( action != null )
             {
-                UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION );
-                url.addParameter( PARAMETER_ID_ACTION, task.getAction( ).getId( ) );
-
-                return url.getUrl( );
+                return getJspModifyAction( request, task.getAction( ).getId( ), PANE_TASKS );
             }
         }
 
@@ -2072,7 +2108,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             return getJspModifyReflexiveAction( request, action.getListIdStateBefore( ).get( 0 ) );
         }
 
-        return getJspModifyAction( request, taskToCopy.getAction( ).getId( ) );
+        return getJspModifyAction( request, taskToCopy.getAction( ).getId( ), PANE_TASKS );
     }
 
     /**
@@ -2236,8 +2272,29 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     private String getJspModifyAction( HttpServletRequest request, int nIdAction )
     {
+        return getJspModifyAction( request, nIdAction, null );
+    }
+
+    /**
+     * Return url of the jsp modify action, opened on a given pane
+     *
+     * @param request
+     *            The HTTP request
+     * @param nIdAction
+     *            The key of action to modify
+     * @param strPane
+     *            The pane to display, or null for the default one
+     * @return return url of the jsp modify action
+     */
+    private String getJspModifyAction( HttpServletRequest request, int nIdAction, String strPane )
+    {
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_ACTION );
         url.addParameter( PARAMETER_ID_ACTION, nIdAction );
+
+        if ( strPane != null )
+        {
+            url.addParameter( PARAMETER_PANE, strPane );
+        }
 
         return url.getUrl( );
     }
@@ -2510,7 +2567,29 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             return getJspModifyReflexiveAction( request, action.getListIdStateBefore( ).get( 0 ) );
         }
 
-        return getJspModifyAction( request, action.getId( ) );
+        return getJspModifyAction( request, action.getId( ), PANE_TASKS );
+    }
+
+    /**
+     * Return the URL to go after enabling or disabling a workflow: the workflow screen when the change was made from it (pane parameter), the workflow list
+     * otherwise
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdWorkflow
+     *            The id of the workflow
+     * @return the URL to redirect to
+     */
+    private String getJspAfterStatusChange( HttpServletRequest request, int nIdWorkflow )
+    {
+        String strPane = request.getParameter( PARAMETER_PANE );
+
+        if ( StringUtils.isNotBlank( strPane ) )
+        {
+            return getJspModifyWorkflow( request, nIdWorkflow, strPane );
+        }
+
+        return getJspManageWorkflow( request );
     }
 
     /**
@@ -3000,7 +3079,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             return getJspModifyReflexiveAction( request, action.getListIdStateBefore( ).get( 0 ) );
         }
 
-        return getJspModifyAction( request, nIdAction );
+        return getJspModifyAction( request, nIdAction, PANE_TASKS );
     }
 
     /**
@@ -3057,6 +3136,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_TASK_TYPE_LIST, refListTaskType );
         model.put( MARK_NUMBER_TASK, listTasks.size( ) );
         model.put( MARK_STATE, state );
+        model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ) );
+        model.put( MARK_LOCALE, locale );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) );
         model.put( MARK_TOKEN_CHANGE_ORDER_TASK, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_TASK ) );
         model.put( MARK_TOKEN_UPDATE_TASK_ORDER, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_UPDATE_TASK_ORDER ) );

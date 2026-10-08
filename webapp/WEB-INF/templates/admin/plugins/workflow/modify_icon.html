@@ -1,33 +1,33 @@
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{workflow.modify_icon.title}' />
-		<@div id='edit_icon_page'>
+		<@pageHeader title='#i18n{workflow.modify_icon.title} : ${modify_icon.name}'>
+			<@aButton href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+		</@pageHeader>
 		<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true id='edit_icon_page'>
-		<@input type='hidden' name='id_icon' value=modify_icon.id />
+			<@input type='hidden' name='id_icon' value='${modify_icon.id}' />
 			<@row>
-				<@columns>
+				<@columns lg=8>
 					<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
-						<@input type='text' name='name' maxlength=255 value=modify_icon.name />
+						<@input type='text' name='name' id='name' maxlength=255 value=modify_icon.name mandatory=true />
 					</@formGroup>
-					<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
-						<@input type='file' name='id_file' />
+					<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}'>
+						<@input type='file' name='id_file' id='id_file' params='accept="image/*"' />
 					</@formGroup>
 					<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
-						<@input type='text' name='width' maxlength=255 value=width_value />
+						<@input type='text' name='width' id='width' maxlength=255 value=width_value />
 					</@formGroup>
 					<@formGroup labelFor='height' labelKey='#i18n{workflow.create_icon.label_height}' helpKey='#i18n{workflow.create_icon.label_height_comment}'>
-						<@input type='text' name='height' maxlength=255 value=height_value />
+						<@input type='text' name='height' id='height' maxlength=255 value=height_value />
 					</@formGroup>
 				</@columns>
-				<@columns>
-					<@img url='image?resource_type=workflow_icon_img&id=${modify_icon.id}' class='img-fluid img-thumbnail'  />
+				<@columns lg=4 class='text-center'>
+					<@img url='image?resource_type=workflow_icon_img&amp;id=${modify_icon.id}' alt=modify_icon.name class='img-fluid img-thumbnail' />
 				</@columns>
 			</@row>
 			<@formGroup>
-				<@button type='submit' name='save' buttonIcon='check' title='#i18n{workflow.create_icon.button_save}' />
-				<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.create_icon.button_cancel}' cancel=true />
+				<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_icon.button_save}' />
+				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_icon.button_cancel}' params='formnovalidate' />
 			</@formGroup>
 		</@tform>
-	</@div>
 	</@pageColumn>
 </@pageContainer>
