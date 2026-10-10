@@ -59,7 +59,7 @@ public class TaskCommentConfigDAO implements ITaskConfigDAO<TaskCommentConfig>
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskCommentConfig config )
+    public void insert( TaskCommentConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

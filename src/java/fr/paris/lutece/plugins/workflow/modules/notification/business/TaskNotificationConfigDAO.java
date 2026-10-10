@@ -60,7 +60,7 @@ public class TaskNotificationConfigDAO implements ITaskConfigDAO<TaskNotificatio
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskNotificationConfig config )
+    public void insert( TaskNotificationConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

@@ -60,7 +60,7 @@ public class TaskAssignmentConfigDAO implements ITaskConfigDAO<TaskAssignmentCon
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskAssignmentConfig config )
+    public void insert( TaskAssignmentConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

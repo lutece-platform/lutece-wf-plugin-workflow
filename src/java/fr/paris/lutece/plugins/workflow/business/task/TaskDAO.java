@@ -78,7 +78,7 @@ public class TaskDAO implements ITaskDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( ITask task )
+    public void insert( ITask task )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {

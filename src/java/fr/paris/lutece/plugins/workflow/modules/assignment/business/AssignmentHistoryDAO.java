@@ -60,7 +60,7 @@ public class AssignmentHistoryDAO implements IAssignmentHistoryDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( AssignmentHistory history, Plugin plugin )
+    public void insert( AssignmentHistory history, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
         {

@@ -101,7 +101,7 @@ public class ActionDAO implements IActionDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( Action action )
+    public void insert( Action action )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {
@@ -309,7 +309,7 @@ public class ActionDAO implements IActionDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insertLinkedActions( int nIdAction, int nIdLinkedAction )
+    public void insertLinkedActions( int nIdAction, int nIdLinkedAction )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_LINKED_ACTION, WorkflowUtils.getPlugin( ) ) )
         {

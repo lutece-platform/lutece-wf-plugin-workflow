@@ -80,7 +80,7 @@ public class StateDAO implements IStateDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( State state )
+    public void insert( State state )
     {
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )

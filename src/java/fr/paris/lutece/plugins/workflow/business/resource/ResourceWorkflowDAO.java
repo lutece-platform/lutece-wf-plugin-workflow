@@ -103,7 +103,7 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( ResourceWorkflow resourceWorkflow )
+    public void insert( ResourceWorkflow resourceWorkflow )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

@@ -26,7 +26,7 @@ public class ActionStateDAO implements IActionStateDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( int nIdAction, List<Integer> listIdStateBefore )
+    public void insert( int nIdAction, List<Integer> listIdStateBefore )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {

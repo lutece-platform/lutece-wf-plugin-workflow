@@ -73,7 +73,7 @@ public class WorkflowDAO implements IWorkflowDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( Workflow workflow )
+    public void insert( Workflow workflow )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {

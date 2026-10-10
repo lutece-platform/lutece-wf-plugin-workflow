@@ -65,7 +65,7 @@ public class IconDAO implements IIconDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( Icon icon )
+    public void insert( Icon icon )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, WorkflowUtils.getPlugin( ) ) )
         {

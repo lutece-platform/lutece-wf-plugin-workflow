@@ -58,7 +58,7 @@ public class ChoiceTaskConfigDAO implements ITaskConfigDAO<ChoiceTaskConfig>
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( ChoiceTaskConfig config )
+    public void insert( ChoiceTaskConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

@@ -88,7 +88,7 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void create( Prerequisite prerequisite, Plugin plugin )
+    public void create( Prerequisite prerequisite, Plugin plugin )
     {
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )

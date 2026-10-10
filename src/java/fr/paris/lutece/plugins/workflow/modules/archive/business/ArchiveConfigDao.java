@@ -57,7 +57,7 @@ public class ArchiveConfigDao implements ITaskConfigDAO<ArchiveConfig>
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( ArchiveConfig config )
+    public void insert( ArchiveConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

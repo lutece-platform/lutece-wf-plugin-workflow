@@ -57,7 +57,7 @@ public class CommentValueDAO implements ICommentValueDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( CommentValue commentValue, Plugin plugin )
+    public void insert( CommentValue commentValue, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
         {

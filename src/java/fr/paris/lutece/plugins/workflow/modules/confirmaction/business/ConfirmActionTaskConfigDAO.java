@@ -58,7 +58,7 @@ public class ConfirmActionTaskConfigDAO implements ITaskConfigDAO<ConfirmActionT
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( ConfirmActionTaskConfig config )
+    public void insert( ConfirmActionTaskConfig config )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {
