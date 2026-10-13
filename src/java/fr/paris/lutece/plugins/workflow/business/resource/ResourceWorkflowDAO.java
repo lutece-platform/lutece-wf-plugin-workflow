@@ -42,8 +42,10 @@ import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
@@ -76,6 +79,10 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_resource_workflow  SET id_resource=?,resource_type=?,id_state=?,id_workflow=?, "
             + " id_external_parent= ?,is_associated_workgroups= ? WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_resource_workflow WHERE id_resource=? AND resource_type=? AND id_workflow=? ";
+    private static final String SQL_QUERY_LOCK = "UPDATE workflow_resource_workflow SET lock_date = ? WHERE id_resource = ? AND resource_type = ? AND id_workflow = ? "
+            + " AND ( lock_date IS NULL OR lock_date < ? ) AND id_state IN ( ";
+    private static final String SQL_QUERY_UNLOCK = "UPDATE workflow_resource_workflow SET lock_date = NULL WHERE id_resource = ? AND resource_type = ? AND id_workflow = ? ";
+    private static final String PROPERTY_LOCK_TIMEOUT = "workflow.resourceWorkflow.lockTimeout";
     private static final String SQL_QUERY_DELETE_WORKGROUP = "DELETE FROM workflow_resource_workgroup WHERE id_resource=? AND resource_type=? AND id_workflow=?";
     private static final String SQL_QUERY_DELETE_BY_LIST_ID_RESOURCE = "DELETE FROM workflow_resource_workflow WHERE id_workflow =? AND resource_type = ? AND id_resource IN (? ";
     private static final String SQL_QUERY_DELETE_WORKGROUP_BY_LIST_ID_RESOURCE = "DELETE FROM workflow_resource_workgroup WHERE id_workflow =? AND resource_type = ? AND id_resource IN (? ";
@@ -98,6 +105,11 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
     private static final String SQL_CLOSE_UNION = " UNION ";
     private static final String SQL_ADITIONAL_PARAMETER = ",?";
     private static final String SQL_FILTER_NOT_ASSOCIATE_WITH_WORKGROUP = " AND r.is_associated_workgroups=0 ";
+
+    // Seconds after which the claim of an action is ignored (instance stopped during the action)
+    @Inject
+    @ConfigProperty( name = PROPERTY_LOCK_TIMEOUT, defaultValue = "300" )
+    private int _nLockTimeout;
 
     /**
      * {@inheritDoc}
@@ -829,5 +841,77 @@ public class ResourceWorkflowDAO implements IResourceWorkflowDAO
         }
         documentWorkflow.setAssociatedWithWorkgroup( daoUtil.getBoolean( ++nPos ) );
         return documentWorkflow;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean lock( int nIdResource, String strResourceType, int nIdWorkflow, List<Integer> listIdStateBefore )
+    {
+        return lock( nIdResource, strResourceType, nIdWorkflow, listIdStateBefore, _nLockTimeout );
+    }
+
+    /**
+     * Claims a resource for the processing of an action, with the given timeout
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param listIdStateBefore
+     *            the states from which the action can be processed
+     * @param nLockTimeout
+     *            the seconds after which a claim is ignored
+     * @return true if the resource is claimed
+     */
+    public boolean lock( int nIdResource, String strResourceType, int nIdWorkflow, List<Integer> listIdStateBefore, int nLockTimeout )
+    {
+        if ( CollectionUtils.isEmpty( listIdStateBefore ) )
+        {
+            return false;
+        }
+
+        // The state check and the claim are one statement: the database serializes the concurrent requests of every
+        // instance. The dates come from the clock of the instances, not from the database, to stay portable
+        long lNow = System.currentTimeMillis( );
+        String strQuery = SQL_QUERY_LOCK + listIdStateBefore.stream( ).map( id -> "?" ).collect( Collectors.joining( "," ) ) + " )";
+
+        try ( DAOUtil daoUtil = new DAOUtil( strQuery, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            daoUtil.setTimestamp( ++nPos, new Timestamp( lNow ) );
+            daoUtil.setInt( ++nPos, nIdResource );
+            daoUtil.setString( ++nPos, strResourceType );
+            daoUtil.setInt( ++nPos, nIdWorkflow );
+            daoUtil.setTimestamp( ++nPos, new Timestamp( lNow - nLockTimeout * 1000L ) );
+
+            for ( Integer nIdState : listIdStateBefore )
+            {
+                daoUtil.setInt( ++nPos, nIdState );
+            }
+
+            daoUtil.executeUpdate( );
+
+            return daoUtil.getReturnedRowCount( ) == 1;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unlock( int nIdResource, String strResourceType, int nIdWorkflow )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UNLOCK, WorkflowUtils.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdResource );
+            daoUtil.setString( ++nPos, strResourceType );
+            daoUtil.setInt( ++nPos, nIdWorkflow );
+            daoUtil.executeUpdate( );
+        }
     }
 }

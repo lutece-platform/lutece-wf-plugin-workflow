@@ -95,6 +95,7 @@ CREATE TABLE workflow_resource_workflow
 	id_workflow INT NOT NULL,
 	id_external_parent INT DEFAULT NULL,
 	is_associated_workgroups SMALLINT DEFAULT 0,
+	lock_date TIMESTAMP DEFAULT NULL,
 	PRIMARY KEY (id_resource, resource_type, id_workflow)
 );
 

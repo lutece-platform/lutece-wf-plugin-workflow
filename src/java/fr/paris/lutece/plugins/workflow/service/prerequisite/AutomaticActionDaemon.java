@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
@@ -92,9 +93,18 @@ public class AutomaticActionDaemon extends Daemon
                     }
                     catch ( AppException e )
                     {
-                        AppLogService.error( "An error occurred processing Action {} for resource Id {} of type {} ",
-                      		action.getId( ), resource.getIdResource( ), resource.getResourceType( ) ,  e);
-                        nNbErrors++;
+                        if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+                        {
+                            // Another action is in progress on this resource (user or other instance): not an error
+                            AppLogService.info( "Action {} skipped for resource Id {} of type {}: {}", action.getId( ), resource.getIdResource( ),
+                                    resource.getResourceType( ), e.getCause( ).getMessage( ) );
+                        }
+                        else
+                        {
+                            AppLogService.error( "An error occurred processing Action {} for resource Id {} of type {} ",
+                          		action.getId( ), resource.getIdResource( ), resource.getResourceType( ) ,  e);
+                            nNbErrors++;
+                        }
                     }
 
                     nNbResourcesFound++;
