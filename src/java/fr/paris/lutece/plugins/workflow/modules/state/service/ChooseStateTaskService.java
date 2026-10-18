@@ -103,7 +103,8 @@ public class ChooseStateTaskService extends AbstractStateTaskService implements 
 
         if ( newState != -1 && newState != oldState )
         {
-            doChangeState( task, nIdResource, strResourceType, nIdWorkflow, newState );
+            // Claimed while the resource is still in the old state: the daemon may run on several instances
+            doChangeStateIfInState( task, nIdResource, strResourceType, nIdWorkflow, oldState, newState );
         }
     }
 

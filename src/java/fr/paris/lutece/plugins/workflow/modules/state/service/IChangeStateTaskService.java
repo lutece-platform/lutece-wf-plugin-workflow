@@ -77,4 +77,23 @@ public interface IChangeStateTaskService
      * @param newState
      */
     void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState );
+
+    /**
+     * Change the state of a resource still in a given state, claiming it in the database (daemons running on several instances)
+     * 
+     * @param task
+     *            the task
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param nIdCurrentState
+     *            the state the resource must still be in
+     * @param newState
+     *            the new state id
+     * @return true if the state has been changed
+     */
+    boolean doChangeStateIfInState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int nIdCurrentState, int newState );
 }

@@ -104,8 +104,9 @@ public class ChangeStateDaemon extends Daemon
                 {
                     try
                     {
-                        _changeStateTaskService.doChangeState( task, resource.getIdResource( ), resource.getResourceType( ), workflow.getId( ),
-                                config.getIdNextState( ) );
+                        // Claimed while the resource is still in the state read: the daemon may run on several instances
+                        _changeStateTaskService.doChangeStateIfInState( task, resource.getIdResource( ), resource.getResourceType( ), workflow.getId( ),
+                                resource.getState( ).getId( ), config.getIdNextState( ) );
                     }
                     catch( Exception e )
                     {

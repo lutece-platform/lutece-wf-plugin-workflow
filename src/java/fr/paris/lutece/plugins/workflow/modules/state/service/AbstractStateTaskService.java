@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.state.service;
 
 import java.util.List;
-import java.util.Locale;
 
 import jakarta.inject.Inject;
 
@@ -104,7 +103,83 @@ public abstract class AbstractStateTaskService
 
     public void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
     {
-        Locale locale = I18nService.getDefaultLocale( );
+        State state = changeState( task, nIdResource, strResourceType, nIdWorkflow, newState );
+
+        if ( state != null )
+        {
+            // Execute the relative tasks of the state in the workflow
+            // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
+            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null,
+                    I18nService.getDefaultLocale( ), null );
+        }
+    }
+
+    /**
+     * Changes the state of a resource outside the processing of an action (daemons). The resource is claimed in the database while it is still in
+     * its current state, so that it is changed once when the daemon runs on several instances. The automatic reflexive actions of the new state
+     * run after the claim is released, as they claim the resource themselves.
+     * 
+     * @param task
+     *            the task
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param nIdCurrentState
+     *            the state the resource must still be in
+     * @param newState
+     *            the new state id
+     * @return true if the state has been changed, false if the resource is claimed by another processing or is no longer in the current state
+     */
+    public boolean doChangeStateIfInState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int nIdCurrentState, int newState )
+    {
+        if ( !_resourceWorkflowService.lock( nIdResource, strResourceType, nIdWorkflow, List.of( nIdCurrentState ) ) )
+        {
+            return false;
+        }
+
+        State state;
+
+        try
+        {
+            state = changeState( task, nIdResource, strResourceType, nIdWorkflow, newState );
+        }
+        finally
+        {
+            _resourceWorkflowService.unlock( nIdResource, strResourceType, nIdWorkflow );
+        }
+
+        if ( state == null )
+        {
+            return false;
+        }
+
+        // Execute the relative tasks of the state in the workflow
+        WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null,
+                I18nService.getDefaultLocale( ), null );
+
+        return true;
+    }
+
+    /**
+     * Changes the state of a resource: history, state and task information
+     * 
+     * @param task
+     *            the task
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param newState
+     *            the new state id
+     * @return the new state, or null if the state or the action of the task does not exist
+     */
+    private State changeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
+    {
         State state = _stateService.findByPrimaryKey( newState );
         Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
 
@@ -126,10 +201,11 @@ public abstract class AbstractStateTaskService
             resourceWorkflow.setState( state );
             _resourceWorkflowService.update( resourceWorkflow );
             saveTaskInformation( resourceHistory.getId( ), task, state );
-            // Execute the relative tasks of the state in the workflow
-            // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
-            WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
+
+            return state;
         }
+
+        return null;
     }
 
     protected abstract void saveTaskInformation( int nIdResourceHistory, ITask task, State state );
