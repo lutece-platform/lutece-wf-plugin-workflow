@@ -21,7 +21,7 @@
 							<@inputGroup>
 								<@select name='task_type_key' default_value='-1' items=task_type_list sort=true  />
 									<@button hideTitle=['all'] type='submit' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}'  />
-									<#if action??><@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}' hideTitle=['all'] buttonIcon='arrows-move-vertical' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' color='secondary' /></#if>
+									<#if action??><@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&amp;token=${token_update_task_order}' hideTitle=['all'] buttonIcon='arrows-move-vertical' title='#i18n{workflow.modify_workflow.init_order}' iconPosition='right' color='secondary' /></#if>
 							</@inputGroup>
 						</@formGroup>
 					</@tform>
@@ -35,6 +35,7 @@
 									<@manageFeatureItemColumn auto=true>
 										<!-- SELECT LIST FOR ORDER CHANGE -->
 										<@tform action='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp'>
+											<@input type='hidden' name='token' value='${token_change_order_task}' />
 											<#if (task_list?size > 1)>
 												<@input type='hidden' name='id_workflow' value=action.workflow.id />
 												<@input type='hidden' name='id_task' value=task.id/>

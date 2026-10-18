@@ -139,6 +139,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String JSP_MODIFY_REFLEXIVE_ACTION = "jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp";
     private static final String JSP_DO_REMOVE_WORKFLOW = "jsp/admin/plugins/workflow/DoRemoveWorkflow.jsp";
     private static final String JSP_DO_REMOVE_STATE = "jsp/admin/plugins/workflow/DoRemoveState.jsp";
+    private static final String JSP_DO_CHANGE_ORDER_STATE = "jsp/admin/plugins/workflow/DoChangeOrderState.jsp";
+    private static final String JSP_DO_CHANGE_ORDER_ACTION = "jsp/admin/plugins/workflow/DoChangeOrderAction.jsp";
+    private static final String JSP_DO_CHANGE_ORDER_TASK = "jsp/admin/plugins/workflow/DoChangeOrderTask.jsp";
+    private static final String JSP_DO_UPDATE_TASK_ORDER = "jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp";
     private static final String JSP_DO_REMOVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveAction.jsp";
     private static final String JSP_DO_COPY_WORKFLOW = "jsp/admin/plugins/workflow/DoCopyWorkflow.jsp";
     private static final String JSP_DO_IMPORT_WORKFLOW = "jsp/admin/plugins/workflow/DoImportWorkflow.jsp";
@@ -222,6 +226,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
     // mark
     private static final String MARK_PLUGIN = "plugin";
+    private static final String MARK_TOKEN_CHANGE_ORDER_STATE = "token_change_order_state";
+    private static final String MARK_TOKEN_CHANGE_ORDER_ACTION = "token_change_order_action";
+    private static final String MARK_TOKEN_CHANGE_ORDER_TASK = "token_change_order_task";
+    private static final String MARK_TOKEN_UPDATE_TASK_ORDER = "token_update_task_order";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_PAGINATOR_ACTION = "paginator_action";
     private static final String MARK_PAGINATOR_STATE = "paginator_state";
@@ -602,6 +610,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_MDGRAPH, WorkflowGraphExportService.generate( workflow, AppPathService.getBaseUrl( request ), strShowTasks != null ) );
         // Add CSRF Token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_WORKFLOW ) );
+        model.put( MARK_TOKEN_CHANGE_ORDER_STATE, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_STATE ) );
+        model.put( MARK_TOKEN_CHANGE_ORDER_ACTION, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_ACTION ) );
 
         setPageTitleProperty( PROPERTY_MODIFY_WORKFLOW_PAGE_TITLE );
 
@@ -1530,6 +1540,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
         // Add CSRF token
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_ACTION ) );
+        model.put( MARK_TOKEN_CHANGE_ORDER_TASK, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_TASK ) );
+        model.put( MARK_TOKEN_UPDATE_TASK_ORDER, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_UPDATE_TASK_ORDER ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ACTION, getLocale( ), model );
 
@@ -2146,25 +2158,22 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param request
      *            The HTTP request
      * @return return url of the jsp change order state
+     * @throws AccessDeniedException
+     *             if the security token is invalid
      */
-    public String doChangeOrderState( HttpServletRequest request )
+    public String doChangeOrderState( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, JSP_DO_CHANGE_ORDER_STATE );
+
         // gets the state which needs to be changed (order)
         String strStateId = request.getParameter( PARAMETER_ID_STATE );
-        String strWorkflowId = request.getParameter( PARAMETER_ID_WORKFLOW );
         String strOrderToSet = request.getParameter( PARAMETER_ORDER_ID );
         int nStateId = 0;
-        int nWorkflowId = 0;
         int nOrderToSet = 0;
 
         if ( StringUtils.isNotBlank( strStateId ) )
         {
             nStateId = WorkflowUtils.convertStringToInt( strStateId );
-        }
-
-        if ( StringUtils.isNotBlank( strWorkflowId ) )
-        {
-            nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
 
         if ( StringUtils.isNotBlank( strOrderToSet ) )
@@ -2173,6 +2182,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         State stateToChangeOrder = _stateService.findByPrimaryKey( nStateId );
+
+        if ( ( stateToChangeOrder == null ) || ( stateToChangeOrder.getWorkflow( ) == null ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        // The states reordered are the ones of the workflow of the state, not of a workflow given in the request
+        int nWorkflowId = stateToChangeOrder.getWorkflow( ).getId( );
 
         // order goes up
         if ( nOrderToSet < stateToChangeOrder.getOrder( ) )
@@ -2226,25 +2243,22 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param request
      *            The HTTP request
      * @return return url of the jsp change order action
+     * @throws AccessDeniedException
+     *             if the security token is invalid
      */
-    public String doChangeOrderAction( HttpServletRequest request )
+    public String doChangeOrderAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, JSP_DO_CHANGE_ORDER_ACTION );
+
         // gets the action which needs to be changed (order)
         String strActionId = request.getParameter( PARAMETER_ID_ACTION );
-        String strWorkflowId = request.getParameter( PARAMETER_ID_WORKFLOW );
         String strOrderToSet = request.getParameter( PARAMETER_ORDER_ACTION_ID );
         int nActionId = 0;
-        int nWorkflowId = 0;
         int nOrderToSet = 0;
 
         if ( StringUtils.isNotBlank( strActionId ) )
         {
             nActionId = WorkflowUtils.convertStringToInt( strActionId );
-        }
-
-        if ( StringUtils.isNotBlank( strWorkflowId ) )
-        {
-            nWorkflowId = WorkflowUtils.convertStringToInt( strWorkflowId );
         }
 
         if ( StringUtils.isNotBlank( strOrderToSet ) )
@@ -2253,6 +2267,14 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         Action actionToChangeOrder = _actionService.findByPrimaryKey( nActionId );
+
+        if ( ( actionToChangeOrder == null ) || ( actionToChangeOrder.getWorkflow( ) == null ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        // The actions reordered are the ones of the workflow of the action, not of a workflow given in the request
+        int nWorkflowId = actionToChangeOrder.getWorkflow( ).getId( );
 
         // order goes up
         if ( nOrderToSet < actionToChangeOrder.getOrder( ) )
@@ -2303,9 +2325,13 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      * @param request
      *            The HTTP request
      * @return return url of the jsp change order task
+     * @throws AccessDeniedException
+     *             if the security token is invalid
      */
-    public String doChangeOrderTask( HttpServletRequest request )
+    public String doChangeOrderTask( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, JSP_DO_CHANGE_ORDER_TASK );
+
         // gets the task which needs to be changed (order)
         String strTaskId = request.getParameter( PARAMETER_ID_TASK );
         String strOrderToSet = request.getParameter( PARAMETER_ORDER_TASK_ID );
@@ -2323,6 +2349,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         ITask taskToChangeOrder = _taskService.findByPrimaryKey( nTaskId, this.getLocale( ) );
+
+        if ( ( taskToChangeOrder == null ) || ( taskToChangeOrder.getAction( ) == null ) )
+        {
+            return getJspManageWorkflow( request );
+        }
 
         // order goes up
         if ( nOrderToSet < taskToChangeOrder.getOrder( ) )
@@ -2373,6 +2404,24 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         return getJspModifyAction( request, action.getId( ) );
+    }
+
+    /**
+     * Checks the security token of an action
+     * 
+     * @param request
+     *            The HTTP request
+     * @param strAction
+     *            The action (key of the token)
+     * @throws AccessDeniedException
+     *             if the security token is invalid
+     */
+    private void checkSecurityToken( HttpServletRequest request, String strAction ) throws AccessDeniedException
+    {
+        if ( !SecurityTokenService.getInstance( ).validate( request, strAction ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
     }
 
     /**
@@ -2821,6 +2870,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      */
     public String doUpdateTaskOrder( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, JSP_DO_UPDATE_TASK_ORDER );
+
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         int nIdAction = WorkflowUtils.convertStringToInt( strIdAction );
         Action action = null;
@@ -2900,6 +2951,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         model.put( MARK_NUMBER_TASK, listTasks.size( ) );
         model.put( MARK_STATE, state );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_REFLEXIVE_ACTION ) );
+        model.put( MARK_TOKEN_CHANGE_ORDER_TASK, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_CHANGE_ORDER_TASK ) );
+        model.put( MARK_TOKEN_UPDATE_TASK_ORDER, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_UPDATE_TASK_ORDER ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_REFLEXIVE_ACTION, locale, model );
 

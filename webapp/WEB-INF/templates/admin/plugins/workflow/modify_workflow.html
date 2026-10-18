@@ -88,6 +88,7 @@
 											<@manageFeatureItemColumn auto=true align='end'>
 												<!-- SELECT LIST FOR ORDER CHANGE -->
 												<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderState.jsp'>
+													<@input type='hidden' name='token' value='${token_change_order_state}' />
 													<@input type='hidden' name='id_workflow' value=workflow.id />
 													<@input type='hidden' name='id_state' value=state.id />
 													<@inputGroup>
@@ -127,6 +128,7 @@
 											<@manageFeatureItemColumn>
 												<!-- SELECT LIST FOR ORDER CHANGE -->
 												<@tform type='inline' action='jsp/admin/plugins/workflow/DoChangeOrderAction.jsp'>
+													<@input type='hidden' name='token' value='${token_change_order_action}' />
 													<@input type='hidden' name='id_workflow' value=workflow.id />
 													<@input type='hidden' name='id_action' value=action.id />
 													<@inputGroup>
