@@ -49,14 +49,18 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
-import fr.paris.lutece.util.url.UrlItem;
+import fr.paris.lutece.util.http.SecurityUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -91,6 +95,7 @@ public class CommentJspBean extends MVCAdminJspBean
 
     // Other constants
     private static final String PARAMETER_ENCODING = "UTF-8";
+    private static final String METHOD_POST = "POST";
 
     // Services
     @Inject
@@ -122,14 +127,16 @@ public class CommentJspBean extends MVCAdminJspBean
 
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
-        String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
+        String strReturnUrl = getSafeReturnUrl( request, request.getParameter( PARAMETER_RETURN_URL ) );
 
-        UrlItem url = new UrlItem( JSP_DO_REMOVE_COMMENT );
-        url.addParameter( PARAMETER_ID_HISTORY, strIdHistory );
-        url.addParameter( PARAMETER_ID_TASK, strIdTask );
-        url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
+        Map<String, Object> parameters = new HashMap<>( );
+        parameters.put( PARAMETER_ID_HISTORY, strIdHistory );
+        parameters.put( PARAMETER_ID_TASK, strIdTask );
+        parameters.put( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
+        parameters.put( SecurityTokenService.PARAMETER_TOKEN, getSecurityTokenService( ).getToken( request, JSP_DO_REMOVE_COMMENT ) );
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_COMMENT, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_COMMENT, null, null, JSP_DO_REMOVE_COMMENT, null, AdminMessage.TYPE_CONFIRMATION,
+                parameters );
     }
 
     /**
@@ -138,13 +145,18 @@ public class CommentJspBean extends MVCAdminJspBean
      * @param request
      *            The HTTP request
      * @throws AccessDeniedException
-     *             the {@link AccessDeniedException}
+     *             if the request is not posted with a valid security token or if the user is not allowed to delete the comment
      * @return The URL to go after performing the action
      * @throws UnsupportedEncodingException
      *             if there is an exception during the decoding of the return_url parameter
      */
     public String doRemoveComment( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
+        if ( !METHOD_POST.equalsIgnoreCase( request.getMethod( ) ) || !getSecurityTokenService( ).validate( request, JSP_DO_REMOVE_COMMENT ) )
+        {
+            throw new AccessDeniedException( ERROR_INVALID_TOKEN );
+        }
+
         if ( !canDeleteComment( request ) )
         {
             throw new AccessDeniedException( "The connected user is not allowed to delete this comment" );
@@ -185,7 +197,28 @@ public class CommentJspBean extends MVCAdminJspBean
             _resourceHistoryService.remove( nIdHistory );
         }
 
-        return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
+        String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
+
+        return getSafeReturnUrl( request, ( strReturnUrl != null ) ? URLDecoder.decode( strReturnUrl, PARAMETER_ENCODING ) : null );
+    }
+
+    /**
+     * Gets the return URL if it stays in the application, the admin home page otherwise (no open redirect)
+     * 
+     * @param request
+     *            the request
+     * @param strReturnUrl
+     *            the return URL given in the request
+     * @return the return URL, or the admin home page if it is blank or leaves the application
+     */
+    String getSafeReturnUrl( HttpServletRequest request, String strReturnUrl )
+    {
+        if ( StringUtils.isBlank( strReturnUrl ) || !SecurityUtil.isInternalRedirectUrlSafe( strReturnUrl, request ) )
+        {
+            return AppPathService.getBaseUrl( request ) + AppPathService.getAdminMenuUrl( );
+        }
+
+        return strReturnUrl;
     }
 
     /**
