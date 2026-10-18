@@ -42,10 +42,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -301,6 +303,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
     private static final String LOG_ACTION_NOT_FOUND = "Action not found for ID ";
     private static final String LOG_WORKFLOW_NOT_FOUND = "Workflow not found for ID ";
+    private static final String LOG_WORKFLOW_NOT_AUTHORIZED = "The user is not allowed to manage the workflow of ID ";
     
     private static final String ERROR_NO_FILE_SELECTED = "workflow.message.error.no_file_selected";
 
@@ -337,6 +340,110 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private boolean _bIsAscSort = false;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
+
+    /**
+     * {@inheritDoc}. Every view and action of the bean is reached through this method (JSP): the workflows designated by the request, directly or
+     * through a state, an action or a task, must belong to a workgroup of the user.
+     */
+    @Override
+    public void init( HttpServletRequest request, String strRight ) throws AccessDeniedException
+    {
+        super.init( request, strRight );
+
+        for ( int nIdWorkflow : getRequestWorkflowIds( request ) )
+        {
+            Workflow workflow = _workflowService.findByPrimaryKey( nIdWorkflow );
+
+            if ( ( workflow != null ) && !AdminWorkgroupService.isAuthorized( workflow, (User) getUser( ) ) )
+            {
+                throw new AccessDeniedException( LOG_WORKFLOW_NOT_AUTHORIZED + nIdWorkflow );
+            }
+        }
+    }
+
+    /**
+     * Gets the ids of the workflows designated by the request, directly or through a state, an action or a task
+     * 
+     * @param request
+     *            The HTTP request
+     * @return the ids of the workflows
+     */
+    private Set<Integer> getRequestWorkflowIds( HttpServletRequest request )
+    {
+        Set<Integer> setIdWorkflow = new HashSet<>( );
+
+        for ( int nId : getRequestIds( request, PARAMETER_ID_WORKFLOW ) )
+        {
+            setIdWorkflow.add( nId );
+        }
+
+        for ( String strParameter : new String [ ] { PARAMETER_ID_STATE, PARAMETER_ID_STATE_BEFORE, PARAMETER_ID_STATE_AFTER, PARAMETER_ID_ALTERNATIVE_STATE_AFTER } )
+        {
+            for ( int nId : getRequestIds( request, strParameter ) )
+            {
+                State state = _stateService.findByPrimaryKey( nId );
+
+                if ( ( state != null ) && ( state.getWorkflow( ) != null ) )
+                {
+                    setIdWorkflow.add( state.getWorkflow( ).getId( ) );
+                }
+            }
+        }
+
+        Set<Integer> setIdAction = new HashSet<>( getRequestIds( request, PARAMETER_ID_ACTION ) );
+
+        for ( int nId : getRequestIds( request, PARAMETER_ID_TASK ) )
+        {
+            ITask task = _taskService.findByPrimaryKey( nId, getLocale( ) );
+
+            if ( ( task != null ) && ( task.getAction( ) != null ) )
+            {
+                setIdAction.add( task.getAction( ).getId( ) );
+            }
+        }
+
+        for ( int nId : setIdAction )
+        {
+            Action action = _actionService.findByPrimaryKey( nId );
+
+            if ( ( action != null ) && ( action.getWorkflow( ) != null ) )
+            {
+                setIdWorkflow.add( action.getWorkflow( ).getId( ) );
+            }
+        }
+
+        return setIdWorkflow;
+    }
+
+    /**
+     * Gets the numeric values of a parameter of the request
+     * 
+     * @param request
+     *            The HTTP request
+     * @param strParameter
+     *            The parameter name
+     * @return the numeric values
+     */
+    private static List<Integer> getRequestIds( HttpServletRequest request, String strParameter )
+    {
+        List<Integer> listIds = new ArrayList<>( );
+        String [ ] values = request.getParameterValues( strParameter );
+
+        if ( values != null )
+        {
+            for ( String strValue : values )
+            {
+                int nId = WorkflowUtils.convertStringToInt( strValue );
+
+                if ( nId > 0 )
+                {
+                    listIds.add( nId );
+                }
+            }
+        }
+
+        return listIds;
+    }
 
     /**
      * Return management page of plugin workflow

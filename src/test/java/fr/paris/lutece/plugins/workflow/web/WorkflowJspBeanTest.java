@@ -46,9 +46,11 @@ import fr.paris.lutece.plugins.workflowcore.business.state.IStateDAO;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.test.AdminUserUtils;
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 import jakarta.inject.Inject;
@@ -90,6 +92,8 @@ public class WorkflowJspBeanTest extends LuteceTestCase
 
         _workflow = createWorkflow( "wf_order" );
         _otherWorkflow = createWorkflow( "wf_other" );
+        _otherWorkflow.setWorkgroup( "junit_workgroup_without_user" );
+        _workflowDAO.store( _otherWorkflow );
         _state1 = createState( _workflow, 1 );
         _state2 = createState( _workflow, 2 );
         _otherState1 = createState( _otherWorkflow, 1 );
@@ -224,5 +228,41 @@ public class WorkflowJspBeanTest extends LuteceTestCase
         AccessDeniedException exception = assertThrows( AccessDeniedException.class, ( ) -> _bean.doUpdateTaskOrder( request ) );
         // Refused on the token, before the action is loaded
         assertFalse( exception.getMessage( ).startsWith( "Action not found" ) );
+    }
+
+    private MockHttpServletRequest getUserRequest( )
+    {
+        MockHttpServletRequest request = getRequest( null );
+        AdminUserUtils.registerAdminUserWithRight( request, new AdminUser( ), WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
+
+        return request;
+    }
+
+    @Test
+    public void testInitWorkflowOfAnotherWorkgroup( )
+    {
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "id_workflow", Integer.toString( _otherWorkflow.getId( ) ) );
+
+        assertThrows( AccessDeniedException.class, ( ) -> _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) );
+    }
+
+    @Test
+    public void testInitStateOfAnotherWorkgroup( )
+    {
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "id_state", Integer.toString( _otherState1.getId( ) ) );
+
+        assertThrows( AccessDeniedException.class, ( ) -> _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) );
+    }
+
+    @Test
+    public void testInitWorkflowOfAllWorkgroups( ) throws AccessDeniedException
+    {
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "id_workflow", Integer.toString( _workflow.getId( ) ) );
+        request.setParameter( "id_state", Integer.toString( _state1.getId( ) ) );
+
+        _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
     }
 }
