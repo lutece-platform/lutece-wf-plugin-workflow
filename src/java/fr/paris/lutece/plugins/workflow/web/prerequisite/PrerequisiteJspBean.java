@@ -47,6 +47,7 @@ import jakarta.validation.ConstraintViolation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -90,6 +91,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
     private static final String JSP_URL_MODIFY_ACTION = "jsp/admin/plugins/workflow/ModifyAction.jsp";
     private static final String PARAMETER_PANE = "pane";
     private static final String PANE_PREREQUISITES = "pane-prerequisites";
+    private static final String JSP_URL_MANAGE_WORKFLOW = "jsp/admin/plugins/workflow/ManageWorkflow.jsp";
     private static final String JSP_URL_CREATE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetCreatePrerequisite.jsp";
     private static final String JSP_URL_MODIFY_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp";
     private static final String JSP_URL_DO_REMOVE_PREREQUISITE = "jsp/admin/plugins/workflow/prerequisite/DoRemovePrerequisite.jsp";
@@ -370,9 +372,17 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
      */
     public String getConfirmRemovePrerequisite( HttpServletRequest request )
     {
+        int nIdAction = NumberUtils.toInt( request.getParameter( MARK_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
+        int nIdPrerequisite = NumberUtils.toInt( request.getParameter( MARK_ID_PREREQUISITE ), NumberUtils.INTEGER_MINUS_ONE );
+
+        if ( nIdAction <= 0 || nIdPrerequisite <= 0 )
+        {
+            return AppPathService.getBaseUrl( request ) + JSP_URL_MANAGE_WORKFLOW;
+        }
+
         UrlItem urlItem = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_URL_DO_REMOVE_PREREQUISITE );
-        urlItem.addParameter( MARK_ID_ACTION, request.getParameter( MARK_ID_ACTION ) );
-        urlItem.addParameter( MARK_ID_PREREQUISITE, request.getParameter( MARK_ID_PREREQUISITE ) );
+        urlItem.addParameter( MARK_ID_ACTION, nIdAction );
+        urlItem.addParameter( MARK_ID_PREREQUISITE, nIdPrerequisite );
         urlItem.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_URL_DO_REMOVE_PREREQUISITE ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PREREQUISITE, urlItem.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
@@ -394,8 +404,13 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
             throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
         }
 
-        int nIdAction = Integer.parseInt( request.getParameter( MARK_ID_ACTION ) );
-        int nIdPrerequisite = Integer.parseInt( request.getParameter( MARK_ID_PREREQUISITE ) );
+        int nIdAction = NumberUtils.toInt( request.getParameter( MARK_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
+        int nIdPrerequisite = NumberUtils.toInt( request.getParameter( MARK_ID_PREREQUISITE ), NumberUtils.INTEGER_MINUS_ONE );
+
+        if ( nIdAction <= 0 || nIdPrerequisite <= 0 )
+        {
+            return AppPathService.getBaseUrl( request ) + JSP_URL_MANAGE_WORKFLOW;
+        }
 
         _prerequisiteManagementService.deletePrerequisite( nIdPrerequisite );
 
