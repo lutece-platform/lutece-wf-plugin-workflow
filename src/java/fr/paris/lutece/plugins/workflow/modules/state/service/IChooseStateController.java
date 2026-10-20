@@ -90,7 +90,8 @@ public interface IChooseStateController
      *            locale
      * @param config
      *            the taskconfig
-     * @return the information which must be displayed in the task configuration
+     * @return the information which must be displayed in the task configuration: HTML rendered by the controller from
+     *         its own template, every value escaped by it; the task marks it as markup in its configuration form
      */
     default String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITaskConfig config )
     {
