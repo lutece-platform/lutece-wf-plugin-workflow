@@ -93,6 +93,7 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.message.MessageHtml;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -793,9 +794,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( !WorkflowRemovalListenerService.getService( ).checkForRemoval( strIdWorkflow, listErrors, getLocale( ) ) )
         {
-            String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
+            MessageHtml cause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
             Object [ ] args = {
-                    strCause
+                    cause
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_WORKFLOW, args, AdminMessage.TYPE_STOP );
@@ -867,9 +868,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( !WorkflowRemovalListenerService.getService( ).checkForRemoval( strIdWorkflow, listErrors, getLocale( ) ) )
         {
-            String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
+            MessageHtml cause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
             Object [ ] args = {
-                    strCause
+                    cause
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_DISABLE_WORKFLOW, args, AdminMessage.TYPE_STOP );
@@ -2017,9 +2018,9 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
             if ( !TaskRemovalListenerService.getService( ).checkForRemoval( strIdTask, listErrors, getLocale( ) ) )
             {
-                String strCause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
+                MessageHtml cause = AdminMessageService.getFormattedList( listErrors, getLocale( ) );
                 Object [ ] arguments = {
-                        strCause
+                        cause
                 };
 
                 return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_TASK, arguments, AdminMessage.TYPE_STOP );
