@@ -1,9 +1,11 @@
 <%@ page errorPage="../../ErrorPage.jsp" %>
-<jsp:include page="../../AdminHeader.jsp" />
-
 <%@page import="fr.paris.lutece.plugins.workflow.web.WorkflowJspBean"%>
 
 ${ workflowJspBean.init( pageContext.request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW ) }
-${ workflowJspBean.getCreateState( pageContext.request ) }
+${ pageContext.setAttribute( 'strContent', workflowJspBean.getCreateState( pageContext.request ) ) }
+
+<jsp:include page="../../AdminHeader.jsp" />
+
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>
