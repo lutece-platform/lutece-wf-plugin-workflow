@@ -48,7 +48,13 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  *
  * TaskComponentManager
- *
+ * <p>
+ * Escaping contract (LUT-33153): the task forms, task informations and configuration forms a task component returns are
+ * HTML the component has rendered from its own templates, with HTML auto-escaping. The code of plugin-workflow that
+ * puts them in a template model marks them as markup ({@code HtmlMarkup.of}, {@code HtmlMarkup.ofAll}), so a component
+ * returns safe HTML: every value of its own model escaped by its template, never data concatenated in Java, never an
+ * HTML string escaped by hand.
+ * </p>
  */
 @ApplicationScoped
 @Named( TaskComponentManager.BEAN_MANAGER )

@@ -96,6 +96,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -1877,7 +1878,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
 
         model.put( MARK_TASK, task );
-        model.put( MARK_TASK_CONFIG, _taskComponentManager.getDisplayConfigForm( request, getLocale( ), task ) );
+        model.put( MARK_TASK_CONFIG, HtmlMarkup.of( _taskComponentManager.getDisplayConfigForm( request, getLocale( ), task ) ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_ACTION, action );
         model.put( MARK_WORKFLOW, _workflowService.findByPrimaryKey( action.getWorkflow( ).getId( ) ) );

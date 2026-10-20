@@ -77,6 +77,7 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.workflow.IWorkflowProvider;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
@@ -359,7 +360,7 @@ public class WorkflowProvider implements IWorkflowProvider
 
         Map<String, Object> model = new HashMap<>( );
 
-        model.put( MARK_TASK_FORM_ENTRY_LIST, listFormEntry );
+        model.put( MARK_TASK_FORM_ENTRY_LIST, HtmlMarkup.ofAll( listFormEntry ) );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_TASKS_FORM, locale, model );
 
@@ -572,7 +573,7 @@ public class WorkflowProvider implements IWorkflowProvider
                 }
             }
 
-            resourceHistoryTaskInformation.put( MARK_TASK_INFORMATION_LIST, listTaskInformation );
+            resourceHistoryTaskInformation.put( MARK_TASK_INFORMATION_LIST, HtmlMarkup.ofAll( listTaskInformation ) );
 
             listResourceHistoryTaskInformation.add( resourceHistoryTaskInformation );
         }

@@ -62,6 +62,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
@@ -162,7 +163,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         config.setPrerequisiteType( strPrerequisiteType );
 
         String strContent = service.getConfigHtml( config, request, getLocale( ) );
-        model.put( MARK_CONTENT, strContent );
+        model.put( MARK_CONTENT, HtmlMarkup.of( strContent ) );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ), model );
@@ -296,7 +297,7 @@ public class PrerequisiteJspBean extends PluginAdminPageJspBean
         config.setPrerequisiteType( prerequisite.getPrerequisiteType( ) );
 
         String strContent = service.getConfigHtml( config, request, getLocale( ) );
-        model.put( MARK_CONTENT, strContent );
+        model.put( MARK_CONTENT, HtmlMarkup.of( strContent ) );
         model.put( SecurityTokenService.MARK_TOKEN , SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_MODIFY_PREREQUISITE ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_MODIFY_PREREQUISITE, getLocale( ), model );

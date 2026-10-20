@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 @ApplicationScoped
@@ -99,7 +100,7 @@ public class ChooseStateTaskComponent extends NoFormTaskComponent
         IChooseStateController controller = _chooseStateTaskService.getController( _config );
         if ( controller != null && controller.hasConfig( ) )
         {
-            model.put( MARK_CONTROLLER_CONFIG, controller.getDisplayConfigForm( request, locale, _config ) );
+            model.put( MARK_CONTROLLER_CONFIG, HtmlMarkup.of( controller.getDisplayConfigForm( request, locale, _config ) ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHOOSE_STATE_CONFIG, locale, model );
