@@ -10,7 +10,7 @@
 			<#list icon_list as icon>
 			<@manageFeatureItem>
 				<@manageFeatureItemColumn auto=true>
-					<@img url='image?resource_type=workflow_icon_img&amp;id=${icon.id}' alt='' class='img-fluid img-thumbnail' params='width="32"' />
+					<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' alt='' class='img-fluid img-thumbnail' params={"width": "32"} />
 				</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn auto=true flex=false>
 					<@link href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' class='fw-bold' label=icon.name />

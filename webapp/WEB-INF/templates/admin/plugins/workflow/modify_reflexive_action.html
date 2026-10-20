@@ -1,10 +1,10 @@
 <#include "macro_workflows.html" />
-<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-states' label='#i18n{workflow.modify_workflow.manage_state.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' label=state.name /><@workflowBreadcrumbCurrent label='#i18n{workflow.modify_reflexive_action.title}' /></@workflowBreadcrumb></#assign>
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-states' label='#i18n{workflow.modify_workflow.manage_state.title}' /><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' label=state.name /><@workflowBreadcrumbCurrent label='#i18n{workflow.modify_reflexive_action.title}' /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_state.title} : ${state.name}'>
-			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}&amp;pane=pane-states' buttonIcon='arrow-left' color='light' class='me-1' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
-			<@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' hideTitle=['xs','sm'] params='data-bs-toggle="modal" data-bs-target="#add-reflexive-task"' />
+			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${state.workflow.id}&pane=pane-states' buttonIcon='arrow-left' color='light' class='me-1' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+			<@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#add-reflexive-task"} />
 		</@pageHeader>
 		<@modal id='add-reflexive-task'>
 			<@modalHeader modalTitle='#i18n{workflow.create_action.button_insert_new_task}' />
@@ -18,7 +18,7 @@
 				</@tform>
 			</@modalBody>
 			<@modalFooter>
-				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
 				<@button type='submit' formId='form-add-reflexive-task' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
 			</@modalFooter>
 		</@modal>
@@ -28,7 +28,7 @@
 				<@tabLink active=true href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' title='#i18n{workflow.modify_reflexive_action.title}'><@tag color='secondary' class='ms-2'>${number_task}</@tag></@tabLink>
 				<#if action?? && task_list?size gt 1>
 				<@tabLink tabClass='ms-auto d-flex align-items-center pe-2'>
-					<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&amp;token=${token_update_task_order}' color='light' size='sm' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&token=${token_update_task_order}' color='light' size='sm' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' hideTitle=['all'] />
 				</@tabLink>
 				</#if>
 			</@tabList>
@@ -62,7 +62,7 @@
 				</@manageFeature>
 				<#else>
 				<@empty title='#i18n{workflow.modify_action.manage_task.no_task}' subtitle='#i18n{workflow.modify_reflexive_action.help}' iconName='bolt-off'>
-					<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' params='data-bs-toggle="modal" data-bs-target="#add-reflexive-task"' /></@div>
+					<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' params={"data-bs-toggle": "modal", "data-bs-target": "#add-reflexive-task"} /></@div>
 				</@empty>
 				</#if>
 			</@tabContent>
