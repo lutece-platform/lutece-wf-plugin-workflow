@@ -76,7 +76,10 @@ public class DecodeStoredEntitiesUpgradeTest
             "workflow_task_assignment_cf.title",
             "workflow_task_assignment_cf.subject" );
 
-    /** Columns holding HTML, identifiers or histories, which the changeset must not touch. */
+    /**
+     * Columns holding HTML, identifiers or histories, which the changeset must not touch (the history columns that copy a plain
+     * text value are decoded by the history changeset).
+     */
     private static final List<String> COLUMNS_LEFT_AS_IS = List.of( "workflow_task_notification_cf.message",
             "workflow_task_assignment_cf.message",
             "workflow_task_confirm_action_config.message",
@@ -84,6 +87,26 @@ public class DecodeStoredEntitiesUpgradeTest
             "workflow_resource_user_history.first_name",
             "workflow_resource_history.user_access_code",
             "workflow_workflow.workgroup_key" );
+
+    /** The changeset that decodes the histories the back office shows, separate from the first one. */
+    private static final String HISTORY_CHANGESET = "-- changeset workflow:update_db_workflow-7.0.1-7.0.2.sql-decode-entities-history";
+
+    /** The history columns that hold a copy of a plain text value, which the history changeset decodes, in the order of the script. */
+    private static final List<String> HISTORY_DECODED_COLUMNS = List.of( "workflow_resource_user_history.first_name",
+            "workflow_resource_user_history.last_name",
+            "workflow_resource_user_history.email",
+            "workflow_task_change_state_information.new_state",
+            "workflow_task_choose_state_information.new_state" );
+
+    /** History columns holding rendered texts, HTML or identifiers, which neither changeset must touch. */
+    private static final List<String> HISTORY_COLUMNS_LEFT_AS_IS = List.of( "workflow_resource_user_history.user_access_code",
+            "workflow_resource_user_history.realm",
+            "workflow_resource_history.user_access_code",
+            "workflow_resource_history.resource_type",
+            "workflow_assignment_history.workgroup_key" );
+
+    /** The conditions the history changeset adds to the guard LIKE '%&%;%', by table.column. */
+    private static final Map<String, String> HISTORY_CONDITIONS = Map.of( );
 
     /** The decoding of the changeset rev20 of lutece-core (update_db_lutece_core-8.0.1-8.0.2.sql), &amp; last. */
     private static final List<String> CORE_DECODING = List.of( "&#39;=>'", "&#x27;=>'", "&#34;=>\"", "&quot;=>\"", "&#96;=>`", "&#61;=>=",
@@ -94,24 +117,26 @@ public class DecodeStoredEntitiesUpgradeTest
     private static final String GUARD = "LIKE '%&%;%'";
 
     /**
-     * Reads the decoding changeset: from its header to the next changeset or the end of the script.
+     * Reads a decoding changeset: from its header to the next changeset or the end of the script.
      *
+     * @param strHeader
+     *            the header of the changeset
      * @return the text of the changeset
      * @throws IOException
      *             if the script cannot be read
      */
-    private static String changeset( ) throws IOException
+    private static String changeset( String strHeader ) throws IOException
     {
         String strScript = Files.readString( Path.of( UPGRADE_SCRIPT ), StandardCharsets.UTF_8 );
-        int nStart = strScript.indexOf( CHANGESET );
-        assertTrue( nStart >= 0, "The changeset " + CHANGESET + " is missing from " + UPGRADE_SCRIPT );
-        int nEnd = strScript.indexOf( "-- changeset ", nStart + CHANGESET.length( ) );
+        int nStart = strScript.indexOf( strHeader );
+        assertTrue( nStart >= 0, "The changeset " + strHeader + " is missing from " + UPGRADE_SCRIPT );
+        int nEnd = strScript.indexOf( "-- changeset ", nStart + strHeader.length( ) );
 
         return nEnd < 0 ? strScript.substring( nStart ) : strScript.substring( nStart, nEnd );
     }
 
     /**
-     * Reads, for each UPDATE of the changeset, the replacements of its REPLACE calls in the order they apply.
+     * Reads, for each UPDATE of the first decoding changeset, the replacements of its REPLACE calls in the order they apply.
      *
      * @return the replacements (entity=>character) by table.column
      * @throws IOException
@@ -119,8 +144,22 @@ public class DecodeStoredEntitiesUpgradeTest
      */
     private static Map<String, List<String>> decodings( ) throws IOException
     {
+        return decodings( CHANGESET );
+    }
+
+    /**
+     * Reads, for each UPDATE of a changeset, the replacements of its REPLACE calls in the order they apply.
+     *
+     * @param strHeader
+     *            the header of the changeset
+     * @return the replacements (entity=>character) by table.column
+     * @throws IOException
+     *             if the script cannot be read
+     */
+    private static Map<String, List<String>> decodings( String strHeader ) throws IOException
+    {
         Map<String, List<String>> mapDecodings = new LinkedHashMap<>( );
-        Matcher update = UPDATE.matcher( changeset( ) );
+        Matcher update = UPDATE.matcher( changeset( strHeader ) );
         while ( update.find( ) )
         {
             List<String> listReplacements = new ArrayList<>( );
@@ -134,6 +173,26 @@ public class DecodeStoredEntitiesUpgradeTest
             mapDecodings.put( update.group( 1 ) + "." + update.group( 2 ), listReplacements );
         }
         return mapDecodings;
+    }
+
+    /**
+     * Reads the WHERE clause of each UPDATE of a changeset.
+     *
+     * @param strHeader
+     *            the header of the changeset
+     * @return the WHERE clauses by table.column
+     * @throws IOException
+     *             if the script cannot be read
+     */
+    private static Map<String, String> whereClauses( String strHeader ) throws IOException
+    {
+        Map<String, String> mapWhere = new LinkedHashMap<>( );
+        Matcher update = UPDATE.matcher( changeset( strHeader ) );
+        while ( update.find( ) )
+        {
+            mapWhere.put( update.group( 1 ) + "." + update.group( 2 ), update.group( 4 ) );
+        }
+        return mapWhere;
     }
 
     /**
@@ -156,7 +215,12 @@ public class DecodeStoredEntitiesUpgradeTest
             // WHERE ... LIKE '%&%;%': the value is not updated
             return strUpgraded;
         }
-        for ( String strReplacement : decodings( ).get( strColumn ) )
+        List<String> listReplacements = decodings( ).get( strColumn );
+        if ( listReplacements == null )
+        {
+            listReplacements = decodings( HISTORY_CHANGESET ).get( strColumn );
+        }
+        for ( String strReplacement : listReplacements )
         {
             int nArrow = strReplacement.indexOf( "=>" );
             strUpgraded = strUpgraded.replace( strReplacement.substring( 0, nArrow ), strReplacement.substring( nArrow + 2 ) );
@@ -198,13 +262,92 @@ public class DecodeStoredEntitiesUpgradeTest
     {
         for ( String strColumn : DECODED_COLUMNS )
         {
-            assertEquals( "L'école de l'Est", applyUpgrade( strColumn, "L&#39;école de l&#x27;Est" ), strColumn );
-            assertEquals( "\"Tom\" & \"Jerry\"", applyUpgrade( strColumn, "&#34;Tom&#34; &amp; &quot;Jerry&quot;" ), strColumn );
-            assertEquals( "<b>2 + 2 = 4</b> @ `x`", applyUpgrade( strColumn, "&lt;b&gt;2 &#43; 2 &#61; 4&lt;/b&gt; &#64; &#96;x&#96;" ), strColumn );
-            assertEquals( "&lt;", applyUpgrade( strColumn, "&amp;lt;" ), strColumn );
-            assertEquals( "&amp; &#39;", applyUpgrade( strColumn, "&amp;amp; &amp;#39;" ), strColumn );
-            assertEquals( "Tom & Jerry", applyUpgrade( strColumn, "Tom & Jerry" ), strColumn );
-            assertEquals( "Sans entité", applyUpgrade( strColumn, "Sans entité" ), strColumn );
+            assertDecodedOnce( strColumn );
+        }
+    }
+
+    /**
+     * Checks that the upgrade decodes once the typical values of a column.
+     *
+     * @param strColumn
+     *            the column, as table.column
+     * @throws IOException
+     *             if the script cannot be read
+     */
+    private static void assertDecodedOnce( String strColumn ) throws IOException
+    {
+        assertEquals( "L'école de l'Est", applyUpgrade( strColumn, "L&#39;école de l&#x27;Est" ), strColumn );
+        assertEquals( "\"Tom\" & \"Jerry\"", applyUpgrade( strColumn, "&#34;Tom&#34; &amp; &quot;Jerry&quot;" ), strColumn );
+        assertEquals( "<b>2 + 2 = 4</b> @ `x`", applyUpgrade( strColumn, "&lt;b&gt;2 &#43; 2 &#61; 4&lt;/b&gt; &#64; &#96;x&#96;" ), strColumn );
+        assertEquals( "&lt;", applyUpgrade( strColumn, "&amp;lt;" ), strColumn );
+        assertEquals( "&amp; &#39;", applyUpgrade( strColumn, "&amp;amp; &amp;#39;" ), strColumn );
+        assertEquals( "Tom & Jerry", applyUpgrade( strColumn, "Tom & Jerry" ), strColumn );
+        assertEquals( "Sans entité", applyUpgrade( strColumn, "Sans entité" ), strColumn );
+    }
+
+    /**
+     * The histories have their own changeset, with the header of the first one: to run once, after a backup.
+     */
+    @Test
+    public void testHistoryChangesetIsSeparateAndRunsOnce( ) throws IOException
+    {
+        String strChangeset = changeset( HISTORY_CHANGESET );
+
+        assertTrue( strChangeset.contains( "-- preconditions onFail:MARK_RAN onError:WARN" ), HISTORY_CHANGESET );
+        assertTrue( strChangeset.contains( "-- comment decodes, once," ), HISTORY_CHANGESET );
+        assertTrue( strChangeset.contains( "Back up the database before the upgrade. It must run ONCE only" ), HISTORY_CHANGESET );
+        for ( String strColumn : HISTORY_DECODED_COLUMNS )
+        {
+            assertFalse( decodings( ).containsKey( strColumn ), strColumn + " is decoded by the history changeset only" );
+        }
+    }
+
+    /**
+     * The history changeset decodes exactly the history columns that copy a plain text value, with the decoding of the core,
+     * and only the values holding an entity, with the conditions of the inventory.
+     */
+    @Test
+    public void testDecodesTheHistoryColumnsLikeTheCore( ) throws IOException
+    {
+        Map<String, List<String>> mapDecodings = decodings( HISTORY_CHANGESET );
+
+        assertEquals( HISTORY_DECODED_COLUMNS, new ArrayList<>( mapDecodings.keySet( ) ) );
+        mapDecodings.forEach( ( strColumn, listReplacements ) -> assertEquals( CORE_DECODING, listReplacements, strColumn ) );
+
+        Map<String, String> mapWhere = whereClauses( HISTORY_CHANGESET );
+        for ( String strColumn : HISTORY_DECODED_COLUMNS )
+        {
+            String strCondition = HISTORY_CONDITIONS.getOrDefault( strColumn, "" );
+            String strColumnName = strColumn.substring( strColumn.indexOf( '.' ) + 1 );
+            assertEquals( ( strColumnName + " " + GUARD + " " + strCondition ).trim( ), mapWhere.get( strColumn ), strColumn );
+        }
+    }
+
+    /**
+     * The rendered texts, the HTML and the identifiers of the histories are left as they are by both changesets.
+     */
+    @Test
+    public void testLeavesTheOtherHistoryColumnsAsTheyAre( ) throws IOException
+    {
+        Map<String, List<String>> mapDecodings = decodings( );
+        Map<String, List<String>> mapHistoryDecodings = decodings( HISTORY_CHANGESET );
+
+        for ( String strColumn : HISTORY_COLUMNS_LEFT_AS_IS )
+        {
+            assertFalse( mapDecodings.containsKey( strColumn ), strColumn + " must be left as it is" );
+            assertFalse( mapHistoryDecodings.containsKey( strColumn ), strColumn + " must be left as it is" );
+        }
+    }
+
+    /**
+     * The history values the filter encoded get back the characters that were typed, decoded once.
+     */
+    @Test
+    public void testDecodesTypicalHistoryValuesOnce( ) throws IOException
+    {
+        for ( String strColumn : HISTORY_DECODED_COLUMNS )
+        {
+            assertDecodedOnce( strColumn );
         }
     }
 
@@ -214,7 +357,7 @@ public class DecodeStoredEntitiesUpgradeTest
     @Test
     public void testHeaderSaysItRunsOnce( ) throws IOException
     {
-        String strChangeset = changeset( );
+        String strChangeset = changeset( CHANGESET );
 
         assertTrue( strChangeset.contains( "rewrites the data of the site" ) );
         assertTrue( strChangeset.contains( "must run ONCE only" ) );
