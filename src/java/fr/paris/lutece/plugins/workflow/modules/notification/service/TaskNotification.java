@@ -40,8 +40,8 @@ import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.editor.RichTextContentService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.Collection;
@@ -98,7 +98,7 @@ public class TaskNotification extends Task
             String strSenderEmail = MailService.getNoReplyEmail( );
             Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( config.getIdMailingList( ) );
             Map<String, Object> model = new HashMap<>( );
-            model.put( MARK_MESSAGE, HtmlMarkup.ofSanitized( config.getMessage( ) ) );
+            model.put( MARK_MESSAGE, RichTextContentService.getMarkup( config.getMessage( ) ) );
 
             HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFICATION_MAIL, locale, model );
 
