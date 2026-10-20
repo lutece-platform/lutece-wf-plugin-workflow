@@ -11,7 +11,7 @@
 	<@formGroup labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' >
 		<#list workgroup_list as workgroup>
 			<@checkBox orientation='switch' name='workgroups' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
-			<@span id='div_${workgroup.item.code}'>
+			<@span id='div_${workgroup.item.code}' class='workflow-assignment-notification'>
 				#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
 				<#if workgroup.config?exists>
 					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='${workgroup.config.idMailingList}' />
@@ -23,7 +23,7 @@
 	</@formGroup>
 	<@formGroup>
 		<#assign notify=config?exists&&config.notify>
-		<@checkBox orientation='switch' name='is_notify' id='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' params='onclick="javascript:notification();"'/>
+		<@checkBox orientation='switch' name='is_notify' id='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' />
 	</@formGroup>
 	<@div id="notification">
 		<@formGroup helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_user_name_comment}'>
@@ -45,24 +45,15 @@
 	</@div>
 </@fieldSet>
 <script>
-function notification(){
-	var notif = document.getElementsByName("is_notify");
-	if(notif[0].checked)	{
-		document.getElementById("notification").style.display = "block";
-		<#list workgroup_list as workgroup>
-			if( document.getElementById('div_${workgroup.item.code}') ){
-				document.getElementById('div_${workgroup.item.code}').style.display = "inline";
-			}
-		</#list>
-	} else {
-		document.getElementById( 'notification' ).style.display = "none";
-		<#list workgroup_list as workgroup>
-		if(document.getElementById('div_${workgroup.item.code}') ){
-			document.getElementById('div_${workgroup.item.code}').style.display = "none";
-		}
-		</#list>
-	}
-}
-
-notification();
+( function( ) {
+	const notify = document.getElementsByName( 'is_notify' )[0];
+	const notification = function( ) {
+		document.getElementById( 'notification' ).style.display = notify.checked ? 'block' : 'none';
+		document.querySelectorAll( '.workflow-assignment-notification' ).forEach( function( span ) {
+			span.style.display = notify.checked ? 'inline' : 'none';
+		} );
+	};
+	notify.addEventListener( 'change', notification );
+	notification( );
+} )( );
 </script>
