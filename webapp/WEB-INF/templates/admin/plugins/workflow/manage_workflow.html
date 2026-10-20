@@ -5,7 +5,7 @@
 			<#if workflow_list?has_content>
 			<@formGroup labelFor='search_workflow' labelKey='#i18n{portal.util.labelSearch}' hideLabel=['all'] formStyle=''>
 				<@inputGroup>
-					<@input type='text' name='search_workflow' id='search_workflow' placeHolder='#i18n{portal.util.labelSearch}' params='autocomplete="off"' />
+					<@input type='text' name='search_workflow' id='search_workflow' placeHolder='#i18n{portal.util.labelSearch}' autoComplete="off" />
 					<@inputGroupItem type='text'><@icon style='search' /></@inputGroupItem>
 				</@inputGroup>
 			</@formGroup>
@@ -13,8 +13,8 @@
 			<#if permission_manage_advanced_parameters>
 			<@aButton href='jsp/admin/plugins/workflow/ManageAdvancedParameters.jsp' buttonIcon='cog' color='' class='me-1' title='#i18n{workflow.manage_workflow.button_manage_advanced_parameters}' hideTitle=['xs','sm','md'] />
 			</#if>
-			<@button type='button' buttonIcon='filter' color='light' class='me-1' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['xs','sm','md'] params='data-bs-toggle="modal" data-bs-target="#workflow-filter"' />
-			<@button type='button' buttonIcon='upload' color='light' class='me-1' title='#i18n{workflow.manage_workflow.buttonImport}' hideTitle=['xs','sm','md'] params='data-bs-toggle="modal" data-bs-target="#workflow-import"' />
+			<@button type='button' buttonIcon='filter' color='light' class='me-1' title='#i18n{workflow.manage_workflow.button_search}' hideTitle=['xs','sm','md'] params={"data-bs-toggle": "modal", "data-bs-target": "#workflow-filter"} />
+			<@button type='button' buttonIcon='upload' color='light' class='me-1' title='#i18n{workflow.manage_workflow.buttonImport}' hideTitle=['xs','sm','md'] params={"data-bs-toggle": "modal", "data-bs-target": "#workflow-import"} />
 			<@aButton href='jsp/admin/plugins/workflow/CreateWorkflow.jsp' buttonIcon='plus' color='primary' title='#i18n{workflow.manage_workflow.button_create}' hideTitle=['xs','sm'] />
 		</@pageHeader>
 		<@modal id='workflow-filter'>
@@ -30,7 +30,7 @@
 				</@tform>
 			</@modalBody>
 			<@modalFooter>
-				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
 				<@button type='submit' formId='form-workflow-filter' color='primary' buttonIcon='filter' title='#i18n{workflow.manage_workflow.button_search}' />
 			</@modalFooter>
 		</@modal>
@@ -39,17 +39,17 @@
 			<@modalBody>
 				<@tform id='form-workflow-import' method='post' name='upload_workflow' action='jsp/admin/plugins/workflow/ConfirmImportWorkflow.jsp' enctype='multipart/form-data'>
 					<@formGroup labelFor='json_file' labelKey='#i18n{workflow.manage_workflow.labelImportFile}' helpKey='#i18n{workflow.manage_workflow.labelImportFile.help}' mandatory=true rows=2>
-						<@input type='file' name='json_file' id='json_file' params='accept=".json,application/json"' />
+						<@input type='file' name='json_file' id='json_file' accept=".json,application/json" />
 					</@formGroup>
 				</@tform>
 			</@modalBody>
 			<@modalFooter>
-				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+				<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
 				<@button type='submit' formId='form-workflow-import' name='action_doImportJson' color='primary' buttonIcon='upload' title='#i18n{workflow.manage_workflow.buttonImport}' />
 			</@modalFooter>
 		</@modal>
 		<#assign filterActive = ( active_selected?c != '-1' ) || ( ( user_workgroup_selected!'all' ) != 'all' ) />
-		<#assign resetFilterUrl = 'jsp/admin/plugins/workflow/ManageWorkflow.jsp?is_enabled=-1&amp;workgroup=all' />
+		<#assign resetFilterUrl = 'jsp/admin/plugins/workflow/ManageWorkflow.jsp?is_enabled=-1&workgroup=all' />
 		<#if filterActive>
 		<@alert color='info' iconTitle='filter' class='mt-3 d-flex align-items-center justify-content-between'>
 			<@span>#i18n{workflow.manage_workflow.filter_active}</@span>
@@ -72,9 +72,9 @@
 				<@manageFeatureItemColumn align='end'>
 					<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] />
 					<#if workflow.enabled>
-					<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&amp;token=${token}' color='warning' class='ms-1' buttonIcon='player-pause' title='#i18n{workflow.manage_workflow.title_disable}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='warning' class='ms-1' buttonIcon='player-pause' title='#i18n{workflow.manage_workflow.title_disable}' hideTitle=['all'] />
 					<#else>
-					<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&amp;token=${token}' color='success' class='ms-1' buttonIcon='player-play' title='#i18n{workflow.manage_workflow.title_enable}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='success' class='ms-1' buttonIcon='player-play' title='#i18n{workflow.manage_workflow.title_enable}' hideTitle=['all'] />
 					</#if>
 					<@actionsMenu id='workflow-actions-${workflow.id}'>
 						<@actionsMenuItem href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' iconName='download' label='#i18n{workflow.manage_workflow.title_export}' />

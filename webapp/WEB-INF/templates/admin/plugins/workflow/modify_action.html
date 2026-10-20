@@ -7,24 +7,24 @@
 	<#if state.code == action.stateAfter.id?c><#assign stateAfterName = state.name /></#if>
 </#list>
 <#assign headerDescription><@span class='text-secondary'>${stateBeforeNames?join( ', ' )}<@icon style='arrow-right' class='mx-1' />${stateAfterName}</@span><#if action.automaticState><@tag color='info' class='ms-2' tagIcon='bolt'>#i18n{workflow.create_action.label_automatic}</@tag></#if><#if action.massAction><@tag color='secondary' class='ms-1' tagIcon='stack-2'>#i18n{workflow.create_action.label_mass_action}</@tag></#if></#assign>
-<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&amp;pane=pane-actions' label='#i18n{workflow.modify_workflow.manage_action.title}' /><@workflowBreadcrumbCurrent label=action.name /></@workflowBreadcrumb></#assign>
+<#assign pageBreadcrumb><@workflowBreadcrumb workflow=workflow><@workflowBreadcrumbLink href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}&pane=pane-actions' label='#i18n{workflow.modify_workflow.manage_action.title}' /><@workflowBreadcrumbCurrent label=action.name /></@workflowBreadcrumb></#assign>
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_action.title} : ${action.name}' description=headerDescription>
-			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${action.workflow.id}&amp;pane=pane-actions' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
+			<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${action.workflow.id}&pane=pane-actions' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
 		</@pageHeader>
 		<@tabs>
 			<@tabList>
-				<@tabLink href='${actionUrl}&amp;pane=pane-general' active=( pane == 'pane-general' ) title='#i18n{workflow.modify_action.tab_general}' />
-				<@tabLink href='${actionUrl}&amp;pane=pane-tasks' active=( pane == 'pane-tasks' ) title='#i18n{workflow.modify_action.manage_task.title}'><@tag color='secondary' class='ms-2'>${number_task}</@tag></@tabLink>
-				<@tabLink href='${actionUrl}&amp;pane=pane-prerequisites' active=( pane == 'pane-prerequisites' ) title='#i18n{workflow.modify_action.manage_prerequisite.columnTitle}'><@tag color='secondary' class='ms-2'>${(listPrerequisite?size)!0}</@tag></@tabLink>
-				<@tabLink href='${actionUrl}&amp;pane=pane-linked-actions' active=( pane == 'pane-linked-actions' ) title='#i18n{workflow.create_action.label_link_actions}' />
+				<@tabLink href='${actionUrl}&pane=pane-general' active=( pane == 'pane-general' ) title='#i18n{workflow.modify_action.tab_general}' />
+				<@tabLink href='${actionUrl}&pane=pane-tasks' active=( pane == 'pane-tasks' ) title='#i18n{workflow.modify_action.manage_task.title}'><@tag color='secondary' class='ms-2'>${number_task}</@tag></@tabLink>
+				<@tabLink href='${actionUrl}&pane=pane-prerequisites' active=( pane == 'pane-prerequisites' ) title='#i18n{workflow.modify_action.manage_prerequisite.columnTitle}'><@tag color='secondary' class='ms-2'>${(listPrerequisite?size)!0}</@tag></@tabLink>
+				<@tabLink href='${actionUrl}&pane=pane-linked-actions' active=( pane == 'pane-linked-actions' ) title='#i18n{workflow.create_action.label_link_actions}' />
 				<@tabLink tabClass='ms-auto d-flex align-items-center pe-2'>
 					<#if pane == 'pane-tasks'>
-					<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&amp;token=${token_update_task_order}' color='light' size='sm' class='me-1' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' hideTitle=['all'] />
-					<@button type='button' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' hideTitle=['xs','sm'] params='data-bs-toggle="modal" data-bs-target="#add-task"' />
+					<@aButton href='jsp/admin/plugins/workflow/DoUpdateTaskOrder.jsp?id_action=${action.id}&token=${token_update_task_order}' color='light' size='sm' class='me-1' buttonIcon='arrows-sort' title='#i18n{workflow.modify_workflow.init_order}' hideTitle=['all'] />
+					<@button type='button' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#add-task"} />
 					<#elseif pane == 'pane-prerequisites'>
-					<@button type='button' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' hideTitle=['xs','sm'] params='data-bs-toggle="modal" data-bs-target="#add-prerequisite"' />
+					<@button type='button' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#add-prerequisite"} />
 					</#if>
 				</@tabLink>
 			</@tabList>
@@ -74,7 +74,7 @@
 						<@formGroup rows=2>
 							<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_action.button_save}' />
 							<@button type='submit' name='apply' color='light' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
-							<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' params='formnovalidate' />
+							<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_action.button_cancel}' params={"formnovalidate": true} />
 						</@formGroup>
 					</@tform>
 					</#if>
@@ -109,7 +109,7 @@
 					</@manageFeature>
 					<#else>
 					<@empty title='#i18n{workflow.modify_action.manage_task.no_task}' subtitle='#i18n{workflow.modify_action.manage_task.no_task_help}' iconName='list-check'>
-						<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' params='data-bs-toggle="modal" data-bs-target="#add-task"' /></@div>
+						<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' params={"data-bs-toggle": "modal", "data-bs-target": "#add-task"} /></@div>
 					</@empty>
 					</#if>
 					<@modal id='add-task'>
@@ -124,7 +124,7 @@
 							</@tform>
 						</@modalBody>
 						<@modalFooter>
-							<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+							<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
 							<@button type='submit' formId='form-add-task' color='primary' buttonIcon='plus' title='#i18n{workflow.create_action.button_insert_new_task}' />
 						</@modalFooter>
 					</@modal>
@@ -140,16 +140,16 @@
 							<@manageFeatureItemColumn auto=true flex=false><@span class='fw-bold'>#i18n{${prerequisite.title}}</@span></@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end'>
 								<#if prerequisite.hasConfiguration>
-								<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&amp;id_action=${action.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] />
+								<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] />
 								</#if>
-								<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&amp;id_action=${action.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] />
+								<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] />
 							</@manageFeatureItemColumn>
 						</@manageFeatureItem>
 						</#list>
 					</@manageFeature>
 					<#else>
 					<@empty title='#i18n{workflow.modify_action.manage_prerequisite.noItem}' subtitle=' ' iconName='lock-open'>
-						<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' params='data-bs-toggle="modal" data-bs-target="#add-prerequisite"' /></@div>
+						<@div class='empty-action'><@button type='button' color='primary' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' params={"data-bs-toggle": "modal", "data-bs-target": "#add-prerequisite"} /></@div>
 					</@empty>
 					</#if>
 					<@modal id='add-prerequisite'>
@@ -163,7 +163,7 @@
 							</@tform>
 						</@modalBody>
 						<@modalFooter>
-							<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params='data-bs-dismiss="modal"' />
+							<@button type='button' color='light' buttonIcon='x' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
 							<@button type='submit' formId='form-add-prerequisite' color='primary' buttonIcon='plus' title='#i18n{workflow.modify_action.manage_prerequisite.createPrerequisite}' />
 						</@modalFooter>
 					</@modal>
