@@ -13,7 +13,7 @@ Parameters:
 </#if>
 <#list icons as icon>
 <@radioButton name=name id='${name}_${icon.id}' value='${icon.id}' labelKey='' title=icon.name orientation='inline' checked=( default_value == icon.id ) >
-	<@img url='image?resource_type=workflow_icon_img&amp;id=${icon.id}' alt=icon.name class='img-fluid img-thumbnail' params='width="32"' />
+	<@img url='image?resource_type=workflow_icon_img&id=${icon.id}' alt=icon.name class='img-fluid img-thumbnail' params={"width": "32"} />
 </@radioButton>
 </#list>
 </#macro>
@@ -43,14 +43,14 @@ Parameters:
 <#macro orderButtons url orderParam order max token >
 <@btnGroup size='sm' ariaLabel='#i18n{workflow.modify_workflow.order}'>
 	<#if order gt 1>
-	<@aButton href='${url}&amp;${orderParam}=${order - 1}&amp;token=${token}' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] />
+	<@aButton href='${url}&${orderParam}=${order - 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] />
 	<#else>
-	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] disabled=true class='disabled' params='aria-disabled="true" tabindex="-1"' />
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} />
 	</#if>
 	<#if order lt max>
-	<@aButton href='${url}&amp;${orderParam}=${order + 1}&amp;token=${token}' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] />
+	<@aButton href='${url}&${orderParam}=${order + 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] />
 	<#else>
-	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] disabled=true class='disabled' params='aria-disabled="true" tabindex="-1"' />
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} />
 	</#if>
 </@btnGroup>
 </#macro>
@@ -87,7 +87,7 @@ Parameters:
 <#macro workflowBreadcrumb workflow active=false >
 <@breadcrumbs class='mb-1'>
 	<#if active>
-	<@breadcrumbItem class='active' params='aria-current="page"'><@icon style='git-merge' class='me-1' />${workflow.name}</@breadcrumbItem>
+	<@breadcrumbItem class='active' params={"aria-current": "page"}><@icon style='git-merge' class='me-1' />${workflow.name}</@breadcrumbItem>
 	<#else>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}'><@icon style='git-merge' class='me-1' />${workflow.name}</@link></@breadcrumbItem>
 	</#if>
@@ -101,7 +101,7 @@ Parameters:
 - label (string, required): text of the item.
 -->
 <#macro workflowBreadcrumbCurrent label >
-<@breadcrumbItem class='active' params='aria-current="page"'>${label}</@breadcrumbItem>
+<@breadcrumbItem class='active' params={"aria-current": "page"}>${label}</@breadcrumbItem>
 </#macro>
 <#--
 Macro: workflowBreadcrumbLink
