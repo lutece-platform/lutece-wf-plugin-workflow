@@ -48,6 +48,8 @@ import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.test.AdminUserUtils;
@@ -264,5 +266,38 @@ public class WorkflowJspBeanTest extends LuteceTestCase
         request.setParameter( "id_state", Integer.toString( _state1.getId( ) ) );
 
         _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
+    }
+    @Test
+    public void testDoCreateActionWithoutStateBeforeReturnsToTheCreationScreen( ) throws AccessDeniedException
+    {
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "id_workflow", Integer.toString( _workflow.getId( ) ) );
+        _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
+        request.setParameter( "name", "action without state before" );
+        request.setParameter( "description", "description" );
+        request.setParameter( "id_state_after", Integer.toString( _state2.getId( ) ) );
+
+        String strUrl = _bean.doCreateAction( request );
+
+        assertTrue( strUrl.endsWith( AdminMessageService.getMessageRelativeUrl( ) ), strUrl );
+        AdminMessage message = AdminMessageService.getMessage( request );
+        assertTrue( message.getBackUrl( ).endsWith( "jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=" + _workflow.getId( ) ),
+                message.getBackUrl( ) );
+    }
+
+    @Test
+    public void testDoCreateStateWithoutNameReturnsToTheCreationScreen( ) throws AccessDeniedException
+    {
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "id_workflow", Integer.toString( _workflow.getId( ) ) );
+        _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
+        request.setParameter( SecurityTokenService.PARAMETER_TOKEN,
+                _securityTokenService.getToken( request, "admin/plugins/workflow/create_state.html" ) );
+
+        String strUrl = _bean.doCreateState( request );
+
+        assertTrue( strUrl.endsWith( AdminMessageService.getMessageRelativeUrl( ) ), strUrl );
+        assertTrue( AdminMessageService.getMessage( request ).getBackUrl( )
+                .endsWith( "jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=" + _workflow.getId( ) ) );
     }
 }

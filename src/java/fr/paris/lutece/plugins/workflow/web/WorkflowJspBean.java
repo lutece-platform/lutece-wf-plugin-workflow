@@ -156,6 +156,10 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String JSP_DO_COPY_ACTION = "jsp/admin/plugins/workflow/DoCopyAction.jsp";
     private static final String JSP_DO_REMOVE_TASK_FROM_REFLEXIVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveTaskFromReflexiveAction.jsp";
     private static final String JSP_MANAGE_WORKFLOW = "jsp/admin/plugins/workflow/ManageWorkflow.jsp";
+    private static final String JSP_CREATE_WORKFLOW = "jsp/admin/plugins/workflow/CreateWorkflow.jsp";
+    private static final String JSP_CREATE_STATE = "jsp/admin/plugins/workflow/CreateState.jsp";
+    private static final String JSP_MODIFY_STATE = "jsp/admin/plugins/workflow/ModifyState.jsp";
+    private static final String JSP_CREATE_ACTION = "jsp/admin/plugins/workflow/CreateAction.jsp";
 
     // templates
     private static final String TEMPLATE_MANAGE_WORKFLOW = "admin/plugins/workflow/manage_workflow.html";
@@ -558,7 +562,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( ( request.getParameter( PARAMETER_CANCEL ) == null ) )
         {
             Workflow workflow = new Workflow( );
-            String strError = getWorkflowData( request, workflow );
+            String strError = getWorkflowData( request, workflow, AppPathService.getBaseUrl( request ) + JSP_CREATE_WORKFLOW );
 
             if ( strError != null )
             {
@@ -730,7 +734,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
                 }
 
-                String strError = getWorkflowData( request, workflow );
+                String strError = getWorkflowData( request, workflow, getJspModifyWorkflow( request, nIdWorkflow ) );
 
                 if ( strError != null )
                 {
@@ -799,7 +803,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     cause
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_WORKFLOW, args, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_WORKFLOW, args, AdminMessage.TYPE_STOP,
+                    getJspManageWorkflow( request ) );
         }
 
         _workflowService.remove( nIdWorkflow );
@@ -873,7 +878,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     cause
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_DISABLE_WORKFLOW, args, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_DISABLE_WORKFLOW, args, AdminMessage.TYPE_STOP,
+                    getJspManageWorkflow( request ) );
         }
 
         workflow.setEnabled( false );
@@ -889,11 +895,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param workflow
      *            the workflow object
-     * @param locale
-     *            the locale
+     * @param strReturnUrl
+     *            the URL of the screen of the form, opened by the button of an error message when there is no page to go back to
      * @return null if no error appear
      */
-    private String getWorkflowData( HttpServletRequest request, Workflow workflow )
+    private String getWorkflowData( HttpServletRequest request, Workflow workflow, String strReturnUrl )
     {
         String strName = request.getParameter( PARAMETER_NAME );
         String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
@@ -917,7 +923,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP, strReturnUrl );
         }
 
         workflow.setName( strName );
@@ -1004,7 +1010,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             state.setUid( UUID.randomUUID( ).toString( ) );
             state.setWorkflow( workflow );
 
-            String strError = getStateData( request, state );
+            String strError = getStateData( request, state, getJspCreateState( request, nIdWorkflow ) );
 
             if ( strError != null )
             {
@@ -1022,7 +1028,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                             stateInitial.getName( )
                     };
 
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP );
+                    return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP,
+                            getJspCreateState( request, nIdWorkflow ) );
                 }
             }
 
@@ -1114,7 +1121,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
             boolean isInitialTestStore = state.isInitialState( );
-            String strError = getStateData( request, state );
+            String strError = getStateData( request, state, getJspModifyState( request, nIdState ) );
 
             if ( strError != null )
             {
@@ -1136,7 +1143,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                             listState.get( 0 ).getName( )
                     };
 
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP );
+                    return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_INITIAL_STATE_ALREADY_EXIST, tabInitialState, AdminMessage.TYPE_STOP,
+                            getJspModifyState( request, nIdState ) );
                 }
             }
 
@@ -1172,7 +1180,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP,
+                    getJspStatesOfWorkflow( request, nIdState ) );
         }
 
         UrlItem url = new UrlItem( JSP_DO_REMOVE_STATE );
@@ -1214,7 +1223,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP,
+                    getJspStatesOfWorkflow( request, nIdState ) );
         }
 
         State state = _stateService.findByPrimaryKey( nIdState );
@@ -1231,7 +1241,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
                     if ( CollectionUtils.isNotEmpty( listTasksFound ) )
                     {
-                        return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+                        return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_STATE_TASKS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP,
+                                getJspModifyWorkflow( request, state.getWorkflow( ).getId( ), PANE_STATES ) );
                     }
                 }
             }
@@ -1252,11 +1263,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param state
      *            the state object
-     * @param locale
-     *            the locale
+     * @param strReturnUrl
+     *            the URL of the screen of the form, opened by the button of an error message when there is no page to go back to
      * @return null if no error appear
      */
-    private String getStateData( HttpServletRequest request, State state )
+    private String getStateData( HttpServletRequest request, State state, String strReturnUrl )
     {
         String strName = request.getParameter( PARAMETER_NAME );
         String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
@@ -1282,7 +1293,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP, strReturnUrl );
         }
 
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
@@ -1378,7 +1389,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             action.setUid( UUID.randomUUID( ).toString( ) );
             action.setWorkflow( workflow );
 
-            String strError = getActionData( request, action );
+            String strError = getActionData( request, action, getJspCreateAction( request, nIdWorkflow ) );
 
             if ( strError != null )
             {
@@ -1412,11 +1423,11 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
      *            The HTTP request
      * @param action
      *            the action object
-     * @param locale
-     *            the locale
+     * @param strReturnUrl
+     *            the URL of the screen of the form, opened by the button of an error message when there is no page to go back to
      * @return null if no error appear
      */
-    private String getActionData( HttpServletRequest request, Action action )
+    private String getActionData( HttpServletRequest request, Action action, String strReturnUrl )
     {
         String strName = request.getParameter( PARAMETER_NAME );
         String strDescription = request.getParameter( PARAMETER_DESCRIPTION );
@@ -1468,12 +1479,12 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                                         I18nService.getLocalizedString( FIELD_STATE_AFTER, getLocale( ) ),
                                 };
 
-                                return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+                                return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_ERROR_AUTOMATIC_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP, strReturnUrl );
                             }
                             else
                                 if ( bIsAutomatic && bIsMassAction )
                                 {
-                                    return AdminMessageService.getMessageUrl( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC, AdminMessage.TYPE_STOP );
+                                    return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_MASS_ACTION_CANNOT_BE_AUTOMATIC, AdminMessage.TYPE_STOP, strReturnUrl );
                                 }
 
         if ( StringUtils.isNotBlank( strFieldError ) )
@@ -1482,7 +1493,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                     I18nService.getLocalizedString( strFieldError, getLocale( ) )
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP, strReturnUrl );
         }
 
         if ( bIsAutomatic )
@@ -1491,7 +1502,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             {
                 if ( !task.getTaskType( ).isTaskForAutomaticAction( ) )
                 {
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_TASK_IS_NOT_AUTOMATIC, AdminMessage.TYPE_STOP );
+                    return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_TASK_IS_NOT_AUTOMATIC, AdminMessage.TYPE_STOP, strReturnUrl );
                 }
             }
         }
@@ -1680,7 +1691,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
-            String strError = getActionData( request, action );
+            String strError = getActionData( request, action, getJspModifyAction( request, nIdAction ) );
 
             if ( strError != null )
             {
@@ -2023,7 +2034,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                         cause
                 };
 
-                return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_TASK, arguments, AdminMessage.TYPE_STOP );
+                return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_TASK, arguments, AdminMessage.TYPE_STOP,
+                        getJspModifyAction( request, task.getAction( ).getId( ) ) );
             }
 
             if ( task.getTaskType( ).isConfigRequired( ) )
@@ -2622,6 +2634,78 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private String getJspManageWorkflow( HttpServletRequest request )
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_WORKFLOW;
+    }
+
+    /**
+     * Return url of the jsp create state
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdWorkflow
+     *            the id of the workflow
+     * @return url of the jsp create state
+     */
+    private String getJspCreateState( HttpServletRequest request, int nIdWorkflow )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_CREATE_STATE );
+        url.addParameter( PARAMETER_ID_WORKFLOW, nIdWorkflow );
+
+        return url.getUrl( );
+    }
+
+    /**
+     * Return url of the jsp modify state
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdState
+     *            the id of the state
+     * @return url of the jsp modify state
+     */
+    private String getJspModifyState( HttpServletRequest request, int nIdState )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_STATE );
+        url.addParameter( PARAMETER_ID_STATE, nIdState );
+
+        return url.getUrl( );
+    }
+
+    /**
+     * Return url of the jsp create action
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdWorkflow
+     *            the id of the workflow
+     * @return url of the jsp create action
+     */
+    private String getJspCreateAction( HttpServletRequest request, int nIdWorkflow )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_CREATE_ACTION );
+        url.addParameter( PARAMETER_ID_WORKFLOW, nIdWorkflow );
+
+        return url.getUrl( );
+    }
+
+    /**
+     * Return url of the states of the workflow of a state, or of the workflow list when the state is unknown
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdState
+     *            the id of the state
+     * @return url of the jsp modify workflow on its states, or of the jsp manage workflow
+     */
+    private String getJspStatesOfWorkflow( HttpServletRequest request, int nIdState )
+    {
+        State state = _stateService.findByPrimaryKey( nIdState );
+
+        if ( ( state == null ) || ( state.getWorkflow( ) == null ) )
+        {
+            return getJspManageWorkflow( request );
+        }
+
+        return getJspModifyWorkflow( request, state.getWorkflow( ).getId( ), PANE_STATES );
     }
 
     /**
