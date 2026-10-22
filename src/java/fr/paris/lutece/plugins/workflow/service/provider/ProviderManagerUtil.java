@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.workflowcore.service.provider.IProviderManager;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.ResolutionException;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 
@@ -93,6 +94,12 @@ public final class ProviderManagerUtil
         {
             AppLogService.info( "Unable to retrieve the provider manager IProviderManager '{}'", strProviderManagerId );
             AppLogService.debug("Unable to retrieve the provider manager '{}'", strProviderManagerId, e);
+        }
+        catch( ResolutionException e )
+        {
+            AppLogService.error( "No provider manager IProviderManager named '{}' (unknown or ambiguous bean): the configurations that reference it are ignored",
+                    strProviderManagerId );
+            AppLogService.debug( "Unable to resolve the provider manager '{}'", strProviderManagerId, e );
         }
 
         return result;
