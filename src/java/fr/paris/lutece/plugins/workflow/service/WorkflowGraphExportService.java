@@ -64,6 +64,7 @@ public class WorkflowGraphExportService
     private static final String KEY_AUTOMATIC_ACTION_SYMBOL = "  fa:fa-bolt";
     private static final String STATE_URL_PART = "/jsp/admin/plugins/workflow/ModifyState.jsp?id_state=";
     private static final String NEWLINE = "\n";
+    private static final String MERMAID_ENCODED_CHARS = "#<>&\"";
 
     /**
      * Export workflow as Mermaid MD graph
@@ -84,7 +85,7 @@ public class WorkflowGraphExportService
         	sb.append( KEY_START ).append( state.getId( ) ).append( NEWLINE );
             }
             
-            sb.append( state.getId( ) ).append( KEY_ASSIGN_LABEL_START ).append( state.getName( ).replaceAll( "\"", "'" ) ); 
+            sb.append( state.getId( ) ).append( KEY_ASSIGN_LABEL_START ).append( encodeLabel( state.getName( ) ) );
             
             if ( state.getAllActions( ) != null && state.getAllActions( ).size( ) > 0 )
             {
@@ -103,7 +104,7 @@ public class WorkflowGraphExportService
             {
             	sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
             		.append( ( action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_DEFAULT_ACTION_PREFIX:"" )
-            		.append( action.getName( ) )
+            		.append( encodeLabel( action.getName( ) ) )
             		.append( withTasks?addActionTasks( action ):"" )
             		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
             		.append( KEY_ASSIGN_ACTIONS_END )
@@ -113,7 +114,7 @@ public class WorkflowGraphExportService
                 {
             		sb.append( idState ).append( KEY_ASSIGN_ACTIONS_START )
 	            		.append( (action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) > 0)?KEY_ASSIGN_ALTERNATIVE_ACTION_PREFIX:"" )	
-	            		.append( action.getName( ) )
+	            		.append( encodeLabel( action.getName( ) ) )
 	            		.append( withTasks?addActionTasks( action ):"" )
 	            		.append( action.isAutomaticState ( )?KEY_AUTOMATIC_ACTION_SYMBOL:"" )
 	            		.append( KEY_ASSIGN_ACTIONS_END )
@@ -136,6 +137,35 @@ public class WorkflowGraphExportService
     }
 
     /**
+     * Encodes a text written by a user for a label of the Mermaid graph: the characters that would open markup, close the label or form an
+     * entity are given as Mermaid entity codes, which Mermaid shows as the characters themselves
+     *
+     * @param strText
+     *            the text to encode, may be null
+     * @return the encoded text, empty when the text is null
+     */
+    static String encodeLabel( String strText )
+    {
+        if ( strText == null )
+        {
+            return "";
+        }
+        StringBuilder sbEncoded = new StringBuilder( strText.length( ) );
+        for ( char c : strText.toCharArray( ) )
+        {
+            if ( MERMAID_ENCODED_CHARS.indexOf( c ) >= 0 )
+            {
+                sbEncoded.append( '#' ).append( (int) c ).append( ';' );
+            }
+            else
+            {
+                sbEncoded.append( c );
+            }
+        }
+        return sbEncoded.toString( );
+    }
+
+    /**
      * add tasks labels for action
      * 
      * @param action
@@ -150,10 +180,10 @@ public class WorkflowGraphExportService
 
         for ( ITask task : action.getAllTasks( ) )
         {
-            sb.append( KEY_NEWLINE ).append( " * " ).append( task.getTaskType( ).getTitle( ) );
+            sb.append( KEY_NEWLINE ).append( " * " ).append( encodeLabel( task.getTaskType( ).getTitle( ) ) );
         }
 
-        return sb.toString( ).replaceAll( "\"", "'" );
+        return sb.toString( );
     }
     
     /**
