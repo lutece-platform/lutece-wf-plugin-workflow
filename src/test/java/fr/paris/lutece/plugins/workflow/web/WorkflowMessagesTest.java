@@ -49,6 +49,19 @@ public class WorkflowMessagesTest extends LuteceTestCase
     private static final String ARGUMENT = "Nouveau";
 
     /**
+     * The message of a second initial state keeps its apostrophe and shows the name of the state
+     */
+    @Test
+    public void testInitialStateMessageShowsTheState( )
+    {
+        String strMessage = I18nService.getLocalizedString( "workflow.message.initial_state_already_exist", new Object [ ] {
+                ARGUMENT
+        }, Locale.FRENCH );
+
+        assertTrue( strMessage.startsWith( "L'état \"" + ARGUMENT + "\"" ), strMessage );
+    }
+
+    /**
      * The message of a non numeric width of an icon exists and shows the name of the field
      *
      * @throws ReflectiveOperationException
