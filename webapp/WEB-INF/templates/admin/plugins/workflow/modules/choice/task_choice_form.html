@@ -5,14 +5,38 @@
 		</@callOut>
 	</@columns>
 </@row>
-<@formGroup>
-	<@button type='submit' name='button_yes'  title='#i18n{module.workflow.choice.task_choice.yes}' />
-	<@button type='submit' name='button_no'   title='#i18n{module.workflow.choice.task_choice.no}'  />
+<@formGroup class='workflow-task-choice'>
+	<@button type='button' title='#i18n{module.workflow.choice.task_choice.yes}' params='data-task-choice="yes"' />
+	<@button type='button' title='#i18n{module.workflow.choice.task_choice.no}' params='data-task-choice="no"' />
 </@formGroup>
 <script>
-document.addEventListener( 'DOMContentLoaded', () => {	
-	document.getElementById('submit_task_form_buttons_div').style.display = 'none';
-});
+document.addEventListener( 'DOMContentLoaded', () => {
+	document.querySelectorAll( '.workflow-task-choice' ).forEach( ( choice ) => {
+		const form = choice.closest( 'form' );
+		if ( !form ) {
+			return;
+		}
+		const saveButton = Array.from( form.querySelectorAll( '[type=submit][name^="action_"]' ) )
+			.find( ( button ) => !choice.contains( button ) && /save/i.test( button.name ) );
+		if ( saveButton ) {
+			saveButton.style.display = 'none';
+		}
+		choice.querySelectorAll( '[data-task-choice]' ).forEach( ( button ) => {
+			button.addEventListener( 'click', () => {
+				if ( button.dataset.taskChoice === 'no' ) {
+					const input = document.createElement( 'input' );
+					input.type = 'hidden';
+					input.name = 'button_no';
+					input.value = 'true';
+					form.appendChild( input );
+				}
+				if ( saveButton ) {
+					form.requestSubmit( saveButton );
+				} else {
+					form.requestSubmit( );
+				}
+			} );
+		} );
+	} );
+} );
 </script>
-
-
