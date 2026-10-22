@@ -54,16 +54,16 @@
 				<@tabLink tabClass='ms-auto d-flex align-items-center pe-2'>
 					<#switch pane>
 					<#case 'pane-states'>
-						<@aButton href='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' hideTitle=['xs','sm'] />
+						<@aButton href='jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=${workflow.id}' color='primary'  buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_state.button_insert_state}' hideTitle=['xs','sm'] />
 						<#break>
 					<#case 'pane-actions'>
-						<@aButton href='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}' color='primary' size='sm' buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}' hideTitle=['xs','sm'] />
+						<@aButton href='jsp/admin/plugins/workflow/CreateAction.jsp?id_workflow=${workflow.id}' color='primary'  buttonIcon='plus' title='#i18n{workflow.modify_workflow.manage_action.button_insert_action}' hideTitle=['xs','sm'] />
 						<#break>
 					<#case 'pane-graph'>
 						<#if showTasks??>
-						<@aButton href='${workflowUrl}&amp;pane=pane-graph' color='light' size='sm' buttonIcon='eye-off' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' hideTitle=['xs','sm'] />
+						<@aButton href='${workflowUrl}&amp;pane=pane-graph' color='light'  buttonIcon='eye-off' title='#i18n{workflow.manage_workflow.title_graph_hide_tasks}' hideTitle=['xs','sm'] />
 						<#else>
-						<@aButton href='${workflowUrl}&amp;show_tasks&amp;pane=pane-graph' color='light' size='sm' buttonIcon='eye' title='#i18n{workflow.manage_workflow.title_graph_tasks}' hideTitle=['xs','sm'] />
+						<@aButton href='${workflowUrl}&amp;show_tasks&amp;pane=pane-graph' color='light'  buttonIcon='eye' title='#i18n{workflow.manage_workflow.title_graph_tasks}' hideTitle=['xs','sm'] />
 						</#if>
 						<#break>
 					<#default>
