@@ -155,6 +155,51 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
     }
 
     /**
+     * The names of states and actions reach the graph as text: no character of theirs opens markup, closes the label or forms an entity, while
+     * the line breaks between the tasks of an action stay markup.
+     */
+    @Test
+    public void testNamesAreEncodedForMermaid( )
+    {
+        Workflow wf = new Workflow( );
+        wf.setId( 1 );
+
+        State s1 = new State( );
+        s1.setId( 1 );
+        s1.setWorkflow( wf );
+        s1.setName( "State \"one\" <img src=x> & #lt;" );
+        List<State> states = new ArrayList<>( );
+        states.add( s1 );
+        wf.setAllStates( states );
+
+        TaskType taskType = new TaskType( );
+        taskType.setTitle( "notify <b>" );
+        Task task = new MyPrivateTestTask( );
+        task.setTaskType( taskType );
+        List<ITask> tasks = new ArrayList<>( );
+        tasks.add( task );
+
+        Action action = new Action( );
+        action.setId( 11 );
+        action.setName( "Validate <b>now</b>" );
+        List<Integer> listIdStateBefore = new ArrayList<>( );
+        listIdStateBefore.add( 1 );
+        action.setListIdStateBefore( listIdStateBefore );
+        action.setStateAfter( s1 );
+        action.setAllTasks( tasks );
+        List<Action> actions = new ArrayList<>( );
+        actions.add( action );
+        wf.setAllActions( actions );
+
+        String mdGraph = WorkflowGraphExportService.generate( wf, null, true );
+
+        assertFalse( mdGraph, mdGraph.contains( "<img" ) );
+        assertFalse( mdGraph, mdGraph.contains( "<b>" ) );
+        assertTrue( mdGraph, mdGraph.contains( "State #34;one#34; #60;img src=x#62; #38; #35;lt;" ) );
+        assertTrue( mdGraph, mdGraph.contains( "Validate #60;b#62;now#60;/b#62;<br />  * notify #60;b#62;" ) );
+    }
+
+    /**
      * MyPrivateTestTask
      */
     private class MyPrivateTestTask extends SimpleTask
