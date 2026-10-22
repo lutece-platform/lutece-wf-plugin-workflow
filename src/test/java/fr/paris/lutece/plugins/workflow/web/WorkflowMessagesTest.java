@@ -62,6 +62,19 @@ public class WorkflowMessagesTest extends LuteceTestCase
     }
 
     /**
+     * The message of an automatic action keeps its apostrophe and shows the names of the fields
+     */
+    @Test
+    public void testAutomaticFieldMessageShowsTheFields( )
+    {
+        String strMessage = I18nService.getLocalizedString( "workflow.message.error.automatic.field", new Object [ ] {
+                "A", "B"
+        }, Locale.FRENCH );
+
+        assertTrue( strMessage.startsWith( "Si l'action est automatique, les champs \"A\" et \"B\"" ), strMessage );
+    }
+
+    /**
      * The message of a non numeric width of an icon exists and shows the name of the field
      *
      * @throws ReflectiveOperationException
