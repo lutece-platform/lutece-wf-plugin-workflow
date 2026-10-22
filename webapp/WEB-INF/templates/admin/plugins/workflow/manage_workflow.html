@@ -57,7 +57,7 @@
 		</@alert>
 		</#if>
 		<#if workflow_list?has_content>
-		<@manageFeature id='workflow-list'>
+		<@manageFeature layout='list' id='workflow-list'>
 			<#list workflow_list as workflow>
 			<@manageFeatureItem>
 				<@manageFeatureItemColumn auto=true flex=false class='searchable'>

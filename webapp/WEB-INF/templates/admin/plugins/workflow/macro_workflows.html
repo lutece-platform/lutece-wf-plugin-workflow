@@ -61,7 +61,7 @@ Parameters:
 - id (string, required): unique id of the dropdown in the page.
 -->
 <#macro actionsMenu id >
-<@button type='button' id=id class='ms-1' title='#i18n{portal.util.labelActions}' hideTitle=['all'] buttonIcon='dots-vertical' dropdownMenu=true>
+<@button type='button' id=id class='ms-1' title='#i18n{portal.util.labelActions}' hideTitle=['all'] buttonIcon='dots' dropdownMenu=true>
 	<#nested>
 </@button>
 </#macro>
@@ -75,7 +75,7 @@ Parameters:
 - danger (boolean, optional): red entry for a destructive action.
 -->
 <#macro actionsMenuItem href label iconName danger=false >
-<@li><@link href=href class='dropdown-item${danger?then(" text-danger", "")}'><@icon style=iconName class='me-2' />${label}</@link></@li>
+<@link href=href class='dropdown-item${danger?then(" text-danger", "")}'><@icon style=iconName  />${label}</@link>
 </#macro>
 <#--
 Macro: workflowBreadcrumb
