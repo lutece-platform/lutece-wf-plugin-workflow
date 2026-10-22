@@ -45,7 +45,7 @@
 						<@manageFeatureItemColumn auto=true flex=false class='text-truncate'>
 							<#assign taskTitle = task.getTitle( locale )!'' />
 							<@span class='fw-bold'>${task.taskType.title!}</@span>
-							<#if taskTitle?has_content && taskTitle != task.taskType.title!''><@p class='text-secondary small mb-0 text-truncate'>${taskTitle}</@p></#if>
+							<#if taskTitle?has_content && taskTitle != task.taskType.title!''><@p class='text-secondary small mb-0 text-truncate'><#outputformat 'HTML'>${taskTitle}</#outputformat></@p></#if>
 						</@manageFeatureItemColumn>
 						<@manageFeatureItemColumn align='end'>
 							<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=taskCountByAction[task.action.id?c] token=token_change_order_task />
