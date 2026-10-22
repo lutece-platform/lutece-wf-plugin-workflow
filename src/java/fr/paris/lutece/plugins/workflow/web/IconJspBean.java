@@ -103,7 +103,7 @@ public class IconJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_ICON = "workflow.message.confirm_remove_icon";
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
     private static final String MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE = "workflow.message.can_not_remove_icon_actions_are_associate";
-    private static final String MESSAGE_NUMERIC_FIELD = "workflow.message.numeric_field";
+    private static final String MESSAGE_NUMERIC_FIELD = "workflow.message.numeric.field";
 
     // properties
     private static final String PROPERTY_ITEM_PER_PAGE = "workflow.itemsPerPage";
