@@ -356,7 +356,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         }
         else
             if ( ( icon.getValue( ) == null )
-                    && ( ( fileItem == null ) || ( ( fileItem.getName( ) == null ) && WorkflowUtils.EMPTY_STRING.equals( fileItem.getName( ) ) ) ) )
+                    && ( ( fileItem == null ) || ( ( fileItem.getName( ) == null ) || WorkflowUtils.EMPTY_STRING.equals( fileItem.getName( ) ) ) ) )
             {
                 strError = FIELD_FILE;
             }
