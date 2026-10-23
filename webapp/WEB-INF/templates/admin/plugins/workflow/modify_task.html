@@ -3,7 +3,7 @@
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader breadcrumb=pageBreadcrumb title='#i18n{workflow.modify_task.title} : ${task.taskType.title!}' description=task.getTitle( locale )!''>
-			<@button type='submit' formId='edit_task_page' name='cancel' color='light' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] params='formnovalidate' />
+			<@button type='submit' formId='edit_task_page' name='cancel' color='light' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] params={"formnovalidate": true} />
 		</@pageHeader>
 		<@tform action='jsp/admin/plugins/workflow/DoModifyTask.jsp?plugin_name=workflow' id='edit_task_page' boxed=true>
 			<@input type='hidden' name='id_task' value='${task.id!}' />
@@ -12,7 +12,7 @@
 			<@formGroup>
 				<@button type='submit' class='form-validation' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.modify_task.button_save}' />
 				<@button type='submit' class='form-validation' name='apply' color='light' buttonIcon='circle-check' title='#i18n{workflow.modify_action.button_apply}' />
-				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' params='formnovalidate' />
+				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.modify_task.button_cancel}' params={"formnovalidate": true} />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>
