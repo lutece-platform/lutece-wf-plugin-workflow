@@ -44,15 +44,16 @@
 						</@manageFeatureItemColumn>
 						<@manageFeatureItemColumn auto=true flex=false class='text-truncate'>
 							<#assign taskTitle = task.getTitle( locale )!'' />
+							<#assign taskLabel = task.taskType.title?has_content?then( task.taskType.title, taskTitle ) />
 							<@span class='fw-bold'>${task.taskType.title!}</@span>
 							<#if taskTitle?has_content && taskTitle != task.taskType.title!''><@p class='text-secondary small mb-0 text-truncate'>${taskTitle}</@p></#if>
 						</@manageFeatureItemColumn>
 						<@manageFeatureItemColumn align='end'>
-							<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=taskCountByAction[task.action.id?c] token=token_change_order_task />
+							<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=taskCountByAction[task.action.id?c] token=token_change_order_task label=taskLabel />
 							<#if task.taskType.configRequired>
-							<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_action.manage_task.title_modify}' hideTitle=['all'] />
+							<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_action.manage_task.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.modify_action.manage_task.title_modify} " + taskLabel} />
 							</#if>
-							<@actionsMenu id='task-actions-${task.id}'>
+							<@actionsMenu id='task-actions-${task.id}' label=taskLabel>
 								<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' iconName='copy' label='#i18n{workflow.modify_action.manage_task.title_copy}' />
 								<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' iconName='trash' label='#i18n{workflow.modify_action.manage_task.title_delete}' danger=true />
 							</@actionsMenu>
