@@ -1,6 +1,6 @@
 <#if config?exists>
 <#if config.title?exists ><@h level=3>${config.title}</@h></#if>
-<#if has_permission_delete ><@aButton color='danger' size='xs' href='#' buttonIcon='trash' title='#i18n{module.workflow.comment.button.remove_comment}' params={ "data-workflow-remove-comment": true, "data-id-history": id_history?c, "data-id-task": task.id?c } /></#if>
+<#if has_permission_delete ><@button type='button' color='danger' size='xs' buttonIcon='trash' title='#i18n{module.workflow.comment.button.remove_comment}' params={ "data-workflow-remove-comment": true, "data-id-history": id_history?c, "data-id-task": task.id?c } /></#if>
 <#if comment_value?exists && comment_value.value?has_content><#if config.richText>${richText(comment_value.value)}<#else>${comment_value.value}</#if></#if>
 <script src="themes/shared/plugins/workflow/js/admin/modules/comment/comment.js"></script>
 </#if>

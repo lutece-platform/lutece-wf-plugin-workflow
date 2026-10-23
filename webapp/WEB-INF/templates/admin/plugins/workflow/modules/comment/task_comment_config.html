@@ -8,14 +8,16 @@
 				</#if>
 				<@input type='text' size='sm' name='title' value=titleValue maxlength=255 />
 			</@formGroup>
-			<@formGroup labelFor='mandatory' labelKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}'>
-				<@radioButton name='mandatory' orientation='inline' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.mandatory />
-				<@radioButton name='mandatory' orientation='inline' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.mandatory />
-			</@formGroup>
-			<@formGroup labelFor='richText' labelKey='#i18n{module.workflow.comment.task_comment_config.label_richtext}' helpKey='#i18n{module.workflow.comment.task_comment_config.label_richtext_comment}'>
-				<@radioButton name='richText' orientation='inline' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.richText />
-				<@radioButton name='richText' orientation='inline' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.richText />
-			</@formGroup>
+			<@fieldSet legend='#i18n{module.workflow.comment.task_comment_config.label_mandatory}' legendClass='form-label'>
+				<@radioButton name='mandatory' id='mandatory_true' orientation='inline' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.mandatory />
+				<@radioButton name='mandatory' id='mandatory_false' orientation='inline' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.mandatory />
+				<@formHelp>#i18n{module.workflow.comment.task_comment_config.label_mandatory_comment}</@formHelp>
+			</@fieldSet>
+			<@fieldSet legend='#i18n{module.workflow.comment.task_comment_config.label_richtext}' legendClass='form-label'>
+				<@radioButton name='richText' id='richText_true' orientation='inline' value='true' labelKey='#i18n{module.workflow.comment.task_comment_config.label_yes}' checked=config?exists&&config.richText />
+				<@radioButton name='richText' id='richText_false' orientation='inline' value='false' labelKey='#i18n{module.workflow.comment.task_comment_config.label_no}' checked=config?exists&&!config.richText />
+				<@formHelp>#i18n{module.workflow.comment.task_comment_config.label_richtext_comment}</@formHelp>
+			</@fieldSet>
 		</@fieldSet>
 	</@columns>
 </@row>

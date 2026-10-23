@@ -3,7 +3,7 @@
 <@row>
 	<@columns>
 		<@fieldSet legend='#i18n{module.workflow.state.task.change.state.config.title}'>
-			<@formGroup>
+			<@formGroup labelFor='idNextState' labelKey='#i18n{module.workflow.state.task.change.state.config.title}' hideLabel=['all']>
 				<@select name='idNextState' default_value=idNextState?string items=list_states />
 			</@formGroup>
 		</@fieldSet>

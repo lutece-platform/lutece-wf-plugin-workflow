@@ -7,22 +7,22 @@
 <@row>
 	<@columns>
 		<@fieldSet legend='#i18n{module.workflow.state.task.choose.state.config.title}'>
-			<@formGroup labelFor='idStateOK' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}'>
+			<@formGroup labelFor='idStateOK' labelKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}'>
 				<@select name='idStateOK' default_value=idStateOK?string items=list_states />
 			</@formGroup>
-			<@formGroup labelFor='idStateKO' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}'>
+			<@formGroup labelFor='idStateKO' labelKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}'>
 				<@select name='idStateKO' default_value=idStateKO?string items=list_states />
 			</@formGroup>
-			<@formGroup labelFor='controllerName' labelKey='#i18n{module.workflow.state.task.choose.state.config.controller.choice}'>
 			<#if controller_list?has_content>
+			<@fieldSet legend='#i18n{module.workflow.state.task.choose.state.config.controller.choice}' legendClass='form-label'>
 				<#list controller_list as controller>
 					<#if selected_controller?? && selected_controller == controller.getName()><#assign checked=true><#else><#assign checked=false></#if>
-					<@radioButton name="controllerName" value='${controller.getName()}' orientation='inline'  mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
+					<@radioButton name="controllerName" id='controllerName_${controller?index}' value='${controller.getName()}' orientation='inline'  mandatory=true labelKey='#i18n{${controller.getLabelKey()}}' checked=checked />
 					<@formHelp>#i18n{controller.getHelpKey()}</@formHelp>
 				</#list>
 				<@button type='submit' buttonIcon='check' name='apply' title='#i18n{workflow.modify_action.button_apply}' value='select_controller_config' />
+			</@fieldSet>
 			</#if>
-			</@formGroup>
 		</@fieldSet>
 	</@columns>
 </@row>

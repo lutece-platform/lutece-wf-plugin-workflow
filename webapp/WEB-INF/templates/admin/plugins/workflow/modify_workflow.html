@@ -87,13 +87,13 @@
 								<#if state.icon?? && state.icon.id gt 0><@img url='image?resource_type=workflow_icon_img&id=${state.icon.id}' alt='' class='me-2 align-middle' params={"width": "20"} /></#if>
 								<@link href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' class='fw-bold' label=state.name />
 								<#if (state.isInitialState( ))!false><@tag color='primary' class='ms-2' tagIcon='star'>#i18n{workflow.modify_workflow.manage_state.label_initial}</@tag></#if>
-								<#if state.allActions?has_content><@tag color='info' class='ms-1' tagIcon='bolt' title='#i18n{workflow.modify_reflexive_action.title}'>${state.allActions?size}</@tag></#if>
+								<#if state.allActions?has_content><@tag color='info' class='ms-1' tagIcon='bolt' title='#i18n{workflow.modify_reflexive_action.title}'><@span class='visually-hidden'>#i18n{workflow.modify_reflexive_action.title} : </@span>${state.allActions?size}</@tag></#if>
 								<#if state.description?has_content><@p class='text-secondary small mb-0'>${state.description}</@p></#if>
 							</@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end'>
-								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderState.jsp?id_workflow=${workflow.id}&id_state=${state.id}' orderParam='order_id' order=state.order max=number_state token=token_change_order_state />
-								<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' hideTitle=['all'] />
-								<@actionsMenu id='state-actions-${state.id}'>
+								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderState.jsp?id_workflow=${workflow.id}&id_state=${state.id}' orderParam='order_id' order=state.order max=number_state token=token_change_order_state label=state.name />
+								<@aButton href='jsp/admin/plugins/workflow/ModifyState.jsp?id_state=${state.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_state.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.modify_workflow.manage_state.title_modify} " + state.name} />
+								<@actionsMenu id='state-actions-${state.id}' label=state.name>
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/GetModifyReflexiveAction.jsp?id_state=${state.id}' iconName='bolt' label='#i18n{workflow.modify_reflexive_action.title}' />
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyState.jsp?id_state=${state.id}' iconName='copy' label='#i18n{workflow.modify_workflow.manage_state.title_copy_state}' />
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveState.jsp?id_state=${state.id}' iconName='trash' label='#i18n{workflow.modify_workflow.manage_state.title_delete}' danger=true />
@@ -125,15 +125,15 @@
 								<#if action.automaticState><@tag color='info' class='ms-2' tagIcon='bolt'>#i18n{workflow.create_action.label_automatic}</@tag></#if>
 								<#if action.massAction><@tag color='secondary' class='ms-1' tagIcon='stack-2'>#i18n{workflow.create_action.label_mass_action}</@tag></#if>
 								<@p class='text-secondary small mb-0'>
-									<@span params={"title": "#i18n{workflow.modify_workflow.manage_action.row_state_before}"}><#list action.listIdStateBefore as idStateBefore>${state_before_map[idStateBefore?c]!}<#sep>, </#sep></#list></@span>
+									<@span params={"title": "#i18n{workflow.modify_workflow.manage_action.row_state_before}"}><@span class='visually-hidden'>#i18n{workflow.modify_workflow.manage_action.row_state_before} : </@span><#list action.listIdStateBefore as idStateBefore>${state_before_map[idStateBefore?c]!}<#sep>, </#sep></#list></@span>
 									<@icon style='arrow-right' class='mx-1' />
-									<@span params={"title": "#i18n{workflow.modify_workflow.manage_action.row_state_after}"}>${action.stateAfter.name!}</@span>
+									<@span params={"title": "#i18n{workflow.modify_workflow.manage_action.row_state_after}"}><@span class='visually-hidden'>#i18n{workflow.modify_workflow.manage_action.row_state_after} : </@span>${action.stateAfter.name!}</@span>
 								</@p>
 							</@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end'>
-								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderAction.jsp?id_workflow=${workflow.id}&id_action=${action.id}' orderParam='order_action_id' order=action.order max=number_action token=token_change_order_action />
-								<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' hideTitle=['all'] />
-								<@actionsMenu id='action-actions-${action.id}'>
+								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderAction.jsp?id_workflow=${workflow.id}&id_action=${action.id}' orderParam='order_action_id' order=action.order max=number_action token=token_change_order_action label=action.name />
+								<@aButton href='jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=${action.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_workflow.manage_action.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.modify_workflow.manage_action.title_modify} " + action.name} />
+								<@actionsMenu id='action-actions-${action.id}' label=action.name>
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyAction.jsp?id_action=${action.id}' iconName='copy' label='#i18n{workflow.modify_workflow.manage_state.title_copy_action}' />
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveAction.jsp?id_action=${action.id}' iconName='trash' label='#i18n{workflow.modify_workflow.manage_action.title_delete}' danger=true />
 								</@actionsMenu>

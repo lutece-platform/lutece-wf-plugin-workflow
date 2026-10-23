@@ -27,15 +27,16 @@
 							</@formGroup>
 						</@columns>
 						<@columns lg=6>
-							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_initial_state}' helpKey='#i18n{workflow.create_state.label_initial_state_comment}' hideLabel=['all']>
+							<@formGroup rows=2 labelFor='is_initial_state' helpKey='#i18n{workflow.create_state.label_initial_state_comment}'>
 								<@checkBox orientation='switch' name='is_initial_state' id='is_initial_state' value='1' labelKey='#i18n{workflow.create_state.label_initial_state}' checked=(state.isInitialState( ))!false />
 							</@formGroup>
-							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}' hideLabel=['all']>
+							<@formGroup rows=2 labelFor='is_required_workgroup_assigned' helpKey='#i18n{workflow.create_state.label_required_workgroup_assigned_comment}'>
 								<@checkBox orientation='switch' name='is_required_workgroup_assigned' id='is_required_workgroup_assigned' value='1' labelKey='#i18n{workflow.create_state.label_required_workgroup_assigned}' checked=(state.isRequiredWorkgroupAssigned( ))!false />
 							</@formGroup>
-							<@formGroup rows=2 labelKey='#i18n{workflow.create_state.label_icon}' helpKey='#i18n{workflow.create_state.label_icon_comment}'>
+							<@fieldSet legend='#i18n{workflow.create_state.label_icon}' legendClass='form-label'>
 								<@radioIconList name='id_icon' default_value=state.icon.id icons=icon_list noIconLabel='#i18n{workflow.create_state.label_no_icon}' />
-							</@formGroup>
+								<@formHelp>#i18n{workflow.create_state.label_icon_comment}</@formHelp>
+							</@fieldSet>
 						</@columns>
 					</@row>
 					<@formGroup rows=2>

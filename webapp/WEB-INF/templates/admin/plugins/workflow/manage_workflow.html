@@ -70,13 +70,13 @@
 					<@p class='text-secondary small mb-0'>${workflow.description!}<#if workflow.workgroup?has_content && workflow.workgroup != 'all'> &middot; <@icon style='users' class='me-1' />${workflow.workgroup}</#if></@p>
 				</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn align='end'>
-					<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/ModifyWorkflow.jsp?id_workflow=${workflow.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_workflow.title_modify} " + workflow.name} />
 					<#if workflow.enabled>
-					<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='warning' class='ms-1' buttonIcon='player-pause' title='#i18n{workflow.manage_workflow.title_disable}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/DoDisableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='warning' class='ms-1' buttonIcon='player-pause' title='#i18n{workflow.manage_workflow.title_disable}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_workflow.title_disable} " + workflow.name} />
 					<#else>
-					<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='success' class='ms-1' buttonIcon='player-play' title='#i18n{workflow.manage_workflow.title_enable}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/DoEnableWorkflow.jsp?id_workflow=${workflow.id}&token=${token}' color='success' class='ms-1' buttonIcon='player-play' title='#i18n{workflow.manage_workflow.title_enable}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_workflow.title_enable} " + workflow.name} />
 					</#if>
-					<@actionsMenu id='workflow-actions-${workflow.id}'>
+					<@actionsMenu id='workflow-actions-${workflow.id}' label=workflow.name>
 						<@actionsMenuItem href='jsp/admin/plugins/workflow/DoExportWorkflow.jsp?id_workflow=${workflow.id}' iconName='download' label='#i18n{workflow.manage_workflow.title_export}' />
 						<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyWorkflow.jsp?id_workflow=${workflow.id}' iconName='copy' label='#i18n{workflow.manage_workflow.title_copy}' />
 						<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveWorkflow.jsp?id_workflow=${workflow.id}' iconName='trash' label='#i18n{workflow.manage_workflow.title_delete}' danger=true />
