@@ -8,7 +8,7 @@
 				<@input type='text' name='name' id='name' maxlength=255 mandatory=true />
 			</@formGroup>
 			<@formGroup labelFor='id_file' labelKey='#i18n{workflow.create_icon.label_file}' helpKey='#i18n{workflow.create_icon.label_file_comment}' mandatory=true>
-				<@input type='file' name='id_file' id='id_file' params='accept="image/*"' />
+				<@input type='file' name='id_file' id='id_file' accept="image/*" />
 			</@formGroup>
 			<@formGroup labelFor='width' labelKey='#i18n{workflow.create_icon.label_width}' helpKey='#i18n{workflow.create_icon.label_width_comment}'>
 				<@input type='number' name='width' id='width' min=0 />
@@ -18,7 +18,7 @@
 			</@formGroup>
 			<@formGroup>
 				<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_icon.button_save}' />
-				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_icon.button_cancel}' params='formnovalidate' />
+				<@button type='submit' name='cancel' color='light' buttonIcon='x' title='#i18n{workflow.create_icon.button_cancel}' params={"formnovalidate": true} />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>
