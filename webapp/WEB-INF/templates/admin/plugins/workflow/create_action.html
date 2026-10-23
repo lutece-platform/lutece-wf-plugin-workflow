@@ -16,16 +16,20 @@
 					<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' helpKey='#i18n{workflow.create_action.label_description_comment}' mandatory=true>
 						<@input type='textarea' name='description' id='description' rows=3 mandatory=true />
 					</@formGroup>
-					<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' helpKey='#i18n{workflow.create_action.label_icon_comment}' mandatory=true>
+					<#assign legendIcon>#i18n{workflow.create_action.label_icon} <span class="text-danger">*</span></#assign>
+					<@fieldSet legend=legendIcon legendClass='form-label'>
 						<@radioIconList name='id_icon' default_value=1 icons=icon_list />
-					</@formGroup>
+						<@formHelp>#i18n{workflow.create_action.label_icon_comment}</@formHelp>
+					</@fieldSet>
 				</@columns>
 				<@columns lg=6>
-					<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_state_before}' helpKey='#i18n{workflow.create_action.label_state_before_comment}' mandatory=true>
+					<#assign legendStateBefore>#i18n{workflow.create_action.label_state_before} <span class="text-danger">*</span></#assign>
+					<@fieldSet legend=legendStateBefore legendClass='form-label'>
 						<#list state_list as state>
 						<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' />
 						</#list>
-					</@formGroup>
+						<@formHelp>#i18n{workflow.create_action.label_state_before_comment}</@formHelp>
+					</@fieldSet>
 					<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' helpKey='#i18n{workflow.create_action.label_state_after_comment}' mandatory=true>
 						<@select name='id_state_after' id='id_state_after' items=state_list default_value='-1' />
 					</@formGroup>
@@ -42,11 +46,12 @@
 					</@fieldSet>
 					<#if available_linked_actions?has_content>
 					<@fieldSet legend='#i18n{workflow.create_action.label_link_actions}'>
-						<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_available_linked_actions}' helpKey='#i18n{workflow.create_action.label_link_actions_comment}'>
+						<@fieldSet legend='#i18n{workflow.create_action.label_available_linked_actions}' legendClass='form-label'>
 							<#list available_linked_actions as linkedAction>
 							<@checkBox orientation='switch' name='select_linked_actions' id='select_linked_actions_${linkedAction.code}' value='${linkedAction.code}' labelKey='${linkedAction.name}' />
 							</#list>
-						</@formGroup>
+							<@formHelp>#i18n{workflow.create_action.label_link_actions_comment}</@formHelp>
+						</@fieldSet>
 					</@fieldSet>
 					</#if>
 				</@columns>

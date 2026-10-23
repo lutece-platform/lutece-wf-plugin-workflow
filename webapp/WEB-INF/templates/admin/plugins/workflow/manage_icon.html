@@ -16,8 +16,8 @@
 					<@link href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' class='fw-bold' label=icon.name />
 				</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn align='end'>
-					<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] />
-					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] />
+					<@aButton href='jsp/admin/plugins/workflow/ModifyIcon.jsp?id_icon=${icon.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_icon.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_icon.title_modify} " + icon.name} />
+					<@aButton href='jsp/admin/plugins/workflow/ConfirmRemoveIcon.jsp?id_icon=${icon.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.manage_icon.title_delete}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_icon.title_delete} " + icon.name} />
 				</@manageFeatureItemColumn>
 			</@manageFeatureItem>
 			</#list>

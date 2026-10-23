@@ -11,7 +11,7 @@
 			<@input type='hidden' name='prerequisite_type' value='${prerequisite_type}' />
 			<@input type='hidden' name='token' value='${token}' />
 			<#if id_prerequisite??><@input type='hidden' name='id_prerequisite' value='${id_prerequisite}' /></#if>
-			<#list (errors![]) as error><@alert color='danger' dismissible=true title=error.message /></#list>
+			<#list (errors![]) as error><@alert color='danger' dismissible=true titleLevel='h2' titleClass='h4' title=error.message /></#list>
 			${content}
 			<@formGroup>
 				<@button type='submit' name='save' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_state.button_save}' />

@@ -39,18 +39,22 @@ Parameters:
 - order (number, required): current position of the row.
 - max (number, required): number of rows.
 - token (string, required): security token of the order change.
+- label (string, optional): name of the row, added to the accessible names of the group and of its buttons.
 -->
-<#macro orderButtons url orderParam order max token >
-<@btnGroup size='sm' ariaLabel='#i18n{workflow.modify_workflow.order}'>
+<#macro orderButtons url orderParam order max token label='' >
+<#local suffix = label?has_content?then( ' ' + label, '' ) />
+<#local upName = label?has_content?then( { "aria-label": "#i18n{workflow.modify_workflow.moveUp}" + suffix }, {} ) />
+<#local downName = label?has_content?then( { "aria-label": "#i18n{workflow.modify_workflow.moveDown}" + suffix }, {} ) />
+<@btnGroup size='sm' ariaLabel='#i18n{workflow.modify_workflow.order}' + suffix>
 	<#if order gt 1>
-	<@aButton href='${url}&${orderParam}=${order - 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] />
+	<@aButton href='${url}&${orderParam}=${order - 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] params=upName />
 	<#else>
-	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} />
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-up' title='#i18n{workflow.modify_workflow.moveUp}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} + upName />
 	</#if>
 	<#if order lt max>
-	<@aButton href='${url}&${orderParam}=${order + 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] />
+	<@aButton href='${url}&${orderParam}=${order + 1}&token=${token}' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] params=downName />
 	<#else>
-	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} />
+	<@aButton href='#' color='light' size='sm' buttonIcon='chevron-down' title='#i18n{workflow.modify_workflow.moveDown}' hideTitle=['all'] disabled=true class='disabled' tabIndex="-1" params={"aria-disabled": "true"} + downName />
 	</#if>
 </@btnGroup>
 </#macro>
@@ -59,9 +63,10 @@ Macro: actionsMenu
 Description: "more actions" dropdown of a list row; the nested content is a list of @actionsMenuItem.
 Parameters:
 - id (string, required): unique id of the dropdown in the page.
+- label (string, optional): name of the row, added to the accessible name of the button.
 -->
-<#macro actionsMenu id >
-<@button type='button' id=id class='ms-1' title='#i18n{portal.util.labelActions}' hideTitle=['all'] buttonIcon='dots' dropdownMenu=true>
+<#macro actionsMenu id label='' >
+<@button type='button' id=id class='ms-1' title='#i18n{portal.util.labelActions}' hideTitle=['all'] buttonIcon='dots' dropdownMenu=true params=label?has_content?then( { "aria-label": "#i18n{portal.util.labelActions} " + label }, {} )>
 	<#nested>
 </@button>
 </#macro>

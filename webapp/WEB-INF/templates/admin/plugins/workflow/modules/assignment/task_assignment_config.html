@@ -8,19 +8,20 @@
 		<#assign multipleOwner=config?exists&&config.multipleOwner>
 		<@checkBox orientation='switch' name='is_multiple_owner' id='is_multiple_owner' value='1' checked=multipleOwner labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_multiple_owner}' />
 	</@formGroup>
-	<@formGroup labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' helpKey='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}' >
+	<@fieldSet legend='#i18n{module.workflow.assignment.task_assignment_config.label_workgroups}' legendClass='form-label'>
 		<#list workgroup_list as workgroup>
-			<@checkBox orientation='switch' name='workgroups' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
+			<@checkBox orientation='switch' name='workgroups' id='workgroups_${workgroup?index}' labelKey=workgroup.item.name value=workgroup.item.code checked=workgroup.config?exists />
 			<@span id='div_${workgroup.item.code}' class='workflow-assignment-notification'>
 				#i18n{module.workflow.assignment.task_assignment_config.label_notification} :
 				<#if workgroup.config?exists>
-					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='${workgroup.config.idMailingList}' />
+					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='${workgroup.config.idMailingList}' params={"aria-label": "#i18n{module.workflow.assignment.task_assignment_config.label_notification} " + workgroup.item.name} />
 				<#else>
-					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='-1' />
+					<@select name="id_mailing_list_${workgroup.item.code}" items=mailing_list default_value='-1' params={"aria-label": "#i18n{module.workflow.assignment.task_assignment_config.label_notification} " + workgroup.item.name} />
 				</#if>
 			</@span>
 		</#list>
-	</@formGroup>
+		<@formHelp>#i18n{module.workflow.assignment.task_assignment_config.label_workgroups_comment}</@formHelp>
+	</@fieldSet>
 	<@formGroup>
 		<#assign notify=config?exists&&config.notify>
 		<@checkBox orientation='switch' name='is_notify' id='is_notify' value='1' checked=notify labelKey='#i18n{module.workflow.assignment.task_assignment_config.label_notification}' />

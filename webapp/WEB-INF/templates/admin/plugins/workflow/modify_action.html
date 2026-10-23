@@ -45,16 +45,20 @@
 								<@formGroup rows=2 labelFor='description' labelKey='#i18n{workflow.create_action.label_description}' mandatory=true helpKey='#i18n{workflow.create_action.label_description_comment}'>
 									<@input type='textarea' name='description' id='description' rows=3 mandatory=true>${action.description!}</@input>
 								</@formGroup>
-								<@formGroup rows=2 labelFor='id_icon' labelKey='#i18n{workflow.create_action.label_icon}' mandatory=true helpKey='#i18n{workflow.create_action.label_icon_comment}'>
+								<#assign legendIcon>#i18n{workflow.create_action.label_icon} <span class="text-danger">*</span></#assign>
+								<@fieldSet legend=legendIcon legendClass='form-label'>
 									<@radioIconList name='id_icon' default_value=action.icon.id icons=icon_list />
-								</@formGroup>
+									<@formHelp>#i18n{workflow.create_action.label_icon_comment}</@formHelp>
+								</@fieldSet>
 							</@columns>
 							<@columns lg=6>
-								<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_state_before}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_before_comment}'>
+								<#assign legendStateBefore>#i18n{workflow.create_action.label_state_before} <span class="text-danger">*</span></#assign>
+								<@fieldSet legend=legendStateBefore legendClass='form-label'>
 									<#list state_list as state>
 									<@checkBox orientation='switch' name='id_state_before' id='id_state_before${state.code}' value='${state.code}' labelKey='${state.name}' checked=action.listIdStateBefore?seq_contains( state.code?number ) />
 									</#list>
-								</@formGroup>
+									<@formHelp>#i18n{workflow.create_action.label_state_before_comment}</@formHelp>
+								</@fieldSet>
 								<@formGroup rows=2 labelFor='id_state_after' labelKey='#i18n{workflow.create_action.label_state_after}' mandatory=true helpKey='#i18n{workflow.create_action.label_state_after_comment}'>
 									<@select name='id_state_after' id='id_state_after' items=state_list default_value=action.stateAfter.id?string />
 								</@formGroup>
@@ -91,15 +95,16 @@
 							</@manageFeatureItemColumn>
 							<@manageFeatureItemColumn auto=true flex=false class='text-truncate'>
 								<#assign taskTitle = task.getTitle( locale )!'' />
+								<#assign taskLabel = task.taskType.title?has_content?then( task.taskType.title, taskTitle ) />
 								<@span class='fw-bold'>${task.taskType.title!}</@span>
 								<#if taskTitle?has_content && taskTitle != task.taskType.title!''><@p class='text-secondary small mb-0 text-truncate'>${taskTitle}</@p></#if>
 							</@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end'>
-								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=number_task token=token_change_order_task />
+								<@orderButtons url='jsp/admin/plugins/workflow/DoChangeOrderTask.jsp?id_task=${task.id}' orderParam='order_task_id' order=task.order max=number_task token=token_change_order_task label=taskLabel />
 								<#if task.taskType.configRequired>
-								<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_action.manage_task.title_modify}' hideTitle=['all'] />
+								<@aButton href='jsp/admin/plugins/workflow/ModifyTask.jsp?id_task=${task.id}' color='' class='ms-1' buttonIcon='pencil' title='#i18n{workflow.modify_action.manage_task.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.modify_action.manage_task.title_modify} " + taskLabel} />
 								</#if>
-								<@actionsMenu id='task-actions-${task.id}'>
+								<@actionsMenu id='task-actions-${task.id}' label=taskLabel>
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmCopyTask.jsp?id_task=${task.id}' iconName='copy' label='#i18n{workflow.modify_action.manage_task.title_copy}' />
 									<@actionsMenuItem href='jsp/admin/plugins/workflow/ConfirmRemoveTask.jsp?id_task=${task.id}' iconName='trash' label='#i18n{workflow.modify_action.manage_task.title_delete}' danger=true />
 								</@actionsMenu>
@@ -140,9 +145,9 @@
 							<@manageFeatureItemColumn auto=true flex=false><@span class='fw-bold'>#i18n{${prerequisite.title}}</@span></@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end'>
 								<#if prerequisite.hasConfiguration>
-								<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] />
+								<@aButton href='jsp/admin/plugins/workflow/prerequisite/GetModifyPrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='' buttonIcon='pencil' title='#i18n{workflow.manage_workflow.title_modify}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.manage_workflow.title_modify} #i18n{${prerequisite.title}}"} />
 								</#if>
-								<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] />
+								<@aButton href='jsp/admin/plugins/workflow/prerequisite/ConfirmRemovePrerequisite.jsp?id_prerequisite=${prerequisite.idPrerequisite}&id_action=${action.id}' color='danger' class='ms-1' buttonIcon='trash' title='#i18n{workflow.modify_action.manage_task.title_delete}' hideTitle=['all'] params={"aria-label": "#i18n{workflow.modify_action.manage_task.title_delete} #i18n{${prerequisite.title}}"} />
 							</@manageFeatureItemColumn>
 						</@manageFeatureItem>
 						</#list>
@@ -175,19 +180,19 @@
 						<@p class='mb-0'>#i18n{workflow.create_action.label_link_actions_example}</@p>
 					</@callOut>
 					<#if display_tasks_form>
-					<@alert color='warning' iconTitle='alert-triangle' title='#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}' />
+					<@alert color='warning' iconTitle='alert-triangle' titleLevel='h2' titleClass='h4' title='#i18n{workflow.create_action.label_link_actions_comment_display_task_forms}' />
 					<#elseif selected_linked_actions?has_content || available_linked_actions?has_content>
 					<@tform action='jsp/admin/plugins/workflow/DoModifyLinkedActions.jsp?plugin_name=workflow'>
 						<@input type='hidden' name='id_action' value='${action.id}' />
 						<@input type='hidden' name='token' value='${token}' />
-						<@formGroup rows=2 labelKey='#i18n{workflow.create_action.label_available_linked_actions}'>
+						<@fieldSet legend='#i18n{workflow.create_action.label_available_linked_actions}' legendClass='form-label'>
 							<#list selected_linked_actions as linkedAction>
 							<@checkBox orientation='switch' name='id_linked_action' id='id_linked_action_${linkedAction.code}' value='${linkedAction.code}' labelKey='${linkedAction.name}' checked=true />
 							</#list>
 							<#list available_linked_actions as linkedAction>
 							<@checkBox orientation='switch' name='id_linked_action' id='id_linked_action_${linkedAction.code}' value='${linkedAction.code}' labelKey='${linkedAction.name}' />
 							</#list>
-						</@formGroup>
+						</@fieldSet>
 						<@formGroup rows=2>
 							<@button type='submit' color='primary' buttonIcon='device-floppy' title='#i18n{workflow.create_action.button_save}' />
 						</@formGroup>
