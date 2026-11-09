@@ -72,7 +72,8 @@ public class ActionDAO implements IActionDAO
     private static final String SQL_QUERY_INSERT_LINKED_ACTION = " INSERT INTO workflow_action_action (id_action, id_linked_action) VALUES ( ?,? ) ";
     private static final String SQL_QUERY_REMOVE_LINKED_ACTION = " DELETE FROM workflow_action_action WHERE id_action = ? OR id_linked_action = ? ";
     private static final String SQL_QUERY_SELECT_LINKED_ACTION = " SELECT id_action FROM workflow_action_action WHERE id_linked_action = ?";
-    private static final String SQL_QUERY_SELECT_LINKED_ACTION_UID = "SELECT a.uid_action FROM workflow_action_action aa, workflow_action a WHERE aa.id_linked_action = a.id_action AND aa.id_linked_action = ?;";
+    private static final String SQL_QUERY_SELECT_LINKED_ACTION_UID = "SELECT a.uid_action FROM workflow_action_action aa, workflow_action a WHERE aa.id_action = a.id_action AND aa.id_linked_action = ?";
+    private static final String SQL_QUERY_SELECT_LINKED_ACTION_UID_2 = "SELECT a.uid_action FROM workflow_action_action aa, workflow_action a WHERE aa.id_linked_action = a.id_action AND aa.id_action = ?";
     private static final String SQL_QUERY_SELECT_LINKED_ACTION_2 = " SELECT id_linked_action FROM workflow_action_action WHERE id_action = ?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_action  WHERE id_action=? ";
     private static final String SQL_FILTER_ID_WORKFLOW = " a.id_workflow = ? ";
@@ -379,6 +380,18 @@ public class ActionDAO implements IActionDAO
             while ( daoUtil.next( ) )
             {
             	listUidsLinkedAction.add( daoUtil.getString( 1 ) );
+            }
+        }
+
+        // a link is read in both directions, as selectListIdsLinkedAction does
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LINKED_ACTION_UID_2, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdAction );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                listUidsLinkedAction.add( daoUtil.getString( 1 ) );
             }
         }
         return listUidsLinkedAction;
