@@ -201,8 +201,28 @@ public class WorkflowJsonService
     @Transactional
     public void jsonImportWorkflow( String json, Locale locale ) throws JsonProcessingException
     {
-        WorkflowJsonData jsonData = _objectMapper.readValue( json, WorkflowJsonData.class );
+        importJsonData( _objectMapper.readValue( json, WorkflowJsonData.class ), locale );
+    }
 
+    /**
+     * Copy a workflow. Unlike an import from another instance, the copy is a new workflow : it gets new UUIDs.
+     *
+     * @param nIdWorkflow
+     *            the id of the workflow to copy
+     * @param locale
+     *            the locale
+     * @throws JsonProcessingException
+     */
+    @Transactional
+    public void jsonCopyWorkflow( int nIdWorkflow, Locale locale ) throws JsonProcessingException
+    {
+        WorkflowJsonData jsonData = _objectMapper.readValue( jsonExportWorkflow( nIdWorkflow ), WorkflowJsonData.class );
+        WorkflowUidRenewer.renew( jsonData );
+        importJsonData( jsonData, locale );
+    }
+
+    private void importJsonData( WorkflowJsonData jsonData, Locale locale )
+    {
         int newIdWf = importWorkflow( jsonData.getWorkflow( ), locale );
 
         List<State> stateList = jsonData.getStateList( );
