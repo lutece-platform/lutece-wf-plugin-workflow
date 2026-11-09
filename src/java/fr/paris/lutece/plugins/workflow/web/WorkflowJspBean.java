@@ -2681,8 +2681,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         try
         {
-            String json = WorkflowJsonService.getInstance( ).jsonExportWorkflow( nId );
-            WorkflowJsonService.getInstance( ).jsonImportWorkflow( json, getLocale( ) );
+            WorkflowJsonService.getInstance( ).jsonCopyWorkflow( nId, getLocale( ) );
         }
         catch( JsonProcessingException e )
         {
