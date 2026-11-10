@@ -116,4 +116,13 @@ public class TaskArchive extends SimpleTask
         ResourceHistory history = _resourceHistoryService.findByPrimaryKey( nIdHistory );
         _archiveService.removeArchiveResource( history.getIdResource( ), getId( ) );
     }
+
+    /**
+     * The archive trace holds no personal data: it is kept, or the daemon would archive the resource again on each run
+     */
+    @Override
+    public void doAnonymizeTaskInformation( int nIdHistory )
+    {
+        // Nothing to anonymize
+    }
 }
