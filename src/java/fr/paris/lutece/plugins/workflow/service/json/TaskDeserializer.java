@@ -68,6 +68,11 @@ public class TaskDeserializer extends JsonDeserializer<ITask>
         action.setUid( actionUid );
 
         ITask task = taskfactory.newTask( taskType, Locale.getDefault( ) );
+        if ( task == null )
+        {
+            // no module of this instance provides this type : the task stays in the file so that the import can report it
+            task = new UnavailableTask( taskType );
+        }
         task.setOrder( order );
         task.setAction( action );
         task.setActionUid( actionUid );

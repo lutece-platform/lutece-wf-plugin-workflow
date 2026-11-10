@@ -17,3 +17,11 @@ DELETE FROM workflow_task_choice_config WHERE NOT EXISTS ( SELECT 1 FROM workflo
 DELETE FROM workflow_task_choose_state_information WHERE NOT EXISTS ( SELECT 1 FROM workflow_resource_history h WHERE h.id_history = workflow_task_choose_state_information.id_history );
 DELETE FROM workflow_task_change_state_information WHERE NOT EXISTS ( SELECT 1 FROM workflow_resource_history h WHERE h.id_history = workflow_task_change_state_information.id_history );
 DELETE FROM workflow_prerequisite_duration_cf WHERE NOT EXISTS ( SELECT 1 FROM workflow_prerequisite p WHERE p.id_prerequisite = workflow_prerequisite_duration_cf.id_prerequisite );
+
+-- changeset workflow:update_db_workflow-6.0.10-6.0.11-rev1.sql
+-- Fingerprints written by the import, to tell what was modified on the target since the last import
+ALTER TABLE workflow_workflow ADD COLUMN last_import_date TIMESTAMP NULL;
+ALTER TABLE workflow_state ADD COLUMN import_hash VARCHAR(64) DEFAULT NULL;
+ALTER TABLE workflow_action ADD COLUMN import_hash VARCHAR(64) DEFAULT NULL;
+ALTER TABLE workflow_task ADD COLUMN import_hash VARCHAR(64) DEFAULT NULL;
+ALTER TABLE workflow_prerequisite ADD COLUMN import_hash VARCHAR(64) DEFAULT NULL;

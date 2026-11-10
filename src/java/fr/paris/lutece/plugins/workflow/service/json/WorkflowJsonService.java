@@ -73,6 +73,7 @@ import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 public class WorkflowJsonService
 {
@@ -115,6 +116,19 @@ public class WorkflowJsonService
      * @throws JsonProcessingException
      */
     public String jsonExportWorkflow( int idWorkflow ) throws JsonProcessingException
+    {
+        return _objectMapper.writeValueAsString( buildExportData( idWorkflow ) );
+    }
+
+    /**
+     * Gives the workflow as the export describes it, its elements referring to each other by UUID, before it is written as JSON : the objects still carry
+     * their database identifiers.
+     *
+     * @param idWorkflow
+     *            the workflow
+     * @return the export data
+     */
+    public WorkflowJsonData buildExportData( int idWorkflow )
     {
         WorkflowJsonData jsonData = new WorkflowJsonData( );
 
@@ -195,7 +209,21 @@ public class WorkflowJsonService
 
         jsonData.setTaskList( taskList );
         jsonData.setPrerequisiteList( prerequisiteList );
-        return _objectMapper.writeValueAsString( jsonData );
+        return jsonData;
+    }
+
+    /**
+     * Reads an exported workflow
+     *
+     * @param json
+     *            the JSON export
+     * @return the export data
+     * @throws JsonProcessingException
+     *             when the file is not a workflow export
+     */
+    public WorkflowJsonData readExportData( String json ) throws JsonProcessingException
+    {
+        return _objectMapper.readValue( json, WorkflowJsonData.class );
     }
 
     @Transactional
@@ -221,7 +249,27 @@ public class WorkflowJsonService
         importJsonData( jsonData, locale );
     }
 
-    private void importJsonData( WorkflowJsonData jsonData, Locale locale )
+    /**
+     * Imports an exported workflow as a new workflow
+     *
+     * @param jsonData
+     *            the export data
+     * @param bNewUids
+     *            true to give the new workflow new UUIDs, false to keep those of the export
+     * @param locale
+     *            the locale
+     * @return the identifier of the new workflow
+     */
+    public int importAsNewWorkflow( WorkflowJsonData jsonData, boolean bNewUids, Locale locale )
+    {
+        if ( bNewUids )
+        {
+            WorkflowUidRenewer.renew( jsonData );
+        }
+        return importJsonData( jsonData, locale );
+    }
+
+    private int importJsonData( WorkflowJsonData jsonData, Locale locale )
     {
         int newIdWf = importWorkflow( jsonData.getWorkflow( ), locale );
 
@@ -234,6 +282,8 @@ public class WorkflowJsonService
         importActions( actionList, taskList, prerequisiteList );
         importTasks( taskList );
         importPrerequisites( prerequisiteList );
+
+        return newIdWf;
     }
 
     public int importWorkflow( Workflow workflow, Locale locale )
@@ -357,6 +407,11 @@ public class WorkflowJsonService
     {
         for ( ITask task : taskList )
         {
+            if ( task instanceof UnavailableTask )
+            {
+                AppLogService.info( "Workflow import : the task type {} is not provided by this instance, its task is not created", task.getTaskType( ).getKey( ) );
+                continue;
+            }
         	if( _taskFactory.getAllTaskTypes( ).stream( ).anyMatch( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) ) ) {
             	task.setTaskType( _taskFactory.getAllTaskTypes( ).stream( )
             			.filter( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) )

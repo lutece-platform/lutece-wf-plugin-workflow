@@ -160,7 +160,8 @@ public class PrerequisiteManagementService implements IPrerequisiteManagementSer
 
         IAutomaticActionPrerequisiteService prerequisiteService = getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
 
-        if ( prerequisiteService.hasConfiguration( ) )
+        // a prerequisite whose type no module of this instance provides any more has no configuration this instance can reach
+        if ( prerequisiteService != null && prerequisiteService.hasConfiguration( ) )
         {
             IPrerequisiteConfigDAO dao = getConfigurationDAO( prerequisiteService );
 
