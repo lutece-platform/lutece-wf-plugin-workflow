@@ -1,0 +1,123 @@
+<#include "macro_workflows.html" />
+<#--
+  Import of a workflow : the administrator chooses between updating an existing workflow and creating a new one, reviews what changes, pairs by hand
+  the elements no identifier matched, then applies everything at once.
+-->
+<#macro importElement line>
+	<#switch line.element.name()>
+		<#case 'STATE'>#i18n{workflow.import_workflow.element.STATE}<#break>
+		<#case 'ACTION'>#i18n{workflow.import_workflow.element.ACTION}<#break>
+		<#case 'TASK'>#i18n{workflow.import_workflow.element.TASK}<#break>
+		<#default>#i18n{workflow.import_workflow.element.PREREQUISITE}
+	</#switch>
+</#macro>
+<#macro importOutcome line>
+	<#switch line.status.name()>
+		<#case 'NEW'>#i18n{workflow.import_workflow.status.NEW}<#break>
+		<#case 'ABSENT_UNUSED'>#i18n{workflow.import_workflow.status.ABSENT_UNUSED}<#break>
+		<#case 'ABSENT_USED'>#i18n{workflow.import_workflow.status.ABSENT_USED}<#break>
+		<#default><#if line.changed>#i18n{workflow.import_workflow.status.updated}<#else>#i18n{workflow.import_workflow.status.unchanged}</#if>
+	</#switch>
+</#macro>
+<#macro importWarnings line>
+	<#if line.modifiedOnTarget><div>#i18n{workflow.import_workflow.warning.modified}</div></#if>
+	<#if line.status.name() == 'ABSENT_USED'><div>#i18n{workflow.import_workflow.warning.kept}</div></#if>
+	<#if line.withoutCounterpart><div>#i18n{workflow.import_workflow.warning.noMatch}</div></#if>
+	<#if line.status.name() == 'PAIRED' && line.danger && !line.modifiedOnTarget><div>#i18n{workflow.import_workflow.warning.namesDiffer}</div></#if>
+</#macro>
+<#macro importUsage line>
+	<#if line.element.name() == 'STATE' && line.usage gt 0>${line.usage} #i18n{workflow.import_workflow.usage.resources}</#if>
+	<#if line.element.name() == 'ACTION' && line.usage gt 0>${line.usage} #i18n{workflow.import_workflow.usage.history} <#if line.lastExecution??>${line.lastExecution?date}</#if></#if>
+</#macro>
+
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{workflow.import_workflow.title}' />
+		<@tform name='import_workflow' action='jsp/admin/plugins/workflow/DoImportWorkflow.jsp' boxed=true>
+			<@input type='hidden' name='token' value='${token}' />
+			<@formGroup labelKey='#i18n{workflow.import_workflow.labelFile}'>
+				<@staticText>${file_workflow.name!}</@staticText>
+			</@formGroup>
+			<@formGroup labelKey='#i18n{workflow.import_workflow.labelMode}'>
+				<@radioButton name='import_mode' id='import_mode_update' value='update' labelKey='#i18n{workflow.import_workflow.mode.update}' checked=(import_mode == 'update') />
+				<p class='form-text'>#i18n{workflow.import_workflow.mode.update.help}</p>
+				<@radioButton name='import_mode' id='import_mode_new' value='new' labelKey='#i18n{workflow.import_workflow.mode.new}' checked=(import_mode == 'new') />
+				<p class='form-text'>#i18n{workflow.import_workflow.mode.new.help}</p>
+			</@formGroup>
+			<@formGroup labelKey='#i18n{workflow.import_workflow.labelTarget}' helpKey='#i18n{workflow.import_workflow.labelTarget.help}'>
+				<@select name='id_target' items=target_list default_value='${id_target?c}' />
+				<#list carriers as carrier>
+					<p class='form-text'>${carrier.name} : #i18n{workflow.import_workflow.labelCarrier}</p>
+				</#list>
+			</@formGroup>
+
+			<#if plan??>
+				<#if plan.firstAlignment>
+					<@alert color='warning'>#i18n{workflow.import_workflow.firstAlignment}</@alert>
+				</#if>
+				<#if plan.lastImportDate??>
+					<p>#i18n{workflow.import_workflow.lastImport} ${plan.lastImportDate?datetime}</p>
+				<#else>
+					<p>#i18n{workflow.import_workflow.neverImported}</p>
+				</#if>
+
+				<#assign pairing = plan.pairingLines />
+				<#if pairing?has_content>
+					<h3>#i18n{workflow.import_workflow.pairing.title}</h3>
+					<p class='form-text'>#i18n{workflow.import_workflow.pairing.help}</p>
+					<@table>
+						<@tr>
+							<@th>#i18n{workflow.import_workflow.column.type}</@th>
+							<@th>#i18n{workflow.import_workflow.column.file}</@th>
+							<@th>#i18n{workflow.import_workflow.column.target}</@th>
+						</@tr>
+						<#list pairing as line>
+							<@tr class='${line.danger?then("table-danger","")}'>
+								<@td><@importElement line=line /></@td>
+								<@td>${line.fileItem.label!}</@td>
+								<@td>
+									<#assign selected = line.targetItem???then(line.targetItem.id?c, '-1') />
+									<@select name='choice_${line.fileItem.uid}' items=candidates[line.element.name()] default_value=selected />
+									<@importWarnings line=line />
+								</@td>
+							</@tr>
+						</#list>
+					</@table>
+				</#if>
+
+				<h3>#i18n{workflow.import_workflow.summary.title}</h3>
+				<p>
+					${plan.countChanged()} #i18n{workflow.import_workflow.summary.updated},
+					${plan.createdCount} #i18n{workflow.import_workflow.summary.created},
+					${plan.removedCount} #i18n{workflow.import_workflow.summary.removed},
+					${plan.keptCount} #i18n{workflow.import_workflow.summary.kept}
+				</p>
+				<@alert color='info'>#i18n{workflow.import_workflow.taskConfigNotice}</@alert>
+				<@table>
+					<@tr>
+						<@th>#i18n{workflow.import_workflow.column.type}</@th>
+						<@th>#i18n{workflow.import_workflow.column.file}</@th>
+						<@th>#i18n{workflow.import_workflow.column.target}</@th>
+						<@th>#i18n{workflow.import_workflow.column.outcome}</@th>
+						<@th>#i18n{workflow.import_workflow.column.usage}</@th>
+					</@tr>
+					<#list plan.allLines as line>
+						<@tr class='${line.danger?then("table-danger","")}'>
+							<@td><@importElement line=line /></@td>
+							<@td><#if line.fileItem??>${line.fileItem.label!}</#if></@td>
+							<@td><#if line.targetItem??>${line.targetItem.label!}</#if></@td>
+							<@td><@importOutcome line=line /><@importWarnings line=line /></@td>
+							<@td><@importUsage line=line /></@td>
+						</@tr>
+					</#list>
+				</@table>
+			</#if>
+
+			<@formGroup>
+				<@button type='submit' name='apply' buttonIcon='check' title='#i18n{workflow.import_workflow.button.apply}' />
+				<@button type='submit' name='refresh' buttonIcon='sync' title='#i18n{workflow.import_workflow.button.refresh}' color='default' params='formaction="jsp/admin/plugins/workflow/ImportWorkflow.jsp" formmethod="post"' />
+				<@button type='submit' name='cancel' buttonIcon='times-circle' title='#i18n{workflow.import_workflow.button.cancel}' cancel=true />
+			</@formGroup>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>

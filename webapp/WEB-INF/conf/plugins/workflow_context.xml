@@ -18,6 +18,8 @@
         p:pluginName="workflow" />
 
     <!-- DAO -->
+    <bean id="workflow.workflowImportDAO"
+        class="fr.paris.lutece.plugins.workflow.business.workflowimport.WorkflowImportDAO" />
     <bean id="worklow.workflowDAO"
         class="fr.paris.lutece.plugins.workflow.business.workflow.WorkflowDAO" />
     <bean id="workflow.stateDAO"

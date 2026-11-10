@@ -69,6 +69,12 @@ import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
 import fr.paris.lutece.plugins.workflow.service.WorkflowGraphExportService;
 import fr.paris.lutece.plugins.workflow.service.json.WorkflowJsonService;
+import fr.paris.lutece.plugins.workflow.service.json.WorkflowJsonData;
+import fr.paris.lutece.plugins.workflow.business.workflowimport.ImportElement;
+import fr.paris.lutece.plugins.workflow.service.workflowimport.ImportItem;
+import fr.paris.lutece.plugins.workflow.service.workflowimport.WorkflowImportPlan;
+import fr.paris.lutece.plugins.workflow.service.workflowimport.WorkflowImportPlanner;
+import fr.paris.lutece.plugins.workflow.service.workflowimport.WorkflowImportService;
 import fr.paris.lutece.plugins.workflow.service.prerequisite.PrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflow.service.task.TaskFactory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -146,7 +152,25 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String JSP_DO_REMOVE_STATE = "jsp/admin/plugins/workflow/DoRemoveState.jsp";
     private static final String JSP_DO_REMOVE_ACTION = "jsp/admin/plugins/workflow/DoRemoveAction.jsp";
     private static final String JSP_DO_COPY_WORKFLOW = "jsp/admin/plugins/workflow/DoCopyWorkflow.jsp";
-    private static final String JSP_DO_IMPORT_WORKFLOW = "jsp/admin/plugins/workflow/DoImportWorkflow.jsp";
+    private static final String JSP_IMPORT_WORKFLOW = "jsp/admin/plugins/workflow/ImportWorkflow.jsp";
+    private static final String TEMPLATE_IMPORT_WORKFLOW = "admin/plugins/workflow/import_workflow.html";
+    private static final String PROPERTY_IMPORT_WORKFLOW_PAGE_TITLE = "workflow.import_workflow.pageTitle";
+    private static final String MESSAGE_ERROR_IMPORT_FILE = "workflow.import_workflow.error.file";
+    private static final String MESSAGE_ERROR_IMPORT_FAILED = "workflow.import_workflow.error.failed";
+    private static final String MESSAGE_IMPORT_SKIPPED = "workflow.import_workflow.message.skipped";
+    private static final String MESSAGE_IMPORT_CREATE_NEW = "workflow.import_workflow.choice.createNew";
+    private static final String PARAMETER_IMPORT_MODE = "import_mode";
+    private static final String PARAMETER_ID_TARGET = "id_target";
+    private static final String PARAMETER_CHOICE_PREFIX = "choice_";
+    private static final String IMPORT_MODE_UPDATE = "update";
+    private static final String IMPORT_MODE_NEW = "new";
+    private static final String MARK_IMPORT_FILE_WORKFLOW = "file_workflow";
+    private static final String MARK_IMPORT_CARRIERS = "carriers";
+    private static final String MARK_IMPORT_MODE = "import_mode";
+    private static final String MARK_IMPORT_ID_TARGET = "id_target";
+    private static final String MARK_IMPORT_TARGET_LIST = "target_list";
+    private static final String MARK_IMPORT_PLAN = "plan";
+    private static final String MARK_IMPORT_CANDIDATES = "candidates";
     private static final String JSP_DO_REMOVE_TASK = "jsp/admin/plugins/workflow/DoRemoveTask.jsp";
     private static final String JSP_DO_COPY_TASK = "jsp/admin/plugins/workflow/DoCopyTask.jsp";
     private static final String JSP_DO_COPY_STATE = "jsp/admin/plugins/workflow/DoCopyState.jsp";
@@ -322,7 +346,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private ITaskFactory _taskFactory = SpringContextService.getBean( TaskFactory.BEAN_SERVICE );
     private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
     private IPrerequisiteManagementService _prerequisiteManagementService = SpringContextService.getBean( PrerequisiteManagementService.BEAN_NAME );
-    private FileItem _importWorkflowFile;
+    private String _strImportJson;
 
     /*-------------------------------MANAGEMENT  WORKFLOW-----------------------------*/
 
@@ -3090,37 +3114,215 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         }
     }
 
+    /**
+     * Receives the file of a workflow to import, then leads to the screen comparing it with this instance
+     *
+     * @param request
+     *            the multipart request carrying the file
+     * @return the url of the import screen, or of an error message
+     */
     public String getConfirmImportWorkflow( HttpServletRequest request )
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        _importWorkflowFile = multipartRequest.getFile( PARAMETER_JSON_FILE );
-        if(!_importWorkflowFile.getName().isEmpty()) {
-            UrlItem url = new UrlItem( JSP_DO_IMPORT_WORKFLOW );
-            return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, MESSAGE_CONFIRM_COPY_WORKFLOW, url.getUrl( ),
-                    AdminMessage.TYPE_CONFIRMATION );
+        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        _strImportJson = null;
+
+        if ( fileItem == null || fileItem.getName( ).isEmpty( ) )
+        {
+            return AdminMessageService.getMessageUrl( multipartRequest, ERROR_NO_FILE_SELECTED, new UrlItem( JSP_MANAGE_WORKFLOW ).getUrl( ),
+                    AdminMessage.TYPE_ERROR );
         }
-        UrlItem url = new UrlItem( JSP_MANAGE_WORKFLOW );
-        return AdminMessageService.getMessageUrl( (MultipartHttpServletRequest) request, ERROR_NO_FILE_SELECTED, url.getUrl( ),
-                AdminMessage.TYPE_ERROR );
+
+        String strJson = new String( fileItem.get( ), StandardCharsets.UTF_8 );
+        if ( readImportFile( strJson ) == null )
+        {
+            return AdminMessageService.getMessageUrl( multipartRequest, MESSAGE_ERROR_IMPORT_FILE, new UrlItem( JSP_MANAGE_WORKFLOW ).getUrl( ),
+                    AdminMessage.TYPE_ERROR );
+        }
+
+        _strImportJson = strJson;
+        return AppPathService.getBaseUrl( request ) + JSP_IMPORT_WORKFLOW;
     }
 
-    public String doImportWorkflow( HttpServletRequest request )
+    /**
+     * The import screen : update the workflow carrying the UUID of the file, or one chosen by hand, after reviewing what changes ; or import as a new
+     * workflow
+     *
+     * @param request
+     *            the request
+     * @return the html of the screen
+     */
+    public String getImportWorkflow( HttpServletRequest request )
     {
+        WorkflowJsonData fileData = readImportFile( _strImportJson );
+        if ( fileData == null )
+        {
+            return getManageWorkflow( request );
+        }
+
+        WorkflowImportService importService = WorkflowImportService.getInstance( );
+        List<Workflow> listCarrier = authorized( importService.findWorkflowsCarrying( fileData.getWorkflow( ).getUid( ) ) );
+        String strMode = request.getParameter( PARAMETER_IMPORT_MODE );
+        if ( strMode == null )
+        {
+            strMode = listCarrier.isEmpty( ) ? IMPORT_MODE_NEW : IMPORT_MODE_UPDATE;
+        }
+        int nIdTarget = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_TARGET ) );
+        if ( nIdTarget == WorkflowUtils.CONSTANT_ID_NULL && !listCarrier.isEmpty( ) )
+        {
+            nIdTarget = listCarrier.get( 0 ).getId( );
+        }
+
+        Map<String, Object> model = new HashMap<>( );
+        model.put( MARK_IMPORT_FILE_WORKFLOW, fileData.getWorkflow( ) );
+        model.put( MARK_IMPORT_CARRIERS, listCarrier );
+        model.put( MARK_IMPORT_MODE, strMode );
+        model.put( MARK_IMPORT_ID_TARGET, nIdTarget );
+
+        ReferenceList listTarget = new ReferenceList( );
+        for ( Workflow workflow : authorized( _workflowService.getListWorkflowsByFilter( new WorkflowFilter( ) ) ) )
+        {
+            listTarget.addItem( workflow.getId( ), workflow.getName( ) );
+        }
+        model.put( MARK_IMPORT_TARGET_LIST, listTarget );
+
+        if ( IMPORT_MODE_UPDATE.equals( strMode ) && isAuthorizedTarget( nIdTarget ) )
+        {
+            WorkflowImportPlan plan = importService.analyse( fileData, nIdTarget, readImportChoices( request ) );
+            model.put( MARK_IMPORT_PLAN, plan );
+
+            Map<String, ReferenceList> mapCandidates = new HashMap<>( );
+            for ( ImportElement element : ImportElement.values( ) )
+            {
+                ReferenceList listCandidate = new ReferenceList( );
+                listCandidate.addItem( WorkflowImportPlanner.CHOICE_NEW, I18nService.getLocalizedString( MESSAGE_IMPORT_CREATE_NEW, getLocale( ) ) );
+                for ( ImportItem item : plan.getCandidates( element ) )
+                {
+                    listCandidate.addItem( item.getId( ), item.getLabel( ) );
+                }
+                mapCandidates.put( element.name( ), listCandidate );
+            }
+            model.put( MARK_IMPORT_CANDIDATES, mapCandidates );
+        }
+
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_IMPORT_WORKFLOW ) );
+        setPageTitleProperty( PROPERTY_IMPORT_WORKFLOW_PAGE_TITLE );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_IMPORT_WORKFLOW, getLocale( ), model );
+
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Applies the import reviewed on the import screen
+     *
+     * @param request
+     *            the request
+     * @return the url of the updated or created workflow, or of a message
+     * @throws AccessDeniedException
+     *             on an invalid token or a workflow the user may not manage
+     */
+    public String doImportWorkflow( HttpServletRequest request ) throws AccessDeniedException
+    {
+        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_IMPORT_WORKFLOW ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
+
+        WorkflowJsonData fileData = readImportFile( _strImportJson );
+        if ( request.getParameter( PARAMETER_CANCEL ) != null || fileData == null )
+        {
+            _strImportJson = null;
+            return getJspManageWorkflow( request );
+        }
+
+        WorkflowImportService importService = WorkflowImportService.getInstance( );
+        int nIdWorkflow;
+        List<String> listSkipped = new ArrayList<>( );
+
         try
         {
-            if ( _importWorkflowFile != null )
+            if ( IMPORT_MODE_UPDATE.equals( request.getParameter( PARAMETER_IMPORT_MODE ) ) )
             {
-                WorkflowJsonService.getInstance( ).jsonImportWorkflow( new String( _importWorkflowFile.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+                nIdWorkflow = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_TARGET ) );
+                if ( !isAuthorizedTarget( nIdWorkflow ) )
+                {
+                    throw new AccessDeniedException( LOG_WORKFLOW_NOT_FOUND + nIdWorkflow );
+                }
+                listSkipped = importService.update( fileData, nIdWorkflow, readImportChoices( request ), getLocale( ) );
             }
+            else
+            {
+                // a workflow already carrying the UUID of the file means the new one is a separate copy : it gets new UUIDs. Otherwise this is the
+                // first import of this workflow here, which keeps them so that the next import can update it.
+                boolean bNewUids = !importService.findWorkflowsCarrying( fileData.getWorkflow( ).getUid( ) ).isEmpty( );
+                nIdWorkflow = importService.importAsNew( fileData, bNewUids, getLocale( ) );
+            }
+        }
+        catch( RuntimeException e )
+        {
+            AppLogService.error( "Workflow import : the import of {} failed, nothing was written", fileData.getWorkflow( ).getUid( ), e );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_IMPORT_FAILED, AppPathService.getBaseUrl( request ) + JSP_IMPORT_WORKFLOW,
+                    AdminMessage.TYPE_ERROR );
+        }
+
+        _strImportJson = null;
+
+        if ( !listSkipped.isEmpty( ) )
+        {
+            Object [ ] args = {
+                    AdminMessageService.getFormattedList( listSkipped, getLocale( ) )
+            };
+            return AdminMessageService.getMessageUrl( request, MESSAGE_IMPORT_SKIPPED, args, getJspModifyWorkflow( request, nIdWorkflow ),
+                    AdminMessage.TYPE_INFO );
+        }
+        return getJspModifyWorkflow( request, nIdWorkflow );
+    }
+
+    private WorkflowJsonData readImportFile( String strJson )
+    {
+        if ( strJson == null )
+        {
+            return null;
+        }
+        try
+        {
+            WorkflowJsonData fileData = WorkflowJsonService.getInstance( ).readExportData( strJson );
+            return ( fileData.getWorkflow( ) == null ) ? null : fileData;
         }
         catch( JsonProcessingException e )
         {
-            AppLogService.error( e.getMessage( ) );
+            AppLogService.error( "Workflow import : the file is not a workflow export", e );
+            return null;
         }
-        finally
+    }
+
+    /**
+     * @return the choices of the correspondence table : the parameter choice_&lt;UUID of the file&gt; holds the identifier of the element it updates
+     */
+    private static Map<String, Integer> readImportChoices( HttpServletRequest request )
+    {
+        Map<String, Integer> mapChoice = new HashMap<>( );
+        for ( String strName : request.getParameterMap( ).keySet( ) )
         {
-            _importWorkflowFile = null;
+            if ( strName.startsWith( PARAMETER_CHOICE_PREFIX ) )
+            {
+                int nChoice = WorkflowUtils.convertStringToInt( request.getParameter( strName ) );
+                mapChoice.put( strName.substring( PARAMETER_CHOICE_PREFIX.length( ) ),
+                        ( nChoice == WorkflowUtils.CONSTANT_ID_NULL ) ? WorkflowImportPlanner.CHOICE_NEW : nChoice );
+            }
         }
-        return getJspManageWorkflow( request );
+        return mapChoice;
+    }
+
+    private List<Workflow> authorized( List<Workflow> listWorkflow )
+    {
+        return new ArrayList<>( AdminWorkgroupService.getAuthorizedCollection( listWorkflow, (User) getUser( ) ) );
+    }
+
+    private boolean isAuthorizedTarget( int nIdWorkflow )
+    {
+        Workflow workflow = ( nIdWorkflow == WorkflowUtils.CONSTANT_ID_NULL ) ? null : _workflowService.findByPrimaryKey( nIdWorkflow );
+        return workflow != null && !authorized( Collections.singletonList( workflow ) ).isEmpty( );
     }
 }
