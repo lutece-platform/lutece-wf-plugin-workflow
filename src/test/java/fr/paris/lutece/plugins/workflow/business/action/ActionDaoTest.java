@@ -50,6 +50,7 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class ActionDaoTest extends LuteceTestCase
 {
     private ActionDAO _dao = new ActionDAO( );
+    private ActionStateDAO actionStateDAO = new ActionStateDAO( );
     private IconDAO iconDAO = new IconDAO( );
     private StateDAO stateDAO = new StateDAO( );
     private WorkflowDAO workflowDAO = new WorkflowDAO( );
@@ -77,14 +78,18 @@ public class ActionDaoTest extends LuteceTestCase
         wf.setWorkgroup( "group" );
         workflowDAO.insert( wf );
 
+        stateBefore = new State( );
+        stateBefore.setWorkflow( wf );
+        stateBefore.setInitialState( true );
+        stateBefore.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateBefore );
         stateAfter = new State( );
         stateAfter.setWorkflow( wf );
         stateAfter.setInitialState( false );
         stateAfter.setRequiredWorkgroupAssigned( false );
         stateDAO.insert( stateAfter );
-        
-        listIdStateBefore.add( 0 );
+
+        listIdStateBefore.add( stateBefore.getId( ) );
     }
 
     @Override
@@ -155,6 +160,7 @@ public class ActionDaoTest extends LuteceTestCase
         action.setOrder( 0 );
 
         _dao.insert( action );
+        actionStateDAO.insert( action.getId( ), listIdStateBefore );
 
         ActionFilter filter = new ActionFilter( );
         filter.setIdStateAfter( stateAfter.getId( ) );
@@ -167,6 +173,7 @@ public class ActionDaoTest extends LuteceTestCase
         List<Action> list = _dao.selectActionsByFilter( filter );
         assertEquals( 1, list.size( ) );
 
+        actionStateDAO.delete( action.getId( ) );
         _dao.delete( action.getId( ) );
     }
 

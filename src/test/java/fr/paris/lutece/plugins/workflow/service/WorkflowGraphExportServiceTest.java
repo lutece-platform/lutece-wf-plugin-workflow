@@ -76,6 +76,10 @@ public class WorkflowGraphExportServiceTest extends LuteceTestCase
         s1.setName( "brouillon" );
         s2.setName( "à valider" );
         s3.setName( "validé" );
+
+        s1.setInitialState( true );
+        s2.setInitialState( false );
+        s3.setInitialState( false );
         
         List<Integer> listIdStateBefore1 = new ArrayList<>( );
         List<Integer> listIdStateBefore2 = new ArrayList<>( );

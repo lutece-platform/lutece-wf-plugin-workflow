@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResource
 import fr.paris.lutece.plugins.workflow.modules.archive.business.ArchiveResourceDao;
 import fr.paris.lutece.plugins.workflow.modules.archive.business.IArchiveResourceDao;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -49,6 +50,16 @@ public class ArchiveServiceTest extends LuteceTestCase
     private ArchiveService _service = SpringContextService.getBean( ArchiveService.BEAN_SERVICE );
 
     private IArchiveResourceDao _archiveResourceDao = SpringContextService.getBean( ArchiveResourceDao.BEAN_NAME );
+    private static final int ID_RESOURCE = 1;
+    private static final int ID_TASK = 2;
+
+    @Override
+    protected void tearDown( ) throws Exception
+    {
+        // cleanup even when an assertion fails, so the next test can insert the same key
+        _archiveResourceDao.delete( ID_RESOURCE, ID_TASK );
+        super.tearDown( );
+    }
 
     public void testIsResourceUpForArchival_Yes( )
     {
@@ -106,8 +117,11 @@ public class ArchiveServiceTest extends LuteceTestCase
         config.setIdTask( 2 );
         config.setDelayArchival( 10 );
 
+        Workflow workflow = new Workflow( );
+        workflow.setId( 1 );
         ResourceWorkflow resourceWorkflow = new ResourceWorkflow( );
         resourceWorkflow.setIdResource( 1 );
+        resourceWorkflow.setWorkFlow( workflow );
 
         assertFalse( _service.isResourceUpForArchival( resourceWorkflow, config ) );
 
