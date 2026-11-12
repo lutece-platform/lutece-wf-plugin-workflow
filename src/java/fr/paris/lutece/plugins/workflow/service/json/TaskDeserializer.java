@@ -70,7 +70,8 @@ public class TaskDeserializer extends JsonDeserializer<ITask>
         ITask task = taskfactory.newTask( taskType, Locale.getDefault( ) );
         task.setOrder( order );
         task.setAction( action );
-        task.setActionUid( uid );
+        task.setActionUid( actionUid );
+        task.setUid( uid );
 
         return task;
     }

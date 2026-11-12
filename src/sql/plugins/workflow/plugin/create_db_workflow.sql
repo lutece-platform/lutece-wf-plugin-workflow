@@ -40,6 +40,7 @@ CREATE TABLE workflow_workflow
 	is_enabled SMALLINT DEFAULT 0,
 	workgroup_key VARCHAR(255) DEFAULT NULL,
 	uid_workflow VARCHAR(255) DEFAULT NULL,
+	last_import_date TIMESTAMP NULL DEFAULT NULL,
 	PRIMARY KEY (id_workflow)
 );
 
@@ -57,6 +58,7 @@ CREATE TABLE workflow_state
 	id_icon int DEFAULT NULL,
 	display_order INT DEFAULT 0,
 	uid_state VARCHAR(255) DEFAULT NULL,
+	import_hash VARCHAR(64) DEFAULT NULL,
 	PRIMARY KEY (id_state)
 );
 
@@ -77,6 +79,7 @@ CREATE TABLE workflow_action
 	display_order INT DEFAULT 0,
 	is_automatic_reflexive_action SMALLINT DEFAULT 0,
 	uid_action VARCHAR(255) DEFAULT NULL,
+	import_hash VARCHAR(64) DEFAULT NULL,
 	PRIMARY KEY (id_action)
 );
 
@@ -159,6 +162,7 @@ CREATE TABLE workflow_task
 	id_action INT DEFAULT 0 NOT NULL,
 	display_order INT DEFAULT 0,
 	uid_task VARCHAR(255) DEFAULT NULL,
+	import_hash VARCHAR(64) DEFAULT NULL,
 	PRIMARY KEY (id_task)
 );
 
@@ -274,6 +278,7 @@ CREATE TABLE workflow_prerequisite
 	id_action INT NOT NULL,
 	prerequisite_type VARCHAR(255) NOT NULL,
 	uid_prerequisite VARCHAR(255) DEFAULT NULL,
+	import_hash VARCHAR(64) DEFAULT NULL,
 	PRIMARY KEY (id_prerequisite)
 );
 
