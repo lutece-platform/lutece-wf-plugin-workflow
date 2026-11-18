@@ -64,6 +64,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -89,6 +90,8 @@ public class WorkflowJsonService
     private ITaskFactory _taskFactory;
     @Inject
     private IPrerequisiteManagementService _prerequisiteManagementService;
+    @Inject
+    private ITaskComponentManager _taskComponentManager;
 
     WorkflowJsonService( )
     {
@@ -357,6 +360,8 @@ public class WorkflowJsonService
             			.filter( type -> type.getTitle( ) == task.getTaskType( ).getTitle( ) )
             			.findFirst( ).orElse(null) );
                 _taskService.create( task );
+                // the configuration is not exported: create the default one, as for a task added in the back office
+                _taskComponentManager.doCreateDefaultConfig( task );
         	}
         }
     }

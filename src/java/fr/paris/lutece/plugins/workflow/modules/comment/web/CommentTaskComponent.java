@@ -182,6 +182,14 @@ public class CommentTaskComponent extends AbstractTaskComponent
     {
         Map<String, Object> model = new HashMap<>( );
         TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+
+        if ( config == null )
+        {
+            // task created without configuration (copy or import of a workflow): give it the default one
+            doCreateDefaultConfig( task );
+            config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        }
+
         String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, strComment );
