@@ -4,6 +4,7 @@
 			<@aButton href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
 		</@pageHeader>
 		<@tform action='jsp/admin/plugins/workflow/DoModifyIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true id='edit_icon_page'>
+			<@input type='hidden' name='token' value='${token}' />
 			<@input type='hidden' name='id_icon' value='${modify_icon.id}' />
 			<@row>
 				<@columns lg=8>

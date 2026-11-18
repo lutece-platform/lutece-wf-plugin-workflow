@@ -4,6 +4,7 @@
 			<@aButton href='jsp/admin/plugins/workflow/ManageIcon.jsp?plugin_name=workflow' buttonIcon='arrow-left' color='light' title='#i18n{portal.util.labelBack}' hideTitle=['xs','sm','md'] />
 		</@pageHeader>
 		<@tform action='jsp/admin/plugins/workflow/DoCreateIcon.jsp?plugin_name=workflow' enctype='multipart/form-data' boxed=true>
+			<@input type='hidden' name='token' value='${token}' />
 			<@formGroup labelFor='name' labelKey='#i18n{workflow.create_icon.label_name}' helpKey='#i18n{workflow.create_icon.label_name_comment}' mandatory=true>
 				<@input type='text' name='name' id='name' maxlength=255 mandatory=true />
 			</@formGroup>

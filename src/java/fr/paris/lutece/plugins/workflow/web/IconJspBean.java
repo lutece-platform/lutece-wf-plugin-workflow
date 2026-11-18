@@ -48,12 +48,16 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.icon.IIconService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -103,6 +107,7 @@ public class IconJspBean extends PluginAdminPageJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_ICON = "workflow.message.confirm_remove_icon";
     private static final String MESSAGE_MANDATORY_FIELD = "workflow.message.mandatory.field";
     private static final String MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE = "workflow.message.can_not_remove_icon_actions_are_associate";
+    private static final String MESSAGE_CAN_NOT_REMOVE_ICON_STATES_ARE_ASSOCIATE = "workflow.message.can_not_remove_icon_states_are_associate";
     private static final String MESSAGE_NUMERIC_FIELD = "workflow.message.numeric.field";
 
     // properties
@@ -127,6 +132,8 @@ public class IconJspBean extends PluginAdminPageJspBean
     private IIconService _iconService;
     @Inject
     private IActionService _actionService;
+    @Inject
+    private IStateService _stateService;
 
     /**
      * Return management icon ( list of icon )
@@ -166,7 +173,10 @@ public class IconJspBean extends PluginAdminPageJspBean
     {
         setPageTitleProperty( PROPERTY_CREATE_ICON );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_ICON, getLocale( ) );
+        Map<String, Object> model = new HashMap<>( );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_CREATE_ICON ) );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_ICON, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
     }
@@ -176,10 +186,14 @@ public class IconJspBean extends PluginAdminPageJspBean
      * 
      * @param request
      *            The HTTP request
+     * @throws AccessDeniedException
+     *             if the security token is invalid
      * @return The URL to go after performing the action
      */
-    public String doCreateIcon( HttpServletRequest request )
+    public String doCreateIcon( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, TEMPLATE_CREATE_ICON );
+
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
             Icon icon = new Icon( );
@@ -219,6 +233,7 @@ public class IconJspBean extends PluginAdminPageJspBean
         Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_MODIFY_ICON, icon );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MODIFY_ICON ) );
         setPageTitleProperty( PROPERTY_MODIFY_ICON );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_ICON, getLocale( ), model );
@@ -237,6 +252,8 @@ public class IconJspBean extends PluginAdminPageJspBean
      */
     public String doModifyIcon( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, TEMPLATE_MODIFY_ICON );
+
         if ( request.getParameter( PARAMETER_CANCEL ) == null )
         {
             String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
@@ -292,8 +309,14 @@ public class IconJspBean extends PluginAdminPageJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
         }
 
+        if ( isIconOfAState( nIdIcon ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_STATES_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+        }
+
         UrlItem url = new UrlItem( JSP_DO_REMOVE_ICON );
         url.addParameter( PARAMETER_ID_ICON, strIdIcon );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_ICON ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_ICON, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
@@ -309,6 +332,8 @@ public class IconJspBean extends PluginAdminPageJspBean
      */
     public String doRemoveIcon( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkSecurityToken( request, JSP_DO_REMOVE_ICON );
+
         String strIdIcon = request.getParameter( PARAMETER_ID_ICON );
         int nIdIcon = WorkflowUtils.convertStringToInt( strIdIcon );
         ActionFilter filter = new ActionFilter( );
@@ -322,9 +347,46 @@ public class IconJspBean extends PluginAdminPageJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
         }
 
+        if ( isIconOfAState( nIdIcon ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_CAN_NOT_REMOVE_ICON_STATES_ARE_ASSOCIATE, AdminMessage.TYPE_STOP );
+        }
+
         _iconService.remove( nIdIcon );
 
         return getJspManageIcon( request );
+    }
+
+    /**
+     * Tells if an icon is the icon of a state
+     * 
+     * @param nIdIcon
+     *            the icon id
+     * @return true if a state of a workflow uses this icon
+     */
+    private boolean isIconOfAState( int nIdIcon )
+    {
+        List<State> listStates = _stateService.getListStateByFilter( new StateFilter( ) );
+
+        return listStates.stream( ).anyMatch( state -> state.getIcon( ) != null && state.getIcon( ).getId( ) == nIdIcon );
+    }
+
+    /**
+     * Checks the security token of the request
+     * 
+     * @param request
+     *            the request
+     * @param strAction
+     *            the action the token was generated for
+     * @throws AccessDeniedException
+     *             if the token is invalid
+     */
+    private void checkSecurityToken( HttpServletRequest request, String strAction ) throws AccessDeniedException
+    {
+        if ( !SecurityTokenService.getInstance( ).validate( request, strAction ) )
+        {
+            throw new AccessDeniedException( I18nService.getLocalizedString( WorkflowUtils.MESSAGE_ERROR_INVALID_SECURITY_TOKEN, getLocale( ) ) );
+        }
     }
 
     /**
