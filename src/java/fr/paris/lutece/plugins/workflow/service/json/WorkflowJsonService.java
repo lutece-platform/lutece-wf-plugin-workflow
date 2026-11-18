@@ -165,6 +165,15 @@ public class WorkflowJsonService
             List<String> listUidStateBefore = new ArrayList<>( );
             action.getListIdStateBefore( ).forEach( stateId -> listUidStateBefore.add( mapUidStates.get( stateId ) ) );
             action.setListUidStateBefore( listUidStateBefore );
+
+            // linked actions of both sides of workflow_action_action, by the uid exported for this workflow
+            List<String> listUidsLinkedAction = new ArrayList<>( );
+            if ( action.getListIdsLinkedAction( ) != null )
+            {
+                action.getListIdsLinkedAction( ).stream( ).filter( mapUidActions::containsKey ).map( mapUidActions::get )
+                        .forEach( listUidsLinkedAction::add );
+            }
+            action.setListUidsLinkedAction( listUidsLinkedAction );
         }
 
         jsonData.setActionList( actionList );

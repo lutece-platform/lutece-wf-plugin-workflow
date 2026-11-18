@@ -143,6 +143,37 @@ public class ActionDaoTest extends LuteceTestCase
     }
 
     @Test
+    public void testSelectListUidsLinkedAction( )
+    {
+        Action actionA = newAction( "A", "uid-linked-a" );
+        Action actionB = newAction( "B", "uid-linked-b" );
+        _dao.insertLinkedActions( actionA.getId( ), actionB.getId( ) );
+
+        // each side of the link returns the uid of the other action, never its own
+        assertEquals( List.of( "uid-linked-b" ), new ArrayList<>( _dao.selectListUidsLinkedAction( actionA.getId( ) ) ) );
+        assertEquals( List.of( "uid-linked-a" ), new ArrayList<>( _dao.selectListUidsLinkedAction( actionB.getId( ) ) ) );
+
+        _dao.removeLinkedActions( actionA.getId( ) );
+        _dao.delete( actionA.getId( ) );
+        _dao.delete( actionB.getId( ) );
+    }
+
+    private Action newAction( String strName, String strUid )
+    {
+        Action action = new Action( );
+        action.setName( strName );
+        action.setDescription( "strDescription" );
+        action.setIcon( icon );
+        action.setListIdStateBefore( listIdStateBefore );
+        action.setStateAfter( stateAfter );
+        action.setWorkflow( wf );
+        action.setOrder( 0 );
+        action.setUid( strUid );
+        _dao.insert( action );
+        return action;
+    }
+
+    @Test
     public void testLoadWithIcon( )
     {
         Action action = new Action( );
