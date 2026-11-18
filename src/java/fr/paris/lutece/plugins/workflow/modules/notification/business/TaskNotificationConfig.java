@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.workflow.modules.notification.business;
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Named;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  *
@@ -46,9 +48,14 @@ import jakarta.inject.Named;
 @Named( "workflow.taskNotificationConfig" )
 public class TaskNotificationConfig extends TaskConfig
 {
+    // the fields marked mandatory in the configuration form: -1 is the empty choice of the mailing list
+    @Min( 1 )
     private int _nIdMailingList;
+    @NotBlank
     private String _strSubject;
+    @NotBlank
     private String _strMessage;
+    @NotBlank
     private String _strSenderName;
 
     /**
