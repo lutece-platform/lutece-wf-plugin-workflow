@@ -40,6 +40,9 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * DAO for prerequisite
@@ -50,11 +53,11 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
      * The name of the bean of this service
      */
     public static final String BEAN_NAME = "workflow.prerequisiteDAO";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_prerequisite = ?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_prerequisite, id_action, prerequisite_type, uid_prerequisite FROM workflow_prerequisite WHERE id_prerequisite = ?";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_prerequisite SET id_action = ?, prerequisite_type = ? WHERE id_prerequisite = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_action,prerequisite_type) VALUES(?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_prerequisite(id_action,prerequisite_type,uid_prerequisite) VALUES(?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_prerequisite WHERE id_prerequisite = ?";
-    private static final String SQL_QUERY_FIND_BY_ID_ACTION = "SELECT id_prerequisite, id_action, prerequisite_type FROM workflow_prerequisite WHERE id_action = ?";
+    private static final String SQL_QUERY_FIND_BY_ID_ACTION = "SELECT id_prerequisite, id_action, prerequisite_type, uid_prerequisite FROM workflow_prerequisite WHERE id_action = ?";
 
     /**
      * {@inheritDoc}
@@ -74,6 +77,7 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
                 prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
                 prerequisite.setIdAction( daoUtil.getInt( 2 ) );
                 prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
+                prerequisite.setUidPrerequisite( daoUtil.getString( 4 ) );
             }
         }
         return prerequisite;
@@ -88,8 +92,14 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
+            if ( StringUtils.isEmpty( prerequisite.getUidPrerequisite( ) ) )
+            {
+                prerequisite.setUidPrerequisite( UUID.randomUUID( ).toString( ) );
+            }
+
             daoUtil.setInt( 1, prerequisite.getIdAction( ) );
             daoUtil.setString( 2, prerequisite.getPrerequisiteType( ) );
+            daoUtil.setString( 3, prerequisite.getUidPrerequisite( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -145,6 +155,7 @@ public class PrerequisiteDAO implements IPrerequisiteDAO
                 prerequisite.setIdPrerequisite( daoUtil.getInt( 1 ) );
                 prerequisite.setIdAction( daoUtil.getInt( 2 ) );
                 prerequisite.setPrerequisiteType( daoUtil.getString( 3 ) );
+                prerequisite.setUidPrerequisite( daoUtil.getString( 4 ) );
                 listPrerequisites.add( prerequisite );
             }
         }

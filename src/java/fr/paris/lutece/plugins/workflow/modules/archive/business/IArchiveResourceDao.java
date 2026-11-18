@@ -73,4 +73,12 @@ public interface IArchiveResourceDao
      *            the task id
      */
     void delete( int nIdResource, int nIdTask );
+
+    /**
+     * Deletes the archive rows of a task, whatever the resource
+     *
+     * @param nIdTask
+     *            the task
+     */
+    void deleteByTask( int nIdTask );
 }
