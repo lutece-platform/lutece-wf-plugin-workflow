@@ -37,7 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -99,5 +103,20 @@ public class CommentJspBeanTest extends LuteceTestCase
         assertEquals( strAdminHome, _bean.getSafeReturnUrl( request, null ) );
         assertEquals( strInternalUrl, _bean.getSafeReturnUrl( request, strInternalUrl ) );
         assertEquals( "jsp/admin/plugins/forms/ManageForms.jsp", _bean.getSafeReturnUrl( request, "jsp/admin/plugins/forms/ManageForms.jsp" ) );
+    }
+
+    @Test
+    public void testConfirmRemoveDeletedComment( ) throws Exception
+    {
+        // the comment (and its history line) were deleted by a first removal: page of the browser history
+        MockHttpServletRequest request = getRemoveRequest( "GET" );
+        request.setParameter( "id_history", "999999" );
+
+        String strUrl = _bean.getConfirmRemoveComment( request );
+
+        assertTrue( strUrl.endsWith( AdminMessageService.getMessageRelativeUrl( ) ), strUrl );
+        AdminMessage message = AdminMessageService.getMessage( request );
+        assertEquals( AdminMessage.TYPE_STOP, message.getType( ) );
+        assertEquals( "This comment has already been deleted or cannot be found.", message.getText( Locale.ENGLISH ) );
     }
 }

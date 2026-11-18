@@ -111,6 +111,12 @@ public class CommentValueService implements ICommentValueService
     public boolean isOwner( int nIdHistory, AdminUser adminUser )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+
+        if ( resourceHistory == null || adminUser == null )
+        {
+            return false;
+        }
+
         AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) );
 
         return ( ( userOwner != null ) && ( userOwner.getUserId( ) == adminUser.getUserId( ) ) );

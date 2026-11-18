@@ -92,6 +92,7 @@ public class CommentJspBean extends MVCAdminJspBean
 
     // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_COMMENT = "module.workflow.comment.message.confirm_remove_comment";
+    private static final String MESSAGE_COMMENT_NOT_FOUND = "module.workflow.comment.message.comment_not_found";
 
     // Other constants
     private static final String PARAMETER_ENCODING = "UTF-8";
@@ -120,6 +121,12 @@ public class CommentJspBean extends MVCAdminJspBean
      */
     public String getConfirmRemoveComment( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
+        if ( findCommentValue( request ) == null )
+        {
+            // already deleted (page of the browser history, second tab)
+            return AdminMessageService.getMessageUrl( request, MESSAGE_COMMENT_NOT_FOUND, AdminMessage.TYPE_STOP );
+        }
+
         if ( !canDeleteComment( request ) )
         {
             throw new AccessDeniedException( "The connected user is not allowed to delete this comment" );
@@ -157,6 +164,11 @@ public class CommentJspBean extends MVCAdminJspBean
             throw new AccessDeniedException( ERROR_INVALID_TOKEN );
         }
 
+        if ( findCommentValue( request ) == null )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_COMMENT_NOT_FOUND, AdminMessage.TYPE_STOP );
+        }
+
         if ( !canDeleteComment( request ) )
         {
             throw new AccessDeniedException( "The connected user is not allowed to delete this comment" );
@@ -171,6 +183,14 @@ public class CommentJspBean extends MVCAdminJspBean
 
         // Remove history if no other task information to display
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+
+        if ( resourceHistory == null )
+        {
+            String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
+
+            return getSafeReturnUrl( request, ( strReturnUrl != null ) ? URLDecoder.decode( strReturnUrl, PARAMETER_ENCODING ) : null );
+        }
+
         List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), request.getLocale( ) );
 
         Iterator<ITask> iterator = listActionTasks.iterator( );
@@ -232,15 +252,28 @@ public class CommentJspBean extends MVCAdminJspBean
     {
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         int nIdHistory = WorkflowUtils.convertStringToInt( strIdHistory );
-        String strIdTask = request.getParameter( PARAMETER_ID_TASK );
-        int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
+        CommentValue commentValue = findCommentValue( request );
 
         boolean bHasPermissionDeletion = RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, (User) userConnected );
         boolean bIsOwner = _commentValueService.isOwner( nIdHistory, userConnected );
 
         return bHasPermissionDeletion || bIsOwner;
+    }
+
+    /**
+     * Finds the comment designated by the request
+     * 
+     * @param request
+     *            the request
+     * @return the comment, or null if it does not exist (any more)
+     */
+    private CommentValue findCommentValue( HttpServletRequest request )
+    {
+        int nIdHistory = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_HISTORY ) );
+        int nIdTask = WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_TASK ) );
+
+        return _commentValueService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
     }
 }
