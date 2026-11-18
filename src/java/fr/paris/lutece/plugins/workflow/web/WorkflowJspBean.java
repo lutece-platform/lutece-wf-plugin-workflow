@@ -3074,6 +3074,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         stateToCopy.setOrder( nMaximumOrder + 1 );
         // the copy is a new state: it must not share the uid of the original
         stateToCopy.setUid( UUID.randomUUID( ).toString( ) );
+        // a workflow has only one initial state: the copy of the initial state is a regular state
+        stateToCopy.setInitialState( false );
         _stateService.create( stateToCopy );
         return stateToCopy;
     }
