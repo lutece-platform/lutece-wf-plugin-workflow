@@ -45,6 +45,7 @@ public class ArchiveResourceDao implements IArchiveResourceDao
     private static final String SQL_QUERY_SELECT_BY_ID = "SELECT id_resource, id_task, initial_date, archival_date, is_archived FROM workflow_task_archive_resource WHERE id_resource=? AND id_task=? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_archive_resource SET id_resource=?, id_task=?, initial_date=?, archival_date=?, is_archived=? WHERE id_resource=? AND id_task=? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_archive_resource WHERE id_resource=? AND id_task=? ";
+    private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_archive_resource WHERE id_task=? ";
 
     @Override
     public void insert( ArchiveResource archiveResource )
@@ -163,5 +164,15 @@ public class ArchiveResourceDao implements IArchiveResourceDao
 
         archiveResource.setIsArchived( daoUtil.getBoolean( ++nPos ) );
         return archiveResource;
+    }
+
+    @Override
+    public void deleteByTask( int nIdTask )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }
