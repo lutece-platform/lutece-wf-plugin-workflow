@@ -213,8 +213,8 @@ CREATE TABLE workflow_task_assignment_cf
 	title VARCHAR(255) DEFAULT NULL, 
 	is_multiple_owner SMALLINT DEFAULT 0,
 	is_notify SMALLINT DEFAULT 0,
-	message VARCHAR(255) DEFAULT NULL,
-	subject VARCHAR(45) DEFAULT NULL, 
+	message LONG VARCHAR DEFAULT NULL,
+	subject VARCHAR(255) DEFAULT NULL, 
 	is_use_user_name SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_task)
 );
