@@ -265,5 +265,6 @@ public class ArchiveService implements IArchiveService
     public void removeConfig( ITask task )
     {
         _taskArchiveConfigService.remove( task.getId( ) );
+        _archiveResourceDao.deleteByTask( task.getId( ) );
     }
 }
