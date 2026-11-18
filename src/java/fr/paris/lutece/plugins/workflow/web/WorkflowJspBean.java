@@ -1181,7 +1181,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         List<Action> listActionStateAfter = _actionService.getListActionByFilter( filter );
 
-        if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter ) )
+        if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter )
+                || isAlternativeStateOfAnAction( nIdState ) )
         {
             return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP,
                     getJspStatesOfWorkflow( request, nIdState ) );
@@ -1192,6 +1193,29 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         url.addParameter( SecurityTokenService.PARAMETER_TOKEN, SecurityTokenService.getInstance( ).getToken( request, JSP_DO_REMOVE_STATE ) );
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_STATE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+    }
+
+    /**
+     * Tells if a state is the alternative state after of an action of its workflow (state reached by the "No" of the choice task)
+     * 
+     * @param nIdState
+     *            the state id
+     * @return true if an action of the workflow leads to this state as alternative state
+     */
+    private boolean isAlternativeStateOfAnAction( int nIdState )
+    {
+        State state = _stateService.findByPrimaryKey( nIdState );
+
+        if ( state == null || state.getWorkflow( ) == null )
+        {
+            return false;
+        }
+
+        ActionFilter filter = new ActionFilter( );
+        filter.setIdWorkflow( state.getWorkflow( ).getId( ) );
+
+        return _actionService.getListActionByFilter( filter ).stream( )
+                .anyMatch( action -> action.getAlternativeStateAfter( ) != null && action.getAlternativeStateAfter( ).getId( ) == nIdState );
     }
 
     /**
@@ -1224,7 +1248,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
 
         List<Action> listActionStateAfter = _actionService.getListActionByFilter( filter );
 
-        if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter ) )
+        if ( CollectionUtils.isNotEmpty( listActionStateBefore ) || CollectionUtils.isNotEmpty( listActionStateAfter )
+                || isAlternativeStateOfAnAction( nIdState ) )
         {
             return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CAN_NOT_REMOVE_STATE_ACTIONS_ARE_ASSOCIATE, AdminMessage.TYPE_STOP,
                     getJspStatesOfWorkflow( request, nIdState ) );

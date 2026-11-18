@@ -35,17 +35,22 @@ package fr.paris.lutece.plugins.workflow.web;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.icon.IIconDAO;
 import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 import fr.paris.lutece.plugins.workflowcore.business.state.IStateDAO;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -76,6 +81,8 @@ public class WorkflowJspBeanTest extends LuteceTestCase
     private IWorkflowDAO _workflowDAO;
     @Inject
     private IIconDAO _iconDAO;
+    @Inject
+    private IActionService _actionService;
 
     private Icon _icon;
     private Workflow _workflow;
@@ -299,5 +306,38 @@ public class WorkflowJspBeanTest extends LuteceTestCase
         assertTrue( strUrl.endsWith( AdminMessageService.getMessageRelativeUrl( ) ), strUrl );
         assertTrue( AdminMessageService.getMessage( request ).getBackUrl( )
                 .endsWith( "jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=" + _workflow.getId( ) ) );
+    }
+
+    @Test
+    public void testRemoveStateUsedAsAlternativeStateIsRefused( ) throws AccessDeniedException
+    {
+        Action action = new Action( );
+        action.setName( "action with alternative state" );
+        action.setDescription( "description" );
+        action.setIcon( _icon );
+        action.setWorkflow( _workflow );
+        action.setListIdStateBefore( List.of( _state1.getId( ) ) );
+        action.setStateAfter( _state1 );
+        action.setAlternativeStateAfter( _state2 );
+        action.setOrder( 1 );
+        _actionService.create( action );
+
+        try
+        {
+            MockHttpServletRequest request = getUserRequest( );
+            request.setParameter( "id_state", Integer.toString( _state2.getId( ) ) );
+            _bean.init( request, WorkflowJspBean.RIGHT_MANAGE_WORKFLOW );
+
+            String strUrl = _bean.getConfirmRemoveState( request );
+
+            assertTrue( strUrl.endsWith( AdminMessageService.getMessageRelativeUrl( ) ), strUrl );
+            AdminMessage message = AdminMessageService.getMessage( request );
+            assertEquals( AdminMessage.TYPE_STOP, message.getType( ) );
+            assertEquals( "Actions of the workflow are associated with this state, you cannot delete this state!", message.getText( Locale.ENGLISH ) );
+        }
+        finally
+        {
+            _actionService.remove( action.getId( ) );
+        }
     }
 }
