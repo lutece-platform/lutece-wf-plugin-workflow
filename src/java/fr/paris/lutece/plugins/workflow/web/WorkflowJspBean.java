@@ -2148,6 +2148,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // get the maximum order number in this workflow and set max+1
         int nMaximumOrder = _taskService.findMaximumOrderByActionId( taskToCopy.getAction( ).getId( ) );
         taskToCopy.setOrder( nMaximumOrder + 1 );
+        // the copy is a new task: it must not share the uid of the original
+        taskToCopy.setUid( UUID.randomUUID( ).toString( ) );
 
         // Create the new task (taskToCopy id will be update with the new
         // idTask)
@@ -2875,6 +2877,7 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
             List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( action.getId( ), this.getLocale( ) );
 
             action.setStateAfter( stateToCopy );
+            action.setUid( UUID.randomUUID( ).toString( ) );
             if ( !action.getListIdStateBefore( ).isEmpty( ) )
             {
             	action.getListIdStateBefore( ).set( 0, stateToCopy.getId( ) );
@@ -3030,6 +3033,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // get the maximum order number in this workflow and set max+1
         int nMaximumOrder = _actionService.findMaximumOrderByWorkflowId( actionToCopy.getWorkflow( ).getId( ) );
         actionToCopy.setOrder( nMaximumOrder + 1 );
+        // the copy is a new action: it must not share the uid of the original
+        actionToCopy.setUid( UUID.randomUUID( ).toString( ) );
 
         // get the linked tasks and duplicate them
         List<ITask> listLinkedTasks = _taskService.getListTaskByIdAction( actionToCopy.getId( ), this.getLocale( ) );
@@ -3067,6 +3072,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
         // get the maximum order number in this workflow and set max+1
         int nMaximumOrder = _stateService.findMaximumOrderByWorkflowId( stateToCopy.getWorkflow( ).getId( ) );
         stateToCopy.setOrder( nMaximumOrder + 1 );
+        // the copy is a new state: it must not share the uid of the original
+        stateToCopy.setUid( UUID.randomUUID( ).toString( ) );
         _stateService.create( stateToCopy );
         return stateToCopy;
     }

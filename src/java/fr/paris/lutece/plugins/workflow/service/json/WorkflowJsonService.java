@@ -126,12 +126,17 @@ public class WorkflowJsonService
         }
         jsonData.setWorkflow( workflow );
 
+        // The uids are the keys of the import: each state and each action of the workflow must have its own uid,
+        // even when it was copied from another one (copies made by older versions kept the uid of the original)
+        Map<Integer, String> mapUidStates = new HashMap<>( );
         List<State> stateList = (List<State>) _workflowService.getAllStateByWorkflow( workflow.getId( ) );
-        stateList.forEach(state -> {
-            if( state.getUid( ) == null ){
+        stateList.forEach( state -> {
+            if ( state.getUid( ) == null || mapUidStates.containsValue( state.getUid( ) ) )
+            {
                 state.setUid( UUID.randomUUID( ).toString( ) );
             }
-        });
+            mapUidStates.put( state.getId( ), state.getUid( ) );
+        } );
         jsonData.setStateList( stateList );
 
         List<Action> actionList = new ArrayList<>( );
@@ -139,30 +144,29 @@ public class WorkflowJsonService
         ActionFilter filter = new ActionFilter( );
         filter.setIdWorkflow( workflow.getId( ) );
         actionList.addAll( _actionService.getListActionByFilter( filter ) );
-        actionList.forEach(action -> {
-            if( action.getUid( ) == null ){
+        Map<Integer, String> mapUidActions = new HashMap<>( );
+        actionList.forEach( action -> {
+            if ( action.getUid( ) == null || mapUidActions.containsValue( action.getUid( ) ) )
+            {
                 action.setUid( UUID.randomUUID( ).toString( ) );
             }
-        });
-       
-        for( Action action : actionList ) 
-        {       	
-        	State actionStateAfter = _stateService.findByPrimaryKey( action.getStateAfter( ).getId( ) );
-    		action.setStrUidStateAfter( actionStateAfter.getUid( ) );
-    		
-    		if(action.getAlternativeStateAfter().getId() != -1) {
-            	State actionAlternativeStateAfter = _stateService.findByPrimaryKey( action.getAlternativeStateAfter( ).getId( ) );
-        		action.setStrUidAlternativeStateAfter( actionAlternativeStateAfter.getUid( ) );
-    		}
-    		
-    		List<String> listUidStateBefore = new ArrayList<>( );
-    		action.getListIdStateBefore( ).forEach( stateId -> 
-    		{
-    			listUidStateBefore.add( _stateService.findByPrimaryKey( stateId ).getUid( ) );
-    		});
-    		action.setListUidStateBefore( listUidStateBefore );
+            mapUidActions.put( action.getId( ), action.getUid( ) );
+        } );
+
+        for ( Action action : actionList )
+        {
+            action.setStrUidStateAfter( mapUidStates.get( action.getStateAfter( ).getId( ) ) );
+
+            if ( action.getAlternativeStateAfter( ).getId( ) != -1 )
+            {
+                action.setStrUidAlternativeStateAfter( mapUidStates.get( action.getAlternativeStateAfter( ).getId( ) ) );
+            }
+
+            List<String> listUidStateBefore = new ArrayList<>( );
+            action.getListIdStateBefore( ).forEach( stateId -> listUidStateBefore.add( mapUidStates.get( stateId ) ) );
+            action.setListUidStateBefore( listUidStateBefore );
         }
-        
+
         jsonData.setActionList( actionList );
 
         List<ITask> taskList = new ArrayList<>( );
@@ -181,7 +185,7 @@ public class WorkflowJsonService
         
         for ( ITask task : taskList ) 
         {
-        	task.setActionUid( _actionService.findByPrimaryKey( task.getAction( ).getId( ) ).getUid( ) );
+            task.setActionUid( mapUidActions.get( task.getAction( ).getId( ) ) );
         }
 
         prerequisiteList.forEach(prerequisite -> {
@@ -192,7 +196,7 @@ public class WorkflowJsonService
         
         for( Prerequisite prerequisite : prerequisiteList ) 
         {
-        	prerequisite.setUidAction( _actionService.findByPrimaryKey( prerequisite.getIdAction() ).getUid( ) );
+            prerequisite.setUidAction( mapUidActions.get( prerequisite.getIdAction( ) ) );
         }
 
         jsonData.setTaskList( taskList );
