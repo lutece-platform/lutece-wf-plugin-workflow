@@ -67,6 +67,12 @@ public class TaskDeserializer extends JsonDeserializer<ITask>
         action.setUid( actionUid );
 
         ITask task = taskfactory.newTask( taskType, Locale.getDefault( ) );
+
+        if ( task == null )
+        {
+            throw new UnknownTaskTypeException( p, taskType );
+        }
+
         task.setOrder( order );
         task.setAction( action );
         task.setActionUid( uid );

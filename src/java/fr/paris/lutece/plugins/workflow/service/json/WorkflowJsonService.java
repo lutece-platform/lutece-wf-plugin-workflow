@@ -40,13 +40,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -222,12 +225,17 @@ public class WorkflowJsonService
     {
         WorkflowJsonData jsonData = _objectMapper.readValue( json, WorkflowJsonData.class );
 
+        if ( jsonData == null || jsonData.getWorkflow( ) == null )
+        {
+            throw JsonMappingException.from( (JsonParser) null, "The file holds no workflow" );
+        }
+
         int newIdWf = importWorkflow( jsonData.getWorkflow( ), locale );
 
-        List<State> stateList = jsonData.getStateList( );
-        List<Action> actionList = jsonData.getActionList( );
-        List<ITask> taskList = jsonData.getTaskList( );
-        List<Prerequisite> prerequisiteList = jsonData.getPrerequisiteList( );
+        List<State> stateList = Objects.requireNonNullElseGet( jsonData.getStateList( ), ArrayList::new );
+        List<Action> actionList = Objects.requireNonNullElseGet( jsonData.getActionList( ), ArrayList::new );
+        List<ITask> taskList = Objects.requireNonNullElseGet( jsonData.getTaskList( ), ArrayList::new );
+        List<Prerequisite> prerequisiteList = Objects.requireNonNullElseGet( jsonData.getPrerequisiteList( ), ArrayList::new );
 
         importStates( newIdWf, stateList, actionList );
         importActions( actionList, taskList, prerequisiteList );

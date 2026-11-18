@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.workflow.business.prerequisite.PrerequisiteDTO;
 import fr.paris.lutece.plugins.workflow.business.task.TaskRemovalListenerService;
 import fr.paris.lutece.plugins.workflow.service.ActionResourceIdService;
 import fr.paris.lutece.plugins.workflow.service.WorkflowGraphExportService;
+import fr.paris.lutece.plugins.workflow.service.json.UnknownTaskTypeException;
 import fr.paris.lutece.plugins.workflow.service.json.WorkflowJsonService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowCycleUtils;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -308,6 +309,8 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
     private static final String LOG_WORKFLOW_NOT_AUTHORIZED = "The user is not allowed to manage the workflow of ID ";
     
     private static final String ERROR_NO_FILE_SELECTED = "workflow.message.error.no_file_selected";
+    private static final String ERROR_IMPORT_INVALID_FILE = "workflow.message.error.import_invalid_file";
+    private static final String ERROR_IMPORT_UNKNOWN_TASK_TYPE = "workflow.message.error.import_unknown_task_type";
 
     // session fields
     private int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
@@ -3433,9 +3436,17 @@ public class WorkflowJspBean extends PluginAdminPageJspBean
                 _workflowJsonService.jsonImportWorkflow( new String( _importWorkflowFileData, StandardCharsets.UTF_8 ), getLocale( ) );
             }
         }
+        catch( UnknownTaskTypeException e )
+        {
+            AppLogService.error( e.getMessage( ) );
+            return AdminMessageService.getMessageUrl( request, ERROR_IMPORT_UNKNOWN_TASK_TYPE, new Object [ ] {
+                    e.getTaskType( )
+            }, JSP_MANAGE_WORKFLOW, AdminMessage.TYPE_ERROR );
+        }
         catch( JsonProcessingException e )
         {
             AppLogService.error( e.getMessage( ) );
+            return AdminMessageService.getMessageUrl( request, ERROR_IMPORT_INVALID_FILE, JSP_MANAGE_WORKFLOW, AdminMessage.TYPE_ERROR );
         }
         finally
         {
