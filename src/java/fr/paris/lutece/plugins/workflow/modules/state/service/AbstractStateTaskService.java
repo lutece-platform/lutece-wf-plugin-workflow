@@ -135,6 +135,13 @@ public abstract class AbstractStateTaskService
      */
     public boolean doChangeStateIfInState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int nIdCurrentState, int newState )
     {
+        if ( newState == nIdCurrentState )
+        {
+            // Already in the target state (a task of the reflexive action of this state): nothing to change, otherwise the daemon
+            // would add a history line and run the reflexive actions again at each run
+            return false;
+        }
+
         if ( !_resourceWorkflowService.lock( nIdResource, strResourceType, nIdWorkflow, List.of( nIdCurrentState ) ) )
         {
             return false;

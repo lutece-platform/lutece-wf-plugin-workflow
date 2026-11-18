@@ -172,6 +172,22 @@ public class ChangeStateClaimTest extends LuteceTestCase
                 "the claim must be released after the change" );
     }
 
+    /**
+     * A task whose target is the state the resource is already in (task of the reflexive action of that state) changes nothing
+     */
+    @Test
+    public void testSameStateIsNotChanged( )
+    {
+        for ( int i = 0; i < 3; i++ )
+        {
+            assertFalse( _changeStateTaskService.doChangeStateIfInState( _task, ID_RESOURCE, RESOURCE_TYPE, _workflow.getId( ), _state1.getId( ),
+                    _state1.getId( ) ) );
+        }
+
+        assertEquals( _state1.getId( ), currentState( ) );
+        assertEquals( 0, histories( ).size( ) );
+    }
+
     private boolean changeState( )
     {
         return _changeStateTaskService.doChangeStateIfInState( _task, ID_RESOURCE, RESOURCE_TYPE, _workflow.getId( ), _state1.getId( ), _state2.getId( ) );
