@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.workflowcore.business.prerequisite.Prerequisite;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.business.prerequisite.IPrerequisiteConfig;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IPrerequisiteManagementService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
@@ -368,19 +369,24 @@ public class WorkflowJsonService
 
     private void importPrerequisites( List<Prerequisite> prerequisiteList )
     {
-    	List<String> PrerequisiteTypeList = new ArrayList<String>();
-    	
-        for ( IAutomaticActionPrerequisiteService service : _prerequisiteManagementService.getPrerequisiteServiceList( ) )
-        {
-        	PrerequisiteTypeList.add( service.getPrerequisiteType( ) );
-        }
-    	
         for ( Prerequisite prerequisite : prerequisiteList )
         {
-        	if( PrerequisiteTypeList.contains( prerequisite.getPrerequisiteType( ) ) )
-        	{
+            IAutomaticActionPrerequisiteService service = _prerequisiteManagementService.getPrerequisiteService( prerequisite.getPrerequisiteType( ) );
+
+            if ( service != null )
+            {
                 _prerequisiteManagementService.createPrerequisite( prerequisite );
-        	}
+
+                // the configuration is not exported: create the empty one, as the back office does when it is opened
+                IPrerequisiteConfig config = service.hasConfiguration( ) ? service.getEmptyConfiguration( ) : null;
+
+                if ( config != null )
+                {
+                    config.setIdPrerequisite( prerequisite.getIdPrerequisite( ) );
+                    config.setPrerequisiteType( prerequisite.getPrerequisiteType( ) );
+                    _prerequisiteManagementService.createPrerequisiteConfiguration( config, service );
+                }
+            }
         }
     }
 }

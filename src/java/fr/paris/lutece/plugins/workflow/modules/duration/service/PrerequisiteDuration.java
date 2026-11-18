@@ -110,8 +110,10 @@ public class PrerequisiteDuration implements IAutomaticActionPrerequisiteService
         int idWorkflow = _actionService.findByPrimaryKeyWithoutIcon( nIdAction ).getWorkflow( ).getId( );
         ResourceHistory resourceHistory = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType, idWorkflow );
 
-        if ( resourceHistory == null )
+        if ( resourceHistory == null || config == null )
         {
+            // No configuration (prerequisite of a copied or imported workflow): no duration to wait for.
+            //
             // The prerequisite is configured on an automatic action on the initial state without AutomaticReflexiveActions,
             // so we don't have a resourceHistory yet. Since state creation occurs only after a call
             // to getState (state creation is lazy), it is not very meaningful to have a duration
