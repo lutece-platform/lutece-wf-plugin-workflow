@@ -169,15 +169,15 @@ public class TaskAssignment extends Task
             for ( Recipient recipient : listRecipients )
             {
                 String strSenderName = I18nService.getLocalizedString( PROPERTY_MAIL_SENDER_NAME, locale );
-                if ( config.isUseUserName( ) )
+                if ( config.isUseUserName( ) && ( admin != null ) )
                 {
-                    // Build the mail message
-                    MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, config.getSubject( ), t.getHtml( ) );
+                    // "Use the user's name as the sender": the user who runs the action
+                    MailService.sendMailHtml( recipient.getEmail( ), admin.getFirstName( ) + " " + admin.getLastName( ), admin.getEmail( ),
+                            config.getSubject( ), t.getHtml( ) );
                 }
                 else
                 {
-                    MailService.sendMailHtml( recipient.getEmail( ), admin.getFirstName( ) + " " + admin.getLastName( ), admin.getEmail( ),
-                            config.getSubject( ), t.getHtml( ) );
+                    MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, config.getSubject( ), t.getHtml( ) );
                 }
             }
         }
